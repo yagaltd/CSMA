@@ -31,9 +31,5 @@ See the [Complete CSMA Guide](complete-csma-guide.md) for full architecture deta
 
 ## Local Preview
 
-```bash
-pip install mkdocs mkdocs-material
-mkdocs serve
-```
-
-Then open `http://127.0.0.1:8000`.
+No static site generator is required for this repository documentation.
+Browse the markdown files directly in the repo (for example on GitHub) or open them in your editor.

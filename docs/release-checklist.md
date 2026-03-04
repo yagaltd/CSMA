@@ -34,10 +34,10 @@ Record pass/fail + notes for each target (Chrome, Firefox, Safari, iOS Safari, A
 - [ ] Ensure `docs/guides/getting-started.md` matches current workflow
 - [ ] Update `docs/examples/todo-app.md` if contracts/services changed
 - [ ] Confirm `docs/platforms/*.md` reflect current scripts and paths
-- [ ] `mkdocs build --strict`
+- [ ] Verify changed docs render correctly in your markdown viewer (for example GitHub preview)
 
 ## 7. Tag & Publish
-- [ ] Commit release artifacts (no `dist/` or `site/`)
+- [ ] Commit release artifacts (no `dist/`)
 - [ ] Tag `vX.Y.Z`
 - [ ] Attach Android/iOS/desktop binaries (optional)
 - [ ] Publish release notes with checklist results

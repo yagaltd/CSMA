@@ -71,7 +71,6 @@ This repository is template-first source.
 
 - Keep source files, docs source, and minimal examples.
 - Do not commit generated outputs:
-  - `site/`
   - `dist/`
   - `platforms/desktop-neutralino/resources/assets/`
   - `platforms/mobile-capacitor/www/assets/`
@@ -269,7 +268,12 @@ View logs in localStorage:
 localStorage.getItem('analytics');
 ```
 
-## Deploy to Other Platforms
+## Platform Targets
+
+Supported targets in this template:
+
+- Mobile: Capacitor
+- Desktop: Neutralino
 
 ### Mobile (Capacitor)
 
@@ -302,29 +306,6 @@ neu run
 neu build
 ```
 
-### Desktop - With Backend (Tauri)
-
-Deploy with Rust backend (local database, file system):
-
-```bash
-npm install -g @tauri-apps/cli
-npm install @tauri-apps/api
-npx tauri init
-npx tauri dev
-npx tauri build
-```
-
-### Desktop - Node.js Backend (Electron)
-
-Deploy with Node.js backend:
-
-```bash
-npm install electron electron-builder
-# Add electron main.js
-npm run build
-electron .
-```
-
 See `docs/complete-csma-guide.md` Section 11 for detailed platform strategy.
 
 ### PWA (Progressive Web App)
@@ -337,82 +318,6 @@ npx pwa-asset-generator public/logo.png public/icons --icon-only
 ```
 
 See `docs/guides/pwa-setup.md` for complete PWA setup instructions.
-
----
-
-## Migrating to TypeScript
-
-### Why TypeScript?
-
-✅ **Zero runtime overhead** - Types erased at build time  
-✅ **Type safety** - Catch errors at compile time  
-✅ **Better IDE support** - Autocomplete, refactoring  
-✅ **Compile-time contracts** - Types + validation library  
-
-### Migration Steps
-
-1. **Install TypeScript**:
-
-```bash
-npm install -D typescript @types/node
-```
-
-2. **Add `tsconfig.json`**:
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM"],
-    "strict": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
-}
-```
-
-3. **Rename files** `.js` → `.ts` incrementally:
-
-```bash
-# Start with runtime
-mv src/runtime/EventBus.js src/runtime/EventBus.ts
-mv src/runtime/Contracts.js src/runtime/Contracts.ts
-```
-
-4. **Add type annotations**:
-
-```typescript
-// EventBus.ts
-export class EventBus {
-  private listeners: Map<string, Function[]>;
-  private contracts: typeof Contracts | null;
-
-  publish<T>(eventName: string, payload: T): void {
-    // ...
-  }
-
-  subscribe<T>(eventName: string, callback: (payload: T) => void): void {
-    // ...
-  }
-}
-```
-
-5. **Update `vite.config.js`** → `vite.config.ts` (optional)
-
-### Benefits
-
-- Same bundle size (types erased!)
-- Better refactoring safety
-- Improved LLM code generation
-- Catches contract violations at compile-time
-
-See `docs/complete-csma-guide.md` Section 7 for complete TypeScript strategy.
 
 ---
 
