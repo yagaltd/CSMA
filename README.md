@@ -48,6 +48,23 @@ Validate template metadata:
 npm run validate:templates
 ```
 
+## AI System Map (`ai-system-map.json`)
+
+`ai-system-map.json` is a machine-readable snapshot of the CSMA runtime structure intended for automation and AI/code agents.
+
+- Location: `ai-system-map.json` at repository root
+- Generator script: `scripts/generate-ai-map.js`
+- Script command: `npm run generate-map`
+- Auto refresh: runs during `npm install` via `postinstall`
+
+Regenerate manually whenever contracts, modules, or runtime layout changes:
+
+```bash
+npm run generate-map
+```
+
+Reference docs: [`docs/operations/ai-system-map.md`](docs/operations/ai-system-map.md)
+
 ## Repository Policy
 
 This repository is template-first source.
@@ -92,7 +109,7 @@ npm test
 ## Project Structure
 
 ```
-csma-kit/
+CSMA/
 ├── index.html              # Entry point with CSP headers
 ├── package.json
 ├── vite.config.js
@@ -292,9 +309,9 @@ Deploy with Rust backend (local database, file system):
 ```bash
 npm install -g @tauri-apps/cli
 npm install @tauri-apps/api
-npm run tauri init
-npm run tauri dev
-npm run tauri build
+npx tauri init
+npx tauri dev
+npx tauri build
 ```
 
 ### Desktop - Node.js Backend (Electron)
@@ -395,7 +412,7 @@ export class EventBus {
 - Improved LLM code generation
 - Catches contract violations at compile-time
 
-See `THE_complete-csma-guide.md` Section 7 for complete TypeScript strategy.
+See `docs/complete-csma-guide.md` Section 7 for complete TypeScript strategy.
 
 ---
 
@@ -405,4 +422,4 @@ MIT
 
 ## Learn More
 
-See `THE_complete-csma-guide.md` for comprehensive documentation.
+See `docs/complete-csma-guide.md` for comprehensive documentation.

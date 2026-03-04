@@ -25,14 +25,14 @@ If any command fails, fix your environment before proceeding.
 ## 2. Clone & Install
 
 ```bash
-git clone https://github.com/YOUR-ORG/csma-kit.git
-cd csma-kit
+git clone <your-repo-url> csma
+cd csma
 npm install
 ```
 
 What happens:
 - Installs Vite + runtime deps (<10 MB)
-- No postinstall scripts run; safe for CI
+- Runs `postinstall` to generate `ai-system-map.json` (`npm run generate-map`)
 
 LLM hint: when asking an AI to run commands, give the full block above so it never forgets to `cd` into the repo.
 

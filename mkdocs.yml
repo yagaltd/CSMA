@@ -49,6 +49,7 @@ nav:
   - Security:
     - Security Map: security/security-map.md
   - Operations:
+    - AI System Map: operations/ai-system-map.md
     - Release Checklist: release-checklist.md
   - Roadmap:
     - Overview: roadmap/index.md
