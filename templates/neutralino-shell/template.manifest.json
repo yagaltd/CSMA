@@ -1,0 +1,33 @@
+{
+  "templateId": "csma-neutralino-shell",
+  "engine": "csma",
+  "runtime": "desktop-webview",
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "description": "CSMA web template with Neutralino desktop shell scaffolding and build sync script.",
+  "requiredFiles": [
+    "index.html",
+    "package.json",
+    "platforms/desktop-neutralino/neutralino.config.json",
+    "scripts/build-desktop-neutralino.js"
+  ],
+  "sourcePaths": [
+    "index.html",
+    "package.json",
+    "package-lock.json",
+    "vite.config.js",
+    "src",
+    "public",
+    "scripts/build-desktop-neutralino.js",
+    "platforms/desktop-neutralino",
+    "docs/platforms/neutralino.md"
+  ],
+  "compat": {
+    "recommendedCli": ">=0.1.0"
+  },
+  "postScaffoldHints": [
+    "npm install",
+    "npm run build:desktop:neutralino",
+    "cd platforms/desktop-neutralino && neu run"
+  ]
+}

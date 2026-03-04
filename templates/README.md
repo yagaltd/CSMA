@@ -8,6 +8,10 @@ This folder is the template discovery root for `csma-ssma-cli`.
   - Lean CSMA web starter with runtime, modules, UI primitives, and docs.
 - `web-plus-ssma-client` (`templateId: csma-web-plus-ssma-client`)
   - Web starter intended for SSMA-backed optimistic sync flows.
+- `capacitor-shell` (`templateId: csma-capacitor-shell`)
+  - CSMA web app with Capacitor shell scaffolding for mobile packaging.
+- `neutralino-shell` (`templateId: csma-neutralino-shell`)
+  - CSMA web app with Neutralino shell scaffolding for desktop packaging.
 
 ## Manifest Contract
 

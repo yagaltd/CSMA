@@ -2,222 +2,124 @@
 
 /**
  * CSMA Desktop Build Script
- * Builds web app and packages with Neutralino for desktop deployment
+ * Builds the main CSMA web app and syncs it into the Neutralino shell.
+ *
+ * Non-destructive behavior:
+ * - Does not rewrite neutralino.config.json
+ * - Preserves Neutralino client library (neutralino.js) if present
  */
 
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync, copyFileSync, rmSync } from 'fs';
-import { join, dirname } from 'path';
+import {
+  cpSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync
+} from 'fs';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const ROOT_DIR = join(__dirname, '..');
-const PLATFORMS_DIR = join(ROOT_DIR, 'platforms');
-const DESKTOP_DIR = join(PLATFORMS_DIR, 'desktop-neutralino');
+const DESKTOP_DIR = join(ROOT_DIR, 'platforms', 'desktop-neutralino');
+const DIST_DIR = join(ROOT_DIR, 'dist');
+const RESOURCES_DIR = join(DESKTOP_DIR, 'resources');
+const NEUTRALINO_CONFIG_PATH = join(DESKTOP_DIR, 'neutralino.config.json');
+
+function run(command, cwd = ROOT_DIR, stdio = 'inherit') {
+  execSync(command, { cwd, stdio });
+}
+
+function copyDirectoryContents(sourceDir, targetDir) {
+  const entries = readdirSync(sourceDir, { withFileTypes: true });
+  for (const entry of entries) {
+    const src = join(sourceDir, entry.name);
+    const dst = join(targetDir, entry.name);
+    cpSync(src, dst, { recursive: true, force: true });
+  }
+}
 
 console.log('🖥️  Starting CSMA desktop build...');
 
-// Check if Neutralino CLI is installed
 try {
-    execSync('neu version', { stdio: 'pipe' });
-} catch (error) {
-    console.error('❌ Neutralino CLI not found. Install with: npm install -g @neutralinojs/neu');
-    process.exit(1);
+  run('neu version', ROOT_DIR, 'pipe');
+} catch {
+  console.error('❌ Neutralino CLI not found. Install with: npm install -g @neutralinojs/neu');
+  process.exit(1);
 }
 
-// Step 1: Build web app
-console.log('📦 Building web app...');
-try {
-    execSync('npm run build', {
-        cwd: ROOT_DIR,
-        stdio: 'inherit'
-    });
-    console.log('✅ Web build completed');
-} catch (error) {
-    console.error('❌ Web build failed:', error.message);
-    process.exit(1);
-}
-
-// Step 2: Prepare desktop platform directory
-console.log('🖥️  Preparing desktop platform...');
 if (!existsSync(DESKTOP_DIR)) {
-    mkdirSync(DESKTOP_DIR, { recursive: true });
+  console.error('❌ Missing platform directory: platforms/desktop-neutralino');
+  process.exit(1);
 }
 
-// Step 3: Initialize Neutralino app (if not already done)
-const neutralinoConfigPath = join(DESKTOP_DIR, 'neutralino.config.json');
-if (!existsSync(neutralinoConfigPath)) {
-    console.log('🔧 Initializing Neutralino app...');
-    try {
-        // Create basic Neutralino app structure
-        execSync('neu create csma-desktop-app', {
-            cwd: PLATFORMS_DIR,
-            stdio: 'inherit'
-        });
-
-        // Move to desktop directory
-        execSync(`mv csma-desktop-app desktop-neutralino`, {
-            cwd: PLATFORMS_DIR,
-            stdio: 'pipe'
-        });
-
-        console.log('✅ Neutralino app initialized');
-    } catch (error) {
-        console.error('❌ Neutralino initialization failed:', error.message);
-        process.exit(1);
-    }
+if (!existsSync(NEUTRALINO_CONFIG_PATH)) {
+  console.error('❌ Missing Neutralino config: platforms/desktop-neutralino/neutralino.config.json');
+  process.exit(1);
 }
 
-// Step 4: Copy web build to Neutralino resources
-console.log('📋 Syncing web build to desktop...');
-const distDir = join(ROOT_DIR, 'dist');
-const resourcesDir = join(DESKTOP_DIR, 'resources');
+let neutralinoClientPath = join(RESOURCES_DIR, 'js', 'neutralino.js');
+let neutralinoClientSource = null;
 
 try {
-    // Clean resources directory
-    if (existsSync(resourcesDir)) {
-        rmSync(resourcesDir, { recursive: true, force: true });
-    }
-    mkdirSync(resourcesDir, { recursive: true });
-
-    // Copy dist contents to resources
-    execSync(`cp -r ${distDir}/* ${resourcesDir}/`, { stdio: 'pipe' });
-    console.log('✅ Web build synced to desktop');
-} catch (error) {
-    console.error('❌ Failed to sync web build:', error.message);
-    process.exit(1);
+  const config = JSON.parse(readFileSync(NEUTRALINO_CONFIG_PATH, 'utf8'));
+  const configuredClient = config?.cli?.clientLibrary;
+  if (typeof configuredClient === 'string' && configuredClient.trim()) {
+    const relativeClient = configuredClient.replace(/^\/+/, '');
+    neutralinoClientPath = join(DESKTOP_DIR, relativeClient);
+  }
+} catch {
+  console.warn('⚠️  Could not parse neutralino.config.json; using default client path');
 }
 
-// Step 5: Update Neutralino configuration
-console.log('⚙️  Configuring Neutralino...');
-const neutralinoConfig = {
-    applicationId: "com.csma.desktop",
-    version: "1.0.0",
-    defaultMode: "window",
-    port: 0,
-    documentRoot: "/resources/",
-    url: "/",
-    enableServer: true,
-    enableNativeAPI: true,
-    tokenSecurity: "one-time",
-    logging: {
-        enabled: true,
-        writeToLogFile: true
-    },
-    nativeAllowList: [
-        "app.*",
-        "os.*",
-        "filesystem.*",
-        "window.*",
-        "events.*"
-    ],
-    modes: {
-        window: {
-            title: "CSMA Desktop App",
-            width: 1200,
-            height: 800,
-            minWidth: 800,
-            minHeight: 600,
-            fullscreen: false,
-            alwaysOnTop: false,
-            enableInspector: true,
-            borderless: false,
-            maximize: false,
-            hidden: false,
-            resizable: true,
-            icon: "/resources/favicon.ico"
-        }
-    },
-    cli: {
-        binaryName: "csma-desktop",
-        resourcesPath: "/resources/",
-        extensionsPath: "/extensions/",
-        clientLibrary: "/resources/js/neutralino.js",
-        binaryVersion: "4.14.1",
-        clientVersion: "3.12.0"
-    }
-};
-
-// Write neutralino.config.json
-try {
-    const fs = await import('fs/promises');
-    await fs.writeFile(
-        neutralinoConfigPath,
-        JSON.stringify(neutralinoConfig, null, 2)
-    );
-    console.log('✅ Neutralino config updated');
-} catch (error) {
-    console.error('❌ Failed to write Neutralino config:', error.message);
+if (existsSync(neutralinoClientPath)) {
+  neutralinoClientSource = readFileSync(neutralinoClientPath);
 }
 
-// Step 6: Create desktop-specific instructions
-console.log('📝 Creating deployment instructions...');
-const instructions = `# CSMA Desktop Deployment Instructions
-
-## Development
-\`\`\`bash
-cd platforms/desktop-neutralino
-
-# Run in development mode
-neu run
-
-# Build for current platform
-neu build
-\`\`\`
-
-## Distribution
-\`\`\`bash
-# Build for all platforms (Linux, Mac, Windows)
-neu build --release
-
-# The built binaries will be in dist/ directory
-\`\`\`
-
-## Platform-Specific Builds
-\`\`\`bash
-# Linux
-neu build --release --target linux
-
-# macOS
-neu build --release --target mac
-
-# Windows
-neu build --release --target win
-\`\`\`
-
-## Customizing the App
-- Edit \`neutralino.config.json\` for window settings
-- Modify \`resources/\` for web app files
-- Add native functionality using Neutralino APIs
-
-## File Structure
-\`\`\`
-platforms/desktop-neutralino/
-├── neutralino.config.json    # App configuration
-├── resources/               # Web app files (from dist/)
-├── dist/                    # Built binaries (after build)
-└── DEPLOYMENT.md           # This file
-\`\`\`
-`;
-
+console.log('📦 Building main CSMA app (not examples/todo-app)...');
 try {
-    const fs = await import('fs/promises');
-    await fs.writeFile(
-        join(DESKTOP_DIR, 'DEPLOYMENT.md'),
-        instructions
-    );
-    console.log('✅ Deployment instructions created');
+  run('npm run build');
+  console.log('✅ Web build completed');
 } catch (error) {
-    console.warn('⚠️  Failed to create deployment instructions');
+  console.error('❌ Web build failed:', error.message);
+  process.exit(1);
+}
+
+if (!existsSync(DIST_DIR)) {
+  console.error('❌ dist/ not found after build');
+  process.exit(1);
+}
+
+console.log('📋 Syncing dist/ to platforms/desktop-neutralino/resources ...');
+try {
+  rmSync(RESOURCES_DIR, { recursive: true, force: true });
+  mkdirSync(RESOURCES_DIR, { recursive: true });
+  copyDirectoryContents(DIST_DIR, RESOURCES_DIR);
+
+  if (neutralinoClientSource) {
+    const clientDir = dirname(neutralinoClientPath);
+    mkdirSync(clientDir, { recursive: true });
+    writeFileSync(neutralinoClientPath, neutralinoClientSource);
+    console.log('✅ Preserved Neutralino client library:', neutralinoClientPath.replace(`${ROOT_DIR}/`, ''));
+  } else {
+    console.warn('⚠️  neutralino.js was not found before sync.');
+    console.warn('   Run "neu update" in platforms/desktop-neutralino if needed.');
+  }
+
+  console.log('✅ Web build synced to desktop resources/');
+} catch (error) {
+  console.error('❌ Failed to sync dist -> resources:', error.message);
+  process.exit(1);
 }
 
 console.log('');
-console.log('🎉 Desktop build completed!');
-console.log('');
+console.log('🎉 Desktop build completed');
 console.log('Next steps:');
-console.log(`1. cd platforms/desktop-neutralino`);
-console.log(`2. neu run                    # Development`);
-console.log(`3. neu build --release       # Production build`);
+console.log('1. cd platforms/desktop-neutralino');
+console.log('2. neu run');
+console.log('3. neu build --release');
 console.log('');
-console.log('🖥️  Desktop app ready for deployment!');

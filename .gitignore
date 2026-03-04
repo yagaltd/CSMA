@@ -2,7 +2,6 @@ node_modules/
 dist/
 platforms/desktop-neutralino/resources/assets/
 platforms/mobile-capacitor/www/assets/
-platforms/desktop-neutralino/csma-desktop-app/bin/
 *.log
 .DS_Store
 .idea/
@@ -39,3 +38,4 @@ Desktop.ini
 *.sublime-workspace
 .fleet/
 .claude/
+.csma/

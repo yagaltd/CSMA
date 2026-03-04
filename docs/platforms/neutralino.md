@@ -2,6 +2,8 @@
 
 Quick reference for wrapping the CSMA starter inside a Neutralino desktop bundle.
 
+This flow packages the main CSMA app build (`index.html` + `src/main.js`), not `examples/todo-app`.
+
 ---
 
 ## 1. Prerequisites
@@ -20,6 +22,7 @@ npm run build:desktop:neutralino   # wraps dist/ into platforms/desktop-neutrali
 ```
 
 The script copies the web build into `platforms/desktop-neutralino/resources/` and leaves `neutralino.config.json` intact.
+It preserves `resources/js/neutralino.js` (when present) so the Neutralino client library remains available.
 
 Run the desktop shell locally:
 
@@ -34,7 +37,7 @@ neu run
 
 - `platforms/desktop-neutralino/neutralino.config.json`
   - `applicationId`, `modes`, and `url` should target `resources/index.html`
-- `platforms/desktop-neutralino/resources/` is a build artifact; do not hand-edit generated web files.
+- `platforms/desktop-neutralino/resources/` is mostly generated web output. Avoid hand-editing generated app assets.
 - Static shell assets (icons, preload files) also live under `platforms/desktop-neutralino/resources/`.
 
 ---

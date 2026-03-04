@@ -74,7 +74,6 @@ This repository is template-first source.
   - `dist/`
   - `platforms/desktop-neutralino/resources/assets/`
   - `platforms/mobile-capacitor/www/assets/`
-  - `platforms/desktop-neutralino/csma-desktop-app/bin/`
 
 ### 1. Environment Setup
 
@@ -274,6 +273,8 @@ Supported targets in this template:
 
 - Mobile: Capacitor
 - Desktop: Neutralino
+
+Platform build scripts package the main CSMA app (`index.html` + `src/main.js`) from `dist/`, not `examples/todo-app`.
 
 ### Mobile (Capacitor)
 

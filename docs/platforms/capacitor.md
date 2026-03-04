@@ -2,6 +2,8 @@
 
 Minimal instructions for packaging the CSMA starter into a Capacitor shell. Refer to the official Capacitor docs for advanced native configuration.
 
+This flow packages the main CSMA app build (`index.html` + `src/main.js`), not `examples/todo-app`.
+
 ---
 
 ## 1. Prerequisites
@@ -32,6 +34,7 @@ npm run build:mobile:capacitor
 ```
 
 This script runs the web build and sync flow for the Capacitor shell.
+It does not rewrite `capacitor.config.json` and does not auto-add native platforms.
 
 ---
 
