@@ -4,14 +4,14 @@ A lean, secure, and reactive application kit using the CSMA (Client-Side Microse
 
 ## Features
 
-✅ **Zero frameworks** - Pure vanilla JavaScript 
-✅ **17KB gzipped** - Minimal bundle size 
-✅ **CSS-class reactivity** - 10x faster than manual DOM manipulation  
-✅ **Zero-trust security** - CSP, contracts, sanitization, honeypot, rate limiting  
-✅ **Type-safe EventBus** - Contract-validated pub/sub  
+✅ **Zero frameworks** - Pure vanilla JavaScript<br>
+✅ **17KB gzipped** - Minimal bundle size<br>
+✅ **CSS-class reactivity** - 10x faster than manual DOM manipulation<br>
+✅ **Zero-trust security** - CSP, contracts, sanitization, honeypot, rate limiting<br>
+✅ **Type-safe EventBus** - Contract-validated pub/sub<br>
 ✅ **Homemade analytics** - LogAccumulator with CSS tracking  
-✅ **SEO-ready** - MetaManager for meta tags  
-✅ **Dark mode** - Theme switching via CSS custom properties  
+✅ **SEO-ready** - MetaManager for meta tags<br>
+✅ **Dark mode** - Theme switching via CSS custom properties<br>  
 
 ## Quick Start
 
