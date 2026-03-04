@@ -1,6 +1,8 @@
 # CSMA Template
 
-A lean, secure, and reactive application kit using the CSMA (Client-Side Microservices Architecture) pattern.
+A robust, modules-first, framework-free application template built on the CSMA (Client-Side Microservices Architecture) pattern.
+
+CSMA is designed for teams who want a secure, reactive, portable frontend runtime without React, Astro, or Svelte. This template includes hardened lifecycle ownership, contract-validated runtime boundaries, modular extension points, and a growing vanilla JS component system for web, mobile, and desktop apps.
 
 ## Features
 
@@ -9,7 +11,9 @@ A lean, secure, and reactive application kit using the CSMA (Client-Side Microse
 ✅ **CSS-class reactivity** - 10x faster than manual DOM manipulation<br>
 ✅ **Zero-trust security** - CSP, contracts, sanitization, honeypot, rate limiting<br>
 ✅ **Type-safe EventBus** - Contract-validated pub/sub<br>
-✅ **Telemetry/Analytics** - LogAccumulator with CSS tracking  
+✅ **Lifecycle-safe runtime** - Explicit cleanup, unload-safe modules, leak-resistant services<br>
+✅ **Modules-first extension model** - Commands, routes, navigation, panels, adapters<br>
+✅ **Telemetry/Analytics** - LogAccumulator with CSS tracking<br>
 ✅ **SEO-ready** - MetaManager for meta tags<br>
 ✅ **Dark mode** - Theme switching via CSS custom properties<br>
 
@@ -21,8 +25,7 @@ If you prefer guided setup with selective template extraction, use:
 
 - https://github.com/yagaltd/csma-ssma-cli/
 
-
-## SSMA Gateway Middleware (JavaScript and Rust)
+## SSMA Gateway Middleware (JavaScript + Rust)
 
 For CSMA projects that need gateway middleware, see **SSMA**:
 
@@ -35,30 +38,56 @@ Use this CSMA template for the client/app side, and SSMA when you need gateway/r
 
 - CSMA runtime (`src/runtime`)
 - Modular services and contracts (`src/modules`, `src/services`)
+- Modules-first extension model with contribution registries (`commandRegistry`, `routeRegistry`, `navigationRegistry`, `panelRegistry`, `adapterRegistry`)
 - UI components/patterns (`src/ui`)
 - Security and validation primitives
 - Multi-target packaging hooks (web, Capacitor, Neutralino)
 - Tests and examples
 
+## Extension Model
+
+CSMA is **modules-first**.
+
+The supported extension story in this template is:
+- trusted modules under `src/modules/*`
+- `Contracts` for payload validation and security
+- contribution registries for commands, routes, navigation, panels, and adapters
+- lifecycle-safe load/unload through `ModuleManager`, `ServiceManager`, and `destroyApp()`
+
+CSMA does **not** currently treat plugins as a core requirement. If you need to add app features, integrations, or backend adapters, start with a module.
+
+## Building Modules
+
+- Canonical module shape: `manifest`, `services`, optional `contracts`, optional `manifest.contributes`
+- Use `src/modules/example-module/` as the copy/adapt scaffold
+- See `docs/guides/building-modules.md` for the manifest and registry contract
+
 ## AI System Map
 
-`ai-system-map.json` is a machine-readable map of the runtime/modules, an automatic context for AI coding agents (add manually to AGENTS.md or CLAUDE.md).
+`ai-system-map.json` is a machine-readable map of the runtime/modules for automation and AI coding agents.
 
 Reference: `docs/operations/ai-system-map.md`
+
+## AI Agent Guidance
+
+If you use AI coding agents in this repo:
+- `AGENTS.md` is the human-readable agent guide for architecture, rules, and extension patterns
+- `ai-system-map.json` is the machine-readable repo map for fast orientation
+- `skills/` contains project-specific guidance for CSMA architecture, services, and UI components
 
 ## Docs
 
 - Main docs index: `docs/README.md`
 - Getting started: `docs/guides/getting-started.md`
 - CSMA overview: `docs/guides/csma-in-a-nutshell.md`
+- Module authoring: `docs/guides/building-modules.md`
 - Full guide: `docs/complete-csma-guide.md`
 - Template catalog details: `templates/README.md`
 
 ## Acknowledgements
 
-* [Enrico Piovesan](https://medium.com/@enricopiovesan) - For the numerous medium articles on [Client Side Microservices Architecture].
-* Inspired by [JurisJS](https://github.com/jurisjs/juris), [VanJS](https://github.com/vanjs-org/van)
-
+- [Enrico Piovesan](https://medium.com/@enricopiovesan) - For the numerous articles on Client-Side Microservices Architecture
+- Inspired by [JurisJS](https://github.com/jurisjs/juris) and [VanJS](https://github.com/vanjs-org/van)
 
 ## License
 
