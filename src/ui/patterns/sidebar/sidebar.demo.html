@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../../components/theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sidebar Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./sidebar.css">
+    <style>
+        body {
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* Demo container - relative positioning for sidebar */
+        .demo-container {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            margin-left: calc(var(--sidebar-left, 0px) + var(--sidebar-offset, 280px) + clamp(1rem, 3vw, 2rem));
+            padding: 2rem;
+            transition: margin-left 200ms;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: clamp(1rem, 4vw, 2rem);
+            }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--fx-color-border);
+            color: var(--fx-color-fg-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="demo-container">
+        <div class="sidebar" data-state="expanded" id="sidebar-demo">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">CA</div>
+                <div class="sidebar-title-wrap">
+                    <span class="sidebar-title">CSMA App</span>
+                    <span class="sidebar-tagline">Phase 6 navigation</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav" aria-label="Main navigation">
+                <div class="sidebar-section">
+                    <div class="sidebar-section-header">Main</div>
+                    <a href="#" class="sidebar-item" data-active="true" aria-current="page">
+                        <span class="sidebar-item-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="7" height="9" x="3" y="3" rx="1" />
+                                <rect width="7" height="5" x="14" y="3" rx="1" />
+                                <rect width="7" height="9" x="14" y="12" rx="1" />
+                                <rect width="7" height="5" x="3" y="16" rx="1" />
+                            </svg>
+                        </span>
+                        <span class="sidebar-item-text">Dashboard</span>
+                    </a>
+                    <a href="#" class="sidebar-item" data-active="false">
+                        <span class="sidebar-item-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 3v16a2 2 0 0 0 2 2h16" />
+                                <path d="M7 16h8" />
+                                <path d="M7 11h12" />
+                                <path d="M7 6h3" />
+                            </svg>
+                        </span>
+                        <span class="sidebar-item-text">Analytics</span>
+                    </a>
+                    <a href="#" class="sidebar-item" data-active="false">
+                        <span class="sidebar-item-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z" />
+                                <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12" />
+                                <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17" />
+                            </svg>
+                        </span>
+                        <span class="sidebar-item-text">Components</span>
+                    </a>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="sidebar-section-header">Management</div>
+                    <a href="#" class="sidebar-item" data-active="false">
+                        <span class="sidebar-item-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                                <circle cx="9" cy="7" r="4" />
+                            </svg>
+                        </span>
+                        <span class="sidebar-item-text">Users</span>
+                    </a>
+                    <a href="#" class="sidebar-item" data-active="false">
+                        <span class="sidebar-item-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" />
+                                <path d="M14 2v5a1 1 0 0 0 1 1h5" />
+                                <path d="M10 9H8" />
+                                <path d="M16 13H8" />
+                                <path d="M16 17H8" />
+                            </svg>
+                        </span>
+                        <span class="sidebar-item-text">Posts</span>
+                    </a>
+                    <a href="#" class="sidebar-item" data-active="false">
+                        <span class="sidebar-item-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </span>
+                        <span class="sidebar-item-text">Settings</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+
+        <button class="sidebar-fab-toggle" type="button" aria-label="Collapse sidebar" data-sidebar-toggle="sidebar-demo">
+            <img src="../../icons/chevron-left.svg" alt="" aria-hidden="true">
+        </button>
+
+        <div class="main-content">
+            <a href="../../components/demos.html" class="back-link">← Back to Demos</a>
+
+            <h1>Sidebar Navigation</h1>
+
+            <section>
+                <h2>Features</h2>
+                <ul>
+                    <li>Use the floating chevron button to collapse/expand</li>
+                    <li>State persists to localStorage</li>
+                    <li>Click nav items to set active state</li>
+                    <li>On mobile (&lt; 768px), becomes slide-in drawer</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>States</h2>
+                <p><code>data-state="expanded"</code> - Full sidebar (250px)</p>
+                <p><code>data-state="collapsed"</code> - Icon-only sidebar (60px)</p>
+            </section>
+
+            <footer>
+                <p>Sidebar Component - CSMA UI Library</p>
+            </footer>
+        </div>
+    </div>
+
+    <script type="module" src="./sidebar.js"></script>
+</body>
+
+</html>

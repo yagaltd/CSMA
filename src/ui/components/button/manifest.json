@@ -1,0 +1,24 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "button",
+    "type": "I",
+    "owner": "ui-service",
+    "lifecycle": "stable",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": [],
+    "components": []
+  },
+  "metadata": {
+    "description": "Pure CSS button component with CSS custom properties for theming"
+  }
+}

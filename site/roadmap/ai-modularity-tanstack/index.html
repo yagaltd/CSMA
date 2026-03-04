@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://example.com/csma/roadmap/ai-modularity-tanstack/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>AI Modularity - CSMA Kit Docs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">CSMA Kit Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../guides/csma-in-a-nutshell/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/getting-started/" class="dropdown-item">Setup</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/features/" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/validation/" class="dropdown-item">Validation</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/pwa-setup/" class="dropdown-item">PWA Setup</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Guides</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../guides/building-components/" class="dropdown-item">Building Components</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/customizing-theme/" class="dropdown-item">Customizing Theme</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/for-llms/" class="dropdown-item">For LLMs</a>
+</li>
+                                    
+<li>
+    <a href="../../css-foundation/" class="dropdown-item">CSS Foundation</a>
+</li>
+                                    
+<li>
+    <a href="../../complete-csma-guide/" class="dropdown-item">Complete Guide</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/core-services/" class="dropdown-item">Core Services</a>
+</li>
+                                    
+<li>
+    <a href="../../api/llm-service/" class="dropdown-item">LLM Service</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Advanced</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../advanced/contract-governance/" class="dropdown-item">Contract Governance</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/optimistic-sync/" class="dropdown-item">Optimistic Sync</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/llm-instructor/" class="dropdown-item">LLM Instructor</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Platforms</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../platforms/capacitor/" class="dropdown-item">Capacitor</a>
+</li>
+                                    
+<li>
+    <a href="../../platforms/neutralino/" class="dropdown-item">Neutralino</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../examples/todo-app/" class="dropdown-item">Todo App</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Security</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../security/security-map/" class="dropdown-item">Security Map</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Operations</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../release-checklist/" class="dropdown-item">Release Checklist</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Roadmap</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../" class="dropdown-item">Overview</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Priority Tracks</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../OPFS-worker/" class="dropdown-item">OPFS Worker</a>
+</li>
+            
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">AI Modularity</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Proposed</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../proposed/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../to-implement/csma-split-proposal/" class="dropdown-item">CSMA Split Proposal</a>
+</li>
+            
+<li>
+    <a href="../to-implement/llm-portable-architecture/" class="dropdown-item">LLM Portable Architecture</a>
+</li>
+            
+<li>
+    <a href="../to-implement/url-bookmark-universal-module-proposal/" class="dropdown-item">URL Bookmark Module Proposal</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Considerations</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../considerations/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../consideration/CSMA-future-ideas/" class="dropdown-item">CSMA Future Ideas</a>
+</li>
+            
+<li>
+    <a href="../consideration/Security-tracking-nstjs-stryle/" class="dropdown-item">Security Tracking</a>
+</li>
+            
+<li>
+    <a href="../consideration/ocr-image-insights-module/" class="dropdown-item">OCR Image Insights</a>
+</li>
+            
+<li>
+    <a href="../consideration/services-ontop-flexsearch/" class="dropdown-item">Services on FlexSearch</a>
+</li>
+            
+<li>
+    <a href="../consideration/showcase-website/" class="dropdown-item">Showcase Website</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Research</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../research/" class="dropdown-item">Index</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../OPFS-worker/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../proposed/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/example/CSMA-SSMA/edit/main/docs/roadmap/ai-modularity-tanstack.md" class="nav-link">Edit on CSMA-SSMA/CSMA
+                                    </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#ai-modularity-tanstack-inspired-architecture-analysis" class="nav-link">AI Modularity: TanStack-Inspired Architecture Analysis</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#overview" class="nav-link">Overview</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#tanstack-ai-alpha-2-key-architectural-changes" class="nav-link">TanStack AI Alpha 2: Key Architectural Changes</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#current-csma-ai-architecture-analysis" class="nav-link">Current CSMA AI Architecture Analysis</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#hybrid-implementation-strategy" class="nav-link">Hybrid Implementation Strategy</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#implementation-benefits" class="nav-link">Implementation Benefits</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#risks-and-mitigations" class="nav-link">Risks and Mitigations</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#success-metrics" class="nav-link">Success Metrics</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#next-steps" class="nav-link">Next Steps</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#conclusion" class="nav-link">Conclusion</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="ai-modularity-tanstack-inspired-architecture-analysis">AI Modularity: TanStack-Inspired Architecture Analysis<a class="headerlink" href="#ai-modularity-tanstack-inspired-architecture-analysis" title="Permanent link">&para;</a></h1>
+<p><strong>Date:</strong> 2025-12-20<br />
+<strong>Author:</strong> Droid AI Agent<br />
+<strong>Status:</strong> Implementation Proposal<br />
+<strong>Target:</strong> CSMA AI Module Refactoring</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>This document analyzes TanStack AI Alpha 2's new adapter architecture and provides a hybrid implementation recommendation that combines TanStack's modularity benefits with CSMA's superior security and event-driven architecture.</p>
+<h2 id="tanstack-ai-alpha-2-key-architectural-changes">TanStack AI Alpha 2: Key Architectural Changes<a class="headerlink" href="#tanstack-ai-alpha-2-key-architectural-changes" title="Permanent link">&para;</a></h2>
+<h3 id="new-modular-adapter-pattern">New Modular Adapter Pattern<a class="headerlink" href="#new-modular-adapter-pattern" title="Permanent link">&para;</a></h3>
+<p><strong>Before (Monolithic):</strong></p>
+<pre><code class="language-typescript">import { openai } from '@tanstack/ai-openai'
+
+chat({
+  adapter: openai(),
+  model: 'gpt-4',
+  providerOptions: { text: {} },
+  options: { temperature: 0.6 }
+})
+</code></pre>
+<p><strong>After (Modular):</strong></p>
+<pre><code class="language-typescript">import { openaiText, openaiImage, openaiVideo } from '@tanstack/ai-openai'
+
+chat({
+  adapter: openaiText('gpt-4'),
+  modelOptions: { text: {} },
+  temperature: 0.6  // Flat configuration
+})
+</code></pre>
+<h3 id="supported-modalities">Supported Modalities<a class="headerlink" href="#supported-modalities" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Text</strong>: <code>openaiText</code> - Chat completion, summarization</li>
+<li><strong>Image</strong>: <code>openaiImage</code> - DALL-E generation</li>
+<li><strong>Video</strong>: <code>openaiVideo</code> - Video generation (experimental)</li>
+<li><strong>Audio TTS</strong>: <code>openaiSpeech</code> - Text-to-speech</li>
+<li><strong>Audio Transcription</strong>: <code>openaiTranscription</code> - Speech-to-text</li>
+<li><strong>Structured Outputs</strong>: Type-safe responses</li>
+</ul>
+<h3 id="key-benefits">Key Benefits<a class="headerlink" href="#key-benefits" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Tree-shakeable</strong>: Import only needed adapters</li>
+<li><strong>Model-specific typing</strong>: <code>openaiText('gpt-4')</code> provides immediate type safety</li>
+<li><strong>Simplified configuration</strong>: Flatter option nesting</li>
+<li><strong>Easier maintenance</strong>: 3 generics max vs 7+ in monolithic approach</li>
+<li><strong>Incremental feature support</strong>: Add modalities per provider, not all at once</li>
+</ol>
+<h2 id="current-csma-ai-architecture-analysis">Current CSMA AI Architecture Analysis<a class="headerlink" href="#current-csma-ai-architecture-analysis" title="Permanent link">&para;</a></h2>
+<h3 id="strengths">Strengths<a class="headerlink" href="#strengths" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">// Current strengths highlighted in implementation:
+class AIService {
+  constructor(eventBus, options = {}) {
+    // 1. Event-driven architecture with security controls
+    this.eventBus = eventBus;
+    this.security = { sanitizeInputs: true };
+
+    // 2. Provider registry with capability-based routing
+    this.providers = new Map();
+
+    // 3. Built-in 5-layer security system
+    this.toolRegistry = new ToolRegistry(options.tools || []);
+  }
+
+  // 4. Automatic provider fallback and load balancing
+  async generateText(params = {}) {
+    return this._executeOperation({
+      method: 'generateText',
+      capability: 'generateText',
+      params
+    });
+  }
+}
+</code></pre>
+<p><strong>Key Advantages:</strong>
+- <strong>Security-First</strong>: Integrated 5-layer prompt injection protection
+- <strong>Event-driven</strong>: Deep integration with CSMA EventBus
+- <strong>Capability-based routing</strong>: Flexible provider selection
+- <strong>Production-ready</strong>: Comprehensive error handling and fallbacks
+- <strong>Validation integration</strong>: Uses CSMA's runtime validation framework</p>
+<h3 id="areas-for-improvement">Areas for Improvement<a class="headerlink" href="#areas-for-improvement" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Bundle size</strong>: Currently loads all provider capabilities</li>
+<li><strong>API complexity</strong>: Nested configuration (<code>options.providerOptions.text</code>)</li>
+<li><strong>Type safety</strong>: Model-specific typing could be improved</li>
+<li><strong>Modality expansion</strong>: Adding image/video requires core changes</li>
+</ul>
+<h2 id="hybrid-implementation-strategy">Hybrid Implementation Strategy<a class="headerlink" href="#hybrid-implementation-strategy" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-adapter-separation-foundation">Phase 1: Adapter Separation (Foundation)<a class="headerlink" href="#phase-1-adapter-separation-foundation" title="Permanent link">&para;</a></h3>
+<p><strong>New Directory Structure:</strong></p>
+<pre><code>CSMA/src/modules/ai/
+├── adapters/
+│   ├── text/
+│   │   ├── OpenAITextAdapter.js
+│   │   ├── GeminiTextAdapter.js
+│   │   └── TransformersTextAdapter.js
+│   ├── image/
+│   │   ├── OpenAIImageAdapter.js
+│   │   └── GeminiImageAdapter.js
+│   ├── audio/
+│   │   ├── OpenAISpeechAdapter.js
+│   │   └── OpenAITranscriptionAdapter.js
+│   └── video/
+│       ├── OpenAIVideoAdapter.js
+│       └── GeminiVideoAdapter.js
+├── client/
+│   ├── AIClient.js (current, minimal changes)
+│   └── ChatSession.js
+├── security/
+│   └── SecurityLayer.js (extract from current)
+└── AIService.js (refactored)
+</code></pre>
+<p><strong>Adapter Interface:</strong></p>
+<pre><code class="language-javascript">// Base adapter interface
+class BaseAdapter {
+  constructor(model, options = {}) {
+    this.model = model;
+    this.security = options.security || {};
+    this.capabilities = this.getCapabilities();
+  }
+
+  getCapabilities() {
+    return {
+      [this.modality]: true,  // e.g., 'text', 'image', 'audio'
+      streaming: true,
+      tools: true
+    };
+  }
+
+  async generate(params) {
+    // Implementation-specific
+  }
+}
+
+// Text adapter example
+class OpenAITextAdapter extends BaseAdapter {
+  constructor(model = 'gpt-4', options = {}) {
+    super(model, options);
+    this.modality = 'text';
+    this.validateModel(model);
+  }
+
+  getCapabilities() {
+    return {
+      ...super.getCapabilities(),
+      structuredOutputs: true,
+      tools: true,
+      streaming: true
+    };
+  }
+
+  async generate(params) {
+    const sanitized = this.sanitizePrompt(params.prompt);
+    return this.callOpenAI({
+      model: this.model,
+      messages: [{ role: 'user', content: sanitized }],
+      ...this.flattenOptions(params)
+    });
+  }
+}
+</code></pre>
+<h3 id="phase-2-factory-functions-tanstack-style">Phase 2: Factory Functions (TanStack-style)<a class="headerlink" href="#phase-2-factory-functions-tanstack-style" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">// modules/ai/adapters/text/index.js
+export function openaiText(model = 'gpt-4', options = {}) {
+  return new OpenAITextAdapter(model, options);
+}
+
+export function geminiText(model = 'gemini-pro', options = {}) {
+  return new GeminiTextAdapter(model, options);
+}
+
+export function transformersText(model = 'default', options = {}) {
+  return new TransformersTextAdapter(model, options);
+}
+
+// modules/ai/adapters/image/index.js  
+export function openaiImage(model = 'dall-e-3', options = {}) {
+  return new OpenAIImageAdapter(model, options);
+}
+
+export function geminiImage(model = 'imagen-3', options = {}) {
+  return new GeminiImageAdapter(model, options);
+}
+
+// Usage:
+import { openaiText, openaiImage } from './adapters/index.js';
+</code></pre>
+<h3 id="phase-3-service-refactoring-preserve-core">Phase 3: Service Refactoring (Preserve Core)<a class="headerlink" href="#phase-3-service-refactoring-preserve-core" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">// Updated AIService with adapter registry
+class AIService {
+  constructor(eventBus, options = {}) {
+    this.eventBus = eventBus;
+    this.adapters = new Map();  // Change from providers to adapters
+    this.security = {
+      sanitizeInputs: true,
+      ...options.security
+    };
+  }
+
+  registerAdapter(name, adapter, options = {}) {
+    this.adapters.set(name, {
+      instance: adapter,
+      modality: adapter.modality,
+      options
+    });
+  }
+
+  // Refactored to use adapter pattern while keeping event security
+  async generateText(params = {}) {
+    const adapterName = params.adapter || this.getDefaultAdapter('text');
+    const adapter = this.adapters.get(adapterName);
+
+    if (!adapter) {
+      throw new Error(`Text adapter '${adapterName}' not registered`);
+    }
+
+    return this.executeWithSecurity({
+      operation: 'generateText',
+      adapter: adapter.instance,
+      params
+    });
+  }
+
+  async generateImage(params = {}) {
+    const adapterName = params.adapter || this.getDefaultAdapter('image');
+    const adapter = this.adapters.get(adapterName);
+
+    return this.executeWithSecurity({
+      operation: 'generateImage', 
+      adapter: adapter.instance,
+      params
+    });
+  }
+
+  // Preserve security and event integration
+  async executeWithSecurity({ operation, adapter, params }) {
+    const requestId = createRequestId();
+
+    // Security: Input sanitization
+    const sanitized = this.security.sanitizeInputs 
+      ? this.sanitizeParams(params) 
+      : params;
+
+    // Events: Operation start
+    this.eventBus.publish(`AI_${operation.toUpperCase()}_STARTED`, {
+      requestId,
+      adapter: adapter.constructor.name,
+      timestamp: Date.now()
+    });
+
+    try {
+      const result = await adapter.generate(sanitized);
+
+      // Events: Operation success
+      this.eventBus.publish(`AI_${operation.toUpperCase()}_COMPLETE`, {
+        requestId,
+        result,
+        adapter: adapter.constructor.name,
+        timestamp: Date.now()
+      });
+
+      return result;
+    } catch (error) {
+      // Events: Operation error
+      this.eventBus.publish(`AI_${operation.toUpperCase()}_ERROR`, {
+        requestId,
+        error: error.message,
+        adapter: adapter.constructor.name,
+        timestamp: Date.now()
+      });
+
+      throw error;
+    }
+  }
+}
+</code></pre>
+<h3 id="phase-4-integration-example">Phase 4: Integration Example<a class="headerlink" href="#phase-4-integration-example" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">// Application usage with new hybrid approach
+import { AIService } from './modules/ai/index.js';
+import { openaiText, openaiImage, geminiText } from './modules/ai/adapters/index.js';
+
+// Initialize service with adapters
+const aiService = new AIService(eventBus, {
+  security: {
+    sanitizeInputs: true,
+    rateLimiting: true
+  }
+});
+
+// Register adapters (could be automated)
+aiService.registerAdapter('openai-text', openaiText('gpt-4', {
+  temperature: 0.7
+}));
+
+aiService.registerAdapter('openai-image', openaiImage('dall-e-3', {
+  numberOfImages: 1
+}));
+
+aiService.registerAdapter('gemini-text', geminiText('gemini-pro'));
+
+// Usage (preserves current API surface)
+const textResult = await aiService.generateText({
+  adapter: 'openai-text',
+  prompt: 'Generate a story',
+  maxTokens: 1000
+});
+
+const imageResult = await aiService.generateImage({
+  adapter: 'openai-image', 
+  prompt: 'A cat in space',
+  numberOfImages: 2
+});
+
+// Fallback support still works (preserve this feature)
+const fallbackResult = await aiService.generateText({
+  prompt: 'Hello world',
+  fallback: true  // Auto-fallback to gemini-text if openai-text fails
+});
+</code></pre>
+<h2 id="implementation-benefits">Implementation Benefits<a class="headerlink" href="#implementation-benefits" title="Permanent link">&para;</a></h2>
+<h3 id="preserved-csma-strengths">Preserved CSMA Strengths<a class="headerlink" href="#preserved-csma-strengths" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Security Architecture</strong>: 5-layer protection maintained</li>
+<li><strong>Event Integration</strong>: EventBus security controls preserved</li>
+<li><strong>Provider Fallback</strong>: Automatic fallback for reliability</li>
+<li><strong>Validation Framework</strong>: Runtime validation still enforced</li>
+<li><strong>Error Handling</strong>: Comprehensive error management</li>
+</ol>
+<h3 id="gained-tanstack-benefits">Gained TanStack Benefits<a class="headerlink" href="#gained-tanstack-benefits" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Modality Separation</strong>: Clear adapter boundaries</li>
+<li><strong>Bundle Optimization</strong>: Tree-shaking enabled</li>
+<li><strong>Type Safety</strong>: Model-specific typing</li>
+<li><strong>API Simplification</strong>: Flatter configuration</li>
+<li><strong>Extensibility</strong>: Easy to add new modalities</li>
+</ol>
+<h3 id="migration-strategy">Migration Strategy<a class="headerlink" href="#migration-strategy" title="Permanent link">&para;</a></h3>
+<h4 id="immediate-phase-1">Immediate (Phase 1)<a class="headerlink" href="#immediate-phase-1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Extract current providers into adapter classes</li>
+<li>Implement base adapter interface</li>
+<li>Create factory functions</li>
+</ul>
+<h4 id="short-term-phase-2-3">Short-term (Phase 2-3)<a class="headerlink" href="#short-term-phase-2-3" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Refactor AIService to use adapters</li>
+<li>Implement modality-specific methods</li>
+<li>Add security layer extraction</li>
+</ul>
+<h4 id="long-term-phase-4-5">Long-term (Phase 4-5)<a class="headerlink" href="#long-term-phase-4-5" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Add model-specific typing</li>
+<li>Implement tree-shaking optimizations</li>
+<li>Add remaining modalities (video, audio)</li>
+</ul>
+<h2 id="risks-and-mitigations">Risks and Mitigations<a class="headerlink" href="#risks-and-mitigations" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Breaking changes</td>
+<td>High</td>
+<td>Implement adapter wrapper for backward compatibility</td>
+</tr>
+<tr>
+<td>Increased complexity</td>
+<td>Medium</td>
+<td>Gradual migration with parallel interfaces</td>
+</tr>
+<tr>
+<td>Bundle size growth</td>
+<td>Low</td>
+<td>Tree-shaking and lazy loading</td>
+</tr>
+<tr>
+<td>Testing overhead</td>
+<td>Medium</td>
+<td>Reuse existing tests, add adapter-specific tests</td>
+</tr>
+</tbody>
+</table>
+<h2 id="success-metrics">Success Metrics<a class="headerlink" href="#success-metrics" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Bundle Size</strong>: 30% reduction with tree-shaking</li>
+<li><strong>API Complexity</strong>: 50% reduction in configuration nesting</li>
+<li><strong>Type Safety</strong>: 100% model-specific typing coverage</li>
+<li><strong>Modality Coverage</strong>: 6 modalities supported (up from 1)</li>
+<li><strong>Security</strong>: Maintain 5-layer protection with zero compromises</li>
+<li><strong>Performance</strong>: No degradation vs current implementation</li>
+</ul>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Create PoC</strong>: Implement <code>OpenAITextAdapter</code> following this pattern</li>
+<li><strong>Backward Compatibility</strong>: Ensure existing code continues working</li>
+<li><strong>Testing</strong>: Comprehensive testing of security and functionality</li>
+<li><strong>Documentation</strong>: Update AI module documentation</li>
+<li><strong>Migration</strong>: Gradual adoption with feature flags</li>
+</ol>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>The hybrid approach preserves CSMA's superior security and event-driven architecture while adopting TanStack's successful modality-specific adapter pattern. This gives us the best of both worlds: production-ready security with modern modularity and type safety.</p>
+<p>The incremental migration plan allows for gradual adoption without breaking existing applications, while setting up the foundation for future AI modality expansion and optimization.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

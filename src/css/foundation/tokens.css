@@ -1,0 +1,167 @@
+/*
+ * CSMA Foundation Tokens
+ * Canonical CSS custom properties consumed by @csma/foundation layers.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* Color System */
+  --fx-color-bg: hsl(0 0% 100%);
+  --fx-color-bg-muted: hsl(210 40% 96.1%);
+  --fx-color-surface: hsl(0 0% 100%);
+  --fx-color-surface-muted: hsl(210 40% 96.1%);
+  --fx-color-fg: hsl(222.2 84% 4.9%);
+  --fx-color-fg-muted: hsl(215.4 16.3% 46.9%);
+  --fx-color-border: hsl(214.3 31.8% 91.4%);
+  --fx-color-overlay: rgba(15, 23, 42, 0.55);
+
+  --fx-color-primary: hsl(222.2 47.4% 11.2%);
+  --fx-color-on-primary: hsl(210 40% 98%);
+  --fx-color-secondary: hsl(210 40% 96.1%);
+  --fx-color-on-secondary: hsl(222.2 47.4% 11.2%);
+  --fx-color-accent: hsl(210 40% 96.1%);
+  --fx-color-on-accent: hsl(222.2 47.4% 11.2%);
+
+  --fx-color-danger: hsl(0 84.2% 60.2%);
+  --fx-color-on-danger: hsl(210 40% 98%);
+  --fx-color-warning: hsl(38 92% 50%);
+  --fx-color-on-warning: hsl(48 96% 89%);
+  --fx-color-success: hsl(142 71% 45%);
+  --fx-color-on-success: hsl(137 72% 94%);
+  --fx-color-info: hsl(221 83% 53%);
+  --fx-color-on-info: hsl(210 40% 98%);
+
+  /* Typography */
+  --fx-font-family-base: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --fx-font-family-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+  --fx-font-size-xs: 0.75rem;
+  --fx-font-size-sm: 0.875rem;
+  --fx-font-size-md: 1rem;
+  --fx-font-size-lg: 1.125rem;
+  --fx-font-size-xl: 1.25rem;
+  --fx-font-size-2xl: 1.5rem;
+  --fx-font-weight-regular: 400;
+  --fx-font-weight-medium: 500;
+  --fx-font-weight-semibold: 600;
+  --fx-line-height-tight: 1.25;
+  --fx-line-height-base: 1.5;
+  --fx-line-height-loose: 1.7;
+
+  /* Spacing Scale */
+  --fx-space-2xs: 0.125rem;
+  --fx-space-xs: 0.25rem;
+  --fx-space-sm: 0.5rem;
+  --fx-space-md: 0.75rem;
+  --fx-space-lg: 1rem;
+  --fx-space-xl: 1.5rem;
+  --fx-space-2xl: 2rem;
+  --fx-space-3xl: 3rem;
+  --fx-space-4xl: 4rem;
+  --fx-space-5xl: 5rem;
+
+  /* Radii */
+  --fx-radius-sm: 0.25rem;
+  --fx-radius-md: 0.5rem;
+  --fx-radius-lg: 0.75rem;
+  --fx-radius-xl: 1rem;
+  --fx-radius-2xl: 1.5rem;
+  --fx-radius-3xl: 2rem;
+  --fx-radius-full: 999px;
+
+  /* Shadows */
+  --fx-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --fx-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.12);
+  --fx-shadow-lg: 0 20px 45px rgba(15, 23, 42, 0.18);
+  --fx-shadow-xl: 0 32px 64px rgba(15, 23, 42, 0.24);
+
+  /* Transitions */
+  --fx-transition-fast: 150ms ease;
+  --fx-transition-normal: 220ms ease;
+  --fx-transition-slow: 320ms ease;
+
+  /* Breakpoints */
+  --fx-breakpoint-sm: 480px;
+  --fx-breakpoint-md: 768px;
+  --fx-breakpoint-lg: 1024px;
+  --fx-breakpoint-xl: 1280px;
+
+  /* Z-index Slots */
+  --fx-z-base: 1;
+  --fx-z-overlay: 1000;
+  --fx-z-modal: 1100;
+  --fx-z-popover: 1200;
+  --fx-z-toast: 1300;
+
+  /* Legacy alias support (bridging prior token names) */
+  --background: var(--fx-color-bg);
+  --foreground: var(--fx-color-fg);
+  --card: var(--fx-color-surface);
+  --card-foreground: var(--fx-color-fg);
+  --popover: var(--fx-color-surface);
+  --popover-foreground: var(--fx-color-fg);
+  --muted: var(--fx-color-bg-muted);
+  --muted-foreground: var(--fx-color-fg-muted);
+  --primary: var(--fx-color-primary);
+  --primary-foreground: var(--fx-color-on-primary);
+  --secondary: var(--fx-color-secondary);
+  --secondary-foreground: var(--fx-color-on-secondary);
+  --accent: var(--fx-color-accent);
+  --accent-foreground: var(--fx-color-on-accent);
+  --destructive: var(--fx-color-danger);
+  --destructive-foreground: var(--fx-color-on-danger);
+  --success: var(--fx-color-success);
+  --success-foreground: var(--fx-color-on-success);
+  --warning: var(--fx-color-warning);
+  --warning-foreground: var(--fx-color-on-warning);
+  --info: var(--fx-color-info);
+  --info-foreground: var(--fx-color-on-info);
+  --border: var(--fx-color-border);
+  --input: var(--fx-color-border);
+  --ring: var(--fx-color-primary);
+
+  --spacing-2xs: var(--fx-space-2xs);
+  --spacing-xs: var(--fx-space-xs);
+  --spacing-sm: var(--fx-space-sm);
+  --spacing-md: var(--fx-space-md);
+  --spacing-lg: var(--fx-space-lg);
+  --spacing-xl: var(--fx-space-xl);
+  --spacing-2xl: var(--fx-space-2xl);
+  --spacing-xxl: var(--fx-space-3xl);
+  --spacing-3xl: var(--fx-space-3xl);
+  --spacing-4xl: var(--fx-space-4xl);
+  --spacing-5xl: var(--fx-space-5xl);
+
+  --radius: var(--fx-radius-lg);
+  --radius-sm: var(--fx-radius-sm);
+  --radius-md: var(--fx-radius-md);
+  --radius-lg: var(--fx-radius-lg);
+  --radius-xl: var(--fx-radius-xl);
+  --radius-full: var(--fx-radius-full);
+
+  --corner-sm: var(--fx-radius-sm);
+  --corner-md: var(--fx-radius-md);
+  --corner-lg: var(--fx-radius-lg);
+  --corner-xl: var(--fx-radius-xl);
+  --corner-2xl: var(--fx-radius-2xl);
+  --corner-3xl: var(--fx-radius-3xl);
+  --corner-full: var(--fx-radius-full);
+  --corner-pill: 999px;
+
+  --shadow-sm: var(--fx-shadow-sm);
+  --shadow-md: var(--fx-shadow-md);
+  --shadow-lg: var(--fx-shadow-lg);
+  --shadow-xl: var(--fx-shadow-xl);
+
+  --transition-fast: var(--fx-transition-fast);
+  --transition-normal: var(--fx-transition-normal);
+  --transition-slow: var(--fx-transition-slow);
+
+  --font-family: var(--fx-font-family-base);
+  --font-size-xs: var(--fx-font-size-xs);
+  --font-size-sm: var(--fx-font-size-sm);
+  --font-size-base: var(--fx-font-size-md);
+  --font-size-lg: var(--fx-font-size-lg);
+  --font-size-xl: var(--fx-font-size-xl);
+  --font-size-2xl: var(--fx-font-size-2xl);
+}

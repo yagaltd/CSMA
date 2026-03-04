@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://example.com/csma/roadmap/consideration/Security-tracking-nstjs-stryle/">
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>Security Tracking - CSMA Kit Docs</title>
+        <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../../css/brands.min.css" rel="stylesheet">
+        <link href="../../../css/solid.min.css" rel="stylesheet">
+        <link href="../../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../../..">CSMA Kit Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../guides/csma-in-a-nutshell/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/getting-started/" class="dropdown-item">Setup</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/features/" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/validation/" class="dropdown-item">Validation</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/pwa-setup/" class="dropdown-item">PWA Setup</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Guides</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../guides/building-components/" class="dropdown-item">Building Components</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/customizing-theme/" class="dropdown-item">Customizing Theme</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/for-llms/" class="dropdown-item">For LLMs</a>
+</li>
+                                    
+<li>
+    <a href="../../../css-foundation/" class="dropdown-item">CSS Foundation</a>
+</li>
+                                    
+<li>
+    <a href="../../../complete-csma-guide/" class="dropdown-item">Complete Guide</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../api/core-services/" class="dropdown-item">Core Services</a>
+</li>
+                                    
+<li>
+    <a href="../../../api/llm-service/" class="dropdown-item">LLM Service</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Advanced</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../advanced/contract-governance/" class="dropdown-item">Contract Governance</a>
+</li>
+                                    
+<li>
+    <a href="../../../advanced/optimistic-sync/" class="dropdown-item">Optimistic Sync</a>
+</li>
+                                    
+<li>
+    <a href="../../../advanced/llm-instructor/" class="dropdown-item">LLM Instructor</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Platforms</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../platforms/capacitor/" class="dropdown-item">Capacitor</a>
+</li>
+                                    
+<li>
+    <a href="../../../platforms/neutralino/" class="dropdown-item">Neutralino</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../examples/todo-app/" class="dropdown-item">Todo App</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Security</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../security/security-map/" class="dropdown-item">Security Map</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Operations</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../release-checklist/" class="dropdown-item">Release Checklist</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Roadmap</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../" class="dropdown-item">Overview</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Priority Tracks</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../OPFS-worker/" class="dropdown-item">OPFS Worker</a>
+</li>
+            
+<li>
+    <a href="../../ai-modularity-tanstack/" class="dropdown-item">AI Modularity</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Proposed</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../proposed/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../to-implement/csma-split-proposal/" class="dropdown-item">CSMA Split Proposal</a>
+</li>
+            
+<li>
+    <a href="../../to-implement/llm-portable-architecture/" class="dropdown-item">LLM Portable Architecture</a>
+</li>
+            
+<li>
+    <a href="../../to-implement/url-bookmark-universal-module-proposal/" class="dropdown-item">URL Bookmark Module Proposal</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Considerations</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../considerations/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../CSMA-future-ideas/" class="dropdown-item">CSMA Future Ideas</a>
+</li>
+            
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Security Tracking</a>
+</li>
+            
+<li>
+    <a href="../ocr-image-insights-module/" class="dropdown-item">OCR Image Insights</a>
+</li>
+            
+<li>
+    <a href="../services-ontop-flexsearch/" class="dropdown-item">Services on FlexSearch</a>
+</li>
+            
+<li>
+    <a href="../showcase-website/" class="dropdown-item">Showcase Website</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Research</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../research/" class="dropdown-item">Index</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../CSMA-future-ideas/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../ocr-image-insights-module/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/example/CSMA-SSMA/edit/main/docs/roadmap/consideration/Security-tracking-nstjs-stryle.md" class="nav-link">Edit on CSMA-SSMA/CSMA
+                                    </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p>Article Analysis: NestJS Error Handling vs CSMA/SSMA</p>
+<p>https://medium.com/@rup.singh88/building-a-bulletproof-error-handling-architecture-for-enterprise-nestjs-applications-8bc2681a08bb</p>
+<p>The article describes excellent enterprise-grade error handling patterns for NestJS. Let me compare with your current system:</p>
+<p>✅ What You Already Have (Similar)</p>
+<ol>
+<li>
+<p>Try-Catch with Logging
+  // SyncGateway.js:427-445
+  try {
+    const cookies = parseCookie(request.headers.cookie || '');
+    const token = cookies[this.authCookieName];
+    if (!token) return null;
+    const payload = await this.authService.verifyToken(token);
+    return {
+      id: payload.sub,
+      role: payload.role || 'user'
+    };
+  } catch (error) {
+    console.warn('[SyncGateway] Failed to verify auth token:', error);
+    return null;
+  }
+  Your pattern is similar but simpler - catches, logs, returns null instead of re-throwing.</p>
+</li>
+<li>
+<p>Contract Validation (Schema Validation)
+  // ContractRegistry.js:40-62
+  export function validateContract(contractGroup, contractName, payload) {
+    const contract = getContract(contractGroup, contractName);
+    if (!contract) {
+      throw new Error(<code>Contract ${contractGroup}.${contractName} not found</code>);
+    }
+    const validator = ajv.compile(contract.schema);
+    const valid = validator(payload);
+    if (!valid) {
+      const error = new Error(<code>Contract validation failed</code>);
+      error.details = validator.errors;
+      error.status = 422;
+      throw error;
+    }
+    return true;
+  }
+  This is better than NestJS in some ways - you have JSON Schema validation built-in!</p>
+</li>
+<li>
+<p>Security Violation Tracking
+  // EventBus.js:37-43, 93-99
+  this._publishSecurityViolation({
+    type: 'rate-limit',
+    eventName,
+    userId,
+    limitType,
+    payload: limits
+  });
+  You track violations, NestJS article suggests similar but doesn't implement it.</p>
+</li>
+</ol>
+<p>❌ What You're Missing</p>
+<ol>
+<li>
+<p>Structured Error Classes
+  Your errors are generic Error objects with custom properties. NestJS pattern uses:
+  class BaseException extends HttpException {
+    code: string;
+    severity: ErrorSeverity;
+    details?: unknown;
+  }
+  You lack a hierarchy of typed errors.</p>
+</li>
+<li>
+<p>Global Exception Filter
+  You catch errors locally (try-catch) but don't have a centralized error handler that:</p>
+</li>
+<li>Formats all errors consistently</li>
+<li>Adds correlation IDs</li>
+<li>Logs with context</li>
+<li>
+<p>Hides sensitive data</p>
+</li>
+<li>
+<p>Error Severity Levels
+  Your logging doesn't classify errors as LOW/MEDIUM/HIGH/CRITICAL.</p>
+</li>
+<li>
+<p>Correlation IDs
+  You don't track errors across the distributed system.</p>
+</li>
+<li>
+<p>Structured Logging
+  Your logs use console.warn/error but lack:</p>
+</li>
+<li>JSON formatting</li>
+<li>Context metadata</li>
+<li>Centralized log aggregation</li>
+<li>
+<p>Different transports (file, http, etc.)</p>
+</li>
+<li>
+<p>Error Boundaries
+  In EventBus.js:68-75, when a handler fails:
+  try {
+    const result = await handler(payload);
+    results.push(result);
+  } catch (error) {
+    console.error(<code>[EventBus] Handler error for ${eventName}:</code>, error);
+  }
+  You catch and log but the error is swallowed. Other handlers still run, but the caller doesn't know there was an error.</p>
+</li>
+</ol>
+<p>⚠️ What Would Apply to CSMA/SSMA</p>
+<p>Good Fit:
+  - Global exception filter for SSMA server (NestJS-style)
+  - Structured error classes for optimistic-sync failures
+  - Correlation IDs for distributed tracing
+  - Severity levels for operation monitoring
+  - Error boundaries in EventBus</p>
+<p>Less Relevant:
+  - HTTP-specific patterns (404, 401) - you have custom protocol over WebSocket
+  - Validation pipes - you already have ContractRegistry
+  - Decorator-based guards - you use manual rbac checks</p>
+<p>🎯 Recommendations</p>
+<p>For SSMA (Server):
+  Add a lightweight exception filter pattern:
+  // New file: SSMA/src/filters/exception.filter.js
+  export class ExceptionFilter {
+    handle(error, context) {
+      const correlationId = context.correlationId || generateId();</p>
+<pre><code>  return {
+    correlationId,
+    timestamp: new Date().toISOString(),
+    code: error.code || 'INTERNAL_ERROR',
+    message: process.env.NODE_ENV === 'development' ? error.message : 'Internal error',
+    severity: this.getSeverity(error),
+    details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+  };
+}
+</code></pre>
+<p>}</p>
+<p>For CSMA (Client):
+  The current simple try-catch is fine since errors are reported back via EventBus.</p>
+<p>Bottom Line: The NestJS article describes excellent patterns, but many are HTTP-specific. Your architecture is different (WebSocket + EventBus protocol), so you'd need to adapt not copy. The
+  core ideas (structured errors, correlation IDs, severity levels) would definitely improve your system but need to fit your existing EventBus/optimistic-sync model, not NestJS's HTTP model.</p>
+<p>The article is good but not directly applicable - it's for REST APIs, you have a real-time sync system. Your ContractRegistry is actually more advanced than most NestJS apps I've seen!</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../../js/base.js"></script>
+        <script src="../../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

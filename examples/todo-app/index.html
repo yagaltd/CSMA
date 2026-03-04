@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' http://localhost:5050;">
+  <title>CSMA Todo App Example</title>
+  <link rel="stylesheet" href="../../src/css/main.css">
+  <link rel="stylesheet" href="./todo.css">
+</head>
+
+<body>
+  <div class="page-shell">
+    <header class="page-header">
+      <div>
+        <p class="feature-badge">Example · Type II + Type III mix</p>
+        <h1>Todo App (CSMA Reference)</h1>
+        <p>Demonstrates EventBus-driven UI, local persistence, filters, stats, and theming using CSMA patterns.</p>
+      </div>
+      <button type="button" class="theme-toggle button" data-variant="secondary" data-theme-toggle aria-pressed="false">
+        <span data-theme-label>Light mode</span>
+      </button>
+    </header>
+
+    <main class="todo-app" data-todo-app data-view="list">
+      <section class="todo-panel">
+        <header class="todo-panel__header">
+          <div>
+            <p class="todo-panel__eyebrow">Tasks</p>
+            <h2>Plan the next release</h2>
+          </div>
+          <div class="todo-toggles">
+            <button type="button" class="button" data-variant="ghost" data-view-toggle="list"
+              aria-pressed="true">List</button>
+            <button type="button" class="button" data-variant="ghost" data-view-toggle="board"
+              aria-pressed="false">Board</button>
+          </div>
+        </header>
+
+        <form class="todo-form" data-todo-form>
+          <input id="todo-input" name="title" type="text" placeholder="Add a new todo…" maxlength="120"
+            autocomplete="off" aria-label="Add todo" required>
+          <button type="submit" class="button" data-variant="primary">Add</button>
+        </form>
+
+        <div class="todo-filters" role="tablist" aria-label="Todo filters">
+          <button type="button" class="button" data-variant="text" role="tab" data-filter="all"
+            aria-selected="true">All</button>
+          <button type="button" class="button" data-variant="text" role="tab" data-filter="active"
+            aria-selected="false">Active</button>
+          <button type="button" class="button" data-variant="text" role="tab" data-filter="completed"
+            aria-selected="false">Completed</button>
+          <button type="button" class="button" data-variant="text" data-action="clear-completed">Clear
+            completed</button>
+        </div>
+
+        <ul class="todo-list" data-todo-list aria-live="polite"></ul>
+      </section>
+
+      <section class="todo-activity">
+        <header>
+          <p class="todo-panel__eyebrow">Insights</p>
+          <h2>Velocity snapshot</h2>
+        </header>
+        <div class="todo-insights-grid" data-todo-insights>
+          <div class="todo-stat" data-stat="total">
+            <p>Total</p>
+            <strong>0</strong>
+          </div>
+          <div class="todo-stat" data-stat="active">
+            <p>Active</p>
+            <strong>0</strong>
+          </div>
+          <div class="todo-stat" data-stat="completed">
+            <p>Completed</p>
+            <strong>0</strong>
+          </div>
+        </div>
+        <div class="todo-activity__log">
+          <h3>Recent Activity</h3>
+          <ul data-todo-log></ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <template id="todo-item-template">
+    <li class="todo-item" data-id="">
+      <label class="todo-item__checkbox">
+        <input type="checkbox" data-action="toggle">
+        <span class="checkbox-indicator" aria-hidden="true"></span>
+      </label>
+      <div class="todo-item__body">
+        <p class="todo-item__title"></p>
+        <p class="todo-item__meta"></p>
+      </div>
+      <div class="todo-item__actions">
+        <button type="button" class="button" data-variant="text" data-action="edit">Edit</button>
+        <button type="button" class="button" data-variant="text" data-action="delete">Delete</button>
+      </div>
+    </li>
+  </template>
+
+  <template id="todo-board-template">
+    <li class="todo-board-card" data-board-card tabindex="0" role="button">
+      <p class="todo-board-card__title"></p>
+      <p class="todo-board-card__preview"></p>
+    </li>
+  </template>
+
+  <dialog class="todo-dialog dialog-content" data-edit-dialog data-size="md">
+    <form class="todo-dialog__form" data-dialog-form>
+      <div class="dialog-header">
+        <p class="dialog-title">Edit todo</p>
+        <button type="button" class="dialog-close" data-dialog-close aria-label="Close">✕</button>
+      </div>
+      <div class="dialog-body">
+        <label class="todo-dialog-checkbox">
+          <input type="checkbox" data-dialog-toggle>
+          <span>Mark as completed</span>
+        </label>
+        <textarea id="todo-dialog-input" data-dialog-input rows="5" maxlength="180" aria-label="Todo text"
+          placeholder="Update note" required></textarea>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" class="button" data-variant="outline" data-dialog-delete>Delete</button>
+        <button type="button" class="button" data-variant="ghost" data-dialog-cancel>Cancel</button>
+        <button type="submit" class="button" data-variant="primary">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="./todo-app.js"></script>
+</body>
+
+</html>

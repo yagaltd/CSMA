@@ -1,0 +1,346 @@
+/**
+ * CSMA Slider Component Styles
+ * Follows CSS-class reactivity pattern - all state changes via classes/data attributes
+ */
+
+/* Slider Base Container */
+.slider {
+    position: relative;
+    width: 100%;
+    height: 44px;
+    padding: 20px 0;
+    user-select: none;
+    touch-action: pan-y;
+}
+
+/* Slider Track */
+.slider-track {
+    position: relative;
+    height: 4px;
+    background: var(--fx-color-surface-muted);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+/* Slider Fill (progress indicator) */
+.slider-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--fx-color-primary);
+    border-radius: var(--radius-sm);
+    transition: width var(--transition-fast);
+    width: 0%;
+}
+
+/* Slider Thumb (draggable handle) */
+.slider-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: var(--fx-color-primary);
+    border: 2px solid var(--fx-color-bg);
+    border-radius: 50%;
+    cursor: grab;
+    transition: all var(--transition-fast);
+    z-index: 1;
+    left: 0%;
+}
+
+/* Slider Labels */
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: var(--fx-color-fg-muted);
+}
+
+.slider-value {
+    font-weight: 600;
+    color: var(--fx-color-primary);
+}
+
+/* ========================================
+   STATE CLASSES - CSS-Class Reactivity Pattern
+   ======================================== */
+
+/* Dragging State */
+.slider[data-state="dragging"] .slider-thumb {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.2);
+}
+
+.slider[data-state="dragging"] .slider-track {
+    cursor: grabbing;
+}
+
+/* Disabled State */
+.slider[data-state="disabled"] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.slider[data-state="disabled"] .slider-thumb {
+    cursor: not-allowed;
+}
+
+/* Focus State */
+.slider-thumb:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--fx-color-primary);
+}
+
+.slider[data-state="focused"] .slider-thumb {
+    box-shadow: 0 0 0 2px var(--fx-color-primary);
+}
+
+/* Hover State */
+.slider:not([data-state="disabled"]):hover .slider-thumb {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* ========================================
+   VALUE-BASED STYLING
+   ======================================== */
+
+/* Low values (0-20%) */
+.slider[data-percentage="0"] .slider-fill,
+.slider[data-percentage="1"] .slider-fill,
+.slider[data-percentage="2"] .slider-fill,
+.slider[data-percentage="3"] .slider-fill,
+.slider[data-percentage="4"] .slider-fill,
+.slider[data-percentage="5"] .slider-fill,
+.slider[data-percentage="6"] .slider-fill,
+.slider[data-percentage="7"] .slider-fill,
+.slider[data-percentage="8"] .slider-fill,
+.slider[data-percentage="9"] .slider-fill,
+.slider[data-percentage="10"] .slider-fill,
+.slider[data-percentage="11"] .slider-fill,
+.slider[data-percentage="12"] .slider-fill,
+.slider[data-percentage="13"] .slider-fill,
+.slider[data-percentage="14"] .slider-fill,
+.slider[data-percentage="15"] .slider-fill,
+.slider[data-percentage="16"] .slider-fill,
+.slider[data-percentage="17"] .slider-fill,
+.slider[data-percentage="18"] .slider-fill,
+.slider[data-percentage="19"] .slider-fill,
+.slider[data-percentage="20"] .slider-fill {
+    background: var(--fx-color-danger);
+}
+
+/* High values (80-100%) */
+.slider[data-percentage="80"] .slider-fill,
+.slider[data-percentage="81"] .slider-fill,
+.slider[data-percentage="82"] .slider-fill,
+.slider[data-percentage="83"] .slider-fill,
+.slider[data-percentage="84"] .slider-fill,
+.slider[data-percentage="85"] .slider-fill,
+.slider[data-percentage="86"] .slider-fill,
+.slider[data-percentage="87"] .slider-fill,
+.slider[data-percentage="88"] .slider-fill,
+.slider[data-percentage="89"] .slider-fill,
+.slider[data-percentage="90"] .slider-fill,
+.slider[data-percentage="91"] .slider-fill,
+.slider[data-percentage="92"] .slider-fill,
+.slider[data-percentage="93"] .slider-fill,
+.slider[data-percentage="94"] .slider-fill,
+.slider[data-percentage="95"] .slider-fill,
+.slider[data-percentage="96"] .slider-fill,
+.slider[data-percentage="97"] .slider-fill,
+.slider[data-percentage="98"] .slider-fill,
+.slider[data-percentage="99"] .slider-fill,
+.slider[data-percentage="100"] .slider-fill {
+    background: var(--fx-color-success);
+}
+
+/* ========================================
+   VARIATIONS AND THEMES
+   ======================================== */
+
+/* Large Slider */
+.slider--large {
+    height: 60px;
+    padding: 30px 0;
+}
+
+.slider--large .slider-track {
+    height: 8px;
+}
+
+.slider--large .slider-thumb {
+    width: 28px;
+    height: 28px;
+}
+
+/* Small Slider */
+.slider--small {
+    height: 32px;
+    padding: 16px 0;
+}
+
+.slider--small .slider-track {
+    height: 2px;
+}
+
+.slider--small .slider-thumb {
+    width: 16px;
+    height: 16px;
+}
+
+.slider--small .slider-labels {
+    font-size: 0.625rem;
+}
+
+/* Rounded Slider */
+.slider--rounded .slider-track {
+    border-radius: var(--radius-full);
+}
+
+.slider--rounded .slider-fill {
+    border-radius: var(--radius-full);
+}
+
+.slider--rounded .slider-thumb {
+    border-radius: var(--radius-sm);
+}
+
+/* ========================================
+   KEYBOARD NAVIGATION
+   ======================================== */
+
+/* High contrast focus for keyboard navigation */
+.slider-thumb:focus-visible {
+    outline: 2px solid var(--fx-color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--fx-color-bg), 0 0 0 6px var(--fx-color-primary);
+}
+
+/* ========================================
+   TOUCH DEVICE SUPPORT
+   ======================================== */
+
+@media (pointer: coarse) {
+    .slider-thumb {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .slider-track {
+        height: 6px;
+    }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+/* Smooth transitions for all interactive elements */
+.slider-fill,
+.slider-thumb {
+    transition: all var(--transition-fast, 150ms) ease;
+}
+
+/* Loading animation for indeterminate state */
+@keyframes slider-loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.slider[data-state="loading"] .slider-fill {
+    background: linear-gradient(
+        90deg,
+        var(--fx-color-primary) 0%,
+        var(--fx-color-surface-muted) 50%,
+        var(--fx-color-primary) 100%
+    );
+    background-size: 200% 100%;
+    animation: slider-loading 1.5s ease-in-out infinite;
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/* Screen reader only content */
+.slider-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .slider-thumb {
+        border-width: 3px;
+    }
+    
+    .slider-thumb:focus {
+        outline: 3px solid currentColor;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .slider-fill,
+    .slider-thumb {
+        transition: none;
+    }
+    
+    .slider[data-state="loading"] .slider-fill {
+        animation: none;
+    }
+}
+
+/* ========================================
+   CSS CUSTOM PROPERTIES FOR THEMING
+   ======================================== */
+
+.slider {
+    --slider-track-height: 4px;
+    --slider-thumb-size: 20px;
+    --slider-fill-color: var(--fx-color-primary);
+    --slider-track-color: var(--fx-color-surface-muted);
+    --slider-thumb-border-color: var(--fx-color-bg);
+}
+
+.slider--large {
+    --slider-track-height: 8px;
+    --slider-thumb-size: 28px;
+}
+
+.slider--small {
+    --slider-track-height: 2px;
+    --slider-thumb-size: 16px;
+}
+
+/* Apply custom properties */
+.slider-track {
+    height: var(--slider-track-height);
+    background: var(--slider-track-color);
+}
+
+.slider-fill {
+    background: var(--slider-fill-color);
+}
+
+.slider-thumb {
+    width: var(--slider-thumb-size);
+    height: var(--slider-thumb-size);
+    background: var(--slider-fill-color);
+    border-color: var(--slider-thumb-border-color);
+}

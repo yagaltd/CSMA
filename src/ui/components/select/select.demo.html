@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./select.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            color: var(--fx-color-fg);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Select Component</h1>
+    <p class="intro">Accessible native selects with helpers and error states.</p>
+
+    <section>
+        <h2>Default</h2>
+        <div class="select-group" data-state="default">
+            <label for="select-1" class="select-label">Country</label>
+            <div class="select-wrapper">
+                <select id="select-1" class="select">
+                    <option value="">Select a country...</option>
+                    <option value="us">United States</option>
+                    <option value="uk">United Kingdom</option>
+                    <option value="ca">Canada</option>
+                    <option value="au">Australia</option>
+                </select>
+                <span class="select-arrow">▼</span>
+            </div>
+            <p class="select-helper">Select your country of residence</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>With Option Groups</h2>
+        <div class="select-group" data-state="default">
+            <label for="select-2" class="select-label">Category</label>
+            <div class="select-wrapper">
+                <select id="select-2" class="select">
+                    <option value="">Choose category...</option>
+                    <optgroup label="Fruits">
+                        <option value="apple">Apple</option>
+                        <option value="banana">Banana</option>
+                        <option value="orange">Orange</option>
+                    </optgroup>
+                    <optgroup label="Vegetables">
+                        <option value="carrot">Carrot</option>
+                        <option value="broccoli">Broccoli</option>
+                    </optgroup>
+                </select>
+                <span class="select-arrow">▼</span>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Error State</h2>
+        <div class="select-group" data-state="error">
+            <label for="select-3" class="select-label">Required</label>
+            <div class="select-wrapper">
+                <select id="select-3" class="select">
+                    <option value="">Make a selection</option>
+                </select>
+                <span class="select-arrow">▼</span>
+            </div>
+            <p class="select-error" role="alert">Please make a selection</p>
+        </div>
+    </section>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Select Component - CSMA UI Library</p>
+    </footer>
+</body>
+
+</html>

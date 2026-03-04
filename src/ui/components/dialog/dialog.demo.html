@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialog Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./dialog.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        section {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Dialog Component</h1>
+
+    <section>
+        <h2>Sizes</h2>
+        <button class="button" data-variant="secondary" onclick="openDialog('dialog-sm')">Small</button>
+        <button class="button" data-variant="secondary" onclick="openDialog('dialog-md')">Medium</button>
+        <button class="button" data-variant="secondary" onclick="openDialog('dialog-lg')">Large</button>
+    </section>
+
+    <!-- Small Dialog -->
+    <div class="dialog-overlay" id="dialog-sm" role="dialog" aria-modal="true">
+        <div class="dialog-content" data-size="sm">
+            <div class="dialog-header">
+                <h3 class="dialog-title">Small Dialog</h3>
+                <button class="dialog-close" aria-label="Close">×</button>
+            </div>
+            <div class="dialog-body">
+                <p>This is a small dialog with minimal content.</p>
+            </div>
+            <div class="dialog-footer">
+                <button class="button" data-variant="secondary" onclick="closeDialog('dialog-sm')">Cancel</button>
+                <button class="button" data-variant="primary" onclick="closeDialog('dialog-sm')">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Medium Dialog -->
+    <div class="dialog-overlay" id="dialog-md" role="dialog" aria-modal="true">
+        <div class="dialog-content" data-size="md">
+            <div class="dialog-header">
+                <h3 class="dialog-title">Edit Profile</h3>
+                <button class="dialog-close" aria-label="Close">×</button>
+            </div>
+            <div class="dialog-body">
+                <p>Make changes to your profile here. Click save when you're done.</p>
+                <div style="margin-top: 1rem;">
+                    <input type="text" class="input" placeholder="Name">
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button class="button" data-variant="secondary" onclick="closeDialog('dialog-md')">Cancel</button>
+                <button class="button" data-variant="primary" onclick="closeDialog('dialog-md')">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Large Dialog -->
+    <div class="dialog-overlay" id="dialog-lg" role="dialog" aria-modal="true">
+        <div class="dialog-content" data-size="lg">
+            <div class="dialog-header">
+                <h3 class="dialog-title">Terms of Service</h3>
+                <button class="dialog-close" aria-label="Close">×</button>
+            </div>
+            <div class="dialog-body" style="max-height: 300px; overflow-y: auto;">
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat.</p>
+                <p style="margin-top: 1rem;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+                    dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                    officia deserunt mollit anim id est laborum.</p>
+            </div>
+            <div class="dialog-footer">
+                <button class="button" data-variant="secondary" onclick="closeDialog('dialog-lg')">Decline</button>
+                <button class="button" data-variant="primary" onclick="closeDialog('dialog-lg')">Accept</button>
+            </div>
+        </div>
+    </div>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Dialog Component - CSMA UI Library</p>
+    </footer>
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { initDialogSystem, openDialog, closeDialog } from './dialog.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+
+        initDialogSystem(eventBus);
+
+        // Expose functions for onclick handlers
+        window.openDialog = openDialog;
+        window.closeDialog = closeDialog;
+    </script>
+</body>
+
+</html>

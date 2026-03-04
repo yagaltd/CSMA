@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../../components/theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth UI Pattern - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./auth-ui.css">
+</head>
+
+<body class="csma-auth-demo">
+    <a href="../../components/demos.html" class="button" data-variant="text">← Back</a>
+    <header>
+        <h1>Authentication Pattern</h1>
+        <p class="text-muted">Shows how the Auth UI service orchestrates login/register forms.</p>
+    </header>
+
+    <div class="csma-auth-shell" data-auth-container data-view="login">
+        <div class="csma-auth-panel">
+            <p class="csma-auth-eyebrow">Phase 6 · Auth Pattern</p>
+            <h2>Secure, form-managed authentication flows</h2>
+            <p class="text-muted">Toggle between sign-in and registration. Everything is wired to <code>AuthUIService</code>,
+                Form Management, and AuthService.</p>
+
+            <div class="csma-auth-toggle" role="tablist">
+                <button class="button" data-variant="primary" data-auth-view="login" role="tab" aria-selected="true">Sign in</button>
+                <button class="button" data-variant="secondary" data-auth-view="register" role="tab" aria-selected="false">Create account</button>
+            </div>
+
+            <form class="csma-auth-form" data-auth-form="login" autocomplete="on">
+                <div class="input-group" data-size="lg">
+                    <label class="input-label" for="auth-email">Email address</label>
+                    <input class="input" id="auth-email" name="email" type="email" autocomplete="email" required placeholder="ada@lovelace.dev">
+                </div>
+                <div class="input-group" data-size="lg">
+                    <label class="input-label" for="auth-password">Password</label>
+                    <input class="input" id="auth-password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••">
+                </div>
+                <button class="button" data-variant="primary" type="submit">Sign in</button>
+            </form>
+
+            <form class="csma-auth-form" data-auth-form="register" hidden autocomplete="on">
+                <div class="input-group" data-size="lg">
+                    <label class="input-label" for="auth-name">Full name</label>
+                    <input class="input" id="auth-name" name="name" autocomplete="name" required placeholder="Ada Lovelace">
+                </div>
+                <div class="input-group" data-size="lg">
+                    <label class="input-label" for="auth-email-new">Email address</label>
+                    <input class="input" id="auth-email-new" name="email" type="email" autocomplete="email" required>
+                </div>
+                <div class="input-group" data-size="lg">
+                    <label class="input-label" for="auth-password-new">Password</label>
+                    <input class="input" id="auth-password-new" name="password" type="password" minlength="8" autocomplete="new-password" required placeholder="Create a secure password">
+                    <p class="input-helper">Minimum 8 characters, stored via Form Management.</p>
+                </div>
+                <button class="button" data-variant="success" type="submit">Create account</button>
+            </form>
+
+            <p class="csma-auth-status text-muted" data-auth-status data-state="idle" aria-live="polite">Idle</p>
+        </div>
+
+        <div class="csma-auth-panel csma-auth-panel--side">
+            <h2>Event Log</h2>
+            <p class="text-muted">Streaming <code>AUTH_UI_STATE_CHANGED</code> + <code>AUTH_UI_ERROR</code>.</p>
+            <div class="csma-auth-log" data-auth-log aria-live="polite"></div>
+        </div>
+    </div>
+
+    <script type="module" src="./auth-ui.js"></script>
+</body>
+
+</html>

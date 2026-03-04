@@ -1,0 +1,102 @@
+/**
+ * Popover Component CSS
+ * CSMA-compliant styles - Extracted from kimi-atomic1.html
+ */
+
+.popover-container {
+    position: relative;
+    display: inline-block;
+}
+
+.popover-trigger {
+    cursor: pointer;
+}
+
+.popover-content {
+    position: absolute;
+    background-color: var(--fx-color-surface);
+    border: 1px solid var(--fx-color-border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem;
+    box-shadow: var(--shadow-xl);
+    z-index: 100;
+    min-width: 200px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.popover-content[data-state="open"] {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.popover-arrow {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: var(--fx-color-surface);
+    border: 1px solid var(--fx-color-border);
+    transform: rotate(45deg);
+}
+
+/* Popover Positions */
+.popover-top {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-4px);
+}
+
+.popover-top .popover-arrow {
+    top: 100%;
+    left: 50%;
+    margin-left: -4px;
+    margin-top: -4px;
+    border-top: none;
+    border-left: none;
+}
+
+.popover-bottom {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+}
+
+.popover-bottom .popover-arrow {
+    bottom: 100%;
+    left: 50%;
+    margin-left: -4px;
+    margin-bottom: -4px;
+    border-bottom: none;
+    border-right: none;
+}
+
+.popover-left {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-4px);
+}
+
+.popover-left .popover-arrow {
+    left: 100%;
+    top: 50%;
+    margin-top: -4px;
+    margin-left: -4px;
+    border-left: none;
+    border-bottom: none;
+}
+
+.popover-right {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%) translateX(4px);
+}
+
+.popover-right .popover-arrow {
+    right: 100%;
+    top: 50%;
+    margin-top: -4px;
+    margin-right: -4px;
+    border-right: none;
+    border-top: none;
+}

@@ -1,0 +1,59 @@
+/* CSMA Foundation Dark Theme Overrides */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --fx-color-bg: hsl(222.2 84% 4.9%);
+  --fx-color-bg-muted: hsl(217.2 32.6% 17.5%);
+  --fx-color-surface: hsl(222.2 84% 4.9%);
+  --fx-color-surface-muted: hsl(217.2 32.6% 17.5%);
+  --fx-color-fg: hsl(210 40% 98%);
+  --fx-color-fg-muted: hsl(215 20.2% 65.1%);
+  --fx-color-border: rgba(148, 163, 184, 0.35);
+  --fx-color-overlay: rgba(2, 6, 23, 0.75);
+
+  --fx-color-primary: hsl(210 40% 98%);
+  --fx-color-on-primary: hsl(222.2 47.4% 11.2%);
+  --fx-color-secondary: hsl(217.2 32.6% 17.5%);
+  --fx-color-on-secondary: hsl(210 40% 98%);
+  --fx-color-accent: hsl(217.2 32.6% 17.5%);
+  --fx-color-on-accent: hsl(210 40% 98%);
+
+  --fx-color-danger: hsl(0 84.2% 60.2%);
+  --fx-color-on-danger: hsl(210 40% 98%);
+  --fx-color-warning: hsl(38 92% 50%);
+  --fx-color-on-warning: hsl(48 96% 89%);
+  --fx-color-success: hsl(142 71% 45%);
+  --fx-color-on-success: hsl(137 72% 94%);
+  --fx-color-info: hsl(221 83% 53%);
+  --fx-color-on-info: hsl(210 40% 98%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --fx-color-bg: hsl(222.2 84% 4.9%);
+    --fx-color-bg-muted: hsl(217.2 32.6% 17.5%);
+    --fx-color-surface: hsl(222.2 84% 4.9%);
+    --fx-color-surface-muted: hsl(217.2 32.6% 17.5%);
+    --fx-color-fg: hsl(210 40% 98%);
+    --fx-color-fg-muted: hsl(215 20.2% 65.1%);
+    --fx-color-border: rgba(148, 163, 184, 0.35);
+    --fx-color-overlay: rgba(2, 6, 23, 0.75);
+
+    --fx-color-primary: hsl(210 40% 98%);
+    --fx-color-on-primary: hsl(222.2 47.4% 11.2%);
+    --fx-color-secondary: hsl(217.2 32.6% 17.5%);
+    --fx-color-on-secondary: hsl(210 40% 98%);
+    --fx-color-accent: hsl(217.2 32.6% 17.5%);
+    --fx-color-on-accent: hsl(210 40% 98%);
+
+    --fx-color-danger: hsl(0 84.2% 60.2%);
+    --fx-color-on-danger: hsl(210 40% 98%);
+    --fx-color-warning: hsl(38 92% 50%);
+    --fx-color-on-warning: hsl(48 96% 89%);
+    --fx-color-success: hsl(142 71% 45%);
+    --fx-color-on-success: hsl(137 72% 94%);
+    --fx-color-info: hsl(221 83% 53%);
+    --fx-color-on-info: hsl(210 40% 98%);
+  }
+}

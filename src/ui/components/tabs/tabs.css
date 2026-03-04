@@ -1,0 +1,63 @@
+/**
+ * Tabs Component CSS
+ * CSMA-compliant styles - Extracted from kimi-atomic1.html
+ */
+
+.tabs-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.tabs-list {
+    display: flex;
+    border-bottom: 1px solid var(--fx-color-border);
+    position: relative;
+}
+
+.tabs-trigger {
+    background: none;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    color: var(--fx-color-fg-muted);
+    position: relative;
+    transition: color 0.2s;
+    border-radius: 0;
+    transform: none;
+}
+
+.tabs-trigger:hover {
+    color: var(--fx-color-fg);
+    background: transparent;
+}
+
+.tabs-trigger[aria-selected="true"] {
+    color: var(--fx-color-fg);
+    font-weight: 500;
+}
+
+.tabs-trigger[aria-selected="true"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--fx-color-primary);
+}
+
+.tabs-content {
+    padding: 1.5rem;
+    background-color: var(--fx-color-bg);
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    min-height: 100px;
+}
+
+.tabs-panel {
+    display: none;
+}
+
+.tabs-panel[data-state="active"] {
+    display: block;
+}

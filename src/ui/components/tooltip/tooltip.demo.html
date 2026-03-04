@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tooltip Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./tooltip.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .tooltip-demo-grid {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .tooltip-demo-grid .tooltip-trigger {
+            margin: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .tooltip-trigger {
+            display: inline-block;
+        }
+
+        .tooltip-trigger .button {
+            min-width: 6rem;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Tooltip Component</h1>
+
+    <section>
+        <h2>Positions</h2>
+        <div class="tooltip-demo-grid">
+            <div class="tooltip-trigger">
+                <button class="button" data-variant="secondary">Top</button>
+                <span class="tooltip-content" data-position="top" data-state="closed">Tooltip on top</span>
+            </div>
+
+            <div class="tooltip-trigger">
+                <button class="button" data-variant="secondary">Bottom</button>
+                <span class="tooltip-content" data-position="bottom" data-state="closed">Tooltip on bottom</span>
+            </div>
+
+            <div class="tooltip-trigger">
+                <button class="button" data-variant="secondary">Left</button>
+                <span class="tooltip-content" data-position="left" data-state="closed">Tooltip on left</span>
+            </div>
+
+            <div class="tooltip-trigger">
+                <button class="button" data-variant="secondary">Right</button>
+                <span class="tooltip-content" data-position="right" data-state="closed">Tooltip on right</span>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Long Content</h2>
+        <div class="tooltip-demo-grid">
+            <div class="tooltip-trigger">
+                <button class="button" data-variant="secondary">Hover for info</button>
+                <span class="tooltip-content" data-position="top" data-state="closed" data-long="true">
+                    This is a longer tooltip with wrapped text that spans multiple lines.
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Tooltip Component - CSMA UI Library</p>
+    </footer>
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initTooltipSystem } from './tooltip.js';
+        
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+        
+        initTooltipSystem(eventBus);
+    </script>
+</body>
+
+</html>

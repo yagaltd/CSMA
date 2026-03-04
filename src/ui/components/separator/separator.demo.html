@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Separator Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./separator.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .demo-box {
+            padding: 1.5rem;
+            background: var(--fx-color-bg);
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+        }
+
+        .flex {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Separator Component</h1>
+    <p class="intro">Visual dividers for separating content sections.</p>
+
+    <section>
+        <h2>Horizontal Separator</h2>
+        <div class="demo-box">
+            <p>Content above the separator</p>
+            <div class="separator"></div>
+            <p>Content below the separator</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Vertical Separator</h2>
+        <div class="demo-box">
+            <div class="flex">
+                <span>Left content</span>
+                <div class="separator separator-vertical" style="height: 2rem;"></div>
+                <span>Right content</span>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Separator Component - CSMA UI Library</p>
+    </footer>
+</body>
+
+</html>

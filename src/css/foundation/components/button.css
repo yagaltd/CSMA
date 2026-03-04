@@ -1,0 +1,147 @@
+/* CSMA Foundation — Button Component */
+
+.button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fx-space-xs);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-lg);
+  padding: var(--fx-space-sm) var(--fx-space-xl);
+  min-height: 2.5rem;
+  font-family: var(--fx-font-family-base);
+  font-weight: var(--fx-font-weight-medium);
+  font-size: var(--fx-font-size-sm);
+  line-height: var(--fx-line-height-tight);
+  color: var(--fx-color-fg);
+  background: var(--fx-color-surface);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--fx-transition-fast),
+    color var(--fx-transition-fast),
+    border-color var(--fx-transition-fast),
+    box-shadow var(--fx-transition-fast),
+    transform var(--fx-transition-fast);
+}
+
+.button:hover:not([disabled]):not([data-loading="true"]) {
+  transform: translateY(-1px);
+  box-shadow: var(--fx-shadow-sm);
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--fx-color-bg), 0 0 0 4px var(--fx-color-primary);
+}
+
+.button:active:not([disabled]):not([data-loading="true"]) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.button[disabled],
+.button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+/* Variants */
+.button[data-variant="primary"] {
+  background: var(--fx-color-primary);
+  color: var(--fx-color-on-primary);
+  border-color: transparent;
+}
+
+.button[data-variant="secondary"] {
+  background: var(--fx-color-surface-muted);
+  color: var(--fx-color-fg);
+  border-color: var(--fx-color-border);
+}
+
+.button[data-variant="ghost"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--fx-color-fg);
+}
+
+.button[data-variant="outline"] {
+  background: transparent;
+  border-color: var(--fx-color-border);
+  color: var(--fx-color-fg);
+}
+
+.button[data-variant="text"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--fx-color-primary);
+  padding-inline: var(--fx-space-sm);
+}
+
+.button[data-variant="destructive"] {
+  background: var(--fx-color-danger);
+  border-color: var(--fx-color-danger);
+  color: var(--fx-color-on-danger);
+}
+
+.button[data-variant="success"] {
+  background: var(--fx-color-success);
+  border-color: var(--fx-color-success);
+  color: var(--fx-color-on-success);
+}
+
+.button[data-variant="info"] {
+  background: var(--fx-color-info);
+  border-color: var(--fx-color-info);
+  color: var(--fx-color-on-info);
+}
+
+/* Sizes */
+.button[data-size="sm"] {
+  padding: var(--fx-space-xs) var(--fx-space-lg);
+  font-size: var(--fx-font-size-xs);
+}
+
+.button[data-size="lg"] {
+  padding: var(--fx-space-md) var(--fx-space-2xl);
+  font-size: var(--fx-font-size-md);
+}
+
+.button[data-shape="icon"] {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border-radius: var(--fx-radius-full);
+}
+
+.button[data-size="sm"][data-shape="icon"] {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.button[data-size="lg"][data-shape="icon"] {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Loading State */
+.button[data-loading="true"] {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.button[data-loading="true"]::after {
+  content: "";
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 999px;
+  animation: fx-spin 600ms linear infinite;
+}
+
+@keyframes fx-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

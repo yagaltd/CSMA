@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slider Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./slider.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .demo-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .slider-example {
+            margin-bottom: 2rem;
+        }
+
+        .slider-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--fx-color-fg);
+        }
+
+        .slider-value-display {
+            display: inline-block;
+            margin-left: 1rem;
+            font-weight: 600;
+            color: var(--fx-color-primary);
+        }
+
+        .control-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            min-width: 80px;
+            font-size: 0.875rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .control-input {
+            width: 100px;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid var(--fx-color-border);
+            border-radius: var(--radius-sm);
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Slider Component</h1>
+    <p>Range input controls with mouse, touch, and keyboard support.</p>
+
+    <section>
+        <h2>Basic Volume Control</h2>
+        <div class="slider-example">
+            <label class="slider-label">Volume</label>
+            <div id="volume-slider" class="slider" data-min="0" data-max="100" data-step="1" data-value="50">
+                <div class="slider-track">
+                    <div class="slider-fill" data-slider-fill></div>
+                </div>
+                <div class="slider-thumb" data-slider-thumb tabindex="0" role="slider" aria-valuemin="0"
+                    aria-valuemax="100" aria-valuenow="50" aria-label="Volume control">
+                </div>
+                <div class="slider-labels">
+                    <span class="slider-min">0</span>
+                    <span class="slider-value" data-slider-value>50</span>
+                    <span class="slider-max">100</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-controls">
+            <div class="control-group">
+                <span class="control-label">Min:</span>
+                <input type="number" class="control-input" id="volume-min" value="0" min="0" max="99">
+            </div>
+            <div class="control-group">
+                <span class="control-label">Max:</span>
+                <input type="number" class="control-input" id="volume-max" value="100" min="1" max="1000">
+            </div>
+            <div class="control-group">
+                <span class="control-label">Step:</span>
+                <input type="number" class="control-input" id="volume-step" value="1" min="0.1" max="10" step="0.1">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Brightness Control</h2>
+        <div class="slider-example">
+            <label class="slider-label">Brightness <span class="slider-value-display"
+                    data-display-value="75">75%</span></label>
+            <div id="brightness-slider" class="slider" data-min="0" data-max="100" data-step="5" data-value="75">
+                <div class="slider-track">
+                    <div class="slider-fill" data-slider-fill></div>
+                </div>
+                <div class="slider-thumb" data-slider-thumb tabindex="0" role="slider" aria-valuemin="0"
+                    aria-valuemax="100" aria-valuenow="75" aria-label="Brightness control">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Temperature Control</h2>
+        <div class="slider-example">
+            <label class="slider-label">Temperature <span class="slider-value-display"
+                    data-display-value="22">22°C</span></label>
+            <div id="temperature-slider" class="slider" data-min="16" data-max="30" data-step="0.5" data-value="22">
+                <div class="slider-track">
+                    <div class="slider-fill" data-slider-fill></div>
+                </div>
+                <div class="slider-thumb" data-slider-thumb tabindex="0" role="slider" aria-valuemin="16"
+                    aria-valuemax="30" aria-valuenow="22" aria-label="Temperature control">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Disabled State</h2>
+        <div class="slider-example">
+            <label class="slider-label">Disabled Slider</label>
+            <div id="disabled-slider" class="slider" data-min="0" data-max="100" data-step="1" data-value="50"
+                data-state="disabled">
+                <div class="slider-track">
+                    <div class="slider-fill" data-slider-fill></div>
+                </div>
+                <div class="slider-thumb" data-slider-thumb tabindex="0" role="slider" aria-valuemin="0"
+                    aria-valuemax="100" aria-valuenow="50" aria-label="Disabled slider" aria-disabled="true">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Slider Component - CSMA UI Library</p>
+    </footer>
+
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initSliderUI } from './slider.js';
+        import { createSliderService } from '../../../services/SliderService.js';
+
+        // Initialize EventBus
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+
+        // Initialize Slider Service (Required for handling intents)
+        const sliderService = createSliderService(eventBus);
+
+        // Initialize all sliders
+        const sliderCleanup = initSliderUI(eventBus);
+
+        // Update value displays
+        eventBus.subscribe('SLIDER_VALUE_UPDATED', (payload) => {
+            const slider = document.getElementById(payload.sliderId);
+            if (slider) {
+                const display = slider.parentElement.querySelector('[data-display-value]');
+                if (display) {
+                    const suffix = display.dataset.suffix || '';
+                    display.textContent = payload.value + suffix;
+                }
+            }
+        });
+
+        // Control panel functionality
+        document.getElementById('volume-min').addEventListener('change', (e) => {
+            const slider = document.getElementById('volume-slider');
+            slider.dataset.min = e.target.value;
+        });
+
+        document.getElementById('volume-max').addEventListener('change', (e) => {
+            const slider = document.getElementById('volume-slider');
+            slider.dataset.max = e.target.value;
+        });
+
+        document.getElementById('volume-step').addEventListener('change', (e) => {
+            const slider = document.getElementById('volume-slider');
+            slider.dataset.step = e.target.value;
+        });
+
+        // Make cleanup available globally for hot reload
+        window.sliderCleanup = sliderCleanup;
+        window.eventBus = eventBus;
+
+          
+    </script>
+</body>
+
+</html>

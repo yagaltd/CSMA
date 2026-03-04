@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkbox Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./checkbox.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            color: var(--fx-color-fg);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Checkbox Component</h1>
+    <p class="intro">Checkbox states, orientations, and disabled handling.</p>
+
+    <section>
+        <h2>States</h2>
+        <div class="checkbox-group">
+            <div class="checkbox-item" data-state="unchecked">
+                <input type="checkbox" class="checkbox-input" id="cb-1">
+                <div class="checkbox-box"></div>
+                <label for="cb-1" class="checkbox-label">Unchecked</label>
+            </div>
+            <div class="checkbox-item" data-state="checked">
+                <input type="checkbox" class="checkbox-input" id="cb-2" checked>
+                <div class="checkbox-box"></div>
+                <label for="cb-2" class="checkbox-label">Checked</label>
+            </div>
+            <div class="checkbox-item" data-state="indeterminate">
+                <input type="checkbox" class="checkbox-input" id="cb-3">
+                <div class="checkbox-box"></div>
+                <label for="cb-3" class="checkbox-label">Indeterminate</label>
+            </div>
+            <div class="checkbox-item" data-state="disabled">
+                <input type="checkbox" class="checkbox-input" id="cb-4" disabled>
+                <div class="checkbox-box"></div>
+                <label for="cb-4" class="checkbox-label">Disabled</label>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Horizontal Group</h2>
+        <div class="checkbox-group" data-orientation="horizontal">
+            <div class="checkbox-item" data-state="unchecked">
+                <input type="checkbox" class="checkbox-input" id="cb-5">
+                <div class="checkbox-box"></div>
+                <label for="cb-5" class="checkbox-label">Option A</label>
+            </div>
+            <div class="checkbox-item" data-state="unchecked">
+                <input type="checkbox" class="checkbox-input" id="cb-6">
+                <div class="checkbox-box"></div>
+                <label for="cb-6" class="checkbox-label">Option B</label>
+            </div>
+            <div class="checkbox-item" data-state="unchecked">
+                <input type="checkbox" class="checkbox-input" id="cb-7">
+                <div class="checkbox-box"></div>
+                <label for="cb-7" class="checkbox-label">Option C</label>
+            </div>
+        </div>
+    </section>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Checkbox Component - CSMA UI Library</p>
+    </footer>
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { initCheckboxSystem } from './checkbox.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+
+        initCheckboxSystem(eventBus);
+    </script>
+</body>
+
+</html>

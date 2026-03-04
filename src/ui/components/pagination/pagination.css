@@ -1,0 +1,245 @@
+/**
+ * Pagination Component CSS
+ * CSMA-compliant styles - Extracted from kimi-ui-phase3-4.html
+ */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.pagination-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.25rem;
+    height: 2.25rem;
+    padding: 0 var(--spacing-md);
+    background: var(--fx-color-bg);
+    border: 1px solid var(--fx-color-border);
+    border-radius: calc(var(--radius-md) - 0.125rem);
+    color: var(--fx-color-fg);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.pagination-button:hover:not([data-state="disabled"]) {
+    background: var(--fx-color-accent);
+}
+
+.pagination-button[data-state="active"] {
+    background: var(--fx-color-primary);
+    color: var(--fx-color-on-primary);
+    border-color: var(--fx-color-primary);
+}
+
+.pagination-button[data-state="disabled"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Keyboard navigation focus styles */
+.pagination-button:focus {
+    outline: 2px solid var(--fx-color-primary);
+    outline-offset: 2px;
+}
+
+.pagination-button:focus-visible {
+    outline: 2px solid var(--fx-color-primary);
+    outline-offset: 2px;
+}
+
+.pagination-ellipsis {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--spacing-sm);
+    color: var(--fx-color-fg-muted);
+    font-size: var(--font-size-sm);
+}
+
+/* Compact variant */
+.pagination[data-variant="compact"] .pagination-button:not(.pagination-prev):not(.pagination-next) {
+    display: none;
+}
+
+/* Items per page selector */
+.pagination-size-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-left: var(--spacing-lg);
+}
+
+.pagination-size-label {
+    font-size: var(--font-size-sm);
+    color: var(--fx-color-fg-muted);
+}
+
+.pagination-size-select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--fx-color-bg);
+    border: 1px solid var(--fx-color-border);
+    border-radius: calc(var(--radius-md) - 0.125rem);
+    color: var(--fx-color-fg);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    min-width: 80px;
+}
+
+.pagination-size-select:focus {
+    outline: 2px solid var(--fx-color-primary);
+    outline-offset: 2px;
+}
+
+/* Medium screens (tablets 995px and below) - FIX: dropdown overflow prevention */
+@media (max-width: 995px) {
+    .pagination {
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+    }
+
+    .pagination-size-selector {
+        margin-left: var(--spacing-md);
+    }
+
+    .pagination-size-dropdown {
+        min-width: 80px;
+        max-width: 80px;
+        right: 0;
+        left: auto !important;
+    }
+}
+
+/* Mobile screens 768px and below */
+@media (max-width: 768px) {
+    .pagination {
+        flex-wrap: wrap;
+        gap: var(--spacing-sm);
+    }
+
+    .pagination-size-selector {
+        width: 100%;
+        margin-left: 0;
+        margin-top: var(--spacing-sm);
+        justify-content: center;
+    }
+
+    .pagination-size-selector .dropdown-content {
+        left: 50%;
+        transform: translateX(-50%);
+        top: calc(100% + var(--spacing-sm));
+        right: auto;
+    }
+
+    .pagination-size-dropdown {
+        right: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 80px;
+        min-width: 80px;
+    }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+    .pagination {
+        gap: var(--spacing-xs);
+    }
+
+    .pagination-button {
+        min-width: 2rem;
+        height: 2rem;
+        padding: 0 var(--spacing-sm);
+        font-size: 0.8125rem;
+    }
+
+    .pagination-size-selector {
+        gap: var(--spacing-xs);
+    }
+
+    .pagination-size-label {
+        font-size: 0.8125rem;
+    }
+
+    .pagination-size-trigger {
+        min-width: 70px;
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.8125rem;
+    }
+
+    .pagination-size-dropdown {
+        width: 70px;
+        min-width: 70px;
+        max-width: 70px;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+    .pagination-size-label {
+        display: none;
+    }
+
+    .pagination-size-dropdown {
+        width: 70px;
+        min-width: 70px;
+        max-width: 70px;
+    }
+}
+
+/* Desktop dropdown consistency fix */
+@media (min-width: 769px) {
+    .pagination-size-dropdown {
+        width: 80px;
+        min-width: 80px;
+        max-width: 80px;
+    }
+}
+
+/* Custom dropdown styling for pagination size selector */
+.pagination-size-trigger {
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--fx-color-bg);
+    border: 1px solid var(--fx-color-border);
+    border-radius: calc(var(--radius-md) - 0.125rem);
+    color: var(--fx-color-fg);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    min-width: 80px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+}
+
+.pagination-size-trigger:hover {
+    background: var(--fx-color-accent);
+}
+
+.pagination-size-trigger[data-state="open"] {
+    background: var(--fx-color-accent);
+}
+
+@media (min-width: 769px) {
+    .pagination-size-dropdown {
+        width: 80px;
+        min-width: unset;
+        right: 0;
+        left: auto !important;
+        top: calc(100% + var(--spacing-sm));
+    }
+}
+
+.pagination-size-option {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    text-align: center;
+    justify-content: center;
+    color: var(--fx-color-fg) !important;
+}
+
+.pagination-size-option:hover:not([data-disabled="true"]) {
+    background: var(--fx-color-accent);
+}

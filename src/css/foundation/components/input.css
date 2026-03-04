@@ -1,0 +1,136 @@
+/* CSMA Foundation — Form Controls */
+
+.field,
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-xs);
+  width: 100%;
+}
+
+.field__label,
+.input-label {
+  font-size: var(--fx-font-size-sm);
+  font-weight: var(--fx-font-weight-medium);
+  color: var(--fx-color-fg);
+}
+
+.field__hint,
+.input-helper {
+  font-size: var(--fx-font-size-xs);
+  color: var(--fx-color-fg-muted);
+}
+
+.field__error,
+.input-error {
+  font-size: var(--fx-font-size-xs);
+  color: var(--fx-color-danger);
+  display: none;
+}
+
+.field[data-state="error"] .field__error,
+.input-group[data-state="error"] .input-error {
+  display: block;
+}
+
+.field[data-state="error"] .field__hint,
+.input-group[data-state="error"] .input-helper {
+  display: none;
+}
+
+.input,
+.textarea,
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-lg);
+  background: var(--fx-color-surface);
+  color: var(--fx-color-fg);
+  font-size: var(--fx-font-size-sm);
+  font-family: var(--fx-font-family-base);
+  padding: var(--fx-space-sm) var(--fx-space-xl);
+  transition: border-color var(--fx-transition-fast),
+    box-shadow var(--fx-transition-fast),
+    background var(--fx-transition-fast);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: color-mix(in srgb, var(--fx-color-fg) 55%, transparent);
+}
+
+.input:focus,
+.textarea:focus,
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--fx-color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--fx-color-primary) 40%, transparent);
+}
+
+.field[data-state="disabled"] .input,
+.field[data-state="disabled"] .textarea,
+.input-group[data-state="disabled"] .input {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.field[data-state="readonly"] .input,
+.input-group[data-state="readonly"] .input {
+  background: var(--fx-color-surface-muted);
+}
+
+.field[data-state="error"] .input,
+.input-group[data-state="error"] .input {
+  border-color: var(--fx-color-danger);
+}
+
+.field[data-size="sm"] .input,
+.input-group[data-size="sm"] .input {
+  padding: var(--fx-space-xs) var(--fx-space-lg);
+  font-size: var(--fx-font-size-xs);
+}
+
+.field[data-size="lg"] .input,
+.input-group[data-size="lg"] .input {
+  padding: var(--fx-space-md) var(--fx-space-2xl);
+  font-size: var(--fx-font-size-md);
+}
+
+.input-wrapper,
+.field__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  inset-inline-start: var(--fx-space-lg);
+  color: var(--fx-color-fg-muted);
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-icon + .input {
+  padding-inline-start: var(--fx-space-2xl);
+}
+
+.input-clear {
+  position: absolute;
+  inset-inline-end: var(--fx-space-lg);
+  background: transparent;
+  border: none;
+  color: var(--fx-color-fg-muted);
+  display: none;
+  cursor: pointer;
+}
+
+.input-group[data-value] .input-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

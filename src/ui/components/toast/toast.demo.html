@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toast Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./toast.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .demo-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Toast Component</h1>
+    <p class="intro">Notification messages that slide in from the right and auto-dismiss.</p>
+
+    <section>
+        <h2>Toast Variants</h2>
+        <div class="demo-controls">
+            <button class="button" data-variant="primary"
+                onclick="showToast({ type: 'default', title: 'Notification', description: 'This is a default toast message' })">
+                Default Toast
+            </button>
+            <button class="button" data-variant="success" style="background: #15803d; border-color: #15803d;"
+                onclick="showToast({ type: 'success', title: 'Success!', description: 'Your changes have been saved.' })">
+                Success Toast
+            </button>
+            <button class="button" data-variant="destructive"
+                onclick="showToast({ type: 'error', title: 'Error', description: 'Something went wrong. Please try again.' })">
+                Error Toast
+            </button>
+            <button class="button" data-variant="primary" style="background: #a16207; border-color: #a16207;"
+                onclick="showToast({ type: 'warning', title: 'Warning', description: 'Please review your input before proceeding.' })">
+                Warning Toast
+            </button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Toast Options</h2>
+        <div class="demo-controls">
+            <button class="button" data-variant="secondary"
+                onclick="showToast({ type: 'success', title: 'Quick Toast', description: 'Disappears in 1 second', duration: 1000 })">
+                Quick (1s)
+            </button>
+            <button class="button" data-variant="secondary"
+                onclick="showToast({ type: 'default', title: 'Long Toast', description: 'Disappears in 10 seconds', duration: 10000 })">
+                Long (10s)
+            </button>
+            <button class="button" data-variant="secondary"
+                onclick="showToast({ type: 'warning', title: 'Persistent', description: 'Click X to dismiss', duration: 0 })">
+                Persistent
+            </button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Multiple Toasts</h2>
+        <div class="demo-controls">
+            <button class="button" data-variant="outline" onclick="showMultipleToasts()">
+                Show 3 Toasts
+            </button>
+        </div>
+    </section>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Toast Component - CSMA UI Library</p>
+    </footer>
+
+    <script type="module">
+        import { showToast, dismissToast } from './toast.js';
+
+        // Expose to window for onclick handlers
+        window.showToast = showToast;
+        window.dismissToast = dismissToast;
+
+        window.showMultipleToasts = () => {
+            showToast({ type: 'success', title: 'Step 1', description: 'First action completed' });
+            setTimeout(() => showToast({ type: 'success', title: 'Step 2', description: 'Second action completed' }), 300);
+            setTimeout(() => showToast({ type: 'success', title: 'Step 3', description: 'All done!' }), 600);
+        };
+    </script>
+</body>
+
+</html>

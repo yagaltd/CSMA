@@ -1,0 +1,148 @@
+@import '../../../css/foundation/components/button.css';
+@import '../../../css/foundation/components/input.css';
+
+.csma-otp-surface {
+    min-height: 100vh;
+    padding: clamp(1.5rem, 6vw, 3.5rem);
+    background: radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--fx-color-primary) 10%, transparent), transparent 32%),
+        linear-gradient(140deg, color-mix(in srgb, var(--fx-color-bg-muted) 75%, transparent), var(--fx-color-bg));
+    color: var(--fx-color-fg);
+}
+
+.csma-otp-card {
+    max-width: 520px;
+    margin: 0 auto;
+    background: var(--fx-color-bg);
+    border: 1px solid color-mix(in srgb, var(--fx-color-border) 60%, transparent);
+    border-radius: var(--fx-radius-2xl);
+    box-shadow: var(--fx-shadow-md);
+    padding: clamp(1.25rem, 4vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-md);
+}
+
+.csma-otp-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: var(--fx-font-size-xs);
+    color: var(--fx-color-fg-muted);
+    margin: 0;
+}
+
+.csma-otp-title {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 1.875rem);
+}
+
+.csma-otp-text {
+    margin: 0;
+    color: var(--fx-color-fg-muted);
+}
+
+.csma-otp-hint {
+    display: inline-flex;
+    gap: var(--fx-space-xs);
+    align-items: center;
+    padding: var(--fx-space-xs) var(--fx-space-sm);
+    background: color-mix(in srgb, var(--fx-color-primary) 8%, var(--fx-color-surface));
+    border: 1px solid color-mix(in srgb, var(--fx-color-border) 50%, transparent);
+    border-radius: var(--fx-radius-pill, 999px);
+    font-size: var(--fx-font-size-xs);
+    color: var(--fx-color-fg);
+    width: fit-content;
+}
+
+.csma-otp-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-lg);
+}
+
+.csma-otp-label {
+    font-size: var(--fx-font-size-sm);
+    font-weight: var(--fx-font-weight-medium);
+    color: var(--fx-color-fg);
+    margin: 0;
+}
+
+.csma-otp-inputs {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--fx-space-sm);
+}
+
+.csma-otp-input {
+    appearance: textfield;
+    width: 100%;
+    border: 1px solid var(--fx-color-border);
+    border-radius: var(--fx-radius-lg);
+    background: var(--fx-color-surface);
+    color: var(--fx-color-fg);
+    font-size: var(--fx-font-size-lg);
+    font-weight: var(--fx-font-weight-semibold);
+    text-align: center;
+    padding: var(--fx-space-md) 0;
+    transition: border-color var(--fx-transition-fast), box-shadow var(--fx-transition-fast), background var(--fx-transition-fast);
+}
+
+.csma-otp-input:focus {
+    outline: none;
+    border-color: var(--fx-color-primary);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--fx-color-primary) 35%, transparent);
+}
+
+.csma-otp-input::placeholder {
+    color: color-mix(in srgb, var(--fx-color-fg) 35%, transparent);
+}
+
+.csma-otp-input::-webkit-outer-spin-button,
+.csma-otp-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.csma-otp-input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.csma-otp-actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--fx-space-xs);
+}
+
+.csma-otp-status {
+    font-size: var(--fx-font-size-sm);
+    color: var(--fx-color-fg-muted);
+}
+
+.csma-otp-status[data-state="error"] { color: var(--fx-color-danger); }
+.csma-otp-status[data-state="success"] { color: var(--fx-color-success); }
+.csma-otp-status[data-state="loading"] { color: var(--fx-color-info); }
+
+.csma-otp-resend {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--fx-space-2xs);
+    font-size: var(--fx-font-size-sm);
+    color: var(--fx-color-fg-muted);
+    text-decoration: none;
+}
+
+.csma-otp-resend:hover {
+    color: var(--fx-color-primary);
+    text-decoration: underline;
+}
+
+.csma-otp-meta {
+    font-size: var(--fx-font-size-xs);
+    color: var(--fx-color-fg-muted);
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .csma-otp-inputs {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}

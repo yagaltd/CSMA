@@ -1,0 +1,95 @@
+/**
+ * Checkbox Component CSS
+ * CSMA-compliant styles - Extracted from kimi-ui-phase3-4.html
+ */
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.checkbox-group[data-orientation="horizontal"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    cursor: pointer;
+}
+
+.checkbox-item[data-state="disabled"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkbox-box {
+    position: relative;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1px solid var(--fx-color-border);
+    border-radius: var(--radius-sm);
+    background: var(--fx-color-bg);
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.checkbox-item:hover .checkbox-box {
+    border-color: var(--fx-color-primary);
+}
+
+/* Checkmark */
+.checkbox-box::after {
+    content: '';
+    position: absolute;
+    display: none;
+    left: 50%;
+    top: 50%;
+    width: 5px;
+    height: 9px;
+    border: solid var(--fx-color-on-primary);
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -65%) rotate(45deg);
+}
+
+.checkbox-item[data-state="checked"] .checkbox-box {
+    background: var(--fx-color-primary);
+    border-color: var(--fx-color-primary);
+}
+
+.checkbox-item[data-state="checked"] .checkbox-box::after {
+    display: block;
+}
+
+/* Indeterminate */
+.checkbox-item[data-state="indeterminate"] .checkbox-box {
+    background: var(--fx-color-primary);
+    border-color: var(--fx-color-primary);
+}
+
+.checkbox-item[data-state="indeterminate"] .checkbox-box::after {
+    display: block;
+    border: none;
+    width: 8px;
+    height: 2px;
+    background: var(--fx-color-on-primary);
+    transform: none;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.checkbox-label {
+    font-size: var(--font-size-sm);
+    user-select: none;
+}

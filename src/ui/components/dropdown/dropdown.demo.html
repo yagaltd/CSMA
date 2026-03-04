@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="zinc">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./dropdown.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Dropdown Component</h1>
+
+    <section>
+        <h2>Basic Menu</h2>
+        <div class="dropdown">
+            <button class="dropdown-trigger">
+                Options
+                <span>▼</span>
+            </button>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item">
+                    <img class="dropdown-item-icon" src="../../icons/pencil.svg" alt="">
+                    Edit
+                    <span class="dropdown-item-shortcut">⌘E</span>
+                </a>
+                <a href="#" class="dropdown-item">
+                    <img class="dropdown-item-icon" src="../../icons/copy.svg" alt="">
+                    Copy
+                    <span class="dropdown-item-shortcut">⌘C</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">
+                    <img class="dropdown-item-icon" src="../../icons/trash.svg" alt="">
+                    Delete
+                </a>
+                <a href="#" class="dropdown-item" data-disabled="true">
+                    <img class="dropdown-item-icon" src="../../icons/lock.svg" alt="">
+                    Locked
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>User Menu</h2>
+        <div class="dropdown">
+            <button class="dropdown-trigger">
+                <img class="dropdown-item-icon" src="../../icons/user.svg" alt="">
+                Account
+                <span>▼</span>
+            </button>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item">Profile</a>
+                <a href="#" class="dropdown-item">Settings</a>
+                <a href="#" class="dropdown-item">Billing</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">Sign out</a>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>With Submenu</h2>
+        <div class="dropdown">
+            <button class="dropdown-trigger">
+                More Options
+                <span>▼</span>
+            </button>
+            <div class="dropdown-content">
+                <a href="#" class="dropdown-item">Copy</a>
+                <a href="#" class="dropdown-item">Paste</a>
+                <div class="dropdown-item-submenu">
+                    <a href="#" class="dropdown-item">
+                        Share
+                        <span class="dropdown-item-shortcut">▶</span>
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="#" class="dropdown-item">Email</a>
+                        <a href="#" class="dropdown-item">Slack</a>
+                        <a href="#" class="dropdown-item">Teams</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Dropdown Component - CSMA UI Library</p>
+    </footer>
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { initDropdownSystem } from './dropdown.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+        
+        initDropdownSystem(eventBus);
+    </script>
+</body>
+
+</html>

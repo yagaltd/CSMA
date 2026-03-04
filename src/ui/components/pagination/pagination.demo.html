@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagination Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="../dropdown/dropdown.css">
+    <link rel="stylesheet" href="./pagination.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Pagination Component</h1>
+
+    <section>
+        <h2>Full Pagination</h2>
+        <nav class="pagination" aria-label="Pagination">
+            <button class="pagination-button pagination-prev" data-state="disabled" tabindex="0">← Prev</button>
+            <button class="pagination-button" data-state="active" tabindex="0" aria-current="page">1</button>
+            <button class="pagination-button" tabindex="0">2</button>
+            <button class="pagination-button" tabindex="0">3</button>
+            <span class="pagination-ellipsis">...</span>
+            <button class="pagination-button" tabindex="0">10</button>
+            <button class="pagination-button pagination-next" tabindex="0">Next →</button>
+        </nav>
+    </section>
+
+    <section>
+        <h2>Middle Page Active</h2>
+        <nav class="pagination" aria-label="Pagination">
+            <button class="pagination-button pagination-prev" tabindex="0">← Prev</button>
+            <button class="pagination-button" tabindex="0">1</button>
+            <span class="pagination-ellipsis">...</span>
+            <button class="pagination-button" tabindex="0">4</button>
+            <button class="pagination-button" data-state="active" tabindex="0" aria-current="page">5</button>
+            <button class="pagination-button" tabindex="0">6</button>
+            <span class="pagination-ellipsis">...</span>
+            <button class="pagination-button" tabindex="0">10</button>
+            <button class="pagination-button pagination-next" tabindex="0">Next →</button>
+        </nav>
+    </section>
+
+    <section>
+        <h2>With Items Per Page Selector</h2>
+        <nav class="pagination" role="navigation" aria-label="Pagination">
+            <button class="pagination-button pagination-prev" data-state="disabled" tabindex="0">← Prev</button>
+            <button class="pagination-button" data-state="active" aria-label="Go to page 1" aria-current="page" tabindex="0">1</button>
+            <button class="pagination-button" aria-label="Go to page 2" tabindex="0">2</button>
+            <button class="pagination-button" aria-label="Go to page 3" tabindex="0">3</button>
+            <div class="pagination-ellipsis">...</div>
+            <button class="pagination-button" aria-label="Go to page 8" tabindex="0">8</button>
+            <button class="pagination-button" aria-label="Go to page 9" tabindex="0">9</button>
+            <button class="pagination-button" aria-label="Go to page 10" tabindex="0">10</button>
+            <button class="pagination-button pagination-next" aria-label="Go to next page" tabindex="0">Next →</button>
+            
+            <div class="pagination-size-selector dropdown" id="pagination-size-dropdown">
+                <label class="pagination-size-label">Items per page:</label>
+                <button class="dropdown-trigger pagination-size-trigger" data-dropdown-toggle="pagination-size-dropdown">
+                    <span class="pagination-size-value">10</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+                <div class="dropdown-content pagination-size-dropdown" data-state="closed">
+                    <a href="#" class="dropdown-item pagination-size-option" data-value="10">10</a>
+                    <a href="#" class="dropdown-item pagination-size-option" data-value="20">20</a>
+                    <a href="#" class="dropdown-item pagination-size-option" data-value="50">50</a>
+                    <a href="#" class="dropdown-item pagination-size-option" data-value="100">100</a>
+                </div>
+            </div>
+        </nav>
+    </section>
+
+    <section>
+        <h2>Compact Variant</h2>
+        <nav class="pagination" data-variant="compact" aria-label="Pagination">
+            <button class="pagination-button pagination-prev" tabindex="0">← Previous</button>
+            <button class="pagination-button pagination-next" tabindex="0">Next →</button>
+        </nav>
+    </section>
+
+    <section>
+        <h2>Responsive Test - Different Positions</h2>
+        <nav class="pagination" aria-label="Pagination">
+            <button class="pagination-button pagination-prev" tabindex="0">← Prev</button>
+            <button class="pagination-button" data-state="active" tabindex="0">1</button>
+            <button class="pagination-button" tabindex="0">2</button>
+            <button class="pagination-button" tabindex="0">3</button>
+            <button class="pagination-button pagination-next" tabindex="0">Next →</button>
+            
+            <div class="pagination-size-selector dropdown" id="pagination-size-dropdown-2">
+                <label class="pagination-size-label">Show:</label>
+                <button class="dropdown-trigger pagination-size-trigger" data-dropdown-toggle="pagination-size-dropdown-2">
+                    <span class="pagination-size-value">10</span>
+                    <span class="dropdown-arrow">▼</span>
+                </button>
+                <div class="dropdown-content pagination-size-dropdown" data-state="closed">
+                    <a href="#" class="dropdown-item pagination-size-option" data-value="5">5</a>
+                    <a href="#" class="dropdown-item pagination-size-option" data-value="10">10</a>
+                    <a href="#" class="dropdown-item pagination-size-option" data-value="25">25</a>
+                    <a href="#" class="dropdown-item pagination-size-option" data-value="50">50</a>
+                </div>
+            </div>
+        </nav>
+    </section>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Pagination Component - CSMA UI Library</p>
+    </footer>
+
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initDropdownSystem } from '../dropdown/dropdown.js';
+        import { initPaginationSystem } from './pagination.js';
+        
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+        
+        initDropdownSystem(eventBus);
+        initPaginationSystem(eventBus);
+    </script>
+</body>
+
+</html>

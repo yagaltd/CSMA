@@ -1,0 +1,49 @@
+/*
+ * CSMA Touch Enhancements
+ * Ensures 44px tap targets, gesture affordances, and touch-optimized spacing
+ */
+
+:root {
+  --touch-target-min: 44px;
+}
+
+[data-touch-area],
+.touch-target,
+[data-touch-target="true"],
+button.touch-target,
+input.touch-target,
+label.touch-target,
+a.touch-target {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  padding-inline: max(var(--spacing-sm), 0.75rem);
+}
+
+.touch-scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  gap: var(--spacing-md);
+}
+
+.touch-scroll-x > * {
+  scroll-snap-align: start;
+}
+
+.touch-swipe-area {
+  touch-action: pan-y pinch-zoom;
+}
+
+@media (pointer: coarse) {
+  .hide-on-touch {
+    display: none !important;
+  }
+
+  .touch-spacing-lg {
+    gap: var(--spacing-lg);
+  }
+
+  .touch-padding-lg {
+    padding: var(--spacing-lg);
+  }
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Dialog Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./alert-dialog.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        section {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Alert Dialog Component</h1>
+
+    <section>
+        <h2>Variants</h2>
+        <button class="button" data-variant="secondary" onclick="openAlertDialog('alert-info')">Info</button>
+        <button class="button" data-variant="outline" onclick="openAlertDialog('alert-warning')">Warning</button>
+        <button class="button" data-variant="destructive" onclick="openAlertDialog('alert-danger')">Danger</button>
+    </section>
+
+    <!-- Info Alert -->
+    <div class="alert-dialog-overlay" id="alert-info" role="alertdialog" aria-modal="true">
+        <div class="alert-dialog-content">
+            <div class="alert-dialog-header">
+                <div class="alert-dialog-icon" data-variant="info"><img src="../../icons/info.svg" alt=""></div>
+                <div class="alert-dialog-title-group">
+                    <h3 class="alert-dialog-title">Information</h3>
+                    <p class="alert-dialog-description">This action will update your settings.</p>
+                </div>
+            </div>
+            <div class="alert-dialog-footer">
+                <button class="alert-dialog-cancel" onclick="closeAlertDialog('alert-info')">Cancel</button>
+                <button class="alert-dialog-action"
+                    style="background: var(--fx-color-primary); color: var(--fx-color-on-primary);"
+                    onclick="closeAlertDialog('alert-info')">Continue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Alert -->
+    <div class="alert-dialog-overlay" id="alert-warning" role="alertdialog" aria-modal="true">
+        <div class="alert-dialog-content">
+            <div class="alert-dialog-header">
+                <div class="alert-dialog-icon" data-variant="warning"><img src="../../icons/triangle.svg" alt=""></div>
+                <div class="alert-dialog-title-group">
+                    <h3 class="alert-dialog-title">Warning</h3>
+                    <p class="alert-dialog-description">This action cannot be easily undone.</p>
+                </div>
+            </div>
+            <div class="alert-dialog-footer">
+                <button class="alert-dialog-cancel" onclick="closeAlertDialog('alert-warning')">Cancel</button>
+                <button class="alert-dialog-action" style="background: var(--fx-color-warning);"
+                    onclick="closeAlertDialog('alert-warning')">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danger Alert -->
+    <div class="alert-dialog-overlay" id="alert-danger" role="alertdialog" aria-modal="true">
+        <div class="alert-dialog-content">
+            <div class="alert-dialog-header">
+                <div class="alert-dialog-icon" data-variant="danger"><img src="../../icons/trash.svg" alt=""></div>
+                <div class="alert-dialog-title-group">
+                    <h3 class="alert-dialog-title">Delete Account?</h3>
+                    <p class="alert-dialog-description">This action is permanent and cannot be undone.</p>
+                </div>
+            </div>
+            <div class="alert-dialog-footer">
+                <button class="alert-dialog-cancel" onclick="closeAlertDialog('alert-danger')">Cancel</button>
+                <button class="alert-dialog-action" onclick="closeAlertDialog('alert-danger')">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Alert Dialog Component - CSMA UI Library</p>
+    </footer>
+    <script type="module">
+        import { openAlertDialog, closeAlertDialog } from './alert-dialog.js';
+        
+        // Expose functions for onclick handlers
+        window.openAlertDialog = openAlertDialog;
+        window.closeAlertDialog = closeAlertDialog;
+    </script>
+</body>
+
+</html>

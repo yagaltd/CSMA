@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSMA Breadcrumb Component Demo</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="../../../css/components.css">
+    <link rel="stylesheet" href="./breadcrumb.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid var(--fx-color-border);
+            border-radius: var(--radius-md);
+            background: var(--fx-color-bg);
+        }
+
+        .demo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+        }
+
+        .demo-description {
+            color: var(--fx-color-fg-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-code {
+            background: var(--fx-color-surface-muted);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            font-family: ui-monospace, 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            color: var(--fx-color-fg);
+            border: 1px solid var(--fx-color-border);
+        }
+
+        .breadcrumb-preview {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--fx-color-bg);
+            border: 1px solid var(--fx-color-border);
+            border-radius: var(--radius-sm);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        code {
+            background: var(--fx-color-surface-muted);
+            padding: 0.125rem 0.25rem;
+            border-radius: var(--radius-sm);
+            font-family: ui-monospace, monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    
+    <h1>CSMA Breadcrumb Component Demo</h1>
+    <p class="intro">Type I (Pure CSS) component - No JavaScript required</p>
+
+    <!-- Basic Breadcrumb -->
+    <div class="demo-section">
+        <h2 class="demo-title">Basic Breadcrumb</h2>
+        <p class="demo-description">Simple breadcrumb with default separator</p>
+
+        <div class="breadcrumb-preview">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">Products</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <span class="breadcrumb-link">Laptops</span>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="demo-code">
+            <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">Home</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">Products</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <span class="breadcrumb-link">Laptops</span>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Custom Separators -->
+    <div class="demo-section">
+        <h2 class="demo-title">Custom Separators</h2>
+        <p class="demo-description">Different separator styles using data attributes</p>
+
+        <div class="breadcrumb-preview">
+            <nav class="breadcrumb-nav">
+                <ol class="breadcrumb" data-separator="chevron">
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Settings</a></li>
+                    <li class="breadcrumb-item"><span class="breadcrumb-link">Profile</span></li>
+                </ol>
+            </nav>
+
+            <nav class="breadcrumb-nav">
+                <ol class="breadcrumb" data-separator="arrow">
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Analytics</a></li>
+                    <li class="breadcrumb-item"><span class="breadcrumb-link">Reports</span></li>
+                </ol>
+            </nav>
+
+            <nav class="breadcrumb-nav">
+                <ol class="breadcrumb" data-separator="bullet">
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">File</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Edit</a></li>
+                    <li class="breadcrumb-item"><span class="breadcrumb-link">Preferences</span></li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="demo-code">
+            <!-- Chevron separator -->
+            <ol class="breadcrumb" data-separator="chevron">
+
+                <!-- Arrow separator -->
+                <ol class="breadcrumb" data-separator="arrow">
+
+                    <!-- Bullet separator -->
+                    <ol class="breadcrumb" data-separator="bullet">
+        </div>
+    </div>
+
+    <!-- Truncation Examples -->
+    <div class="demo-section">
+        <h2 class="demo-title">Truncation for Long Paths</h2>
+        <p class="demo-description">Automatic truncation on mobile and small screens</p>
+
+        <div class="breadcrumb-preview">
+            <nav class="breadcrumb-nav">
+                <ol class="breadcrumb" data-truncate="true">
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Electronics</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Computers</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Laptops</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Gaming</a></li>
+                    <li class="breadcrumb-item"><span class="breadcrumb-link">ASUS ROG</span></li>
+                </ol>
+            </nav>
+        </div>
+
+        <div class="demo-code">
+            <ol class="breadcrumb" data-truncate="true">
+                <!-- Long breadcrumb path -->
+                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Home</a></li>
+                <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Electronics</a></li>
+                <!-- ... more items ... -->
+                <li class="breadcrumb-item"><span class="breadcrumb-link">ASUS ROG</span></li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- With Icons -->
+    <div class="demo-section">
+        <h2 class="demo-title">With Icons</h2>
+        <p class="demo-description">Breadcrumb items with SVG icons</p>
+
+        <div class="breadcrumb-preview">
+            <nav class="breadcrumb-nav">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">
+                            <svg class="breadcrumb-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10.707 2.293a1 1 0 00-1.414 0l-9 9a1 1 0 001.414 1.414L2 12.414V19a1 1 0 001 1h3a1 1 0 001-1v-3h2v3a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-9-9z" />
+                            </svg>
+                            Home
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="#" class="breadcrumb-link">
+                            <svg class="breadcrumb-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Projects
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <span class="breadcrumb-link">
+                            <svg class="breadcrumb-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            My Project
+                        </span>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Mobile Responsive Demo -->
+    <div class="demo-section">
+        <h2 class="demo-title">Mobile Responsive</h2>
+        <p class="demo-description">Resize your browser to see truncation on mobile</p>
+
+        <div class="breadcrumb-preview">
+            <nav class="breadcrumb-nav">
+                <ol class="breadcrumb" data-truncate="auto">
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">User Management</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Permissions</a></li>
+                    <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Roles</a></li>
+                    <li class="breadcrumb-item"><span class="breadcrumb-link">Administrator</span></li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Implementation Notes -->
+    <div class="demo-section">
+        <h2 class="demo-title">Implementation Notes</h2>
+        <ul>
+            <li><strong>Semantic HTML:</strong> Uses proper <nav> and <ol> elements for accessibility</li>
+            <li><strong>ARIA Labels:</strong> Include <code>aria-label="Breadcrumb"</code> on the nav element</li>
+            <li><strong>Current Page:</strong> Last item should be <span> (not <a>) to indicate current location</li>
+            <li><strong>Theme Support:</strong> Automatically adapts to light/dark themes</li>
+            <li><strong>Accessibility:</strong> Full keyboard navigation and screen reader support</li>
+            <li><strong>Performance:</strong> Pure CSS - zero JavaScript overhead</li>
+        </ul>
+    </div>
+</body>
+
+</html>

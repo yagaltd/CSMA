@@ -1,0 +1,136 @@
+@import '../../components/index.css';
+
+.csma-checkout-demo {
+    background: linear-gradient(120deg, color-mix(in srgb, var(--fx-color-primary) 18%, transparent), var(--fx-color-surface-muted));
+    min-height: 100vh;
+    padding: clamp(2rem, 4vw, 4rem);
+    color: var(--fx-color-fg);
+}
+
+.csma-checkout-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--fx-color-bg);
+    border-radius: var(--corner-3xl, 2rem);
+    border: 1px solid color-mix(in srgb, var(--fx-color-border) 40%, transparent);
+    box-shadow: var(--shadow-2xl, 0 35px 80px rgba(15, 23, 42, 0.35));
+    padding: clamp(1.5rem, 4vw, 3rem);
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr);
+    gap: clamp(1.5rem, 5vw, 3rem);
+}
+
+.csma-checkout-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.csma-checkout-eyebrow {
+    margin: 0;
+    font-size: var(--font-size-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--fx-color-fg-muted);
+}
+
+.csma-cart-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.csma-cart-item {
+    padding: var(--spacing-lg);
+    border-radius: var(--corner-xl);
+    border: 1px solid color-mix(in srgb, var(--fx-color-border) 50%, transparent);
+    background: color-mix(in srgb, var(--fx-color-surface-muted) 90%, transparent);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.csma-cart-item h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+}
+
+.csma-cart-item p {
+    margin: 0;
+    color: var(--fx-color-fg-muted);
+}
+
+.csma-cart-controls {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    border: 1px solid color-mix(in srgb, var(--fx-color-border) 60%, transparent);
+    border-radius: 999px;
+    padding: 0.25rem 0.5rem;
+}
+
+.csma-cart-controls button {
+    border: none;
+    background: transparent;
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    padding: 0 var(--spacing-sm);
+}
+
+.csma-checkout-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.csma-checkout-form .input-group,
+.csma-checkout-form .textarea-group {
+    max-width: none;
+}
+
+.csma-totals {
+    background: color-mix(in srgb, var(--fx-color-surface-muted) 95%, transparent);
+    border-radius: var(--corner-2xl);
+    border: 1px solid color-mix(in srgb, var(--fx-color-border) 45%, transparent);
+    padding: var(--spacing-xl);
+}
+
+.csma-totals-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
+}
+
+.csma-totals-row.total {
+    font-size: var(--font-size-xl);
+}
+
+.csma-checkout-status {
+    margin-top: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--fx-color-fg-muted);
+}
+
+.csma-checkout-optimistic {
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    border-radius: var(--corner-xl);
+    border: 1px dashed color-mix(in srgb, var(--fx-color-border) 60%, transparent);
+    background: color-mix(in srgb, var(--fx-color-surface-muted) 85%, transparent);
+    font-size: var(--font-size-sm);
+}
+
+.csma-checkout-optimistic__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xs);
+}
+
+@media (max-width: 960px) {
+    .csma-checkout-shell {
+        grid-template-columns: 1fr;
+    }
+}

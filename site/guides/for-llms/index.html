@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://example.com/csma/guides/for-llms/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>For LLMs - CSMA Kit Docs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">CSMA Kit Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../csma-in-a-nutshell/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../getting-started/" class="dropdown-item">Setup</a>
+</li>
+                                    
+<li>
+    <a href="../features/" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../validation/" class="dropdown-item">Validation</a>
+</li>
+                                    
+<li>
+    <a href="../pwa-setup/" class="dropdown-item">PWA Setup</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Guides</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../building-components/" class="dropdown-item">Building Components</a>
+</li>
+                                    
+<li>
+    <a href="../customizing-theme/" class="dropdown-item">Customizing Theme</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">For LLMs</a>
+</li>
+                                    
+<li>
+    <a href="../../css-foundation/" class="dropdown-item">CSS Foundation</a>
+</li>
+                                    
+<li>
+    <a href="../../complete-csma-guide/" class="dropdown-item">Complete Guide</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/core-services/" class="dropdown-item">Core Services</a>
+</li>
+                                    
+<li>
+    <a href="../../api/llm-service/" class="dropdown-item">LLM Service</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Advanced</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../advanced/contract-governance/" class="dropdown-item">Contract Governance</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/optimistic-sync/" class="dropdown-item">Optimistic Sync</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/llm-instructor/" class="dropdown-item">LLM Instructor</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Platforms</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../platforms/capacitor/" class="dropdown-item">Capacitor</a>
+</li>
+                                    
+<li>
+    <a href="../../platforms/neutralino/" class="dropdown-item">Neutralino</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../examples/todo-app/" class="dropdown-item">Todo App</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Security</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../security/security-map/" class="dropdown-item">Security Map</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Operations</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../release-checklist/" class="dropdown-item">Release Checklist</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Roadmap</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../roadmap/" class="dropdown-item">Overview</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Priority Tracks</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/OPFS-worker/" class="dropdown-item">OPFS Worker</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/ai-modularity-tanstack/" class="dropdown-item">AI Modularity</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Proposed</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/proposed/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/csma-split-proposal/" class="dropdown-item">CSMA Split Proposal</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/llm-portable-architecture/" class="dropdown-item">LLM Portable Architecture</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/url-bookmark-universal-module-proposal/" class="dropdown-item">URL Bookmark Module Proposal</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Considerations</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/considerations/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/CSMA-future-ideas/" class="dropdown-item">CSMA Future Ideas</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/Security-tracking-nstjs-stryle/" class="dropdown-item">Security Tracking</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/ocr-image-insights-module/" class="dropdown-item">OCR Image Insights</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/services-ontop-flexsearch/" class="dropdown-item">Services on FlexSearch</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/showcase-website/" class="dropdown-item">Showcase Website</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Research</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/research/" class="dropdown-item">Index</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../customizing-theme/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../css-foundation/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/example/CSMA-SSMA/edit/main/docs/guides/for-llms.md" class="nav-link">Edit on CSMA-SSMA/CSMA
+                                    </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#for-llms-csma-coding-guide" class="nav-link">For LLMs: CSMA Coding Guide</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#table-of-contents" class="nav-link">Table of Contents</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#architecture-overview" class="nav-link">Architecture Overview</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#the-8-rules" class="nav-link">The 8 Rules</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#workflows" class="nav-link">Workflows</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#complete-example-note-card" class="nav-link">Complete Example: Note Card</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#security-checklist" class="nav-link">Security Checklist</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#contract-definition-pattern" class="nav-link">Contract Definition Pattern</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#performance-tips" class="nav-link">Performance Tips</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#reference-files" class="nav-link">Reference Files</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="for-llms-csma-coding-guide">For LLMs: CSMA Coding Guide<a class="headerlink" href="#for-llms-csma-coding-guide" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>For AI Coding Agents</strong>: Use these workflows and rules when generating CSMA code</p>
+</blockquote>
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#architecture-overview">Architecture Overview</a></li>
+<li><a href="#the-8-rules">The 8 Rules</a></li>
+<li><a href="#workflows">Workflows</a></li>
+<li><a href="#complete-example-note-card">Complete Example</a></li>
+<li><a href="#security-checklist">Security Checklist</a></li>
+<li><a href="#contract-definition-pattern">Contract Definition</a></li>
+<li><a href="#performance-tips">Performance Tips</a></li>
+</ul>
+<hr />
+<h2 id="architecture-overview">Architecture Overview<a class="headerlink" href="#architecture-overview" title="Permanent link">&para;</a></h2>
+<p><strong>CSMA Pattern</strong>: Services communicate via EventBus, CSS handles all rendering</p>
+<pre><code>User Action 
+    → Component publishes INTENT
+    → EventBus delivers to subscribers
+    → Type II: Component handles intent itself
+    → Type III: Service processes, publishes EVENT
+    → CSS updates based on classes/data-attributes
+</code></pre>
+<p><strong>3 Component Types</strong>:
+- <strong>Type I (Pure CSS)</strong>: No JavaScript - Badge, Card, Avatar
+- <strong>Type II (Self-Contained)</strong>: <code>init[Name]System(eventBus)</code> - Dialog, Toast, Popover
+- <strong>Type III (Service-Backed)</strong>: <code>create[Name]Service() + init[Name]UI()</code> - Slider</p>
+<hr />
+<h2 id="the-8-rules">The 8 Rules<a class="headerlink" href="#the-8-rules" title="Permanent link">&para;</a></h2>
+<h3 id="rule-1-state-changes-css-classes-only">Rule 1: State Changes = CSS Classes Only<a class="headerlink" href="#rule-1-state-changes-css-classes-only" title="Permanent link">&para;</a></h3>
+<p><strong>DO THIS</strong> ✅</p>
+<pre><code class="language-javascript">element.className = 'card completed high-priority';
+</code></pre>
+<p><strong>NOT THIS</strong> ❌</p>
+<pre><code class="language-javascript">element.style.opacity = '1';
+element.style.borderColor = 'green';
+</code></pre>
+<p><strong>Why</strong>: CSS class changes are 10x faster (15ms vs 150ms)</p>
+<hr />
+<h3 id="rule-2-define-all-states-in-css">Rule 2: Define All States in CSS<a class="headerlink" href="#rule-2-define-all-states-in-css" title="Permanent link">&para;</a></h3>
+<p><strong>DO THIS</strong> ✅</p>
+<pre><code class="language-css">.card.pending { border-left: 4px solid var(--fx-color-warning); }
+.card.completed { border: 4px solid var(--fx-color-success); }
+</code></pre>
+<p><strong>NOT THIS</strong> ❌</p>
+<pre><code class="language-javascript">if (status === 'completed') {
+  element.style.borderLeft = '4px solid green';
+}
+</code></pre>
+<hr />
+<h3 id="rule-3-use-css-custom-properties">Rule 3: Use CSS Custom Properties<a class="headerlink" href="#rule-3-use-css-custom-properties" title="Permanent link">&para;</a></h3>
+<p><strong>DO THIS</strong> ✅</p>
+<pre><code class="language-css">:root { --fx-color-primary: #3b82f6; }
+</code></pre>
+<p><strong>NOT THIS</strong> ❌</p>
+<pre><code class="language-javascript">element.style.backgroundColor = '#3b82f6';
+</code></pre>
+<hr />
+<h3 id="rule-4-javascript-publishes-events-css-handles-rendering">Rule 4: JavaScript Publishes Events, CSS Handles Rendering<a class="headerlink" href="#rule-4-javascript-publishes-events-css-handles-rendering" title="Permanent link">&para;</a></h3>
+<p><strong>DO THIS</strong> ✅</p>
+<pre><code class="language-javascript">// Service publishes event
+eventBus.publish('NOTE_SAVED', note);
+
+// UI subscriber changes class
+eventBus.subscribe('NOTE_SAVED', ({ id, status }) =&gt; {
+  document.getElementById(`note-${id}`).className = `card ${status}`;
+});
+</code></pre>
+<p><strong>NOT THIS</strong> ❌</p>
+<pre><code class="language-javascript">function saveNote(note) {
+  saveToDatabase(note);
+  document.getElementById(`note-${note.id}`).style.opacity = '1';
+}
+</code></pre>
+<hr />
+<h3 id="rule-5-security-first">Rule 5: Security First<a class="headerlink" href="#rule-5-security-first" title="Permanent link">&para;</a></h3>
+<p><strong>DO THIS</strong> ✅</p>
+<pre><code class="language-javascript">element.textContent = userInput; // Safe
+const validated = validate(userInput);
+eventBus.publish('NOTE_SAVED', validated);
+</code></pre>
+<p><strong>NOT THIS</strong> ❌</p>
+<pre><code class="language-javascript">element.innerHTML = userInput; // XSS!
+eventBus.publish('NOTE_SAVED', userInput); // No validation!
+</code></pre>
+<hr />
+<h3 id="rule-6-data-attributes-for-complex-state">Rule 6: Data Attributes for Complex State<a class="headerlink" href="#rule-6-data-attributes-for-complex-state" title="Permanent link">&para;</a></h3>
+<p><strong>DO THIS</strong> ✅</p>
+<pre><code class="language-javascript">Object.assign(element.dataset, {
+  status: 'pending',
+  priority: 'high',
+  category: 'urgent'
+});
+</code></pre>
+<p><strong>NOT THIS</strong> ❌</p>
+<pre><code class="language-javascript">element.className = 'card pending high priority urgent category';
+</code></pre>
+<hr />
+<h3 id="rule-7-output-contracts">Rule 7: Output Contracts<a class="headerlink" href="#rule-7-output-contracts" title="Permanent link">&para;</a></h3>
+<p>If you use new events, include contract definition:</p>
+<pre><code class="language-javascript">// Add to src/runtime/Contracts.js
+export const NOTE_SAVED = {
+  version: 1,
+  type: 'event',
+  owner: 'note-service',
+  schema: object({
+    id: string(),
+    title: size(string(), 1, 200),
+    status: enums(['pending', 'completed'])
+  })
+};
+</code></pre>
+<hr />
+<h3 id="rule-8-self-contained-pattern">Rule 8: Self-Contained Pattern<a class="headerlink" href="#rule-8-self-contained-pattern" title="Permanent link">&para;</a></h3>
+<p><strong>DO THIS</strong> ✅</p>
+<pre><code class="language-javascript">// Type II components subscribe to their own intents
+export function initDialogSystem(eventBus) {
+  eventBus.subscribe('INTENT_MODAL_OPEN', (payload) =&gt; {
+    openDialog(payload.modalId);
+    eventBus.publish('MODAL_OPENED', { modalId: payload.modalId });
+  });
+  return () =&gt; { /* cleanup */ };
+}
+</code></pre>
+<p><strong>NOT THIS</strong> ❌</p>
+<pre><code class="language-javascript">// Don't create separate Service for simple components
+class DialogService { openDialog(id) { /* ... */ } } // Overkill!
+</code></pre>
+<hr />
+<h2 id="workflows">Workflows<a class="headerlink" href="#workflows" title="Permanent link">&para;</a></h2>
+<h3 id="workflow-a-build-from-scratch-recommended">Workflow A: Build from Scratch (Recommended)<a class="headerlink" href="#workflow-a-build-from-scratch-recommended" title="Permanent link">&para;</a></h3>
+<p><strong>When</strong>: New visual components
+<strong>Strategy</strong>: Visualize First, Connect Later</p>
+<p><strong>Stage 1: HTML/CSS</strong> (Context: <code>src/css/foundation/tokens.css</code>)</p>
+<pre><code class="language-markdown"># Role: Expert UI Engineer
+# Task: Build [Component Name] with semantic HTML + CSS variables
+# Requirements:
+1. HTML-First (use &lt;dialog&gt;, &lt;button&gt;, &lt;input&gt;)
+2. Use CSS variables from the foundation token files
+3. Use data-state for interaction states
+4. No JS logic (validation goes in Service)
+5. Output: HTML file with embedded CSS
+</code></pre>
+<p><strong>Stage 2: Add EventBus</strong> (Context: <code>Contracts.js</code>, <code>init.js</code>, <code>dialog.js</code>, <code>SliderService.js</code>)</p>
+<pre><code class="language-markdown"># Role: CSMA Architecture Specialist
+# Task: Convert vanilla JS to CSMA component
+
+Choose Pattern:
+- Type II: init[Name]System(eventBus) for Dialog/Popover/Tabs/Toast
+- Type III: create[Name]Service() + init[Name]UI() for Slider/Complex Forms
+
+Rules:
+1. Subscribe to INTENT_[NAME]_* events (self-contained)
+2. Replace addEventListener with eventBus.publish('INTENT_...')
+3. Return cleanup function
+4. Register in src/ui/init.js
+
+Output: Component code + Contracts + init.js registration
+</code></pre>
+<h3 id="workflow-b-restyle-existing-markup">Workflow B: Restyle Existing Markup<a class="headerlink" href="#workflow-b-restyle-existing-markup" title="Permanent link">&para;</a></h3>
+<p><strong>When</strong>: You have HTML, need new look
+<strong>Context</strong>: <code>src/css/foundation/tokens.css</code>
+<strong>Task</strong>: Style with CSS variables, preserve structure</p>
+<h3 id="workflow-c-legacy-migration">Workflow C: Legacy Migration<a class="headerlink" href="#workflow-c-legacy-migration" title="Permanent link">&para;</a></h3>
+<p><strong>When</strong>: Component uses DOM manipulation, needs EventBus
+<strong>Task</strong>: Run Workflow A Stage 2 on existing file</p>
+<hr />
+<h2 id="complete-example-note-card">Complete Example: Note Card<a class="headerlink" href="#complete-example-note-card" title="Permanent link">&para;</a></h2>
+<pre><code class="language-javascript">// ✅ CORRECT CSMA Pattern
+
+// 1. Service handles business logic
+class NoteService {
+  saveNote(noteData) {
+    const validated = this.validateNote(noteData);
+    const note = { ...validated, id: crypto.randomUUID() };
+    this.saveToStorage(note);
+    this.eventBus.publish('NOTE_SAVED', note);
+  }
+}
+
+// 2. UI subscribes and renders
+class NoteUI {
+  init() {
+    this.eventBus.subscribe('NOTE_SAVED', this.renderNote.bind(this));
+  }
+
+  renderNote(note) {
+    const template = document.getElementById('note-card');
+    const card = template.content.cloneNode(true);
+    const cardEl = card.querySelector('.card');
+
+    // Set ID and state
+    cardEl.id = `note-${note.id}`;
+    Object.assign(cardEl.dataset, {
+      status: note.status,
+      priority: note.priority,
+      category: note.category
+    });
+
+    // CSS-class pattern
+    cardEl.className = `card ${note.status}`;
+
+    // textContent for security
+    card.querySelector('.title').textContent = note.title;
+    card.querySelector('.text').textContent = note.text;
+
+    this.container.appendChild(card);
+  }
+}
+</code></pre>
+<pre><code class="language-css">/* 3. CSS defines all visual states */
+.card.pending {
+  opacity: 0.7;
+  border-left: 4px solid var(--fx-color-warning);
+}
+
+.card.completed {
+  opacity: 1;
+  border: 4px solid var(--fx-color-success);
+}
+
+.card[data-priority=&quot;high&quot;] {
+  box-shadow: var(--shadow-lg);
+}
+
+.card[data-category=&quot;urgent&quot;]::before {
+  content: &quot;🔥 &quot;;
+}
+</code></pre>
+<hr />
+<h2 id="security-checklist">Security Checklist<a class="headerlink" href="#security-checklist" title="Permanent link">&para;</a></h2>
+<p>When generating CSMA code, always:
+- [ ] Use <code>textContent</code> instead of <code>innerHTML</code> for user data
+- [ ] Validate all payloads with validation contracts
+- [ ] Sanitize LLM inputs with <code>sanitizeLLMInput()</code>
+- [ ] Check rate limits for user actions
+- [ ] Use CSP headers in HTML
+- [ ] Never trust external data (localStorage, API, URL params)
+- [ ] <strong>ALWAYS output the <code>Contracts.js</code> code block for any new Event or Intent used</strong></p>
+<hr />
+<h2 id="contract-definition-pattern">Contract Definition Pattern<a class="headerlink" href="#contract-definition-pattern" title="Permanent link">&para;</a></h2>
+<pre><code class="language-javascript">export const NOTE_SAVED = {
+  version: 1,
+  type: 'event',
+  owner: 'note-service',
+  lifecycle: 'active',
+  stability: 'stable',
+  compliance: 'public',
+
+  security: {
+    rateLimits: {
+      perUser: { requests: 10, window: 60000 }
+    }
+  },
+
+  schema: object({
+    id: string(),
+    title: size(string(), 1, 200),
+    text: size(string(), 1, 16000),
+    status: enums(['pending', 'completed', 'failed']),
+    timestamp: number()
+  })
+};
+</code></pre>
+<hr />
+<h2 id="performance-tips">Performance Tips<a class="headerlink" href="#performance-tips" title="Permanent link">&para;</a></h2>
+<p>Fastest (use these):
+1. <strong>className</strong> - Fastest (single reflow)
+2. <strong>dataset</strong> - Fast + semantic
+3. <strong>classList</strong> - Fast + precise
+4. <strong>CSS variables</strong> - Fast for dynamic values
+5. <strong>hidden attribute</strong> - Fast for show/hide</p>
+<p>Avoid:
+- <code>innerHTML</code> (XSS + slow)
+- Direct <code>style.property</code> manipulation (triggers reflow per property)
+- Reading layout properties (<code>offsetHeight</code>, <code>getBoundingClientRect</code>)</p>
+<hr />
+<h2 id="reference-files">Reference Files<a class="headerlink" href="#reference-files" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>src/runtime/Contracts.js</code> - Event definitions</li>
+<li><code>src/ui/init.js</code> - Component initialization</li>
+<li><code>src/css/foundation/tokens.css</code> - CSS variables</li>
+<li><code>src/ui/components/dialog/dialog.js</code> - Type II example (Perfect)</li>
+<li><code>src/services/SliderService.js</code> - Type III example (Perfect)</li>
+</ul>
+<hr />
+<p><strong>Result</strong>: Lean (17KB), fast (15ms updates), secure (6 defense layers), maintainable!</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

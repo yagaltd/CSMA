@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radio Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./radio.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            color: var(--fx-color-fg);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Radio Component</h1>
+    <p class="intro">Single-selection radios with vertical and horizontal layouts.</p>
+
+    <section>
+        <h2>Vertical with Descriptions</h2>
+        <div class="radio-group" data-orientation="vertical">
+            <div class="radio-item" data-state="checked" data-value="free">
+                <input type="radio" name="plan" class="radio-input" id="r-1" checked>
+                <div class="radio-circle"></div>
+                <label for="r-1" class="radio-label">Free Plan</label>
+            </div>
+            <p class="radio-description">Basic features, no cost</p>
+
+            <div class="radio-item" data-state="unchecked" data-value="pro">
+                <input type="radio" name="plan" class="radio-input" id="r-2">
+                <div class="radio-circle"></div>
+                <label for="r-2" class="radio-label">Pro Plan</label>
+            </div>
+            <p class="radio-description">Advanced features, $9/mo</p>
+
+            <div class="radio-item" data-state="unchecked" data-value="enterprise">
+                <input type="radio" name="plan" class="radio-input" id="r-3">
+                <div class="radio-circle"></div>
+                <label for="r-3" class="radio-label">Enterprise</label>
+            </div>
+            <p class="radio-description">Custom solutions, contact us</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Horizontal</h2>
+        <div class="radio-group" data-orientation="horizontal">
+            <div class="radio-item" data-state="checked" data-value="light">
+                <input type="radio" name="theme" class="radio-input" id="r-4" checked>
+                <div class="radio-circle"></div>
+                <label for="r-4" class="radio-label">Light</label>
+            </div>
+            <div class="radio-item" data-state="unchecked" data-value="dark">
+                <input type="radio" name="theme" class="radio-input" id="r-5">
+                <div class="radio-circle"></div>
+                <label for="r-5" class="radio-label">Dark</label>
+            </div>
+            <div class="radio-item" data-state="unchecked" data-value="system">
+                <input type="radio" name="theme" class="radio-input" id="r-6">
+                <div class="radio-circle"></div>
+                <label for="r-6" class="radio-label">System</label>
+            </div>
+        </div>
+    </section>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Radio Component - CSMA UI Library</p>
+    </footer>
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initRadioSystem } from './radio.js';
+        
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+        
+        initRadioSystem(eventBus);
+    </script>
+</body>
+
+</html>

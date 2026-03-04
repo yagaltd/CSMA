@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skeleton Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./skeleton.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .demo-box {
+            padding: 1.5rem;
+            background: var(--fx-color-bg);
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+        }
+
+        .flex {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Skeleton Component</h1>
+    <p class="intro">Loading placeholders with shimmer animation.</p>
+
+    <section>
+        <h2>Text Skeleton</h2>
+        <div class="demo-box">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 80%;"></div>
+            <div class="skeleton skeleton-text" style="width: 60%;"></div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Card Skeleton</h2>
+        <div class="demo-box">
+            <div class="skeleton skeleton-card"></div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Avatar + Text Skeleton</h2>
+        <div class="demo-box">
+            <div class="flex">
+                <div class="skeleton skeleton-avatar"></div>
+                <div style="flex: 1;">
+                    <div class="skeleton skeleton-text" style="width: 120px;"></div>
+                    <div class="skeleton skeleton-text" style="width: 80px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Card Loading State</h2>
+        <div class="demo-box">
+            <div class="skeleton skeleton-image" style="margin-bottom: 1rem;"></div>
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-text"></div>
+            <div class="skeleton skeleton-text" style="width: 70%;"></div>
+            <div style="margin-top: 1rem;">
+                <div class="skeleton skeleton-button"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Skeleton Component - CSMA UI Library</p>
+    </footer>
+</body>
+
+</html>

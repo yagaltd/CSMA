@@ -1,0 +1,1892 @@
+{
+  "version": "1.0",
+  "generated": "2025-12-18T01:33:29.416Z",
+  "project": {
+    "name": "csma",
+    "version": "1.0.0",
+    "description": "Lean, secure, reactive CSMA with ready-to-use components"
+  },
+  "architecture": {
+    "pattern": "CSMA",
+    "reactivity": "CSS-class",
+    "security": "6-layer zero-trust",
+    "validation": "Homemade (forked Superstruct)",
+    "bundler": "Vite"
+  },
+  "runtime": {
+    "core": [
+      "EventBus",
+      "ServiceManager",
+      "Validation",
+      "Contracts"
+    ],
+    "optional": [
+      "Router",
+      "Storage",
+      "I18n",
+      "LogAccumulator",
+      "MetaManager"
+    ],
+    "features": {
+      "pwa": "Service Worker + offline support",
+      "routing": "Hash-based SPA routing",
+      "i18n": "Internationalization",
+      "storage": "IndexedDB wrapper",
+      "devtools": "Development panel (dev mode only)"
+    }
+  },
+  "structure": {
+    "config.js": {
+      "type": "file",
+      "ext": ".js",
+      "path": "config.js"
+    },
+    "css": {
+      "THEME_MIGRATION_GUIDE.md": {
+        "type": "file",
+        "ext": ".md",
+        "path": "css/THEME_MIGRATION_GUIDE.md"
+      },
+      "base.css": {
+        "type": "file",
+        "ext": ".css",
+        "path": "css/base.css"
+      },
+      "foundation": {
+        "components": {
+          "badge.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "css/foundation/components/badge.css"
+          },
+          "button.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "css/foundation/components/button.css"
+          },
+          "card.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "css/foundation/components/card.css"
+          },
+          "index.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "css/foundation/components/index.css"
+          },
+          "input.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "css/foundation/components/input.css"
+          }
+        },
+        "themes": {
+          "dark.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "css/foundation/themes/dark.css"
+          },
+          "light.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "css/foundation/themes/light.css"
+          }
+        },
+        "tokens.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "css/foundation/tokens.css"
+        },
+        "utilities.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "css/foundation/utilities.css"
+        }
+      },
+      "main.css": {
+        "type": "file",
+        "ext": ".css",
+        "path": "css/main.css"
+      },
+      "touch.css": {
+        "type": "file",
+        "ext": ".css",
+        "path": "css/touch.css"
+      }
+    },
+    "main.js": {
+      "type": "file",
+      "ext": ".js",
+      "path": "main.js"
+    },
+    "modules": {
+      "ai": {
+        "README.md": {
+          "type": "file",
+          "ext": ".md",
+          "path": "modules/ai/README.md"
+        },
+        "client": {
+          "AIClient.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/client/AIClient.js"
+          },
+          "ChatSession.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/client/ChatSession.js"
+          },
+          "ToolRegistry.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/client/ToolRegistry.js"
+          }
+        },
+        "contracts": {
+          "ai-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/contracts/ai-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/ai/index.js"
+        },
+        "providers": {
+          "AIProvider.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/providers/AIProvider.js"
+          },
+          "GeminiProvider.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/providers/GeminiProvider.js"
+          },
+          "TransformersProvider.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/providers/TransformersProvider.js"
+          },
+          "stubs": {
+            "GeminiProvider.js": {
+              "type": "file",
+              "ext": ".js",
+              "path": "modules/ai/providers/stubs/GeminiProvider.js"
+            }
+          }
+        },
+        "services": {
+          "AIService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/services/AIService.js"
+          }
+        },
+        "utils": {
+          "id.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/utils/id.js"
+          }
+        }
+      },
+      "camera": {
+        "contracts": {
+          "camera-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/camera/contracts/camera-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/camera/index.js"
+        },
+        "services": {
+          "CameraService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/camera/services/CameraService.js"
+          }
+        },
+        "utils": {
+          "ExifParser.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/camera/utils/ExifParser.js"
+          }
+        }
+      },
+      "checkout": {
+        "contracts": {
+          "checkout-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/checkout/contracts/checkout-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/checkout/index.js"
+        },
+        "services": {
+          "CheckoutService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/checkout/services/CheckoutService.js"
+          }
+        }
+      },
+      "data-table": {
+        "contracts": {
+          "data-table-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/data-table/contracts/data-table-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/data-table/index.js"
+        },
+        "services": {
+          "DataTableService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/data-table/services/DataTableService.js"
+          }
+        }
+      },
+      "example-module": {
+        "contracts": {
+          "example-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/example-module/contracts/example-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/example-module/index.js"
+        },
+        "services": {
+          "ExampleModuleService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/example-module/services/ExampleModuleService.js"
+          }
+        }
+      },
+      "file-system": {
+        "contracts": {
+          "file-system-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/file-system/contracts/file-system-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/file-system/index.js"
+        },
+        "services": {
+          "FileSystem.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/file-system/services/FileSystem.js"
+          },
+          "MetadataStore.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/file-system/services/MetadataStore.js"
+          },
+          "StreamProcessor.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/file-system/services/StreamProcessor.js"
+          }
+        },
+        "utils": {
+          "FallbackStorage.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/file-system/utils/FallbackStorage.js"
+          },
+          "FileHandleCache.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/file-system/utils/FileHandleCache.js"
+          },
+          "MimeMapper.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/file-system/utils/MimeMapper.js"
+          }
+        }
+      },
+      "form-management": {
+        "contracts": {
+          "form-management-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/form-management/contracts/form-management-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/form-management/index.js"
+        },
+        "services": {
+          "FormManagementService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/form-management/services/FormManagementService.js"
+          }
+        }
+      },
+      "i18n": {
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/i18n/index.js"
+        },
+        "services": {
+          "I18n.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/i18n/services/I18n.js"
+          }
+        }
+      },
+      "image-optimizer": {
+        "contracts": {
+          "image-optimizer-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/image-optimizer/contracts/image-optimizer-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/image-optimizer/index.js"
+        },
+        "services": {
+          "ImageOptimizerService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/image-optimizer/services/ImageOptimizerService.js"
+          }
+        }
+      },
+      "llm": {
+        "services": {
+          "LLMService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/llm/services/LLMService.js"
+          }
+        }
+      },
+      "location": {
+        "contracts": {
+          "location-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/location/contracts/location-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/location/index.js"
+        },
+        "services": {
+          "LocationService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/location/services/LocationService.js"
+          }
+        }
+      },
+      "media-capture": {
+        "contracts": {
+          "media-capture-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/media-capture/contracts/media-capture-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/media-capture/index.js"
+        },
+        "services": {
+          "MediaCaptureService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/media-capture/services/MediaCaptureService.js"
+          }
+        }
+      },
+      "media-transform": {
+        "contracts": {
+          "media-transform-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/media-transform/contracts/media-transform-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/media-transform/index.js"
+        },
+        "services": {
+          "MediaTransformService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/media-transform/services/MediaTransformService.js"
+          }
+        }
+      },
+      "modal-system": {
+        "contracts": {
+          "modal-system-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/modal-system/contracts/modal-system-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/modal-system/index.js"
+        },
+        "services": {
+          "ModalService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/modal-system/services/ModalService.js"
+          }
+        }
+      },
+      "network-status": {
+        "contracts": {
+          "network-status-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/network-status/contracts/network-status-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/network-status/index.js"
+        },
+        "services": {
+          "NetworkStatusService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/network-status/services/NetworkStatusService.js"
+          }
+        }
+      },
+      "optimistic-sync": {
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/optimistic-sync/index.js"
+        },
+        "services": {
+          "ActionLogService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/optimistic-sync/services/ActionLogService.js"
+          },
+          "CrdtReducerRegistry.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/optimistic-sync/services/CrdtReducerRegistry.js"
+          },
+          "OptimisticSyncService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/optimistic-sync/services/OptimisticSyncService.js"
+          },
+          "SyncTransportService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/optimistic-sync/services/SyncTransportService.js"
+          }
+        }
+      },
+      "router": {
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/router/index.js"
+        },
+        "services": {
+          "Router.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/router/services/Router.js"
+          }
+        }
+      },
+      "search": {
+        "adapters": {
+          "SearchFacade.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/search/adapters/SearchFacade.js"
+          }
+        },
+        "contracts": {
+          "search-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/search/contracts/search-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/search/index.js"
+        },
+        "services": {
+          "AISearchService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/search/services/AISearchService.js"
+          },
+          "BaseSearchService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/search/services/BaseSearchService.js"
+          },
+          "CoreSearchService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/search/services/CoreSearchService.js"
+          },
+          "EnhancedSearchService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/search/services/EnhancedSearchService.js"
+          },
+          "SearchModuleService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/search/services/SearchModuleService.js"
+          }
+        }
+      },
+      "static-render": {
+        "compiler": {
+          "IslandAnalyzer.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/static-render/compiler/IslandAnalyzer.js"
+          }
+        },
+        "contracts": {
+          "island-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/static-render/contracts/island-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/static-render/index.js"
+        },
+        "runtime": {
+          "IslandRuntime.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/static-render/runtime/IslandRuntime.js"
+          },
+          "Telemetry.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/static-render/runtime/Telemetry.js"
+          },
+          "hydrators": {
+            "IdleHydrator.js": {
+              "type": "file",
+              "ext": ".js",
+              "path": "modules/static-render/runtime/hydrators/IdleHydrator.js"
+            },
+            "LoadHydrator.js": {
+              "type": "file",
+              "ext": ".js",
+              "path": "modules/static-render/runtime/hydrators/LoadHydrator.js"
+            },
+            "ManualHydrator.js": {
+              "type": "file",
+              "ext": ".js",
+              "path": "modules/static-render/runtime/hydrators/ManualHydrator.js"
+            },
+            "VisibleHydrator.js": {
+              "type": "file",
+              "ext": ".js",
+              "path": "modules/static-render/runtime/hydrators/VisibleHydrator.js"
+            },
+            "index.js": {
+              "type": "file",
+              "ext": ".js",
+              "path": "modules/static-render/runtime/hydrators/index.js"
+            }
+          }
+        }
+      },
+      "storage": {
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/storage/index.js"
+        },
+        "services": {
+          "Storage.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/storage/services/Storage.js"
+          }
+        }
+      },
+      "sync-queue": {
+        "contracts": {
+          "sync-queue-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/sync-queue/contracts/sync-queue-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/sync-queue/index.js"
+        },
+        "services": {
+          "SyncQueueService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/sync-queue/services/SyncQueueService.js"
+          }
+        }
+      }
+    },
+    "pages": {
+      "about": {
+        "index.html": {
+          "type": "file",
+          "ext": ".html",
+          "path": "pages/about/index.html"
+        }
+      },
+      "blog": {
+        "post.html": {
+          "type": "file",
+          "ext": ".html",
+          "path": "pages/blog/post.html"
+        }
+      },
+      "products": {
+        "detail.html": {
+          "type": "file",
+          "ext": ".html",
+          "path": "pages/products/detail.html"
+        },
+        "index.html": {
+          "type": "file",
+          "ext": ".html",
+          "path": "pages/products/index.html"
+        }
+      },
+      "test": {
+        "hydration.html": {
+          "type": "file",
+          "ext": ".html",
+          "path": "pages/test/hydration.html"
+        }
+      }
+    },
+    "runtime": {
+      "ChannelManager.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ChannelManager.js"
+      },
+      "Contracts.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/Contracts.js"
+      },
+      "CrossTabLeader.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/CrossTabLeader.js"
+      },
+      "EventBus.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/EventBus.js"
+      },
+      "LogAccumulator.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/LogAccumulator.js"
+      },
+      "MetaManager.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/MetaManager.js"
+      },
+      "ModuleManager.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ModuleManager.js"
+      },
+      "RateLimiter.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/RateLimiter.js"
+      },
+      "ServiceManager.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ServiceManager.js"
+      },
+      "ThreadManager.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ThreadManager.js"
+      },
+      "devtools": {
+        "DevPanel.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "runtime/devtools/DevPanel.js"
+        },
+        "devpanel.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "runtime/devtools/devpanel.css"
+        }
+      },
+      "validation": {
+        "contract.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "runtime/validation/contract.js"
+        },
+        "error.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "runtime/validation/error.js"
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "runtime/validation/index.js"
+        },
+        "struct.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "runtime/validation/struct.js"
+        },
+        "types": {
+          "primitives.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "runtime/validation/types/primitives.js"
+          },
+          "refinements.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "runtime/validation/types/refinements.js"
+          }
+        },
+        "utils.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "runtime/validation/utils.js"
+        },
+        "validators": {
+          "security.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "runtime/validation/validators/security.js"
+          },
+          "semantic.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "runtime/validation/validators/semantic.js"
+          }
+        }
+      }
+    },
+    "services": {
+      "DateService.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "services/DateService.js"
+      },
+      "ExampleService.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "services/ExampleService.js"
+      },
+      "FileUploadService.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "services/FileUploadService.js"
+      },
+      "PlatformService.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "services/PlatformService.js"
+      },
+      "SliderService.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "services/SliderService.js"
+      },
+      "core": {
+        "APIWrapper.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "services/core/APIWrapper.js"
+        },
+        "AuthService.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "services/core/AuthService.js"
+        },
+        "CacheManager.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "services/core/CacheManager.js"
+        },
+        "DataAggregator.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "services/core/DataAggregator.js"
+        },
+        "FormValidator.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "services/core/FormValidator.js"
+        }
+      }
+    },
+    "ui": {
+      "components": {
+        "accordion": {
+          "accordion.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/accordion/accordion.css"
+          },
+          "accordion.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/accordion/accordion.demo.html"
+          },
+          "accordion.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/accordion/accordion.js"
+          }
+        },
+        "alert-dialog": {
+          "alert-dialog.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/alert-dialog/alert-dialog.css"
+          },
+          "alert-dialog.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/alert-dialog/alert-dialog.demo.html"
+          },
+          "alert-dialog.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/alert-dialog/alert-dialog.js"
+          }
+        },
+        "analytics-consent": {
+          "analytics-consent.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/analytics-consent/analytics-consent.css"
+          },
+          "analytics-consent.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/analytics-consent/analytics-consent.js"
+          }
+        },
+        "avatar": {
+          "avatar.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/avatar/avatar.css"
+          },
+          "avatar.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/avatar/avatar.demo.html"
+          }
+        },
+        "badge": {
+          "badge.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/badge/badge.css"
+          },
+          "badge.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/badge/badge.demo.html"
+          }
+        },
+        "breadcrumb": {
+          "breadcrumb.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/breadcrumb/breadcrumb.css"
+          },
+          "breadcrumb.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/breadcrumb/breadcrumb.demo.html"
+          }
+        },
+        "button": {
+          "button.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/button/button.css"
+          },
+          "manifest.json": {
+            "type": "file",
+            "ext": ".json",
+            "path": "ui/components/button/manifest.json"
+          }
+        },
+        "card": {
+          "card.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/card/card.css"
+          },
+          "card.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/card/card.demo.html"
+          }
+        },
+        "carousel": {
+          "carousel.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/carousel/carousel.css"
+          },
+          "carousel.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/carousel/carousel.demo.html"
+          },
+          "carousel.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/carousel/carousel.js"
+          }
+        },
+        "chat": {
+          "chat.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/chat/chat.css"
+          },
+          "chat.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/chat/chat.demo.html"
+          }
+        },
+        "checkbox": {
+          "checkbox.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/checkbox/checkbox.css"
+          },
+          "checkbox.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/checkbox/checkbox.demo.html"
+          },
+          "checkbox.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/checkbox/checkbox.js"
+          }
+        },
+        "datepicker": {
+          "datepicker.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/datepicker/datepicker.css"
+          },
+          "datepicker.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/datepicker/datepicker.demo.html"
+          },
+          "datepicker.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/datepicker/datepicker.js"
+          }
+        },
+        "demos.html": {
+          "type": "file",
+          "ext": ".html",
+          "path": "ui/components/demos.html"
+        },
+        "dialog": {
+          "dialog.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/dialog/dialog.css"
+          },
+          "dialog.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/dialog/dialog.demo.html"
+          },
+          "dialog.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/dialog/dialog.js"
+          }
+        },
+        "dropdown": {
+          "dropdown.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/dropdown/dropdown.css"
+          },
+          "dropdown.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/dropdown/dropdown.demo.html"
+          },
+          "dropdown.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/dropdown/dropdown.js"
+          }
+        },
+        "file-upload": {
+          "file-upload.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/file-upload/file-upload.css"
+          },
+          "file-upload.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/file-upload/file-upload.demo.html"
+          },
+          "file-upload.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/file-upload/file-upload.js"
+          }
+        },
+        "index.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "ui/components/index.css"
+        },
+        "input": {
+          "input.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/input/input.css"
+          },
+          "input.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/input/input.demo.html"
+          },
+          "input.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/input/input.js"
+          }
+        },
+        "navbar": {
+          "navbar.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/navbar/navbar.css"
+          },
+          "navbar.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/navbar/navbar.demo.html"
+          },
+          "navbar.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/navbar/navbar.js"
+          }
+        },
+        "otp": {
+          "otp.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/otp/otp.css"
+          },
+          "otp.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/otp/otp.demo.html"
+          },
+          "otp.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/otp/otp.js"
+          }
+        },
+        "pagination": {
+          "pagination.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/pagination/pagination.css"
+          },
+          "pagination.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/pagination/pagination.demo.html"
+          },
+          "pagination.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/pagination/pagination.js"
+          }
+        },
+        "popover": {
+          "popover.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/popover/popover.css"
+          },
+          "popover.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/popover/popover.demo.html"
+          },
+          "popover.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/popover/popover.js"
+          }
+        },
+        "progress": {
+          "progress.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/progress/progress.css"
+          },
+          "progress.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/progress/progress.demo.html"
+          },
+          "progress.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/progress/progress.js"
+          }
+        },
+        "radio": {
+          "radio.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/radio/radio.css"
+          },
+          "radio.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/radio/radio.demo.html"
+          },
+          "radio.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/radio/radio.js"
+          }
+        },
+        "select": {
+          "select.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/select/select.css"
+          },
+          "select.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/select/select.demo.html"
+          }
+        },
+        "separator": {
+          "separator.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/separator/separator.css"
+          },
+          "separator.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/separator/separator.demo.html"
+          }
+        },
+        "skeleton": {
+          "skeleton.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/skeleton/skeleton.css"
+          },
+          "skeleton.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/skeleton/skeleton.demo.html"
+          }
+        },
+        "slider": {
+          "manifest.json": {
+            "type": "file",
+            "ext": ".json",
+            "path": "ui/components/slider/manifest.json"
+          },
+          "slider.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/slider/slider.css"
+          },
+          "slider.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/slider/slider.demo.html"
+          },
+          "slider.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/slider/slider.js"
+          }
+        },
+        "switch": {
+          "switch.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/switch/switch.css"
+          },
+          "switch.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/switch/switch.demo.html"
+          },
+          "switch.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/switch/switch.js"
+          }
+        },
+        "tabs": {
+          "tabs.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/tabs/tabs.css"
+          },
+          "tabs.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/tabs/tabs.demo.html"
+          },
+          "tabs.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/tabs/tabs.js"
+          }
+        },
+        "textarea": {
+          "textarea.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/textarea/textarea.css"
+          },
+          "textarea.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/textarea/textarea.demo.html"
+          },
+          "textarea.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/textarea/textarea.js"
+          }
+        },
+        "theme-loader.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "ui/components/theme-loader.js"
+        },
+        "toast": {
+          "toast.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/toast/toast.css"
+          },
+          "toast.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/toast/toast.demo.html"
+          },
+          "toast.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/toast/toast.js"
+          }
+        },
+        "tooltip": {
+          "tooltip.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/tooltip/tooltip.css"
+          },
+          "tooltip.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/tooltip/tooltip.demo.html"
+          },
+          "tooltip.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/tooltip/tooltip.js"
+          }
+        }
+      },
+      "icons": {
+        "archive.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/archive.svg"
+        },
+        "bell.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/bell.svg"
+        },
+        "bookmark.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/bookmark.svg"
+        },
+        "bug.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/bug.svg"
+        },
+        "calendar.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/calendar.svg"
+        },
+        "camera.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/camera.svg"
+        },
+        "chart-bar.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/chart-bar.svg"
+        },
+        "check.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/check.svg"
+        },
+        "chevron-left.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/chevron-left.svg"
+        },
+        "chevron-right.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/chevron-right.svg"
+        },
+        "circle.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/circle.svg"
+        },
+        "clipboard.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/clipboard.svg"
+        },
+        "clock.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/clock.svg"
+        },
+        "cloud.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/cloud.svg"
+        },
+        "code.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/code.svg"
+        },
+        "command.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/command.svg"
+        },
+        "copy.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/copy.svg"
+        },
+        "diamond.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/diamond.svg"
+        },
+        "download.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/download.svg"
+        },
+        "eye.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/eye.svg"
+        },
+        "file-text.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/file-text.svg"
+        },
+        "file.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/file.svg"
+        },
+        "flag.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/flag.svg"
+        },
+        "folder.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/folder.svg"
+        },
+        "heart.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/heart.svg"
+        },
+        "image.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/image.svg"
+        },
+        "inbox.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/inbox.svg"
+        },
+        "info.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/info.svg"
+        },
+        "key.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/key.svg"
+        },
+        "laptop.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/laptop.svg"
+        },
+        "layers.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/layers.svg"
+        },
+        "layout-dashboard.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/layout-dashboard.svg"
+        },
+        "link.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/link.svg"
+        },
+        "lock.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/lock.svg"
+        },
+        "mail.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/mail.svg"
+        },
+        "menu.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/menu.svg"
+        },
+        "minus.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/minus.svg"
+        },
+        "monitor.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/monitor.svg"
+        },
+        "moon.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/moon.svg"
+        },
+        "music.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/music.svg"
+        },
+        "palette.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/palette.svg"
+        },
+        "pencil.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/pencil.svg"
+        },
+        "phone.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/phone.svg"
+        },
+        "pin.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/pin.svg"
+        },
+        "plus.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/plus.svg"
+        },
+        "rocket.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/rocket.svg"
+        },
+        "scissors.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/scissors.svg"
+        },
+        "search.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/search.svg"
+        },
+        "send.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/send.svg"
+        },
+        "settings.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/settings.svg"
+        },
+        "smartphone.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/smartphone.svg"
+        },
+        "sparkle.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/sparkle.svg"
+        },
+        "square.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/square.svg"
+        },
+        "star.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/star.svg"
+        },
+        "sun.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/sun.svg"
+        },
+        "trash.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/trash.svg"
+        },
+        "triangle.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/triangle.svg"
+        },
+        "upload.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/upload.svg"
+        },
+        "user.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/user.svg"
+        },
+        "users.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/users.svg"
+        },
+        "video.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/video.svg"
+        },
+        "x.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/x.svg"
+        },
+        "zap.svg": {
+          "type": "file",
+          "ext": ".svg",
+          "path": "ui/icons/zap.svg"
+        }
+      },
+      "init.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "ui/init.js"
+      },
+      "pages": {
+        "index.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "ui/pages/index.css"
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "ui/pages/index.js"
+        }
+      },
+      "patterns": {
+        "auth-ui": {
+          "auth-ui.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/patterns/auth-ui/auth-ui.css"
+          },
+          "auth-ui.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/patterns/auth-ui/auth-ui.demo.html"
+          },
+          "auth-ui.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/patterns/auth-ui/auth-ui.js"
+          }
+        },
+        "checkout": {
+          "checkout.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/patterns/checkout/checkout.css"
+          },
+          "checkout.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/patterns/checkout/checkout.demo.html"
+          },
+          "checkout.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/patterns/checkout/checkout.js"
+          }
+        },
+        "data-table": {
+          "data-table.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/patterns/data-table/data-table.css"
+          },
+          "data-table.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/patterns/data-table/data-table.demo.html"
+          },
+          "data-table.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/patterns/data-table/data-table.js"
+          }
+        },
+        "modal-system": {
+          "modal-system.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/patterns/modal-system/modal-system.css"
+          },
+          "modal-system.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/patterns/modal-system/modal-system.demo.html"
+          },
+          "modal-system.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/patterns/modal-system/modal-system.js"
+          }
+        },
+        "search-demo": {
+          "data": {
+            "blog-posts.csv": {
+              "type": "file",
+              "ext": ".csv",
+              "path": "ui/patterns/search-demo/data/blog-posts.csv"
+            }
+          },
+          "search-demo.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/patterns/search-demo/search-demo.css"
+          },
+          "search-demo.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/patterns/search-demo/search-demo.demo.html"
+          },
+          "search-demo.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/patterns/search-demo/search-demo.js"
+          }
+        },
+        "sidebar": {
+          "sidebar.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/patterns/sidebar/sidebar.css"
+          },
+          "sidebar.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/patterns/sidebar/sidebar.demo.html"
+          },
+          "sidebar.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/patterns/sidebar/sidebar.js"
+          }
+        }
+      }
+    },
+    "utils": {
+      "classNameSanitizer.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "utils/classNameSanitizer.js"
+      },
+      "platform.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "utils/platform.js"
+      },
+      "sanitize.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "utils/sanitize.js"
+      }
+    }
+  },
+  "agents": [
+    "ExampleService"
+  ],
+  "contracts": [
+    "Contracts"
+  ],
+  "stack": {
+    "runtime": {
+      "flexsearch": "^0.7.43"
+    },
+    "devDependencies": {
+      "@capacitor/camera": "^6.0.0",
+      "@capacitor/core": "^6.0.0",
+      "@capacitor/filesystem": "^6.0.0",
+      "@capacitor/local-notifications": "^6.0.0",
+      "@playwright/test": "^1.57.0",
+      "jsdom": "^27.3.0",
+      "mikado-compile": "^0.7.0",
+      "terser": "^5.44.1",
+      "vite": "^5.0.0",
+      "vitest": "^1.0.0",
+      "@aws-sdk/client-s3": "^3.685.0"
+    }
+  },
+  "guidelines": {
+    "security": "Zero-trust validation, CSP headers, input sanitization",
+    "reactivity": "CSS-class pattern for 10x faster DOM updates",
+    "validation": "Runtime validation ships to production",
+    "testing": "Vitest for unit tests",
+    "bundleSize": "Target <25KB gzipped total"
+  }
+}

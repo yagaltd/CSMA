@@ -1,0 +1,19 @@
+/**
+ * Separator Component CSS
+ * CSMA-compliant styles - Extracted from kimi-atomic1.html
+ */
+
+.separator {
+    height: 1px;
+    width: 100%;
+    background-color: var(--fx-color-border);
+    margin: 1.5rem 0;
+    position: relative;
+}
+
+.separator-vertical {
+    width: 1px;
+    height: auto;
+    align-self: stretch;
+    margin: 0 1.5rem;
+}

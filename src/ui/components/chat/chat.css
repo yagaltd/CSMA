@@ -1,0 +1,131 @@
+/**
+ * Chat Bubble Component CSS
+ * Converted from DaisyUI to CSMA CSS custom properties
+ * Type I: Pure CSS component
+ */
+
+.chat {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--spacing-lg);
+  padding: var(--spacing-lg);
+}
+
+.chat-start {
+  grid-template-columns: auto 1fr;
+}
+
+.chat-end {
+  grid-template-columns: 1fr auto;
+}
+
+.chat-bubble {
+  display: block;
+  width: fit-content;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  max-width: 90%;
+  word-wrap: break-word;
+}
+
+.chat-bubble-primary {
+  background-color: var(--fx-color-primary);
+  color: var(--fx-color-on-primary);
+}
+
+.chat-bubble-secondary {
+  background-color: var(--fx-color-secondary);
+  color: var(--fx-color-on-secondary);
+}
+
+.chat-bubble-accent {
+  background-color: var(--fx-color-accent);
+  color: var(--fx-color-on-accent);
+}
+
+.chat-bubble-info {
+  background-color: var(--fx-color-info);
+  color: var(--fx-color-on-info);
+}
+
+.chat-bubble-success {
+  background-color: var(--fx-color-success);
+  color: var(--fx-color-on-success);
+}
+
+.chat-bubble-warning {
+  background-color: var(--fx-color-warning);
+  color: var(--fx-color-on-warning);
+}
+
+.chat-bubble-error {
+  background-color: var(--fx-color-danger);
+  color: var(--fx-color-on-danger);
+}
+
+.chat-image {
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.chat-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.chat-header {
+  grid-column: 1 / -1;
+  font-size: var(--font-size-sm);
+  line-height: 1.25rem;
+  opacity: 0.6;
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.chat-footer {
+  grid-column: 1 / -1;
+  font-size: var(--font-size-sm);
+  line-height: 1.25rem;
+  opacity: 0.6;
+  margin-top: var(--spacing-xs);
+}
+
+
+.chat-start .chat-header,
+.chat-start .chat-footer {
+  text-align: left;
+  margin-left: 3.25rem;
+}
+
+.chat-end .chat-header,
+.chat-end .chat-footer {
+  text-align: right;
+  margin-right: 3.25rem;
+}
+
+.chat-end .chat-bubble {
+  margin-left: auto;
+}
+
+.chat-start .chat-image {
+  grid-column: 1;
+}
+
+.chat-end .chat-image {
+  grid-column: 2;
+}
+
+.chat-start .chat-bubble {
+  grid-column: 2;
+  justify-self: start;
+}
+
+.chat-end .chat-bubble {
+  grid-column: 1;
+  justify-self: end;
+}

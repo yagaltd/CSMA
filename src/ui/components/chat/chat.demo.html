@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bubble Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./chat.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .demo-section {
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            background: transparent;
+        }
+        
+        [data-theme="dark"] .demo-section {
+            background: var(--secondary);
+            border-color: var(--border);
+        }
+
+        .feature-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            background: var(--fx-color-success);
+            color: var(--fx-color-on-success);
+            margin-top: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        code {
+            background: transparent;
+            padding: 0.125rem 0.25rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        
+        [data-theme="dark"] code {
+            background: var(--secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Chat Bubble Component</h1>
+    <p class="intro">Message bubbles for conversations with avatars, headers, and color variants.</p>
+
+    <div class="feature-badge">Type I: Pure CSS (No JavaScript Required)</div>
+
+    <section>
+        <h2>Basic Chat Bubbles</h2>
+        <div class="demo-section">
+            <h3>Receiver Message (chat-start) - Left Side</h3>
+            <div class="chat chat-start">
+                <div class="chat-bubble chat-bubble-primary">
+                    Hi! How can I help you today?
+                </div>
+            </div>
+
+            <h3>Sender Message (chat-end) - Right Side</h3>
+            <div class="chat chat-end">
+                <div class="chat-bubble chat-bubble-secondary">
+                    I have a question about CSMA architecture.
+                </div>
+            </div>
+        </div>
+
+        <pre><code>&lt;!-- Receiver message (Other person) - Left side -->
+&lt;div class="chat chat-start">
+  &lt;div class="chat-bubble chat-bubble-primary">Message&lt;/div>
+&lt;/div>
+
+&lt;!-- Sender message (You) - Right side -->
+&lt;div class="chat chat-end">
+  &lt;div class="chat-bubble chat-bubble-secondary">Message&lt;/div>
+&lt;/div&gt;</code></pre>
+    </section>
+
+    <section>
+        <h2>Chat with Avatars</h2>
+        <div class="demo-section">
+            <div class="chat chat-start">
+                <div class="chat-image avatar">
+                    <div class="w-10 rounded-full">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0QTkwRTIiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxNyIgcj0iOCIgZmlsbD0id2hpdGUiLz4KPGVsbGlwc2UgY3g9IjIwIiBjeT0iMzEiIHJ4PSIxMiIgcnk9IjgiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=" alt="Bot avatar">
+                    </div>
+                </div>
+                    <div class="chat-bubble chat-bubble-primary">
+                        Hello! Welcome to CSMA Kit.
+                </div>
+            </div>
+
+            <br>
+
+            <div class="chat chat-end">
+                <div class="chat-image avatar">
+                    <div class="w-10 rounded-full">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2NjdlZWEiLz4KPGVsbGlwc2UgY3g9IjE0IiBjeT0iMTYiIHJ4PSIyIiByeT0iMyIgZmlsbD0iIzJkM2Y1MCIvPgo8ZWxsaXBzZSBjeD0iMjYiIGN5PSIxNiIgcng9IjIiIHJ5PSIzIiBmaWxsPSIjMmQzZjUwIi8+CjxwYXRoIGQ9Ik0xMiAyNEMxMiAyNiAyMC4xIDI3IDIzIDI3QzI2IDI3IDI4IDI2IDI4IDI0QzI4IDIyIDI2IDIwIDIzIDIwQzIwLjEgMjAgMTIgMjIgMTIgMjRaIiBmaWxsPSIjMmQzZjUwIi8+Cjwvc3ZnPgo=" alt="User avatar">
+                    </div>
+                </div>
+                <div class="chat-bubble chat-bubble-secondary">
+                    Nice to meet you! This component is awesome.
+                </div>
+            </div>
+        </div>
+
+        <pre><code>&lt;!-- Chat with avatar -->
+&lt;div class="chat chat-start">
+  &lt;div class="chat-image avatar">
+    &lt;img src="/avatar.jpg" alt="User">
+  &lt;/div>
+  &lt;div class="chat-bubble chat-bubble-primary">
+    Hello! Welcome to CSMA.
+  &lt;/div>
+&lt;/div&gt;</code></pre>
+    </section>
+
+    <section>
+        <h2>Chat with Header & Footer</h2>
+        <div class="demo-section">
+            <div class="chat chat-start">
+                <div class="chat-image avatar">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM0QTkwRTIiLz4KPGNpcmNsZSBjeD0iMjAiIGN5PSIxNyIgcj0iOCIgZmlsbD0id2hpdGUiLz4KPGVsbGlwc2UgY3g9IjIwIiBjeT0iMzEiIHJ4PSIxMiIgcnk9IjgiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=" alt="AI assistant">
+                </div>
+                <div class="chat-header">
+                    AI Assistant
+                    <time style="margin-left: var(--spacing-lg); font-size: var(--font-size-xs); opacity: 0.6;">12:45</time>
+                </div>
+                <div class="chat-bubble chat-bubble-primary">
+                    CSMA is 17KB gzipped and 10x faster than React!
+                </div>
+                <div class="chat-footer">Delivered</div>
+            </div>
+
+            <br>
+
+            <div class="chat chat-end">
+                <div class="chat-image avatar">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2NjdlZWEiLz4KPGVsbGlwc2UgY3g9IjE0IiBjeT0iMTYiIHJ4PSIyIiByeT0iMyIgZmlsbD0iIzJkM2Y1MCIvPgo8ZWxsaXBzZSBjeD0iMjYiIGN5PSIxNiIgcng9IjIiIHJ5PSIzIiBmaWxsPSIjMmQzZjUwIi8+CjxwYXRoIGQ9Ik0xMiAyNEMxMiAyNiAyMC4xIDI3IDIzIDI3QzI2IDI3IDI4IDI2IDI4IDI0QzI4IDIyIDI2IDIwIDIzIDIwQzIwLjEgMjAgMTIgMjIgMTIgMjRaIiBmaWxsPSIjMmQzZjUwIi8+Cjwvc3ZnPgo=" alt="User">
+                </div>
+                <div class="chat-header" style="flex-direction: row-reverse;">
+                    <time style="margin-right: var(--spacing-lg); font-size: var(--font-size-xs); opacity: 0.6;">12:46</time>
+                    User
+                </div>
+                <div class="chat-bubble chat-bubble-secondary">
+                    That's amazing! No frameworks needed.
+                </div>
+                <div class="chat-footer">Read</div>
+            </div>
+        </div>
+
+        <pre><code>&lt;div class="chat chat-start">
+  &lt;div class="chat-image avatar">...&lt;/div>
+  &lt;div class="chat-header">
+    AI Assistant
+    &lt;time>12:45&lt;/time>
+  &lt;/div>
+  &lt;div class="chat-bubble chat-bubble-primary">
+    Message content
+  &lt;/div>
+  &lt;div class="chat-footer">Delivered&lt;/div>
+&lt;/div&gt;</code></pre>
+    </section>
+
+    <section>
+        <h2>Color Variants</h2>
+        <div class="demo-section">
+            <div class="chat chat-start">
+                <div class="chat-bubble chat-bubble-primary">Primary (default)</div>
+            </div>
+            <div class="chat chat-start">
+                <div class="chat-bubble chat-bubble-secondary">Secondary</div>
+            </div>
+            <div class="chat chat-start">
+                <div class="chat-bubble chat-bubble-accent">Accent</div>
+            </div>
+            <div class="chat chat-start">
+                <div class="chat-bubble chat-bubble-info">Info</div>
+            </div>
+            <div class="chat chat-start">
+                <div class="chat-bubble chat-bubble-success">Success</div>
+            </div>
+            <div class="chat chat-start">
+                <div class="chat-bubble chat-bubble-warning">Warning</div>
+            </div>
+            <div class="chat chat-start">
+                <div class="chat-bubble chat-bubble-error">Error</div>
+            </div>
+        </div>
+
+        <pre><code>&lt;div class="chat chat-start">
+  &lt;div class="chat-bubble chat-bubble-primary">Primary&lt;/div>
+&lt;/div>
+
+&lt;div class="chat chat-start">
+  &lt;div class="chat-bubble chat-bubble-success">Success&lt;/div>
+&lt;/div&gt;</code></pre>
+    </section>
+
+    <section>
+        <h2>CSS Classes Reference</h2>
+        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+            <li><code>.chat</code> - Main container (grid layout)</li>
+            <li><code>.chat-start</code> - Sender message (aligns left)</li>
+            <li><code>.chat-end</code> - Receiver message (aligns right)</li>
+            <li><code>.chat-image</code> - Avatar container</li>
+            <li><code>.chat-header</code> - Name + timestamp header</li>
+            <li><code>.chat-footer</code> - Status message (Delivered, Read)</li>
+            <li><code>.chat-bubble</code> - Message bubble</li>
+            <li><code>.chat-bubble-primary|secondary|accent|info|success|warning|error</code> - Color variants</li>
+        </ul>
+    </section>
+
+    <footer>
+        <p>Chat Bubble Component - CSMA UI Library (Type I: Pure CSS)</p>
+    </footer>
+</body>
+
+</html>

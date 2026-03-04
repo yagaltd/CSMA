@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./input.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            color: var(--fx-color-fg);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Input Component</h1>
+    <p class="intro">Form inputs with validation, icons, and size variants.</p>
+
+    <section>
+        <h2>Default Input</h2>
+        <div class="input-group" data-size="md" data-state="default">
+            <label for="input-1" class="input-label">
+                Email <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+                <input type="email" id="input-1" class="input" placeholder="Enter your email"
+                    aria-describedby="input-1-helper input-1-error">
+                <button class="input-clear" aria-label="Clear input">×</button>
+            </div>
+            <p id="input-1-helper" class="input-helper">We'll never share your email</p>
+            <p id="input-1-error" class="input-error" role="alert">Please enter a valid email</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Small with Icon</h2>
+        <div class="input-group" data-size="sm" data-state="default">
+            <label for="input-2" class="input-label">Search</label>
+            <div class="input-wrapper">
+                <img class="input-icon input-icon-left" src="../../icons/search.svg" alt="">
+                <input type="search" id="input-2" class="input" placeholder="Search...">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Large with Error</h2>
+        <div class="input-group" data-size="lg" data-state="error">
+            <label for="input-3" class="input-label">Username</label>
+            <div class="input-wrapper">
+                <input type="text" id="input-3" class="input" placeholder="Choose a username" value="admin">
+            </div>
+            <p class="input-helper">Choose a unique username</p>
+            <p class="input-error" role="alert">Username is already taken</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Disabled</h2>
+        <div class="input-group" data-size="md" data-state="disabled">
+            <label for="input-4" class="input-label">API Key</label>
+            <div class="input-wrapper">
+                <input type="text" id="input-4" class="input" placeholder="Read only" value="sk-xxxx-xxxx-xxxx"
+                    disabled>
+            </div>
+            <p class="input-helper">Contact support to change</p>
+        </div>
+    </section>
+
+    <section>
+        <h2>Login Form (Complete Authentication)</h2>
+        <form method="post" autocomplete="on" aria-label="Login form">
+            <div class="input-group" data-size="md" data-state="default">
+                <label for="input-username" class="input-label">Username</label>
+                <div class="input-wrapper">
+                    <input type="text" id="input-username" class="input" placeholder="Enter username" autocomplete="username">
+                </div>
+            </div>
+            <div class="input-group" data-size="md" data-state="default">
+                <label for="input-password" class="input-label">Password</label>
+                <div class="input-wrapper">
+                    <input type="password" id="input-password" class="input" placeholder="Enter password" autocomplete="current-password">
+                    <button type="button" class="input-clear" aria-label="Clear input">×</button>
+                </div>
+                <p class="input-helper">Must be at least 8 characters</p>
+            </div>
+            <button type="submit" class="button" data-variant="primary" style="margin-top: 1rem;">Sign In</button>
+        </form>
+    </section>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Input Component - CSMA UI Library</p>
+    </footer>
+
+    <script type="module" src="./input.js"></script>
+</body>
+
+</html>

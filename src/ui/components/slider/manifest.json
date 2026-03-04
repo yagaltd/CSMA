@@ -1,0 +1,137 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "slider",
+    "type": "II",
+    "owner": "ui-service",
+    "lifecycle": "active",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [
+      {
+        "intent": "INTENT_SLIDER_VALUE_CHANGED",
+        "type": "UI",
+        "version": "1.0.0",
+        "description": "User changed slider value (drag, click, keyboard)",
+        "payloadSchema": {
+          "type": "object",
+          "properties": {
+            "sliderId": {
+              "type": "string",
+              "required": true,
+              "description": "Unique identifier of the slider"
+            },
+            "value": {
+              "type": "number",
+              "required": true,
+              "description": "Current value of the slider"
+            },
+            "min": {
+              "type": "number",
+              "required": true,
+              "description": "Minimum value of the slider"
+            },
+            "max": {
+              "type": "number",
+              "required": true,
+              "description": "Maximum value of the slider"
+            },
+            "step": {
+              "type": "number",
+              "required": true,
+              "description": "Step increment"
+            },
+            "source": {
+              "type": "string",
+              "required": false,
+              "enum": ["drag", "click", "keyboard"],
+              "description": "How the value was changed"
+            }
+          },
+          "additionalProperties": false
+        },
+        "requiresResponse": false
+      },
+      {
+        "intent": "INTENT_SLIDER_DRAG_STARTED",
+        "type": "UI",
+        "version": "1.0.0",
+        "description": "User started dragging the slider thumb",
+        "payloadSchema": {
+          "type": "object",
+          "properties": {
+            "sliderId": {
+              "type": "string",
+              "required": true
+            },
+            "startValue": {
+              "type": "number",
+              "required": true
+            },
+            "timestamp": {
+              "type": "number",
+              "required": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "requiresResponse": false
+      },
+      {
+        "intent": "INTENT_SLIDER_DRAG_ENDED",
+        "type": "UI",
+        "version": "1.0.0",
+        "description": "User ended dragging the slider thumb",
+        "payloadSchema": {
+          "type": "object",
+          "properties": {
+            "sliderId": {
+              "type": "string",
+              "required": true
+            },
+            "startValue": {
+              "type": "number",
+              "required": true
+            },
+            "endValue": {
+              "type": "number",
+              "required": true
+            },
+            "timestamp": {
+              "type": "number",
+              "required": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "requiresResponse": false
+      }
+    ],
+    "subscribed": [
+      {
+        "intent": "INTENT_SLIDER_VALUE_UPDATED",
+        "type": "UI",
+        "description": "External service requests slider value update",
+        "expects": "Component updates its display"
+      },
+      {
+        "intent": "INTENT_SLIDER_STATE_CHANGED",
+        "type": "UI",
+        "description": "External service requests slider state change",
+        "expects": "Component updates its visual state"
+      }
+    ]
+  },
+  "dependencies": {
+    "runtime": ["EventBus", "IntentRegistry"],
+    "components": []
+  },
+  "metadata": {
+    "description": "Interactive slider component with mouse, touch, and keyboard support",
+    "features": ["Mouse drag", "Touch support", "Keyboard navigation", "Accessibility"]
+  }
+}

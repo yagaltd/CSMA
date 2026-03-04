@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Products • CSMA Hybrid Pilot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/foundation/components/card.css" />
+  </head>
+  <body>
+    <main data-route="/products" class="product-page">
+      <section class="hero">
+        <h1>Hybrid-ready Product Catalog</h1>
+        <p>
+          This template pre-renders static marketing copy while delegating live inventory
+          counts to CSMA islands hydrated at runtime.
+        </p>
+      </section>
+
+      <section class="product-grid">
+        <article class="product-card">
+          <header>
+            <h2>Heritage Backpack</h2>
+            <p class="sku">SKU-001</p>
+          </header>
+          <p class="summary">
+            Durable canvas shell, leather straps, and modular inserts for daily commuting.
+          </p>
+          <div
+            class="inventory island-skeleton"
+            data-island="product-inventory"
+            data-contract="INVENTORY_INQUIRY"
+            data-trigger="visible"
+            data-product-id="SKU-001"
+          >
+            <span class="label">Checking stock…</span>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <header>
+            <h2>Trailfinder Boots</h2>
+            <p class="sku">SKU-002</p>
+          </header>
+          <p class="summary">
+            Waterproof full-grain leather upper with cork midsole for long treks.
+          </p>
+          <div
+            class="inventory island-skeleton"
+            data-island="product-inventory"
+            data-contract="INVENTORY_INQUIRY"
+            data-trigger="visible"
+            data-product-id="SKU-002"
+          >
+            <span class="label">Checking stock…</span>
+          </div>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

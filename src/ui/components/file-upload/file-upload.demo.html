@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="../theme-loader.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload Component Demo - CSMA</title>
+
+  <link rel="stylesheet" href="../../../css/main.css">
+  <link rel="stylesheet" href="./file-upload.css">
+
+  <style>
+    body {
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--fx-color-bg);
+      color: var(--fx-color-fg);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin: 1.5rem 0 0.75rem;
+      color: var(--fx-color-fg-muted);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: var(--fx-color-primary);
+      text-decoration: none;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+  <h1>File Upload</h1>
+  <p style="color: var(--fx-color-fg-muted);">Drag & drop, preview, progress, cancel/retry. Client-side only demo (simulated uploads).</p>
+
+  <section>
+    <div class="file-upload" data-component="file-upload">
+      <div class="file-upload__dropzone" data-fu-dropzone tabindex="0" role="button" aria-label="Upload files">
+        <div class="file-upload__icon"><img src="../../icons/upload.svg" alt=""></div>
+        <div class="file-upload__text">
+          <span class="file-upload__primary">Click or drag files to upload</span>
+          <span class="file-upload__secondary">Images, PDF, text, audio, video — up to 12 MB each</span>
+        </div>
+        <input class="file-upload__input" data-fu-input type="file" multiple aria-label="Choose files to upload">
+      </div>
+
+      <div class="file-upload__queue" data-fu-queue></div>
+      <div class="file-upload__empty" data-fu-empty>No files yet. Add some to get started.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Keyboard & accessibility</h2>
+    <ul style="color: var(--fx-color-fg-muted); line-height: 1.6;">
+      <li>Tab to the dropzone, press Enter/Space to open file picker.</li>
+      <li>Screen readers announce dropzone as a button.</li>
+      <li>Progress and statuses are text-only; no role announcements required.</li>
+    </ul>
+  </section>
+
+  <script type="module">
+    import { initFileUploadDemo } from './file-upload.js';
+    initFileUploadDemo();
+  </script>
+</body>
+
+</html>

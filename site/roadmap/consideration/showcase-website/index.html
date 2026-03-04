@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://example.com/csma/roadmap/consideration/showcase-website/">
+        <link rel="shortcut icon" href="../../../img/favicon.ico">
+        <title>Showcase Website - CSMA Kit Docs</title>
+        <link href="../../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../../css/brands.min.css" rel="stylesheet">
+        <link href="../../../css/solid.min.css" rel="stylesheet">
+        <link href="../../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../../..">CSMA Kit Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../guides/csma-in-a-nutshell/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/getting-started/" class="dropdown-item">Setup</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/features/" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/validation/" class="dropdown-item">Validation</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/pwa-setup/" class="dropdown-item">PWA Setup</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Guides</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../guides/building-components/" class="dropdown-item">Building Components</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/customizing-theme/" class="dropdown-item">Customizing Theme</a>
+</li>
+                                    
+<li>
+    <a href="../../../guides/for-llms/" class="dropdown-item">For LLMs</a>
+</li>
+                                    
+<li>
+    <a href="../../../css-foundation/" class="dropdown-item">CSS Foundation</a>
+</li>
+                                    
+<li>
+    <a href="../../../complete-csma-guide/" class="dropdown-item">Complete Guide</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../api/core-services/" class="dropdown-item">Core Services</a>
+</li>
+                                    
+<li>
+    <a href="../../../api/llm-service/" class="dropdown-item">LLM Service</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Advanced</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../advanced/contract-governance/" class="dropdown-item">Contract Governance</a>
+</li>
+                                    
+<li>
+    <a href="../../../advanced/optimistic-sync/" class="dropdown-item">Optimistic Sync</a>
+</li>
+                                    
+<li>
+    <a href="../../../advanced/llm-instructor/" class="dropdown-item">LLM Instructor</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Platforms</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../platforms/capacitor/" class="dropdown-item">Capacitor</a>
+</li>
+                                    
+<li>
+    <a href="../../../platforms/neutralino/" class="dropdown-item">Neutralino</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../examples/todo-app/" class="dropdown-item">Todo App</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Security</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../security/security-map/" class="dropdown-item">Security Map</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Operations</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../../release-checklist/" class="dropdown-item">Release Checklist</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Roadmap</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../" class="dropdown-item">Overview</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Priority Tracks</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../OPFS-worker/" class="dropdown-item">OPFS Worker</a>
+</li>
+            
+<li>
+    <a href="../../ai-modularity-tanstack/" class="dropdown-item">AI Modularity</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Proposed</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../proposed/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../to-implement/csma-split-proposal/" class="dropdown-item">CSMA Split Proposal</a>
+</li>
+            
+<li>
+    <a href="../../to-implement/llm-portable-architecture/" class="dropdown-item">LLM Portable Architecture</a>
+</li>
+            
+<li>
+    <a href="../../to-implement/url-bookmark-universal-module-proposal/" class="dropdown-item">URL Bookmark Module Proposal</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Considerations</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../considerations/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../CSMA-future-ideas/" class="dropdown-item">CSMA Future Ideas</a>
+</li>
+            
+<li>
+    <a href="../Security-tracking-nstjs-stryle/" class="dropdown-item">Security Tracking</a>
+</li>
+            
+<li>
+    <a href="../ocr-image-insights-module/" class="dropdown-item">OCR Image Insights</a>
+</li>
+            
+<li>
+    <a href="../services-ontop-flexsearch/" class="dropdown-item">Services on FlexSearch</a>
+</li>
+            
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Showcase Website</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Research</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../research/" class="dropdown-item">Index</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../services-ontop-flexsearch/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../../research/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/example/CSMA-SSMA/edit/main/docs/roadmap/consideration/showcase-website.md" class="nav-link">Edit on CSMA-SSMA/CSMA
+                                    </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#csma-showcase-website-implementation-plan" class="nav-link">CSMA Showcase Website - Implementation Plan</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#positioning-see-csma-in-action" class="nav-link">Positioning: "See CSMA in Action"</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#core-demo-pages-performance-first" class="nav-link">Core Demo Pages (Performance First)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#architecture" class="nav-link">Architecture</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#design-principles" class="nav-link">Design Principles</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#timeline-v11-v13" class="nav-link">Timeline (v1.1 - v1.3)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#success-metrics" class="nav-link">Success Metrics</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#related-documents" class="nav-link">Related Documents</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#core-message" class="nav-link">Core Message</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="csma-showcase-website-implementation-plan">CSMA Showcase Website - Implementation Plan<a class="headerlink" href="#csma-showcase-website-implementation-plan" title="Permanent link">&para;</a></h1>
+<p><strong>Status:</strong> Planned (v1.1-v1.3)<br />
+<strong>Purpose:</strong> Interactive playground proving CSMA's speed, simplicity, and production readiness<br />
+<strong>URL Target:</strong> <code>/showcase/*</code> (deployed to static host)</p>
+<hr />
+<h2 id="positioning-see-csma-in-action">Positioning: "See CSMA in Action"<a class="headerlink" href="#positioning-see-csma-in-action" title="Permanent link">&para;</a></h2>
+<p>The showcase is an <strong>interactive testing ground</strong> where developers can:
+- ✅ See 100+ components update at 60fps without lag
+- ✅ Upload massive files without UI freezing
+- ✅ Run Lighthouse audits on real CSMA code
+- ✅ Explore how modules work under the hood
+- ✅ Understand CSMA/C-DAD/ECCA principles in practice
+- ⚡ Compare with TanStack/React (one section, not the whole focus)</p>
+<p><strong>Philosophy:</strong> Show, don't tell. Let developers <em>feel</em> the performance difference.</p>
+<hr />
+<h2 id="core-demo-pages-performance-first">Core Demo Pages (Performance First)<a class="headerlink" href="#core-demo-pages-performance-first" title="Permanent link">&para;</a></h2>
+<h3 id="1-live-performance-lab">1. Live Performance Lab<a class="headerlink" href="#1-live-performance-lab" title="Permanent link">&para;</a></h3>
+<p><strong>URL:</strong> <code>/showcase/performance</code></p>
+<p><strong>Interactive Tests:</strong>
+- <strong>Component Stress Test:</strong> Spawn 50, 100, 500 reactive components → Watch FPS counter stay at 60
+- <strong>State Management Simplicity:</strong> Show EventBus code vs React useState + useReducer + Redux
+- <strong>CSS Reactivity Demo:</strong> Toggle classes 60x/second → Show DevTools Performance tab (0 dropped frames)
+- <strong>Memory Test:</strong> Create/destroy 1000 components → Track heap size (should stay flat)</p>
+<p><strong>Real-time Metrics:</strong>
+- FPS counter (updates every frame)
+- Component count
+- EventBus events/second
+- DOM update latency (time from publish to paint)
+- Memory usage graph</p>
+<p><strong>Code Example Display:</strong></p>
+<pre><code class="language-javascript">// CSMA: Simple EventBus
+eventBus.publish('COUNTER_INCREMENT', { id: 'counter-1' });
+
+// React: Boilerplate jungle
+const [state, dispatch] = useReducer(counterReducer, initialState);
+dispatch({ type: 'INCREMENT', id: 'counter-1' });
+</code></pre>
+<hr />
+<h3 id="2-non-blocking-ui-demos">2. Non-Blocking UI Demos<a class="headerlink" href="#2-non-blocking-ui-demos" title="Permanent link">&para;</a></h3>
+<p><strong>URL:</strong> <code>/showcase/non-blocking</code></p>
+<p><strong>Interactive Side-by-Side Comparisons:</strong></p>
+<p><strong>A) File Upload (Heavy I/O)</strong>
+- <strong>Left:</strong> Main thread FileReader + thumbnail generation → UI freezes visibly
+- <strong>Right:</strong> Worker thread processing → UI stays completely responsive
+- <strong>Test:</strong> Click "Submit" button during uploads → Left doesn't respond, Right responds instantly</p>
+<p><strong>B) Heavy Computation</strong>
+- <strong>Task:</strong> Process 10M array operations with sorting/filtering
+- <strong>Left:</strong> Main thread → UI freezes, progress bar doesn't update
+- <strong>Right:</strong> WebWorker → Progress updates in real-time, "Cancel" button works</p>
+<p><strong>C) Multiple Heavy Operations</strong>
+- Concurrent: File upload + image processing + data analysis
+- <strong>Test:</strong> Try to open a modal while 3 operations run → Demo thread isolation</p>
+<p><strong>Real-time Metrics:</strong>
+- Main thread blocking time (ms)
+- Long task warnings (&gt;50ms)
+- UI response time (button click → visual feedback)
+- FPS during operations</p>
+<p><strong>Why It Matters:</strong> Users can <em>feel</em> the difference, not just see numbers.</p>
+<hr />
+<h3 id="3-principles-in-practice">3. Principles in Practice<a class="headerlink" href="#3-principles-in-practice" title="Permanent link">&para;</a></h3>
+<p><strong>URL:</strong> <code>/showcase/principles</code></p>
+<p><strong>Demonstrates CSMA Core Principles:</strong></p>
+<p><strong>6 Rules Showcase (Interactive Playground):</strong>
+1. <strong>State Changes = CSS Classes Only</strong>
+   - Buttons to change visual states
+   - No JavaScript touching element.style directly
+   - Show CSS handles all rendering</p>
+<ol>
+<li><strong>Define States in CSS</strong></li>
+<li><code>.todo.pending</code>, <code>.todo.completed</code>, <code>.todo[high-priority]</code></li>
+<li>
+<p>All variations defined, JS just assigns class</p>
+</li>
+<li>
+<p><strong>JavaScript Publishes Events</strong></p>
+</li>
+<li>Live EventBus inspector (like Redux DevTools)</li>
+<li>
+<p>See every event: <code>INTENT_TODO_CREATE</code> → <code>TODO_CREATED</code></p>
+</li>
+<li>
+<p><strong>Always Validate</strong></p>
+</li>
+<li>Try to send invalid event → See validation error</li>
+<li>
+<p>Show schema violations caught before publish</p>
+</li>
+<li>
+<p><strong>Data Attributes for Complex State</strong></p>
+</li>
+<li>Multi-dimensional state: <code>data-priority</code>, <code>data-category</code>, <code>data-status</code></li>
+<li>
+<p>Avoid class soup: <code>class="todo high-priority urgent work pending"</code></p>
+</li>
+<li>
+<p><strong>Self-Contained Components</strong></p>
+</li>
+<li>Component subscribes to its own intents</li>
+<li>Demo: open dialog → component handles everything</li>
+</ol>
+<p><strong>C-DAD/ECCA Explained:</strong>
+- <strong>C-DAD:</strong> Contract validation layer preventing invalid events
+- <strong>ECCA:</strong> Type-safety without TypeScript (runtime contracts)
+- Interactive demo: Try to spoof event → Rejected at validation layer</p>
+<p><strong>Code Examples:</strong></p>
+<pre><code class="language-javascript">// Show before/after
+❌ Before (Traditional): element.style.opacity = '1';
+✅ After (CSMA): element.className = 'todo completed';
+</code></pre>
+<hr />
+<h3 id="4-modules-services-explorer">4. Modules &amp; Services Explorer<a class="headerlink" href="#4-modules-services-explorer" title="Permanent link">&para;</a></h3>
+<p><strong>URL:</strong> <code>/showcase/modules</code></p>
+<p><strong>Interactive Module Browser:</strong>
+- List all 25+ modules (Storage, Router, AI, etc.)
+- Click module → See: size, dependencies, use cases, API
+- <strong>Toggle ON/OFF:</strong> Add/remove modules, watch live bundle size update
+- <strong>Bundle Visualization:</strong> Interactive treemap of current selection</p>
+<p><strong>Live Bundle Counter:</strong></p>
+<pre><code>Current Bundle: 17KB (Core only)
+Add Storage: +2KB → 19KB
+Add AI Module: +12KB → 31KB
+Add Sync Queue: +3KB → 34KB
+</code></pre>
+<p><strong>Services Deep-Dive:</strong>
+- CacheManager: See caching in action, hit/miss rates
+- APIWrapper: Mock network requests, see retry logic
+- DataAggregator: Combine multiple data sources
+- ThreadManager: Visual thread pool, task distribution
+- LogAccumulator: Analytics + monitoring (see next section)</p>
+<p><strong>Module Decision Tree:</strong></p>
+<pre><code>Building a blog? → Storage + Search = 27KB
+Building photo app? → + File System + Media = 63KB
+Building SaaS? → + Form + Auth + Sync = 48KB
+</code></pre>
+<hr />
+<h3 id="5-logaccumulator-analytics-dashboard">5. LogAccumulator Analytics Dashboard<a class="headerlink" href="#5-logaccumulator-analytics-dashboard" title="Permanent link">&para;</a></h3>
+<p><strong>URL:</strong> <code>/showcase/analytics</code></p>
+<p><strong>Show LogAccumulator is More Than Logs:</strong></p>
+<p><strong>Live Event Stream:</strong>
+- Every EventBus event displayed in real-time
+- Filter by: User actions, System events, Security, Analytics
+- Click event → See full payload (redacted in production mode)</p>
+<p><strong>Analytics Features:</strong>
+- Page view tracking (without Google Analytics)
+- Feature usage metrics (which buttons users click)
+- Performance metrics (slow actions detected)
+- Error tracking (caught exceptions)
+- Session replay (event timeline)</p>
+<p><strong>Web Analytics Without Third Parties:</strong></p>
+<pre><code class="language-javascript">// Automatic tracking:
+LOGUX: User created todo (id: todo-123, time: 15ms)
+ANALYTICS: Page view (/dashboard, duration: 45s)
+SECURITY: Rate limit triggered (user: abc123, action: INTENT_TODO_CREATE)
+PERFORMANCE: Slow event detected (TODO_CREATED took 120ms)
+</code></pre>
+<p><strong>Export Capabilities:</strong>
+- Download JSON of session logs
+- Analytics dashboard (counts, averages, trends)
+- Generate reports for stakeholders</p>
+<p><strong>Privacy-First:</strong>
+- No data leaves browser unless configured
+- GDPR compliant (no third-party scripts)
+- User can opt-out, data stays local</p>
+<hr />
+<h3 id="6-interactive-testing-tools">6. Interactive Testing Tools<a class="headerlink" href="#6-interactive-testing-tools" title="Permanent link">&para;</a></h3>
+<p><strong>URL:</strong> <code>/showcase/testing</code></p>
+<p><strong>Let Users Run Their Own Tests:</strong></p>
+<p><strong>A) Lighthouse Runner:</strong></p>
+<pre><code>Run Lighthouse on this page
+Results: Performance 98, Accessibility 100, Best Practices 100, SEO 95
+Bundle: 17KB gzipped (React starter: 164KB)
+</code></pre>
+<p><strong>B) Custom Component Tester:</strong>
+- Input: "I want 200 cards that update every frame"
+- Click: "Generate"
+- Result: Verified 60fps, memory stable</p>
+<p><strong>C) Stress Configurator:</strong>
+- Sliders: Component count (10-1000), Update frequency (1-60fps)
+- Toggle: Worker on/off, Caching on/off
+- See: Live impact on metrics</p>
+<p><strong>D) Comparison Suite:</strong>
+- Checkbox: "Show React equivalent code"
+- Display: Side-by-side with CSMA version
+- Metrics: LOC count, bundle size, performance</p>
+<p><strong>E) Mobile Simulator:</strong>
+- Throttle CPU: 4x slowdown (simulates mid-range phone)
+- Throttle Network: Slow 3G
+- Show: CSMA still performs well under constraints</p>
+<hr />
+<h3 id="7-zero-bundle-size-devtools">7. Zero-Bundle-Size DevTools<a class="headerlink" href="#7-zero-bundle-size-devtools" title="Permanent link">&para;</a></h3>
+<p><strong>URL:</strong> <code>/showcase/devtools</code></p>
+<p><strong>Prove DevTools are Free in Production:</strong></p>
+<p><strong>Live Bundle Analysis:</strong></p>
+<pre><code>Development Build: 23KB
+- Core: 17KB
+- DevTools: 6KB (loaded dynamically)
+- Showcase: 0KB (loaded on demand)
+
+Production Build: 17KB
+- Core: 17KB
+- DevTools: 0KB (tree-shaken)
+- Showcase: 0KB (not included)
+</code></pre>
+<p><strong>DevTools Features:</strong>
+- EventBus inspector (real-time events)
+- Contract validator (show validation errors)
+- Performance profiler (slow events highlighted)
+- State viewer (current app state)
+- Log viewer (filter/search events)</p>
+<p><strong>Implementation:</strong></p>
+<pre><code class="language-javascript">// Dynamic import in dev only
+if (process.env.NODE_ENV === 'development') {
+  import('./runtime/devtools/DevPanel.js').then(({initDevPanel}) =&gt; {
+    initDevPanel(eventBus);
+  });
+}
+// In production: this code is removed by bundler
+</code></pre>
+<hr />
+<h3 id="8-tanstack-comparison-one-section-not-focus">8. TanStack Comparison (One Section, Not Focus)<a class="headerlink" href="#8-tanstack-comparison-one-section-not-focus" title="Permanent link">&para;</a></h3>
+<p><strong>URL:</strong> <code>/showcase/comparisons</code></p>
+<p><strong>Not the main event - just another data point:</strong></p>
+<p><strong>Quick Stats (Not a Sales Pitch):</strong></p>
+<pre><code>CSMA Complete:    110KB
+TanStack + React: 341KB
+Savings:          67% smaller
+
+Features:
+✅ Query      (Sync Queue)
+✅ Table      (Data Table)
+✅ Form       (Form Manager)
+✅ Router     (Router)
+✅ AI Module  (TanStack doesn't have)
+✅ Offline    (Sync Queue)
+✅ Mobile     (Capacitor)
+</code></pre>
+<p><strong>Interactive:</strong>
+- Toggle: "Show React boilerplate" → See code complexity difference
+- Click: "Bundle breakdown" → Treemap comparison
+- Note: "Choose based on your needs, not marketing"</p>
+<p><strong>Philosophy:</strong> Informational, not confrontational. Let developers decide.</p>
+<hr />
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<pre><code>src/examples/showcase/
+├── index.html              # Entry point
+├── main.js                 # Initialize showcase
+├── modules/
+│   ├── BenchmarkRunner.js  # Performance measurement
+│   ├── StressTest.js       # Component spawning logic
+│   ├── FileUploadDemo.js   # Worker vs main thread
+│   ├── LogAccumulatorViz.js # Analytics visualization
+│   └── PrinciplesDemo.js   # 6 rules interactive
+├── demo-data/
+│   ├── sample-todos.json
+│   ├── heavy-files/ (10MB+ test files)
+│   └── stress-configs.js
+└── pages/
+    ├── performance.js      # Performance lab
+    ├── non-blocking.js     # WebWorker demos
+    ├── principles.js       # 6 rules + C-DAD/ECCA
+    ├── modules.js          # Module explorer
+    ├── analytics.js        # LogAccumulator demo
+    ├── testing.js          # Interactive tools
+    └── comparisons.js      # TanStack comparison
+</code></pre>
+<hr />
+<h2 id="design-principles">Design Principles<a class="headerlink" href="#design-principles" title="Permanent link">&para;</a></h2>
+<h3 id="1-no-custom-components-only-existing-ones">1. No Custom Components (Only Existing Ones)<a class="headerlink" href="#1-no-custom-components-only-existing-ones" title="Permanent link">&para;</a></h3>
+<p>Showcase should use <strong>only</strong> the 25+ components already in CSMA:
+- progress, card, badge, toast, button, switch, dialog, input, etc.</p>
+<p><strong>If missing:</strong> Component library is incomplete → Fix library, not demos</p>
+<h3 id="2-real-code-real-metrics">2. Real Code, Real Metrics<a class="headerlink" href="#2-real-code-real-metrics" title="Permanent link">&para;</a></h3>
+<p>Every demo uses actual production code from:
+- <code>src/ui/components/</code>
+- <code>src/runtime/</code>
+- <code>src/services/</code></p>
+<p>Not synthetic benchmarks. If it performs well in showcase, it performs well in production.</p>
+<h3 id="3-interactive-not-static">3. Interactive, Not Static<a class="headerlink" href="#3-interactive-not-static" title="Permanent link">&para;</a></h3>
+<p>Users should:
+- Click buttons → See immediate results
+- Change parameters → See live updates
+- Run tests → Get real numbers</p>
+<p>No "trust us" - verify yourself.</p>
+<h3 id="4-education-not-marketing">4. Education, Not Marketing<a class="headerlink" href="#4-education-not-marketing" title="Permanent link">&para;</a></h3>
+<p>Each demo includes:
+- What it measures
+- Why it matters
+- How CSMA achieves it
+- How users can replicate in their apps</p>
+<hr />
+<h2 id="timeline-v11-v13">Timeline (v1.1 - v1.3)<a class="headerlink" href="#timeline-v11-v13" title="Permanent link">&para;</a></h2>
+<h3 id="v11-performance-foundation-4-weeks">v1.1: Performance Foundation (4 weeks)<a class="headerlink" href="#v11-performance-foundation-4-weeks" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Performance Lab (component spawning, FPS tracking)</li>
+<li>Non-blocking UI demos (File upload, heavy computation)</li>
+<li>Core principles visualization (6 rules)</li>
+</ul>
+<h3 id="v12-modules-analytics-3-weeks">v1.2: Modules &amp; Analytics (3 weeks)<a class="headerlink" href="#v12-modules-analytics-3-weeks" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Module explorer with bundle visualization</li>
+<li>LogAccumulator analytics dashboard</li>
+<li>Interactive testing tools (Lighthouse runner)</li>
+</ul>
+<h3 id="v13-polish-comparison-3-weeks">v1.3: Polish &amp; Comparison (3 weeks)<a class="headerlink" href="#v13-polish-comparison-3-weeks" title="Permanent link">&para;</a></h3>
+<ul>
+<li>DevTools demonstration</li>
+<li>TanStack comparison page (informational)</li>
+<li>Stress test configurator</li>
+</ul>
+<p><strong>Total:</strong> 10 weeks post v1.0</p>
+<hr />
+<h2 id="success-metrics">Success Metrics<a class="headerlink" href="#success-metrics" title="Permanent link">&para;</a></h2>
+<h3 id="developer-experience">Developer Experience<a class="headerlink" href="#developer-experience" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Can spawn 500 components and UI stays fluid</li>
+<li>Can upload 10MB file and click buttons immediately</li>
+<li>Can understand C-DAD/ECCA through interactive demos</li>
+<li>Can see bundle size change as they toggle modules</li>
+<li>Can run Lighthouse and get 95+ performance score</li>
+</ul>
+<h3 id="framework-validation">Framework Validation<a class="headerlink" href="#framework-validation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Showcase is built entirely from existing CSMA components</li>
+<li>No custom components needed (proves library completeness)</li>
+<li>Real production code used throughout (proves quality)</li>
+<li>Interactive testing (proves confidence)</li>
+</ul>
+<hr />
+<h2 id="related-documents">Related Documents<a class="headerlink" href="#related-documents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>v1.1-v1.3 Roadmap:</strong> <code>../v1.1-to-v1.21-modules.md</code></li>
+<li><strong>TanStack Comparison (Original):</strong> <code>../../_legacy/showcase-plan-original.md</code></li>
+<li><strong>Core Principles:</strong> <code>../../guides/csma-in-a-nutshell.md</code></li>
+<li><strong>Security:</strong> <code>../../security/security-map.md</code></li>
+<li><strong>Bundle Analysis:</strong> <code>../../../enhancement-plan.md</code> (Complete feature list)</li>
+</ul>
+<hr />
+<h2 id="core-message">Core Message<a class="headerlink" href="#core-message" title="Permanent link">&para;</a></h2>
+<p><strong>"CSMA is fast, simple, and production-ready. Try it yourself."</strong></p>
+<p>Not: "CSMA is better than TanStack."</p>
+<p>Let developers experience the speed, explore the modules, understand the principles, and <strong>draw their own conclusions</strong>.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../../js/base.js"></script>
+        <script src="../../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

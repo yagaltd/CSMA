@@ -1,0 +1,37 @@
+/**
+ * CSMA Components Index
+ * Aggregates all component CSS files
+ * 
+ * This file imports all component styles from the per-component folders
+ */
+
+/* Phase 1-2: CSS-Only Components */
+@import './badge/badge.css';
+@import './separator/separator.css';
+@import './avatar/avatar.css';
+@import './skeleton/skeleton.css';
+
+/* Phase 1-2: Interactive Components */
+@import './toast/toast.css';
+@import './tabs/tabs.css';
+@import './accordion/accordion.css';
+@import './progress/progress.css';
+@import './popover/popover.css';
+
+/* Phase 3: Form Components */
+@import './textarea/textarea.css';
+@import './select/select.css';
+@import './checkbox/checkbox.css';
+@import './radio/radio.css';
+@import './switch/switch.css';
+@import './file-upload/file-upload.css';
+@import './otp/otp.css';
+
+/* Phase 4: Overlay & Navigation */
+@import './tooltip/tooltip.css';
+@import './dropdown/dropdown.css';
+@import './dialog/dialog.css';
+@import './alert-dialog/alert-dialog.css';
+@import '../patterns/sidebar/sidebar.css';
+@import './pagination/pagination.css';
+@import './analytics-consent/analytics-consent.css';

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accordion Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./accordion.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Accordion Component</h1>
+    <p class="intro">Collapsible content sections with smooth animation.</p>
+
+    <section>
+        <h2>Basic Accordion</h2>
+        <div class="accordion">
+            <div class="accordion-item" data-state="closed">
+                <h3 class="accordion-header">
+                    <button class="accordion-trigger" aria-expanded="false" aria-controls="content-1">
+                        <span>Getting Started</span>
+                        <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </h3>
+                <div class="accordion-content" id="content-1">
+                    <div class="accordion-content-wrapper">
+                        <p>Welcome to our component library. This accordion demonstrates collapsible content sections
+                            with smooth CSS-based animations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item" data-state="closed">
+                <h3 class="accordion-header">
+                    <button class="accordion-trigger" aria-expanded="false" aria-controls="content-2">
+                        <span>Installation Guide</span>
+                        <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </h3>
+                <div class="accordion-content" id="content-2">
+                    <div class="accordion-content-wrapper">
+                        <p>Install via npm or include directly in your HTML. Full documentation is available in the docs
+                            folder.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item" data-state="closed">
+                <h3 class="accordion-header">
+                    <button class="accordion-trigger" aria-expanded="false" aria-controls="content-3">
+                        <span>Customization</span>
+                        <svg class="accordion-icon" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </h3>
+                <div class="accordion-content" id="content-3">
+                    <div class="accordion-content-wrapper">
+                        <p>Customize colors, spacing, and behavior using CSS variables and data attributes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Keyboard Navigation</h2>
+        <ul style="color: var(--fx-color-fg-muted);">
+            <li><strong>Arrow Up/Down</strong>: Move between items</li>
+            <li><strong>Home</strong>: Go to first item</li>
+            <li><strong>End</strong>: Go to last item</li>
+            <li><strong>Enter/Space</strong>: Toggle item</li>
+        </ul>
+    </section>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Accordion Component - CSMA UI Library</p>
+    </footer>
+
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { initAccordionSystem } from './accordion.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+
+        initAccordionSystem(eventBus);
+    </script>
+</body>
+
+</html>

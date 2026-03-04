@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../../components/theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table Pattern - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./data-table.css">
+</head>
+
+<body class="csma-table-demo">
+    <a href="../../components/demos.html" class="button" data-variant="text">← Back</a>
+    <header>
+        <h1>Data Table Pattern</h1>
+        <p class="text-muted">Demonstrates API-backed loading with sort + filter controls.</p>
+    </header>
+
+    <div class="csma-table-card">
+        <div class="csma-table-controls">
+            <div class="input-group" data-size="lg">
+                <label class="input-label" for="table-filter">Filter by name</label>
+                <input class="input" id="table-filter" type="search" placeholder="Type to filter" data-table-filter autocomplete="off">
+            </div>
+            <button class="button" data-table-apply-filter>Apply Filter</button>
+            <button class="button" data-sort-field="name">Sort by name</button>
+            <button class="button" data-sort-field="maintainer">Sort by maintainer</button>
+        </div>
+        <table class="csma-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Maintainer</th>
+                    <th>Bundle</th>
+                </tr>
+            </thead>
+            <tbody data-table-body></tbody>
+        </table>
+        <div class="csma-table-foot">
+            <div class="csma-table-status" data-table-status>Loading...</div>
+            <div>
+                <button class="button" data-page-prev>Prev</button>
+                <span style="margin:0 var(--spacing-md);" data-table-pagination>Page 1</span>
+                <button class="button" data-page-next>Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./data-table.js"></script>
+</body>
+
+</html>

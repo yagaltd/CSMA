@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSMA Navbar Component Demo</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="../../../css/components.css">
+    <link rel="stylesheet" href="./navbar.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--background);
+            color: var(--foreground);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .demo-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid var(--fx-color-border);
+            border-radius: var(--radius-md);
+            background: var(--fx-color-bg);
+        }
+
+        .demo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .demo-description {
+            color: var(--muted-foreground);
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-code {
+            background: var(--muted);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            font-family: ui-monospace, 'Cascadia Code', 'Roboto Mono', monospace;
+            font-size: 0.875rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            color: var(--foreground);
+            border: 1px solid var(--border);
+        }
+
+        .navbar-preview {
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--background);
+        }
+
+        .page-content {
+            padding: 2rem;
+            background: var(--background);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-top: 1rem;
+        }
+
+        .mobile-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background: var(--secondary);
+            color: var(--secondary-foreground);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 150ms;
+            margin-bottom: 1rem;
+        }
+
+        .mobile-toggle-icon {
+            width: 1.05rem;
+            height: 1.05rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-toggle:hover {
+            background: var(--accent);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        ul {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        strong {
+            color: var(--foreground);
+        }
+
+        .mobile-view {
+            max-width: 375px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Navbar Component Demo</h1>
+    <p>Responsive navigation with mobile hamburger menu.</p>
+    
+    <div class="feature-badge">Type II: Self-Contained (EventBus-backed)</div>
+
+    <button class="mobile-toggle" id="mobileToggle">
+        <img class="mobile-toggle-icon" src="../icons/smartphone.svg" alt="">
+        <span class="mobile-toggle-label">Toggle Mobile View</span>
+    </button>
+
+    <div class="navbar-preview" id="previewContainer">
+        <nav class="navbar demo-navbar" id="main-navbar">
+            <div class="navbar-container">
+                <a href="#" class="navbar-brand">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 2L3 7v11a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V7l-7-5z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    CSMA Demo
+                </a>
+
+                <ul class="navbar-nav">
+                    <li class="navbar-item">
+                        <a href="#home" class="navbar-link" data-nav-path="/home">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M10.707 2.293a1 1 0 00-1.414 0l-9 9a1 1 0 001.414 1.414L2 12.414V19a1 1 0 001 1h3a1 1 0 001-1v-3h2v3a1 1 0 001 1h3a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-9-9z" />
+                            </svg>
+                            Home
+                        </a>
+                    </li>
+                    <li class="navbar-item">
+                        <a href="#about" class="navbar-link" data-nav-path="/about">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            About
+                        </a>
+                    </li>
+                    <li class="navbar-item">
+                        <a href="#services" class="navbar-link" data-nav-path="/services">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Services
+                        </a>
+                    </li>
+                    <li class="navbar-item">
+                        <a href="#contact" class="navbar-link" data-nav-path="/contact">
+                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                            </svg>
+                            Contact
+                        </a>
+                    </li>
+                </ul>
+
+                <button class="navbar-hamburger" aria-label="Toggle navigation menu">
+                    <span class="navbar-hamburger-lines"></span>
+                </button>
+            </div>
+
+            <div class="navbar-overlay"></div>
+
+            <div class="navbar-mobile-menu">
+                <nav aria-label="Mobile navigation">
+                    <ul class="navbar-mobile-nav">
+                        <li><a href="#home" class="navbar-link" data-nav-path="/home">Home</a></li>
+                        <li><a href="#about" class="navbar-link" data-nav-path="/about">About</a></li>
+                        <li><a href="#services" class="navbar-link" data-nav-path="/services">Services</a></li>
+                        <li><a href="#contact" class="navbar-link" data-nav-path="/contact">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </nav>
+
+        <div class="page-content">
+            <p>This is demo content to show how the navbar stays fixed at the top while you scroll.</p>
+            <p>Try scrolling down to see the navbar behavior.</p>
+        </div>
+    </div>
+
+    <!-- Basic Usage -->
+    <div class="demo-section">
+        <h2 class="demo-title">Basic Usage</h2>
+        <p class="demo-description">Responsive navbar with mobile hamburger menu. Click the mobile toggle button above to see responsive behavior.</p>
+
+        <div class="demo-code">
+            <nav class="navbar" id="main-navbar">
+                <div class="navbar-container">
+                    <a href="#" class="navbar-brand">Brand</a>
+
+                    <ul class="navbar-nav">
+                        <li class="navbar-item">
+                            <a href="#home" class="navbar-link" data-nav-path="/home">Home</a>
+                        </li>
+                    </ul>
+
+                    <button class="navbar-hamburger" aria-label="Toggle navigation menu">
+                        <span class="navbar-hamburger-lines"></span>
+                    </button>
+                </div>
+
+                <div class="navbar-overlay"></div>
+                <div class="navbar-mobile-menu">
+                    <nav aria-label="Mobile navigation">
+                        <ul class="navbar-mobile-nav">
+                            <!-- Mobile nav items -->
+                        </ul>
+                    </nav>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Accessibility Features -->
+    <div class="demo-section">
+        <h2 class="demo-title">Accessibility Features</h2>
+        <ul>
+            <li><strong>Keyboard Navigation:</strong> Tab through navigation links</li>
+            <li><strong>Screen Reader Support:</strong> Proper ARIA labels and roles</li>
+            <li><strong>Focus Management:</strong> Focus moves to first mobile menu item when opened</li>
+            <li><strong>ESC Key:</strong> Closes mobile menu</li>
+            <li><strong>Touch-Friendly:</strong> Large tap targets on mobile</li>
+        </ul>
+    </div>
+
+    <!-- Implementation Notes -->
+    <div class="demo-section">
+        <h2 class="demo-title">Implementation Notes</h2>
+        <ul>
+            <li><strong>Type II Component:</strong> Self-contained with EventBus integration</li>
+            <li><strong>Responsive Design:</strong> Mobile-first with hamburger menu</li>
+            <li><strong>Active States:</strong> Automatic highlighting of current page</li>
+            <li><strong>Smooth Animations:</strong> CSS transitions for menu open/close</li>
+            <li><strong>Performance:</strong> Event delegation and efficient DOM queries</li>
+            <li><strong>Cleanup:</strong> Proper event listener removal for hot reload</li>
+        </ul>
+    </div>
+
+    <!-- Initialize the navbar -->
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initNavbarSystem } from './navbar.js';
+
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+
+        initNavbarSystem(eventBus);
+
+        // Mobile view toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const previewContainer = document.getElementById('previewContainer');
+        const mobileToggleLabel = document.querySelector('.mobile-toggle-label');
+
+        mobileToggle.addEventListener('click', () => {
+            const isMobileView = previewContainer.classList.toggle('mobile-view');
+            mobileToggleLabel.textContent = isMobileView ? 'Exit Mobile View' : 'Toggle Mobile View';
+        });
+    </script>
+</body>
+</html>

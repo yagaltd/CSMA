@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://example.com/csma/guides/getting-started/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Setup - CSMA Kit Docs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">CSMA Kit Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../csma-in-a-nutshell/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Setup</a>
+</li>
+                                    
+<li>
+    <a href="../features/" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../validation/" class="dropdown-item">Validation</a>
+</li>
+                                    
+<li>
+    <a href="../pwa-setup/" class="dropdown-item">PWA Setup</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Guides</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../building-components/" class="dropdown-item">Building Components</a>
+</li>
+                                    
+<li>
+    <a href="../customizing-theme/" class="dropdown-item">Customizing Theme</a>
+</li>
+                                    
+<li>
+    <a href="../for-llms/" class="dropdown-item">For LLMs</a>
+</li>
+                                    
+<li>
+    <a href="../../css-foundation/" class="dropdown-item">CSS Foundation</a>
+</li>
+                                    
+<li>
+    <a href="../../complete-csma-guide/" class="dropdown-item">Complete Guide</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/core-services/" class="dropdown-item">Core Services</a>
+</li>
+                                    
+<li>
+    <a href="../../api/llm-service/" class="dropdown-item">LLM Service</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Advanced</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../advanced/contract-governance/" class="dropdown-item">Contract Governance</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/optimistic-sync/" class="dropdown-item">Optimistic Sync</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/llm-instructor/" class="dropdown-item">LLM Instructor</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Platforms</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../platforms/capacitor/" class="dropdown-item">Capacitor</a>
+</li>
+                                    
+<li>
+    <a href="../../platforms/neutralino/" class="dropdown-item">Neutralino</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../examples/todo-app/" class="dropdown-item">Todo App</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Security</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../security/security-map/" class="dropdown-item">Security Map</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Operations</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../release-checklist/" class="dropdown-item">Release Checklist</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Roadmap</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../roadmap/" class="dropdown-item">Overview</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Priority Tracks</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/OPFS-worker/" class="dropdown-item">OPFS Worker</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/ai-modularity-tanstack/" class="dropdown-item">AI Modularity</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Proposed</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/proposed/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/csma-split-proposal/" class="dropdown-item">CSMA Split Proposal</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/llm-portable-architecture/" class="dropdown-item">LLM Portable Architecture</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/url-bookmark-universal-module-proposal/" class="dropdown-item">URL Bookmark Module Proposal</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Considerations</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/considerations/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/CSMA-future-ideas/" class="dropdown-item">CSMA Future Ideas</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/Security-tracking-nstjs-stryle/" class="dropdown-item">Security Tracking</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/ocr-image-insights-module/" class="dropdown-item">OCR Image Insights</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/services-ontop-flexsearch/" class="dropdown-item">Services on FlexSearch</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/showcase-website/" class="dropdown-item">Showcase Website</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Research</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/research/" class="dropdown-item">Index</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../csma-in-a-nutshell/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../features/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/example/CSMA-SSMA/edit/main/docs/guides/getting-started.md" class="nav-link">Edit on CSMA-SSMA/CSMA
+                                    </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#getting-started-with-the-csma-kit" class="nav-link">Getting Started with the CSMA Kit</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#1-prerequisites" class="nav-link">1. Prerequisites</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#2-clone-install" class="nav-link">2. Clone &amp; Install</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#3-run-the-dev-server" class="nav-link">3. Run the Dev Server</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#4-customize-theme-base-styles" class="nav-link">4. Customize Theme &amp; Base Styles</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#5-optional-verify-contracts-smoke-test" class="nav-link">5. Optional: Verify Contracts &amp; Smoke Test</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#6-next-steps" class="nav-link">6. Next Steps</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="getting-started-with-the-csma-kit">Getting Started with the CSMA Kit<a class="headerlink" href="#getting-started-with-the-csma-kit" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Goal: Go from <code>git clone</code> to a themed, running dev server in under five minutes. These steps are written so humans <strong>and</strong> LLM contributors can follow the exact same workflow.</p>
+</blockquote>
+<hr />
+<h2 id="1-prerequisites">1. Prerequisites<a class="headerlink" href="#1-prerequisites" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Node.js 20+ (LTS) and npm 10+</li>
+<li>Git</li>
+<li>Optional: Android Studio / Neutralino CLI (for platform builds later)</li>
+</ul>
+<p>Verify setup:</p>
+<pre><code class="language-bash">node -v
+npm -v
+git --version
+</code></pre>
+<p>If any command fails, fix your environment before proceeding.</p>
+<hr />
+<h2 id="2-clone-install">2. Clone &amp; Install<a class="headerlink" href="#2-clone-install" title="Permanent link">&para;</a></h2>
+<pre><code class="language-bash">git clone https://github.com/YOUR-ORG/csma-kit.git
+cd csma-kit
+npm install
+</code></pre>
+<p>What happens:
+- Installs Vite + runtime deps (&lt;10 MB)
+- No postinstall scripts run; safe for CI</p>
+<p>LLM hint: when asking an AI to run commands, give the full block above so it never forgets to <code>cd</code> into the repo.</p>
+<hr />
+<h2 id="3-run-the-dev-server">3. Run the Dev Server<a class="headerlink" href="#3-run-the-dev-server" title="Permanent link">&para;</a></h2>
+<pre><code class="language-bash">npm run dev
+</code></pre>
+<p>Visit <code>http://localhost:5173</code> and open the DevTools badge to verify logs are flowing. Hot reload is enabled by default.</p>
+<p>Want a production build?</p>
+<pre><code class="language-bash">npm run build:prod
+</code></pre>
+<p>Outputs go to <code>dist/</code> with terser minification and dev-only code removed.</p>
+<hr />
+<h2 id="4-customize-theme-base-styles">4. Customize Theme &amp; Base Styles<a class="headerlink" href="#4-customize-theme-base-styles" title="Permanent link">&para;</a></h2>
+<p>Most teams tweak two files immediately:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/css/foundation/tokens.css</code> + <code>src/css/foundation/themes/*.css</code></td>
+<td>Semantic color tokens (<code>--fx-color-*</code>). Changing these recolors every component.</td>
+</tr>
+<tr>
+<td><code>src/css/base.css</code></td>
+<td>Global typography, layout resets, scrollbar + selection styling.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="step-by-step">Step-by-step<a class="headerlink" href="#step-by-step" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Open <code>src/css/foundation/tokens.css</code> (shared scales) and the matching file in <code>src/css/foundation/themes/</code> (light/dark overrides).</li>
+<li>Update semantic tokens only (example below). Avoid hardcoding colors inside components.</li>
+</ol>
+<pre><code class="language-css">:root {
+  --surface-primary: #f6f4ff;
+  --text-strong: #130c2f;
+  --accent: #684cf4;
+}
+</code></pre>
+<ol>
+<li>For typography or spacing tweaks, edit <code>src/css/base.css</code> → <code>body</code> + utility sections. Keep variable names consistent (e.g., <code>--font-body</code>).</li>
+<li>Save files—Vite hot reload will refresh instantly.</li>
+</ol>
+<p>LLM hint: When instructing an AI to “update the theme,” include the exact variable names and desired values so it patches the foundation token/theme files (not component styles).</p>
+<hr />
+<h2 id="5-optional-verify-contracts-smoke-test">5. Optional: Verify Contracts &amp; Smoke Test<a class="headerlink" href="#5-optional-verify-contracts-smoke-test" title="Permanent link">&para;</a></h2>
+<p>Before branching, run the lightweight suites:</p>
+<pre><code class="language-bash">npm run test        # Contract + validation unit tests
+npm run test:smoke  # (Added in v1.0) Todo app DOM smoke test
+</code></pre>
+<p>This catches contract regressions and ensures the example app still works.</p>
+<hr />
+<h2 id="6-next-steps">6. Next Steps<a class="headerlink" href="#6-next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Read <code>docs/guides/building-components.md</code> to learn Type I–III patterns.</li>
+<li>Check <code>docs/examples/todo-app.md</code> (new) for a full reference implementation with ThreadManager + LogAccumulator.</li>
+<li>When ready for mobile/desktop, see <code>docs/platforms/capacitor.md</code> &amp; <code>docs/platforms/neutralino.md</code>.</li>
+</ul>
+<p>With these steps, any contributor can stand up the kit, restyle it, and run the reference app without digging through multiple guides.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

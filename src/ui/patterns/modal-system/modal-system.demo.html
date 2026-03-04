@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../../components/theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal System Pattern - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./modal-system.css">
+</head>
+
+<body class="csma-modal-demo">
+    <a href="../../components/demos.html" class="button" data-variant="text">← Back to UI Library</a>
+    <header>
+        <h1>Modal System Pattern</h1>
+        <p class="text-muted">Demonstrates the Phase 6 modal stack with CSMA tokens + EventBus intents.</p>
+    </header>
+
+    <section class="csma-modal-grid">
+        <article class="csma-modal-card">
+            <h2>Trigger Modals</h2>
+            <p>Use the primary buttons to publish <code>INTENT_MODAL_OPEN</code> events.</p>
+            <div class="csma-modal-actions">
+                <button class="button" data-variant="primary" data-modal-open="info">Open Info</button>
+                <button class="button" data-variant="secondary" data-modal-open="confirm">Open Confirm</button>
+                <button class="button" data-variant="success" data-modal-open="success">Open Success</button>
+            </div>
+            <div class="csma-modal-actions" style="margin-top:var(--spacing-md);">
+                <button class="button" data-modal-close-top>Close Top</button>
+                <button class="button" data-variant="destructive" data-modal-close-all>Close All</button>
+            </div>
+        </article>
+
+        <article class="csma-modal-card">
+            <h2>Stack State</h2>
+            <p class="text-muted">Reflects <code>MODAL_STACK_UPDATED</code> payloads.</p>
+            <ul class="csma-modal-stack" data-modal-stack>
+                <li class="csma-modal-empty">Stack empty — launch a modal</li>
+            </ul>
+        </article>
+    </section>
+
+    <div class="csma-modal-preview" data-modal-preview data-visible="false"></div>
+
+    <footer class="csma-modal-footer">
+        <p>Need programmatic control? Inject <code>window.csma.modal</code> or publish intents via EventBus.</p>
+    </footer>
+
+    <script type="module" src="./modal-system.js"></script>
+</body>
+
+</html>

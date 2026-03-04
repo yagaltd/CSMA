@@ -1,0 +1,71 @@
+@import '../../components/index.css';
+
+.csma-table-demo {
+    min-height: 100vh;
+    padding: clamp(2rem, 4vw, 4rem);
+    background: radial-gradient(circle at top, color-mix(in srgb, var(--fx-color-primary) 10%, transparent), var(--fx-color-surface-muted));
+    color: var(--fx-color-fg);
+}
+
+.csma-table-card {
+    background: var(--fx-color-bg);
+    border-radius: var(--corner-3xl);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    box-shadow: var(--shadow-2xl);
+    border: 1px solid color-mix(in srgb, var(--fx-color-border) 35%, transparent);
+}
+
+.csma-table-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.csma-table-controls .input-group {
+    flex: 1;
+    max-width: none;
+}
+
+.csma-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: var(--corner-2xl);
+    overflow: hidden;
+}
+
+.csma-table thead {
+    background: color-mix(in srgb, var(--fx-color-surface-muted) 90%, transparent);
+}
+
+.csma-table th,
+.csma-table td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid color-mix(in srgb, var(--fx-color-border) 40%, transparent);
+    text-align: left;
+    font-size: var(--font-size-sm);
+}
+
+.csma-table th button {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    cursor: pointer;
+}
+
+.csma-table-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: var(--spacing-lg);
+}
+
+.csma-table-status {
+    font-size: var(--font-size-sm);
+    color: var(--fx-color-fg-muted);
+}

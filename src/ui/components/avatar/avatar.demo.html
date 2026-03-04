@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./avatar.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .demo-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            padding: 1rem;
+            background: var(--fx-color-bg);
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Avatar Component</h1>
+    <p class="intro">User profile images with fallback initials.</p>
+
+    <section>
+        <h2>With Image</h2>
+        <div class="demo-row">
+            <div class="avatar avatar-sm">
+                <img src="https://i.pravatar.cc/40?img=1" alt="User">
+            </div>
+            <div class="avatar avatar-md">
+                <img src="https://i.pravatar.cc/48?img=2" alt="User">
+            </div>
+            <div class="avatar avatar-lg">
+                <img src="https://i.pravatar.cc/64?img=3" alt="User">
+            </div>
+            <div class="avatar avatar-xl">
+                <img src="https://i.pravatar.cc/80?img=4" alt="User">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Fallback (Initials)</h2>
+        <div class="demo-row">
+            <div class="avatar avatar-sm">
+                <div class="avatar-fallback">JD</div>
+            </div>
+            <div class="avatar avatar-md">
+                <div class="avatar-fallback">AS</div>
+            </div>
+            <div class="avatar avatar-lg">
+                <div class="avatar-fallback">MK</div>
+            </div>
+            <div class="avatar avatar-xl">
+                <div class="avatar-fallback">XY</div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Avatar Group</h2>
+        <div class="demo-row">
+            <div class="avatar-group">
+                <div class="avatar avatar-md"><img src="https://i.pravatar.cc/48?img=5" alt="User"></div>
+                <div class="avatar avatar-md"><img src="https://i.pravatar.cc/48?img=6" alt="User"></div>
+                <div class="avatar avatar-md"><img src="https://i.pravatar.cc/48?img=7" alt="User"></div>
+                <div class="avatar avatar-md">
+                    <div class="avatar-fallback">+3</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Avatar Component - CSMA UI Library</p>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./card.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Card Component</h1>
+    <p class="intro">Container for grouping related content with header, body, and footer sections.</p>
+
+    <section>
+        <h2>Basic Cards</h2>
+        <div class="card-grid">
+            <article class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Project Alpha</h3>
+                    <p class="card-description">Next-generation dashboard interface</p>
+                </div>
+                <div class="card-content">
+                    <p>Building a modern component library with accessibility and performance in mind.</p>
+                </div>
+                <div class="card-footer">
+                    <button class="button" data-size="sm" data-variant="primary">View Details</button>
+                    <button class="button" data-size="sm" data-variant="secondary">Edit</button>
+                </div>
+            </article>
+
+            <article class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Team Collaboration</h3>
+                </div>
+                <div class="card-content">
+                    <p>Enhanced teamwork through shared components and design systems.</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <h2>Card Without Footer</h2>
+        <div class="card-grid">
+            <article class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Simple Card</h3>
+                    <p class="card-description">Just header and content</p>
+                </div>
+                <div class="card-content">
+                    <p>This card only has a header and content section, no footer.</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Card Component - CSMA UI Library</p>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./otp.css">
+
+    <style>
+        .demo-shell {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            color: var(--fx-color-primary);
+            margin-bottom: 1rem;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+
+<body class="csma-otp-surface">
+    <div class="demo-shell">
+        <a class="back-link" href="../demos.html">← Back to Demos</a>
+
+        <div class="csma-otp-card" data-otp>
+            <div>
+                <p class="csma-otp-eyebrow">Phase 6 · OTP</p>
+                <h1 class="csma-otp-title">Verify with one-time code</h1>
+                <p class="csma-otp-text">Runtime-safe verification with keyboard-friendly input and EventBus intents.</p>
+                <p class="csma-otp-hint">Secure entry · Paste-aware · Auto-advance</p>
+            </div>
+
+            <form class="csma-otp-form" data-otp-form autocomplete="one-time-code">
+                <div>
+                    <p class="csma-otp-label" id="otp-label">Enter 6-digit code</p>
+                    <div class="csma-otp-inputs" aria-labelledby="otp-label" role="group">
+                        <input class="csma-otp-input" data-otp-input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 1" required>
+                        <input class="csma-otp-input" data-otp-input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 2" required>
+                        <input class="csma-otp-input" data-otp-input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 3" required>
+                        <input class="csma-otp-input" data-otp-input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 4" required>
+                        <input class="csma-otp-input" data-otp-input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 5" required>
+                        <input class="csma-otp-input" data-otp-input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" aria-label="Digit 6" required>
+                    </div>
+                </div>
+
+                <div class="csma-otp-actions">
+                    <button class="button" data-variant="primary" data-size="lg" type="submit">Verify code</button>
+                    <p class="csma-otp-status" data-otp-status data-state="idle" aria-live="polite">Idle</p>
+                    <a class="csma-otp-resend" data-otp-resend href="#">Resend code</a>
+                    <p class="csma-otp-meta">We sanitize input client-side and publish <code>INTENT_OTP_SUBMIT</code>/<code>INTENT_OTP_RESEND</code> events for services to handle.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="./otp.js"></script>
+</body>
+
+</html>

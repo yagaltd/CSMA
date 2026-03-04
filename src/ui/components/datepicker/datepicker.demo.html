@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datepicker Component Demo • CSMA</title>
+    <script src="../theme-loader.js"></script>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./datepicker.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            margin-top: 1.5rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .demo-header {
+            max-width: 900px;
+        }
+
+        .demo-header p {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .demo-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <header class="demo-header">
+        <p class="feature-badge">Type III · Service-backed</p>
+        <h1>CSMA Datepicker</h1>
+        <p>
+            Two self-contained pickers that showcase the CSS-class reactivity pattern. The single picker supports
+            keyboard navigation out of the box, while the range picker highlights the hovered span before you commit
+            to an end date. Both instances emit <code>DATE_SELECTED</code> events through the EventBus and keep DOM updates
+            contained to class changes.
+        </p>
+    </header>
+
+    <main class="demo-grid">
+        <section class="demo-card">
+            <h2>Single date picker (keyboard ready)</h2>
+            <p>Use <code>Tab</code> to open, arrow keys to navigate, and <code>Enter</code>/<code>Space</code> to select.</p>
+
+            <div class="datepicker" data-datepicker data-mode="single">
+                <label class="datepicker-label" for="datepicker-single">Meeting date</label>
+                <div class="datepicker-field-wrapper">
+                    <input id="datepicker-single" class="datepicker-field" type="text" placeholder="dd/mm/yyyy"
+                        data-datepicker-field aria-label="Choose meeting date">
+                    <img class="datepicker-icon" src="../../icons/calendar.svg" alt="" aria-hidden="true">
+                </div>
+
+                <div class="datepicker-modal" data-datepicker-modal aria-hidden="true">
+                    <div class="datepicker-panel" data-datepicker-panel role="dialog" aria-modal="true"
+                        aria-label="Select a date">
+                        <div class="datepicker-header">
+                            <button type="button" class="datepicker-nav" data-action="prev" aria-label="Previous month">‹</button>
+                            <p class="datepicker-month" data-datepicker-month></p>
+                            <button type="button" class="datepicker-nav" data-action="next" aria-label="Next month">›</button>
+                        </div>
+
+                        <div class="datepicker-weekdays" data-datepicker-weekdays></div>
+                        <div class="datepicker-grid" data-datepicker-grid role="grid"></div>
+
+                        <div class="datepicker-footer">
+                            <button type="button" class="datepicker-link" data-action="today">Today</button>
+                            <p class="datepicker-display" data-datepicker-display>Use arrows + Enter to pick a date.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-output" id="output-single">Selected: —</div>
+        </section>
+
+        <section class="demo-card">
+            <h2>Date range picker (hover preview)</h2>
+            <p>Hovering in the calendar previews the span. Selecting the end date commits the range and closes the modal.</p>
+
+            <div class="datepicker" data-datepicker data-mode="range">
+                <label class="datepicker-label" for="datepicker-range">Campaign window</label>
+                <div class="datepicker-field-wrapper">
+                    <input id="datepicker-range" class="datepicker-field" type="text" placeholder="dd/mm/yyyy – dd/mm/yyyy"
+                        data-datepicker-field aria-label="Choose campaign range">
+                    <img class="datepicker-icon" src="../../icons/calendar.svg" alt="" aria-hidden="true">
+                </div>
+
+                <div class="datepicker-modal" data-datepicker-modal aria-hidden="true">
+                    <div class="datepicker-panel" data-datepicker-panel role="dialog" aria-modal="true"
+                        aria-label="Select a date range">
+                        <div class="datepicker-header">
+                            <button type="button" class="datepicker-nav" data-action="prev" aria-label="Previous month">‹</button>
+                            <p class="datepicker-month" data-datepicker-month></p>
+                            <button type="button" class="datepicker-nav" data-action="next" aria-label="Next month">›</button>
+                        </div>
+
+                        <div class="datepicker-weekdays" data-datepicker-weekdays></div>
+                        <div class="datepicker-grid" data-datepicker-grid role="grid"></div>
+
+                        <div class="datepicker-footer">
+                            <button type="button" class="datepicker-link" data-action="today">Today</button>
+                            <p class="datepicker-display" data-datepicker-display>Pick a start date to begin.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-output" id="output-range">Selected range: —</div>
+        </section>
+    </main>
+
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initDatepickerUI } from './datepicker.js';
+
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+
+        initDatepickerUI(eventBus);
+
+        const singleOutput = document.getElementById('output-single');
+        const rangeOutput = document.getElementById('output-range');
+
+        eventBus.subscribe('DATE_SELECTED', (payload) => {
+            if (payload.startDate && payload.endDate) {
+                rangeOutput.textContent = `Selected range: ${payload.startDate} – ${payload.endDate}`;
+                return;
+            }
+
+            singleOutput.textContent = `Selected: ${payload.date}`;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Field Notes • Hybrid Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/foundation/components/card.css" />
+  </head>
+  <body>
+    <article data-route="/blog/:slug" class="blog-post">
+      <header>
+        <p class="eyebrow">Field Notes</p>
+        <h1>Why We’re Testing CSMA Hybrid Rendering</h1>
+        <p class="meta">Updated weekly with live comments rendered via islands.</p>
+      </header>
+
+      <section class="content">
+        <p>
+          All of this copy is static and ships directly out of `dist/pages/blog/post.html`. It
+          proves we can pre-render long-lived marketing content while still allowing live data to
+          stream in after hydration.
+        </p>
+        <p>
+          Scroll to the bottom to see a comments island hydrate only when needed.
+        </p>
+      </section>
+
+      <section
+        class="comments island-skeleton"
+        data-island="blog-comments"
+        data-contract="COMMENT_LIST_REQUESTED"
+        data-trigger="idle"
+        data-post-id="hybrid-testing"
+      >
+        <h2>Comments</h2>
+        <p>Loading comments once the page is idle…</p>
+      </section>
+    </article>
+  </body>
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://example.com/csma/guides/customizing-theme/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Customizing Theme - CSMA Kit Docs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">CSMA Kit Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../csma-in-a-nutshell/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../getting-started/" class="dropdown-item">Setup</a>
+</li>
+                                    
+<li>
+    <a href="../features/" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../validation/" class="dropdown-item">Validation</a>
+</li>
+                                    
+<li>
+    <a href="../pwa-setup/" class="dropdown-item">PWA Setup</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Guides</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../building-components/" class="dropdown-item">Building Components</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Customizing Theme</a>
+</li>
+                                    
+<li>
+    <a href="../for-llms/" class="dropdown-item">For LLMs</a>
+</li>
+                                    
+<li>
+    <a href="../../css-foundation/" class="dropdown-item">CSS Foundation</a>
+</li>
+                                    
+<li>
+    <a href="../../complete-csma-guide/" class="dropdown-item">Complete Guide</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/core-services/" class="dropdown-item">Core Services</a>
+</li>
+                                    
+<li>
+    <a href="../../api/llm-service/" class="dropdown-item">LLM Service</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Advanced</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../advanced/contract-governance/" class="dropdown-item">Contract Governance</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/optimistic-sync/" class="dropdown-item">Optimistic Sync</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/llm-instructor/" class="dropdown-item">LLM Instructor</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Platforms</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../platforms/capacitor/" class="dropdown-item">Capacitor</a>
+</li>
+                                    
+<li>
+    <a href="../../platforms/neutralino/" class="dropdown-item">Neutralino</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../examples/todo-app/" class="dropdown-item">Todo App</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Security</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../security/security-map/" class="dropdown-item">Security Map</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Operations</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../release-checklist/" class="dropdown-item">Release Checklist</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Roadmap</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../roadmap/" class="dropdown-item">Overview</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Priority Tracks</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/OPFS-worker/" class="dropdown-item">OPFS Worker</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/ai-modularity-tanstack/" class="dropdown-item">AI Modularity</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Proposed</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/proposed/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/csma-split-proposal/" class="dropdown-item">CSMA Split Proposal</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/llm-portable-architecture/" class="dropdown-item">LLM Portable Architecture</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/url-bookmark-universal-module-proposal/" class="dropdown-item">URL Bookmark Module Proposal</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Considerations</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/considerations/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/CSMA-future-ideas/" class="dropdown-item">CSMA Future Ideas</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/Security-tracking-nstjs-stryle/" class="dropdown-item">Security Tracking</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/ocr-image-insights-module/" class="dropdown-item">OCR Image Insights</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/services-ontop-flexsearch/" class="dropdown-item">Services on FlexSearch</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/showcase-website/" class="dropdown-item">Showcase Website</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Research</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/research/" class="dropdown-item">Index</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../building-components/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../for-llms/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/example/CSMA-SSMA/edit/main/docs/guides/customizing-theme.md" class="nav-link">Edit on CSMA-SSMA/CSMA
+                                    </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#customizing-csma-build-your-own-ui" class="nav-link">Customizing CSMA - Build Your Own UI</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#the-5-step-customization-process" class="nav-link">The 5-Step Customization Process</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#why-this-order-matters" class="nav-link">Why This Order Matters</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#quick-reference-foundation-tokens" class="nav-link">Quick Reference: Foundation Tokens</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#common-mistakes-to-avoid" class="nav-link">Common Mistakes to Avoid</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#example-google-material-design-in-csma" class="nav-link">Example: Google Material Design in CSMA</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#testing-your-customization" class="nav-link">Testing Your Customization</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#key-files" class="nav-link">Key Files</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#next-steps" class="nav-link">Next Steps</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="customizing-csma-build-your-own-ui">Customizing CSMA - Build Your Own UI<a class="headerlink" href="#customizing-csma-build-your-own-ui" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Philosophy</strong>: Customizing CSMA's look is a top-down process. Start with design tokens (colors/spacing/radius), then components, then interactive features.</p>
+<p><strong>Foundation</strong>: CSMA now uses <strong>semantic naming</strong> (<code>--primary</code>, <code>--background</code>, <code>--radius-md</code>) for clarity and shadcn/ui compatibility.</p>
+</blockquote>
+<hr />
+<h2 id="the-5-step-customization-process">The 5-Step Customization Process<a class="headerlink" href="#the-5-step-customization-process" title="Permanent link">&para;</a></h2>
+<p>When you want to give CSMA a <strong>completely custom look</strong> (not just tweak colors), follow this order:</p>
+<h3 id="step-1-design-tokens-foundationtokenscss-2-3-days">Step 1: Design Tokens (foundation/tokens.css) → 2-3 days<a class="headerlink" href="#step-1-design-tokens-foundationtokenscss-2-3-days" title="Permanent link">&para;</a></h3>
+<p><strong>Files</strong>: <code>src/css/foundation/tokens.css</code> + <code>src/css/foundation/themes/*.css</code></p>
+<p>Start here! All components inherit these values. <strong>Define tokens in the correct scope</strong> to avoid bugs.</p>
+<p><strong>What to change</strong>:</p>
+<pre><code class="language-css">/* ====================================================================
+   BASE TOKENS - Apply to ALL themes (light and dark)
+   ==================================================================== */
+:root {
+  /* Border Radius - Apply to both themes */
+  --radius: 0.625rem;                    /* Global base radius (10px) */
+  --radius-sm: calc(var(--radius) - 0.25rem);  /* 6px */
+  --radius-md: var(--radius);            /* 10px */
+  --radius-lg: calc(var(--radius) + 0.25rem);  /* 14px */
+  --radius-xl: calc(var(--radius) + 0.5rem);   /* 18px */
+  --radius-full: 9999px;
+
+  /* Spacing - Apply to both themes */
+  --spacing-xs: 0.25rem;    /* 4px */
+  --spacing-sm: 0.5rem;     /* 8px */
+  --spacing-md: 0.75rem;    /* 12px */
+  --spacing-lg: 1rem;       /* 16px */
+  --spacing-xl: 1.25rem;    /* 20px */
+  --spacing-2xl: 1.5rem;    /* 24px */
+
+  /* Transitions - Apply to both themes */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* Shadows - Apply to both themes */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.2);
+}
+
+/* ====================================================================
+   LIGHT THEME - Colors only (inherits base tokens above)
+   ==================================================================== */
+:root[data-theme=&quot;light&quot;],
+:root:not([data-theme]) {
+  /* Brand &amp; Interactive Colors */
+  --primary: hsl(222.2 47.4% 11.2%);          /* Primary brand/action color */
+  --primary-foreground: hsl(210 40% 98%);     /* Text on primary */
+  --secondary: hsl(210 40% 96.1%);            /* Subtle surfaces */
+  --secondary-foreground: hsl(222.2 47.4% 11.2%); /* Text on secondary */
+  --accent: hsl(210 40% 96.1%);               /* Hover states */
+  --accent-foreground: hsl(222.2 47.4% 11.2%); /* Text on accent */
+
+  /* Component Surfaces */
+  --background: hsl(0 0% 100%);               /* Page background */
+  --foreground: hsl(222.2 84% 4.9%);         /* Primary text */
+  --card: hsl(0 0% 100%);                     /* Card background */
+  --card-foreground: hsl(222.2 84% 4.9%);    /* Card text */
+  --popover: hsl(0 0% 100%);                  /* Popover background */
+  --popover-foreground: hsl(222.2 84% 4.9%); /* Popover text */
+  --muted: hsl(210 40% 96.1%);                /* Muted backgrounds */
+  --muted-foreground: hsl(215.4 16.3% 46.9%); /* Muted text */
+
+  /* Status Colors */
+  --destructive: hsl(0 84.2% 60.2%);          /* Error/red */
+  --destructive-foreground: hsl(210 40% 98%);
+  --success: hsl(142 71% 45%);                /* Success/green */
+  --success-foreground: hsl(137 72% 94%);
+  --warning: hsl(38 92% 50%);                 /* Warning/amber */
+  --warning-foreground: hsl(48 96% 89%);
+  --info: hsl(221 83% 53%);                   /* Info/blue */
+  --info-foreground: hsl(210 40% 98%);
+
+  /* Borders &amp; Input */
+  --border: hsl(214.3 31.8% 91.4%);
+  --input: hsl(214.3 31.8% 91.4%);
+  --ring: hsl(222.2 84% 4.9%);
+}
+
+/* ====================================================================
+   DARK THEME - Colors only (inherits base tokens from :root above)
+   ==================================================================== */
+:root[data-theme=&quot;dark&quot;] {
+  --primary: hsl(210 40% 98%);
+  --primary-foreground: hsl(222.2 47.4% 11.2%);
+  --secondary: hsl(217.2 32.6% 17.5%);
+  --secondary-foreground: hsl(210 40% 98%);
+  --accent: hsl(217.2 32.6% 17.5%);
+  --accent-foreground: hsl(210 40% 98%);
+
+  --background: hsl(222.2 84% 4.9%);
+  --foreground: hsl(210 40% 98%);
+  --card: hsl(222.2 84% 4.9%);
+  --card-foreground: hsl(210 40% 98%);
+  --popover: hsl(222.2 84% 4.9%);
+  --popover-foreground: hsl(210 40% 98%);
+  --muted: hsl(217.2 32.6% 17.5%);
+  --muted-foreground: hsl(215 20.2% 65.1%);
+
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --success: hsl(142 70% 45%);
+  --success-foreground: hsl(20 95% 14%);
+  --warning: hsl(38 92% 45%);
+  --warning-foreground: hsl(48 96% 89%);
+  --info: hsl(217 91% 60%);
+  --info-foreground: hsl(222.2 84% 4.9%);
+
+  --border: hsl(217.2 32.6% 17.5%);
+  --input: hsl(217.2 32.6% 17.5%);
+  --ring: hsl(212.7 26.8% 83.9%);
+}
+</code></pre>
+<p><strong>Critical Rules</strong>:
+- ✅ <strong>Radius/Spacing/Shadows</strong>: Define in <code>:root</code> (base level) - applies to both themes
+- ✅ <strong>Colors Only</strong>: Define in <code>:root[data-theme="light"]</code> and <code>:root[data-theme="dark"]</code>
+- ✅ <strong>Never hardcode</strong>: Always use <code>var(--token-name)</code> in components</p>
+<p><strong>Verify</strong>:
+- Open <code>src/ui/components/demos.html</code> - check buttons, cards have rounded corners
+- Toggle theme - radius should work in both light and dark
+- No square corners anywhere</p>
+<hr />
+<h3 id="step-2-base-styles-basecss-1-day">Step 2: Base Styles (base.css) → 1 day<a class="headerlink" href="#step-2-base-styles-basecss-1-day" title="Permanent link">&para;</a></h3>
+<p><strong>File</strong>: <code>src/css/base.css</code></p>
+<p>Global typography, reset, and layout styles.</p>
+<p><strong>What to change</strong>:</p>
+<pre><code class="language-css">body {
+  font-family: ui-sans-serif, system-ui, -apple-system; /* Your font */
+  line-height: 1.5;  /* Your line height */
+  font-size: 14px;   /* Your base size (already using --font-size-base) */
+  color: var(--foreground);    /* ✅ Use semantic token */
+  background: var(--background); /* ✅ Use semantic token */
+}
+
+h1, h2, h3 {
+  font-weight: 600;  /* Your heading weight */
+  letter-spacing: -0.025em; /* Your letter spacing */
+}
+</code></pre>
+<p><strong>Verify</strong>:
+- Text looks different
+- Spacing between elements adjusted
+- Headings match your design
+- Both themes work correctly</p>
+<hr />
+<h3 id="step-3-type-i-pure-css-components-week-1">Step 3: Type I - Pure CSS Components (Week 1)<a class="headerlink" href="#step-3-type-i-pure-css-components-week-1" title="Permanent link">&para;</a></h3>
+<p><strong>Examples</strong>: Badge, Card, Avatar, Divider</p>
+<p><strong>Why Type I first?</strong>
+- No JavaScript - easy to test
+- Fast progress (2-3 hours each)
+- Depends on foundation tokens + theme overrides
+- Foundation for Type II/III</p>
+<p><strong>How to build</strong>:
+1. Reference foundation tokens, never hardcode:
+   ```css
+   /<em> ✅ CORRECT - Uses foundation tokens </em>/
+   .badge {
+     background: var(--secondary);
+     padding: var(--spacing-xs) var(--spacing-sm);
+     border-radius: var(--radius-full);
+     color: var(--secondary-foreground);
+   }</p>
+<p>/<em> ❌ WRONG - Hardcoded values </em>/
+   .badge {
+     background: #f0f0f0;        /<em> ❌ Hardcoded color </em>/
+     padding: 4px 8px;           /<em> ❌ Hardcoded spacing </em>/
+     border-radius: 9999px;      /<em> ❌ Should use var(--radius-full) </em>/
+   }
+   ```</p>
+<ol>
+<li>Create component structure following existing patterns</li>
+<li>Update <code>src/ui/components/demos.html</code> with link</li>
+<li>Create demo page</li>
+</ol>
+<p><strong>Order matters</strong>: Build in this sequence:
+1. Visual-only: Badge, Avatar, Divider
+2. Layout: Card, Container</p>
+<hr />
+<h3 id="step-4-type-ii-self-contained-components-week-2-3">Step 4: Type II - Self-Contained Components (Week 2-3)<a class="headerlink" href="#step-4-type-ii-self-contained-components-week-2-3" title="Permanent link">&para;</a></h3>
+<p><strong>Examples</strong>: Accordion, Dropdown, Toast, Tabs, Navbar</p>
+<p><strong>Why Type II second?</strong>
+- Depends on Type I components (buttons, badges)
+- Simple JavaScript via EventBus
+- No external services needed</p>
+<p><strong>How to build</strong>:
+1. Create CSS using foundation tokens (same as Type I)
+2. Create init function that returns cleanup:
+   <code>javascript
+   // src/ui/components/navbar/navbar.js
+   export function initNavbarSystem(eventBus) {
+     // Setup event listeners
+     const cleanup = () =&gt; { /* remove listeners */ };
+     return cleanup;
+   }</code>
+3. Register in your app initialization</p>
+<p><strong>Order matters</strong>: Build after dependencies ready:
+1. Needs Type I: Dropdown (uses Button), Toast (uses Badge)
+2. Standalone: Accordion, Tabs, Navbar
+3. Complex: Modal, Popover</p>
+<hr />
+<h3 id="step-5-type-iii-service-backed-components-week-3-4">Step 5: Type III - Service-Backed Components (Week 3-4)<a class="headerlink" href="#step-5-type-iii-service-backed-components-week-3-4" title="Permanent link">&para;</a></h3>
+<p><strong>Examples</strong>: Calendar, File Upload, Drawer</p>
+<p><strong>Why Type III last?</strong>
+- Most complex logic
+- Requires Type I &amp; II working
+- Needs service architecture</p>
+<p><strong>How to build</strong>:
+1. Create service with business logic
+2. Register service
+3. Create Type II component that uses the service
+4. Use foundation tokens in CSS</p>
+<hr />
+<h2 id="why-this-order-matters">Why This Order Matters<a class="headerlink" href="#why-this-order-matters" title="Permanent link">&para;</a></h2>
+<h3 id="starting-with-foundation-tokens-correctly-scoped">✅ Starting with foundation tokens (correctly scoped)<a class="headerlink" href="#starting-with-foundation-tokens-correctly-scoped" title="Permanent link">&para;</a></h3>
+<ul>
+<li>All components automatically use new tokens</li>
+<li>No refactoring needed later</li>
+<li>Visual consistency from day 1</li>
+<li><strong>No square corners in dark mode!</strong></li>
+</ul>
+<h3 id="type-i-before-type-ii">✅ Type I before Type II<a class="headerlink" href="#type-i-before-type-ii" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Type II uses Type I components</li>
+<li>Test CSS in isolation first</li>
+<li>Foundation must be solid</li>
+</ul>
+<h3 id="wrong-order-rework">❌ Wrong order = Rework<a class="headerlink" href="#wrong-order-rework" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>If tokens scoped wrong</strong>: Components break in dark mode</li>
+<li><strong>If you skip theme</strong>: Refactor every component later</li>
+<li><strong>If you hardcode</strong>: Components don't adapt to themes</li>
+</ul>
+<hr />
+<h2 id="quick-reference-foundation-tokens">Quick Reference: Foundation Tokens<a class="headerlink" href="#quick-reference-foundation-tokens" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Token Category</th>
+<th>Where Defined</th>
+<th>Examples</th>
+<th>Use For</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Colors</strong></td>
+<td>Theme sections (light/dark)</td>
+<td><code>--primary</code>, <code>--background</code>, <code>--border</code></td>
+<td>All colors</td>
+</tr>
+<tr>
+<td><strong>Radius</strong></td>
+<td>Base <code>:root</code></td>
+<td><code>--radius</code>, <code>--radius-md</code>, <code>--radius-full</code></td>
+<td>Border radius</td>
+</tr>
+<tr>
+<td><strong>Spacing</strong></td>
+<td>Base <code>:root</code></td>
+<td><code>--spacing-md</code>, <code>--spacing-lg</code></td>
+<td>Padding/margins</td>
+</tr>
+<tr>
+<td><strong>Shadows</strong></td>
+<td>Base <code>:root</code></td>
+<td><code>--shadow-md</code>, <code>--shadow-lg</code></td>
+<td>Box shadows</td>
+</tr>
+<tr>
+<td><strong>Typography</strong></td>
+<td>Base <code>:root</code></td>
+<td><code>--font-size-sm</code>, <code>--font-family</code></td>
+<td>Fonts/sizes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="common-mistakes-to-avoid">Common Mistakes to Avoid<a class="headerlink" href="#common-mistakes-to-avoid" title="Permanent link">&para;</a></h2>
+<h3 id="mistake-1-defining-radius-in-theme-sections">❌ Mistake 1: Defining radius in theme sections<a class="headerlink" href="#mistake-1-defining-radius-in-theme-sections" title="Permanent link">&para;</a></h3>
+<pre><code class="language-css">/* WRONG - Radius won't work in dark mode */
+:root[data-theme=&quot;light&quot;] { --radius: 0.625rem; }
+:root[data-theme=&quot;dark&quot;] { --radius: 0.625rem; }
+
+/* ✅ CORRECT - Define in base :root */
+:root { --radius: 0.625rem; }
+</code></pre>
+<h3 id="mistake-2-hardcoding-values-in-components">❌ Mistake 2: Hardcoding values in components<a class="headerlink" href="#mistake-2-hardcoding-values-in-components" title="Permanent link">&para;</a></h3>
+<pre><code class="language-css">/* WRONG - Won't adapt to theme changes */
+.card {
+  border-radius: 8px;           /* ❌ Hardcoded */
+  padding: 16px;                /* ❌ Hardcoded */
+  background: #ffffff;          /* ❌ Hardcoded */
+}
+
+/* ✅ CORRECT - Uses foundation tokens */
+.card {
+  border-radius: var(--radius-md);  /* ✅ Token */
+  padding: var(--spacing-md);        /* ✅ Token */
+  background: var(--card);           /* ✅ Token */
+}
+</code></pre>
+<h3 id="mistake-3-using-old-literal-token-names">❌ Mistake 3: Using old literal token names<a class="headerlink" href="#mistake-3-using-old-literal-token-names" title="Permanent link">&para;</a></h3>
+<pre><code class="language-css">/* WRONG - Old naming, less clear */
+--fx-color-bg: hsl(...);
+--fx-color-fg: hsl(...);
+--corner-md: 0.5rem;
+
+/* ✅ CORRECT - Semantic naming */
+--background: hsl(...);
+--foreground: hsl(...);
+--radius-md: var(--radius);
+</code></pre>
+<hr />
+<h2 id="example-google-material-design-in-csma">Example: Google Material Design in CSMA<a class="headerlink" href="#example-google-material-design-in-csma" title="Permanent link">&para;</a></h2>
+<h3 id="step-1-foundationtokenscss-correctly-scoped">Step 1: foundation/tokens.css (correctly scoped)<a class="headerlink" href="#step-1-foundationtokenscss-correctly-scoped" title="Permanent link">&para;</a></h3>
+<pre><code class="language-css">/* Base tokens - both themes */
+:root {
+  --fx-radius-md: 0.25rem;          /* Material uses 4px */
+  --fx-space-md: 1rem;              /* 16px grid */
+}
+
+/* Light theme */
+:root[data-theme=&quot;light&quot;] {
+  --fx-color-primary: #1976d2;      /* Material Blue */
+  --fx-color-secondary: #f5f5f5;    /* Light gray */
+  --fx-color-accent: #ff4081;       /* Pink accent */
+}
+
+/* Dark theme */
+:root[data-theme=&quot;dark&quot;] {
+  --fx-color-primary: #90caf9;      /* Light blue */
+  --fx-color-secondary: #424242;    /* Dark gray */
+  --fx-color-accent: #ff80ab;       /* Light pink */
+}
+</code></pre>
+<h3 id="step-2-component-css">Step 2: Component CSS<a class="headerlink" href="#step-2-component-css" title="Permanent link">&para;</a></h3>
+<pre><code class="language-css">/* Material buttons */
+.button {
+  border-radius: var(--fx-radius-md);     /* ✅ Material 4px */
+  padding: var(--fx-space-md);           /* ✅ 16px */
+  text-transform: uppercase;        /* Material style */
+  letter-spacing: 0.0892857143em;   /* Material style */
+  background: var(--fx-color-primary);   /* ✅ Theme-adaptive */
+}
+</code></pre>
+<hr />
+<h2 id="testing-your-customization">Testing Your Customization<a class="headerlink" href="#testing-your-customization" title="Permanent link">&para;</a></h2>
+<p>After each step:
+1. <strong>Run dev server</strong>: <code>npm run dev</code>
+2. <strong>Check light theme</strong>: Open in browser
+3. <strong>Check dark theme</strong>: Click theme toggle
+4. <strong>Verify no square corners</strong>: All elements should be rounded
+5. <strong>Verify no hardcoded values</strong>: All CSS uses <code>var(--*)</code></p>
+<p><strong>If you see square corners in dark mode:</strong>
+- You defined radius in theme section instead of base <code>:root</code>
+- Fix: Move <code>--radius-*</code> tokens to top-level <code>:root</code></p>
+<hr />
+<h2 id="key-files">Key Files<a class="headerlink" href="#key-files" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Foundation Tokens</strong>: <code>src/css/foundation/tokens.css</code> - Global scales + aliases</li>
+<li><strong>Theme Overrides</strong>: <code>src/css/foundation/themes/*.css</code> - Light/dark palettes</li>
+<li><strong>Globals</strong>: <code>src/css/base.css</code> - Typography, reset, layout</li>
+<li><strong>Migration Guide</strong>: <code>src/css/THEME_MIGRATION_GUIDE.md</code> - Detailed token mapping</li>
+<li><strong>Components</strong>: <code>src/ui/components/[name]/[name].css</code> - Component styles</li>
+</ul>
+<hr />
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Read <code>building-components.md</code> for component patterns</li>
+<li>Read <code>for-llms.md</code> for AI-assisted coding</li>
+<li>See <code>complete-csma-guide.md</code> for full architecture</li>
+</ul>
+<p><strong>Follow this order and token scoping rules and you'll build a consistent, theme-adaptive UI!</strong> 🎯</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

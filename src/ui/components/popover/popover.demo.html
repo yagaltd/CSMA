@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popover Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./popover.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .demo-row {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            padding: 3rem;
+            justify-content: center;
+            background: var(--fx-color-bg);
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Popover Component</h1>
+    <p class="intro">Floating content panels triggered by click.</p>
+
+    <section>
+        <h2>Popover Positions</h2>
+        <div class="demo-row">
+            <div class="popover-container">
+                <button class="button popover-trigger" data-variant="primary" aria-haspopup="dialog" aria-expanded="false">
+                    Top Popover
+                </button>
+                <div class="popover-content popover-top" data-state="closed">
+                    <div class="popover-arrow"></div>
+                    <p>This popover appears above the trigger</p>
+                </div>
+            </div>
+
+            <div class="popover-container">
+                <button class="button popover-trigger" data-variant="primary" aria-haspopup="dialog" aria-expanded="false">
+                    Bottom Popover
+                </button>
+                <div class="popover-content popover-bottom" data-state="closed">
+                    <div class="popover-arrow"></div>
+                    <p>This popover appears below the trigger</p>
+                </div>
+            </div>
+
+            <div class="popover-container">
+                <button class="button popover-trigger" data-variant="primary" aria-haspopup="dialog" aria-expanded="false">
+                    Left Popover
+                </button>
+                <div class="popover-content popover-left" data-state="closed">
+                    <div class="popover-arrow"></div>
+                    <p>This popover appears to the left</p>
+                </div>
+            </div>
+
+            <div class="popover-container">
+                <button class="button popover-trigger" data-variant="primary" aria-haspopup="dialog" aria-expanded="false">
+                    Right Popover
+                </button>
+                <div class="popover-content popover-right" data-state="closed">
+                    <div class="popover-arrow"></div>
+                    <p>This popover appears to the right</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Features</h2>
+        <ul style="color: var(--fx-color-fg-muted);">
+            <li><strong>Click to toggle</strong>: Click trigger to open/close</li>
+            <li><strong>Outside click</strong>: Click outside to close</li>
+            <li><strong>ESC key</strong>: Press Escape to close</li>
+            <li><strong>Auto-close</strong>: Opening one closes others</li>
+        </ul>
+    </section>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Popover Component - CSMA UI Library</p>
+    </footer>
+
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { initPopovers } from './popover.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+
+        initPopovers(eventBus);
+
+        eventBus.subscribe('POPOVER_TOGGLED', () => { });
+    </script>
+</body>
+
+</html>

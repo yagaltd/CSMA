@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags (managed by MetaManager) -->
+    <title>CSMA Application</title>
+    <meta name="description" content="A lean, secure, reactive CSMA application">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#007acc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CSMA App">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+    <!-- Content Security Policy (MANDATORY for security) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
+                 script-src 'self'; 
+                 style-src 'self';
+                 connect-src 'self' http://127.0.0.1:5050;
+                 img-src 'self' data: https:;
+                 font-src 'self';
+                 object-src 'none';
+                 base-uri 'self';
+                 form-action 'self';">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="/src/css/main.css">
+    <link rel="stylesheet" href="/src/ui/components/chat/chat.css">
+    <link rel="stylesheet" href="/src/ui/pages/index.css">
+</head>
+
+<body>
+    <header class="page-header">
+        <button type="button" class="consent-trigger" id="openConsent" data-consent-open="#appConsentModal">Open Consent</button>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <img class="theme-icon" src="/src/ui/icons/moon.svg" alt="">
+            <span class="theme-label">Dark</span>
+        </button>
+        <h1>CSMA Kit</h1>
+        <p class="subtitle">CSS-first microservices UI kit with consented analytics and zero-trust defaults.</p>
+    </header>
+
+    <div data-consent-modal id="appConsentModal" aria-hidden="true">
+        <div class="consent-modal-panel" data-consent-center role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+            <header class="consent-modal-header">
+                <div>
+                    <h2 id="consentTitle">Analytics Consent</h2>
+                    <p class="consent-description">Select scopes to share hashed telemetry from these demos. Everything stays opt-in.</p>
+                </div>
+            </header>
+
+            <div class="consent-scopes">
+                <label class="consent-scope-toggle">
+                    <span>Search analytics</span>
+                    <input type="checkbox" data-consent-toggle="search_analytics" data-consent-label="Search analytics">
+                </label>
+                <label class="consent-scope-toggle">
+                    <span>UI interaction analytics</span>
+                    <input type="checkbox" data-consent-toggle="ui_analytics" data-consent-label="UI analytics">
+                </label>
+                <label class="consent-scope-toggle">
+                    <span>Performance metrics</span>
+                    <input type="checkbox" data-consent-toggle="perf_metrics" data-consent-label="Perf metrics">
+                </label>
+            </div>
+
+            <p data-consent-status></p>
+
+            <div class="consent-modal-actions">
+                <button type="button" class="button" data-variant="ghost" data-consent-clear>I don't agree, delete my analytics</button>
+                <button type="button" class="button" data-variant="primary" data-consent-accept disabled>I agree</button>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <section class="hero">
+            <p class="eyebrow">CSMA Kit</p>
+            <h1>CSMA Kit</h1>
+            <p class="hero-lead">A lean, CSS-first microservices UI kit with consented analytics, zero-trust defaults, and ready-to-use components for web, mobile, and desktop targets.</p>
+            <div class="hero-actions">
+                <a class="button" data-variant="primary" href="/src/ui/components/demos.html">Explore components</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Built with CSMA - CSS-first Microservices Architecture</p>
+    </footer>
+
+    <!-- HTML Templates -->
+    <template id="example-card">
+        <div class="card">
+            <div class="card-status"></div>
+            <div class="card-content">
+                <h3 class="card-title"></h3>
+                <p class="card-text"></p>
+            </div>
+            <div class="card-actions">
+                <button class="button" data-variant="primary" data-action="complete">Complete</button>
+                <button class="button" data-variant="secondary" data-action="delete">Delete</button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Main entry point -->
+    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/ui/pages/index.js"></script>
+</body>
+
+</html>

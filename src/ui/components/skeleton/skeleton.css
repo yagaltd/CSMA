@@ -1,0 +1,57 @@
+/**
+ * Skeleton Component CSS
+ * CSMA-compliant styles - Extracted from kimi-atomic1.html
+ * Loading placeholder animations
+ */
+
+.skeleton {
+    background: linear-gradient(90deg,
+            var(--fx-color-bg-muted) 25%,
+            rgba(255, 255, 255, 0.5) 50%,
+            var(--fx-color-bg-muted) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s infinite;
+    border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Skeleton Variants */
+.skeleton-text {
+    height: 0.875rem;
+    margin: 0.25rem 0;
+}
+
+.skeleton-title {
+    height: 1.25rem;
+    width: 60%;
+    margin: 0.5rem 0;
+}
+
+.skeleton-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+}
+
+.skeleton-card {
+    height: 200px;
+}
+
+.skeleton-button {
+    height: 2.5rem;
+    width: 6rem;
+}
+
+.skeleton-image {
+    height: 150px;
+    width: 100%;
+}

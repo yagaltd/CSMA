@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../../components/theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Pattern - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./checkout.css">
+    <script>
+        window.csma = window.csma || {};
+        window.csma.config = {
+            ...(window.csma.config || {}),
+            apiBaseUrl: window.csma?.config?.apiBaseUrl || 'http://localhost:5050',
+            optimisticSync: {
+                ...(window.csma?.config?.optimisticSync || {}),
+                wsEndpoint: 'ws://localhost:5050/optimistic/ws',
+                eventsEndpoint: 'http://localhost:5050/optimistic/events'
+            }
+        };
+    </script>
+</head>
+
+<body class="csma-checkout-demo">
+    <a href="../../components/demos.html" class="button" data-variant="text">← Back</a>
+    <header>
+        <h1>Checkout Pattern</h1>
+        <p class="text-muted">Connects to the checkout module + Form Management.</p>
+    </header>
+
+    <div class="csma-checkout-shell">
+        <section class="csma-checkout-column">
+            <p class="csma-checkout-eyebrow">Cart · Synced with CheckoutService</p>
+            <h2>Your build</h2>
+            <p class="text-muted">Adjust quantities to emit recalculated totals via <code>CHECKOUT_STATE_CHANGED</code>.</p>
+            <div class="csma-cart-items" data-cart-items></div>
+        </section>
+
+        <section class="csma-checkout-column">
+            <h2>Customer details</h2>
+            <form class="csma-checkout-form" data-checkout-form autocomplete="on">
+                <div class="input-group" data-size="lg">
+                    <label class="input-label" for="checkout-name">Full name</label>
+                    <input class="input" id="checkout-name" name="name" autocomplete="name" required placeholder="Ada Lovelace">
+                </div>
+                <div class="input-group" data-size="lg">
+                    <label class="input-label" for="checkout-email">Email</label>
+                    <input class="input" id="checkout-email" name="email" type="email" autocomplete="email" required>
+                </div>
+                <div class="textarea-group" data-size="lg">
+                    <label class="textarea-label" for="checkout-address">Shipping address</label>
+                    <textarea class="textarea" id="checkout-address" name="address" rows="3" autocomplete="street-address" required placeholder="42 Analytical Engine Way"></textarea>
+                </div>
+                <div class="input-group" data-size="lg">
+                    <label class="input-label" for="checkout-payment">Payment method</label>
+                    <select class="input" id="checkout-payment" name="paymentMethod">
+                        <option value="card">Card (Stripe)</option>
+                        <option value="wire">Wire transfer</option>
+                    </select>
+                </div>
+                <button class="button" data-variant="primary" type="submit">Complete order</button>
+            </form>
+            <div class="csma-totals">
+                <div class="csma-totals-row">
+                    <span>Subtotal</span>
+                    <span data-total="subtotal">$0.00</span>
+                </div>
+                <div class="csma-totals-row">
+                    <span>Tax (7%)</span>
+                    <span data-total="tax">$0.00</span>
+                </div>
+                <div class="csma-totals-row total">
+                    <span>Total</span>
+                    <span data-total="total">$0.00</span>
+                </div>
+            </div>
+            <p class="csma-checkout-status" data-checkout-status aria-live="polite">Idle</p>
+            <div class="csma-checkout-optimistic" data-checkout-optimistic hidden>
+                <div class="csma-checkout-optimistic__header">
+                    <span>Optimistic queue</span>
+                    <span class="badge" data-optimistic-state>idle</span>
+                </div>
+                <p class="text-muted">
+                    <strong data-optimistic-pending>0</strong> pending intents · updated
+                    <span data-optimistic-updated>never</span>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        const schedule = typeof requestAnimationFrame === 'function'
+            ? requestAnimationFrame
+            : (fn) => setTimeout(fn, 16);
+
+        const waitFor = (predicate, timeout = 10000) => new Promise((resolve, reject) => {
+            const start = Date.now();
+            const check = () => {
+                if (predicate()) {
+                    resolve();
+                    return;
+                }
+                if (Date.now() - start > timeout) {
+                    reject(new Error('Timed out waiting for CSMA runtime.'));
+                    return;
+                }
+                schedule(check);
+            };
+            check();
+        });
+
+        (async () => {
+            try {
+                await import('/src/main.js');
+                await waitFor(() => window.csma?.eventBus);
+                await waitFor(() => window.csma?.checkout);
+                await waitFor(() => window.csma?.actionLog);
+                await import('./checkout.js');
+            } catch (error) {
+                console.error('[CheckoutDemo] Failed to bootstrap runtime:', error);
+            }
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../../components/theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Module Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./search-demo.css">
+</head>
+
+<body class="search-demo-body">
+    <a href="../../components/demos.html" class="button" data-variant="text">← Back</a>
+    <section class="search-demo" data-state="idle">
+        <header>
+            <h1>Search & Discovery Demo</h1>
+            <p>Tiered FlexSearch module wired to CSMA EventBus contracts.</p>
+        </header>
+
+        <div class="search-demo-controls">
+            <div class="search-demo-actions">
+                <button class="button primary" type="button" data-load-sample>Load sample dataset</button>
+                <button class="button" type="button" data-clear-search disabled>Clear</button>
+                <span class="search-demo-status" data-index-status>Dataset not loaded</span>
+            </div>
+            <div class="search-demo-progress" aria-hidden="true">
+                <div data-progress></div>
+            </div>
+        </div>
+            <span class="search-demo-status" data-index-time></span>
+
+        <div class="search-input-group">
+            <input class="input" type="search" placeholder="Search articles by title, tags, or summary" data-search-input autocomplete="off" disabled>
+            <button class="button" type="button" data-random-search disabled>Random query</button>
+        </div>
+
+        <div class="search-tag-bar" data-filter-tags>
+            <button type="button" data-category="tutorial" disabled>Tutorial</button>
+            <button type="button" data-category="guide" disabled>Guide</button>
+            <button type="button" data-category="advanced" disabled>Advanced</button>
+            <button type="button" data-category="case-study" disabled>Case Study</button>
+        </div>
+
+        <div class="search-meta">
+            <span data-results-count>0 results</span>
+            <span data-search-time>0ms</span>
+        </div>
+
+        <div class="search-results" data-results-list></div>
+        <div class="search-empty">No results yet. Load the dataset and start typing.</div>
+    </section>
+
+    <script type="module" src="./search-demo.js"></script>
+</body>
+
+</html>

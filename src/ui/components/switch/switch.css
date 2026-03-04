@@ -1,0 +1,91 @@
+/**
+ * Switch Component CSS
+ * CSMA-compliant styles - Extracted from kimi-ui-phase3-4.html
+ */
+
+.switch-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+}
+
+.switch-group[data-state="disabled"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.switch-group[data-label-position="left"] {
+    flex-direction: row-reverse;
+}
+
+.switch-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-track {
+    position: relative;
+    width: 2.5rem;
+    height: 1.25rem;
+    background: var(--fx-color-bg-muted);
+    border-radius: var(--radius-full);
+    transition: background var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.switch-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 1rem;
+    height: 1rem;
+    background: var(--fx-color-bg);
+    border-radius: 50%;
+    transition: transform var(--transition-fast);
+    box-shadow: var(--shadow-sm);
+}
+
+.switch-group[data-state="checked"] .switch-track {
+    background: var(--fx-color-primary);
+}
+
+.switch-group[data-state="checked"] .switch-thumb {
+    transform: translateX(1.25rem);
+}
+
+.switch-label {
+    font-size: var(--font-size-sm);
+    user-select: none;
+}
+
+/* Sizes */
+.switch-group[data-size="sm"] .switch-track {
+    width: 2rem;
+    height: 1rem;
+}
+
+.switch-group[data-size="sm"] .switch-thumb {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+.switch-group[data-size="sm"][data-state="checked"] .switch-thumb {
+    transform: translateX(1rem);
+}
+
+.switch-group[data-size="lg"] .switch-track {
+    width: 3rem;
+    height: 1.5rem;
+}
+
+.switch-group[data-size="lg"] .switch-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.switch-group[data-size="lg"][data-state="checked"] .switch-thumb {
+    transform: translateX(1.5rem);
+}

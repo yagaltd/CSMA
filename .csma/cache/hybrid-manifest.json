@@ -1,0 +1,139 @@
+{
+  "generatedAt": "2026-02-22T05:51:56.634Z",
+  "routes": {
+    "/about": {
+      "route": "/about",
+      "generatedAt": 1771739516634,
+      "type": "static",
+      "islands": [],
+      "islandCount": 0
+    },
+    "/blog/post": {
+      "route": "/blog/post",
+      "generatedAt": 1771739516634,
+      "type": "island",
+      "islands": [
+        {
+          "id": "blog-comments",
+          "contract": "COMMENT_LIST_REQUESTED",
+          "trigger": "idle",
+          "parameters": {
+            "postId": "hybrid-testing"
+          },
+          "marker": "<section\n        class=\"comments island-skeleton\"\n        data-island=\"blog-comments\"\n        data-contract=\"COMMENT_LIST_REQUESTED\"\n        data-trigger=\"idle\"\n        data-post-id=\"hybrid-testing\"\n      >"
+        }
+      ],
+      "islandCount": 1
+    },
+    "/products/detail": {
+      "route": "/products/detail",
+      "generatedAt": 1771739516634,
+      "type": "island",
+      "islands": [
+        {
+          "id": "product-inventory",
+          "contract": "INVENTORY_INQUIRY",
+          "trigger": "load",
+          "parameters": {
+            "productId": "SKU-001"
+          },
+          "marker": "<div\n          class=\"inventory island-skeleton\"\n          data-island=\"product-inventory\"\n          data-contract=\"INVENTORY_INQUIRY\"\n          data-trigger=\"load\"\n          data-product-id=\"SKU-001\"\n        >"
+        },
+        {
+          "id": "product-reviews",
+          "contract": "PRODUCT_REVIEWS_REQUESTED",
+          "trigger": "visible",
+          "parameters": {
+            "productId": "SKU-001"
+          },
+          "marker": "<section\n        class=\"reviews island-skeleton\"\n        data-island=\"product-reviews\"\n        data-contract=\"PRODUCT_REVIEWS_REQUESTED\"\n        data-trigger=\"visible\"\n        data-product-id=\"SKU-001\"\n      >"
+        }
+      ],
+      "islandCount": 2
+    },
+    "/products": {
+      "route": "/products",
+      "generatedAt": 1771739516634,
+      "type": "island",
+      "islands": [
+        {
+          "id": "product-inventory",
+          "contract": "INVENTORY_INQUIRY",
+          "trigger": "visible",
+          "parameters": {
+            "productId": "SKU-001"
+          },
+          "marker": "<div\n            class=\"inventory island-skeleton\"\n            data-island=\"product-inventory\"\n            data-contract=\"INVENTORY_INQUIRY\"\n            data-trigger=\"visible\"\n            data-product-id=\"SKU-001\"\n          >"
+        },
+        {
+          "id": "product-inventory",
+          "contract": "INVENTORY_INQUIRY",
+          "trigger": "visible",
+          "parameters": {
+            "productId": "SKU-002"
+          },
+          "marker": "<div\n            class=\"inventory island-skeleton\"\n            data-island=\"product-inventory\"\n            data-contract=\"INVENTORY_INQUIRY\"\n            data-trigger=\"visible\"\n            data-product-id=\"SKU-002\"\n          >"
+        }
+      ],
+      "islandCount": 2
+    },
+    "/test/hydration": {
+      "route": "/test/hydration",
+      "generatedAt": 1771739516634,
+      "type": "island",
+      "islands": [
+        {
+          "id": "hydration-test",
+          "contract": "HYDRATION_TEST",
+          "trigger": "visible",
+          "parameters": {
+            "testId": "hydration-target"
+          },
+          "marker": "<section\n        class=\"hydration-target\"\n        data-island=\"hydration-test\"\n        data-trigger=\"visible\"\n        data-contract=\"HYDRATION_TEST\"\n        data-test-id=\"hydration-target\"\n      >"
+        }
+      ],
+      "islandCount": 1
+    },
+    "/test/incremental": {
+      "route": "/test/incremental",
+      "generatedAt": 1771739516634,
+      "type": "static",
+      "islands": [],
+      "islandCount": 0
+    }
+  },
+  "islands": {
+    "blog-comments": {
+      "id": "blog-comments",
+      "contract": "COMMENT_LIST_REQUESTED",
+      "trigger": "idle",
+      "parameters": {
+        "postId": "hybrid-testing"
+      }
+    },
+    "product-inventory": {
+      "id": "product-inventory",
+      "contract": "INVENTORY_INQUIRY",
+      "trigger": "visible",
+      "parameters": {
+        "productId": "SKU-002"
+      }
+    },
+    "product-reviews": {
+      "id": "product-reviews",
+      "contract": "PRODUCT_REVIEWS_REQUESTED",
+      "trigger": "visible",
+      "parameters": {
+        "productId": "SKU-001"
+      }
+    },
+    "hydration-test": {
+      "id": "hydration-test",
+      "contract": "HYDRATION_TEST",
+      "trigger": "visible",
+      "parameters": {
+        "testId": "hydration-target"
+      }
+    }
+  }
+}

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags (managed by MetaManager) -->
+    <title>CSMA Application</title>
+    <meta name="description" content="A lean, secure, reactive CSMA application">
+
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#007acc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CSMA App">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+    <!-- Content Security Policy (MANDATORY for security) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
+                 script-src 'self'; 
+                 style-src 'self';
+                 connect-src 'self';
+                 img-src 'self' data: https:;
+                 font-src 'self';
+                 object-src 'none';
+                 base-uri 'self';
+                 form-action 'self';
+                 frame-ancestors 'none';">
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/assets/main-D2I5k6QH.js" as="script" crossorigin>
+
+    <!-- Theme CSS -->
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+            font-family: var(--fx-font-body, system-ui, -apple-system, 'Segoe UI', sans-serif);
+        }
+
+        header.page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+            position: relative;
+        }
+
+        header p {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin: 0.5rem 0 0;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin: 0.35rem 0 0.25rem;
+            color: var(--fx-color-fg);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .subtitle {
+            color: var(--fx-color-fg-muted);
+            font-size: 1.05rem;
+        }
+
+        .theme-toggle,
+        .consent-trigger {
+            position: absolute;
+            top: 0;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            color: var(--secondary-foreground);
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .theme-toggle { right: 0; }
+        .consent-trigger { left: 0; }
+
+        .consent-trigger:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        [data-consent-modal] {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        [data-consent-modal][data-open="true"] {
+            display: flex;
+        }
+
+        .consent-modal-panel {
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+            border: 1px solid var(--fx-color-border);
+            border-radius: var(--radius-lg);
+            width: min(520px, 92vw);
+            padding: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        .consent-scopes {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .consent-scope-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--fx-color-border);
+            border-radius: var(--radius-md);
+            background: var(--fx-color-bg);
+        }
+
+        .consent-modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .theme-icon {
+            width: 1.2rem;
+            height: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        html[data-theme="dark"] .theme-icon {
+            filter: brightness(0) invert(1);
+        }
+
+        .theme-toggle:hover,
+        .consent-trigger:hover {
+            background: var(--accent);
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .component-card {
+            background: var(--fx-color-bg);
+            border: 1px solid var(--fx-color-border);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+        }
+
+        .component-card:hover {
+            border-color: var(--fx-color-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .component-card h3 {
+            font-size: 1.125rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .component-card p {
+            color: var(--fx-color-fg-muted);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        @media (max-width: 720px) {
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .badge-js {
+            font-size: 0.625rem;
+            background: var(--fx-color-primary);
+            color: var(--fx-color-on-primary);
+            padding: 0.125rem 0.375rem;
+            border-radius: 9999px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--fx-color-border);
+            color: var(--fx-color-fg-muted);
+        }
+    </style>
+  <script type="module" crossorigin src="/assets/index-BXaCZDpR.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/runtime-BgqW9Nvo.js">
+  <link rel="stylesheet" crossorigin href="/assets/index-DdWN3JMR.css">
+</head>
+
+<body data-theme="light">
+    <header class="page-header" style="position: relative;">
+        <button type="button" class="consent-trigger" id="openConsent" data-consent-open="#appConsentModal">Open Consent</button>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <img class="theme-icon" src="data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='currentColor'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%20%3e%3cpath%20d='M20.985%2012.486a9%209%200%201%201-9.473-9.472c.405-.022.617.46.402.803a6%206%200%200%200%208.268%208.268c.344-.215.825-.004.803.401'%20/%3e%3c/svg%3e" alt="">
+            <span class="theme-label">Dark</span>
+        </button>
+        <h1 style="margin: 0;">CSMA Component Library</h1>
+        <p class="subtitle">Front-page highlights from the CSMA-kit demos</p>
+    </header>
+
+    <div data-consent-modal id="appConsentModal" aria-hidden="true">
+        <div class="consent-modal-panel" data-consent-center role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+            <header style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                <div>
+                    <h2 id="consentTitle" style="margin: 0;">Analytics Consent</h2>
+                    <p style="margin: 0; color: var(--fx-color-fg-muted); font-size: 0.9rem;">Select scopes to share hashed telemetry from these demos. Everything stays opt-in.</p>
+                </div>
+                <button type="button" class="button" data-variant="ghost" data-consent-close>&times;</button>
+            </header>
+
+            <div class="consent-scopes" style="margin-top: 1.25rem;">
+                <label class="consent-scope-toggle">
+                    <span>Search analytics</span>
+                    <input type="checkbox" data-consent-toggle="search_analytics" data-consent-label="Search analytics">
+                </label>
+                <label class="consent-scope-toggle">
+                    <span>UI interaction analytics</span>
+                    <input type="checkbox" data-consent-toggle="ui_analytics" data-consent-label="UI analytics">
+                </label>
+                <label class="consent-scope-toggle">
+                    <span>Performance metrics</span>
+                    <input type="checkbox" data-consent-toggle="perf_metrics" data-consent-label="Perf metrics">
+                </label>
+            </div>
+
+            <p data-consent-status></p>
+
+            <div class="consent-modal-actions">
+                <button type="button" class="button" data-variant="ghost" data-consent-clear>I don't agree, delete my analytics</button>
+                <button type="button" class="button" data-variant="primary" data-consent-accept disabled>I agree</button>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <section>
+            <h2>CSS-Only Components</h2>
+            <p style="color: var(--fx-color-fg-muted); margin-bottom: 1rem;">Pure CSS components with no JavaScript required</p>
+            <div class="component-grid">
+                <a href="/src/ui/components/badge/badge.demo.html" class="component-card">
+                    <h3>Badge</h3>
+                    <p>Inline labels for status, categories, and counts</p>
+                </a>
+
+                <a href="/src/ui/components/card/card.demo.html" class="component-card">
+                    <h3>Card</h3>
+                    <p>Container for grouping related content</p>
+                </a>
+
+                <a href="/src/ui/components/separator/separator.demo.html" class="component-card">
+                    <h3>Separator</h3>
+                    <p>Visual dividers for separating content</p>
+                </a>
+
+                <a href="/src/ui/components/avatar/avatar.demo.html" class="component-card">
+                    <h3>Avatar</h3>
+                    <p>User profile images with fallback initials</p>
+                </a>
+
+                <a href="/src/ui/components/skeleton/skeleton.demo.html" class="component-card">
+                    <h3>Skeleton</h3>
+                    <p>Loading placeholders with shimmer animation</p>
+                </a>
+
+                <a href="/src/ui/components/chat/chat.demo.html" class="component-card">
+                    <h3>Chat Bubble</h3>
+                    <p>Message bubbles for conversations</p>
+                </a>
+
+                <a href="/src/ui/components/breadcrumb/breadcrumb.demo.html" class="component-card">
+                    <h3>Breadcrumb</h3>
+                    <p>Navigation breadcrumbs with truncation</p>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Form Components</h2>
+            <p style="color: var(--fx-color-fg-muted); margin-bottom: 1rem;">Form inputs and controls</p>
+            <div class="component-grid">
+                <a href="/src/ui/components/input/input.demo.html" class="component-card">
+                    <h3>Input <span class="badge-js">JS</span></h3>
+                    <p>Text inputs with validation and icons</p>
+                </a>
+
+                <a href="/src/ui/components/textarea/textarea.demo.html" class="component-card">
+                    <h3>Textarea <span class="badge-js">JS</span></h3>
+                    <p>Multi-line text with character count</p>
+                </a>
+
+                <a href="/src/ui/components/select/select.demo.html" class="component-card">
+                    <h3>Select</h3>
+                    <p>Dropdown selection with option groups</p>
+                </a>
+
+                <a href="/src/ui/components/checkbox/checkbox.demo.html" class="component-card">
+                    <h3>Checkbox <span class="badge-js">JS</span></h3>
+                    <p>Multiple choice selections</p>
+                </a>
+
+                <a href="/src/ui/components/radio/radio.demo.html" class="component-card">
+                    <h3>Radio <span class="badge-js">JS</span></h3>
+                    <p>Single choice from options</p>
+                </a>
+
+                <a href="/src/ui/components/switch/switch.demo.html" class="component-card">
+                    <h3>Switch <span class="badge-js">JS</span></h3>
+                    <p>Toggle on/off controls</p>
+                </a>
+
+                <a href="/src/ui/components/file-upload/file-upload.demo.html" class="component-card">
+                    <h3>File Upload <span class="badge-js">JS</span></h3>
+                    <p>Drag-and-drop file uploads with progress</p>
+                </a>
+
+                <a href="/src/ui/components/datepicker/datepicker.demo.html" class="component-card">
+                    <h3>Datepicker <span class="badge-js">JS</span></h3>
+                    <p>Calendar date selection with keyboard support</p>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Interactive Components</h2>
+            <p style="color: var(--fx-color-fg-muted); margin-bottom: 1rem;">Components with JavaScript for interactivity</p>
+            <div class="component-grid">
+                <a href="/src/ui/components/toast/toast.demo.html" class="component-card">
+                    <h3>Toast <span class="badge-js">JS</span></h3>
+                    <p>Notification messages that auto-dismiss</p>
+                </a>
+
+                <a href="/src/ui/components/tabs/tabs.demo.html" class="component-card">
+                    <h3>Tabs <span class="badge-js">JS</span></h3>
+                    <p>Tabbed navigation with keyboard support</p>
+                </a>
+
+                <a href="/src/ui/components/accordion/accordion.demo.html" class="component-card">
+                    <h3>Accordion <span class="badge-js">JS</span></h3>
+                    <p>Collapsible content sections</p>
+                </a>
+
+                <a href="/src/ui/components/progress/progress.demo.html" class="component-card">
+                    <h3>Progress <span class="badge-js">JS</span></h3>
+                    <p>Progress bars with animations</p>
+                </a>
+
+                <a href="/src/ui/components/popover/popover.demo.html" class="component-card">
+                    <h3>Popover <span class="badge-js">JS</span></h3>
+                    <p>Floating content panels</p>
+                </a>
+
+                <a href="/src/ui/components/carousel/carousel.demo.html" class="component-card">
+                    <h3>Carousel <span class="badge-js">JS</span></h3>
+                    <p>Responsive slider with autoplay and swipe</p>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Overlay & Navigation</h2>
+            <p style="color: var(--fx-color-fg-muted); margin-bottom: 1rem;">Dialogs, menus, and navigation components</p>
+            <div class="component-grid">
+                <a href="/src/ui/components/tooltip/tooltip.demo.html" class="component-card">
+                    <h3>Tooltip <span class="badge-js">JS</span></h3>
+                    <p>Hover hints and information</p>
+                </a>
+
+                <a href="/src/ui/components/dropdown/dropdown.demo.html" class="component-card">
+                    <h3>Dropdown <span class="badge-js">JS</span></h3>
+                    <p>Menu with actions and shortcuts</p>
+                </a>
+
+                <a href="/src/ui/components/dialog/dialog.demo.html" class="component-card">
+                    <h3>Dialog <span class="badge-js">JS</span></h3>
+                    <p>Modal dialogs for forms and content</p>
+                </a>
+
+                <a href="/src/ui/components/alert-dialog/alert-dialog.demo.html" class="component-card">
+                    <h3>Alert Dialog <span class="badge-js">JS</span></h3>
+                    <p>Confirmation and warning dialogs</p>
+                </a>
+
+                <a href="/src/ui/components/navbar/navbar.demo.html" class="component-card">
+                    <h3>Navbar <span class="badge-js">JS</span></h3>
+                    <p>Responsive navigation with mobile menu</p>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Data & Feedback</h2>
+            <p style="color: var(--fx-color-fg-muted); margin-bottom: 1rem;">Components for data display and user feedback</p>
+            <div class="component-grid">
+                <a href="/src/ui/components/pagination/pagination.demo.html" class="component-card">
+                    <h3>Pagination</h3>
+                    <p>Page navigation controls</p>
+                </a>
+                <a href="/src/ui/components/slider/slider.demo.html" class="component-card">
+                    <h3>Slider <span class="badge-js">JS</span></h3>
+                    <p>Range input controls with keyboard support</p>
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Application Patterns</h2>
+            <p style="color: var(--fx-color-fg-muted); margin-bottom: 1rem;">Multi-component demos wired to runtime modules</p>
+            <div class="component-grid">
+                <a href="/src/ui/patterns/modal-system/modal-system.demo.html" class="component-card">
+                    <h3>Modal System <span class="badge-js">JS</span></h3>
+                    <p>Stacked dialogs driven by the modal service and EventBus intents</p>
+                </a>
+                <a href="/src/ui/patterns/sidebar/sidebar.demo.html" class="component-card">
+                    <h3>Sidebar <span class="badge-js">JS</span></h3>
+                    <p>Collapsible navigation pattern with state persistence</p>
+                </a>
+                <a href="/src/ui/patterns/auth-ui/auth-ui.demo.html" class="component-card">
+                    <h3>Auth UI <span class="badge-js">JS</span></h3>
+                    <p>Login/register flows connected to AuthService + Form Management</p>
+                </a>
+                <a href="/src/ui/patterns/checkout/checkout.demo.html" class="component-card">
+                    <h3>Checkout <span class="badge-js">JS</span></h3>
+                    <p>Cart + form orchestration that mirrors the checkout module</p>
+                </a>
+                <a href="/src/ui/patterns/data-table/data-table.demo.html" class="component-card">
+                    <h3>Data Table <span class="badge-js">JS</span></h3>
+                    <p>Filterable, sortable tables sourced from the data-table service</p>
+                </a>
+                <a href="/src/ui/patterns/search-demo/search-demo.demo.html" class="component-card">
+                    <h3>Search Demo <span class="badge-js">JS</span></h3>
+                    <p>FlexSearch-powered discovery pattern with facets + AI context</p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Built with CSMA - CSS-first Microservices Architecture</p>
+    </footer>
+
+    <!-- HTML Templates -->
+    <template id="example-card">
+        <div class="card">
+            <div class="card-status"></div>
+            <div class="card-content">
+                <h3 class="card-title"></h3>
+                <p class="card-text"></p>
+            </div>
+            <div class="card-actions">
+                <button class="button" data-variant="primary" data-action="complete">Complete</button>
+                <button class="button" data-variant="secondary" data-action="delete">Delete</button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Main entry point -->
+</body>
+
+</html>

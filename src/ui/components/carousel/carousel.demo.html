@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="../theme-loader.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSMA Carousel System Demo</title>
+
+  <link rel="stylesheet" href="../../../css/main.css">
+  <link rel="stylesheet" href="./carousel.css">
+
+  <style>
+    :root {
+      color-scheme: light dark;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fx-color-bg);
+      color: var(--fx-color-fg);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: clamp(1.5rem, 3vw, 3rem);
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    .page-header {
+      max-width: 960px;
+      margin: 0 auto;
+      text-align: center;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .page-header p {
+      color: var(--fx-color-fg-muted);
+      margin: 0;
+    }
+
+    .demo-grid {
+      display: grid;
+      gap: clamp(2rem, 4vw, 3rem);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    section.demo-block {
+      display: grid;
+      gap: 1rem;
+    }
+
+    section.demo-block > header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    section.demo-block > header p {
+      margin: 0;
+      color: var(--fx-color-fg-muted);
+    }
+
+    .carousel + .carousel-thumbnails {
+      margin-top: -0.75rem;
+    }
+
+    .hero-wrapper {
+      width: min(1400px, 100%);
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-header">
+    <a href="../demos.html" class="back-link" style="color: var(--fx-color-primary); text-decoration: none;">← Back to Demos</a>
+    <h1>CSMA Carousel System</h1>
+    <p>Five production-ready carousel archetypes powered by CSS-class reactivity, lazy loading, swipe gestures, autoplay, and keyboard controls.</p>
+  </div>
+
+  <div class="demo-grid">
+    <!-- Image Carousel -->
+    <section class="demo-block" aria-labelledby="image-carousel-title">
+      <header>
+        <h2 id="image-carousel-title">Image Carousel</h2>
+        <p>Supports mixed aspect ratios, thumbnails, captions, zoom-on-click, and lazy loading.</p>
+      </header>
+
+      <div class="carousel" data-carousel data-variant="image" data-loop="true" data-autoplay="5200" data-hover-controls="true" aria-label="Editorial gallery" tabindex="0">
+        <div class="carousel-header">
+          <p class="carousel-title">Studio Editorial</p>
+          <div class="carousel-pagination">
+            <p class="carousel-meta" data-carousel-meta>Showing 1–1 of 5</p>
+          </div>
+        </div>
+
+        <div class="carousel-viewport" data-carousel-viewport>
+          <div class="carousel-track" data-carousel-track>
+            <figure class="carousel-slide" data-carousel-slide>
+              <div class="carousel-slide__media" data-slot="media" data-aspect="portrait">
+                <img data-carousel-lazy data-carousel-zoom data-src="https://images.unsplash.com/photo-1503342452485-86b7f54527ef?auto=format&fit=crop&w=1200&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='900'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3C/svg%3E" alt="Creative portrait">
+                <div class="carousel-caption">
+                  Berlin loft, natural bounce lighting captured on Portra.
+                </div>
+                <span class="carousel-zoom-hint">Zoom</span>
+              </div>
+            </figure>
+
+            <figure class="carousel-slide" data-carousel-slide>
+              <div class="carousel-slide__media" data-slot="media" data-aspect="four-three">
+                <img data-carousel-lazy data-carousel-zoom data-src="https://images.unsplash.com/photo-1476111021705-ac3b3304fe20?auto=format&fit=crop&w=1400&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='600'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3C/svg%3E" alt="Color board">
+                <div class="carousel-caption">Mood board pairing textiles with typography.</div>
+                <span class="carousel-zoom-hint">Zoom</span>
+              </div>
+            </figure>
+
+            <figure class="carousel-slide" data-carousel-slide>
+              <div class="carousel-slide__media" data-slot="media" data-aspect="square">
+                <img data-carousel-lazy data-carousel-zoom data-src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3C/svg%3E" alt="Workspace">
+                <div class="carousel-caption">Workspace detail — glass, steel, matte black.</div>
+                <span class="carousel-zoom-hint">Zoom</span>
+              </div>
+            </figure>
+
+            <figure class="carousel-slide" data-carousel-slide>
+              <div class="carousel-slide__media" data-slot="media">
+                <img data-carousel-lazy data-carousel-zoom data-src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='600'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3C/svg%3E" alt="Camera rig">
+                <div class="carousel-caption">4K rig with motion slider for live shoots.</div>
+                <span class="carousel-zoom-hint">Zoom</span>
+              </div>
+            </figure>
+
+            <figure class="carousel-slide" data-carousel-slide>
+              <div class="carousel-slide__media" data-slot="media">
+                <img data-carousel-lazy data-carousel-zoom data-src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1400&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='600'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3C/svg%3E" alt="Color swatches">
+                <div class="carousel-caption">Color swatches prepped for fall palette.</div>
+                <span class="carousel-zoom-hint">Zoom</span>
+              </div>
+            </figure>
+          </div>
+        </div>
+
+        <div class="carousel-controls">
+          <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous image">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 19 8.5 12l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="carousel-button" type="button" data-carousel-next aria-label="Next image">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" d="M8.5 5 15.5 12l-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <div class="carousel-dots" data-carousel-dots></div>
+        <div class="carousel-progress" data-carousel-progress>
+          <div class="carousel-progress__bar"></div>
+        </div>
+      </div>
+
+      <div class="carousel-thumbnails" data-carousel-thumbnails>
+        <button class="carousel-thumb" type="button" data-carousel-thumb="0" aria-label="Portrait thumbnail">
+          <img src="https://images.unsplash.com/photo-1503342452485-86b7f54527ef?auto=format&fit=crop&w=200&q=40" alt="Portrait thumb">
+        </button>
+        <button class="carousel-thumb" type="button" data-carousel-thumb="1" aria-label="Mood board thumbnail">
+          <img src="https://images.unsplash.com/photo-1476111021705-ac3b3304fe20?auto=format&fit=crop&w=200&q=40" alt="Mood board thumb">
+        </button>
+        <button class="carousel-thumb" type="button" data-carousel-thumb="2" aria-label="Workspace thumbnail">
+          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=200&q=40" alt="Workspace thumb">
+        </button>
+        <button class="carousel-thumb" type="button" data-carousel-thumb="3" aria-label="Camera rig thumbnail">
+          <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=200&q=40" alt="Camera thumb">
+        </button>
+        <button class="carousel-thumb" type="button" data-carousel-thumb="4" aria-label="Color swatches thumbnail">
+          <img src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=200&q=40" alt="Swatches thumb">
+        </button>
+      </div>
+    </section>
+
+    <!-- Content Carousel -->
+    <section class="demo-block" aria-labelledby="content-carousel-title">
+      <header>
+        <h2 id="content-carousel-title">Content Carousel</h2>
+        <p>Mixed media slides with video, embeds, and CTA buttons. Height transitions auto-adjust.</p>
+      </header>
+
+      <div class="carousel" data-carousel data-variant="content" data-transition="slide" data-visible="1" data-loop="true" data-autoplay="6000" aria-label="Content sequences" tabindex="0">
+        <div class="carousel-header">
+          <p class="carousel-title">Playbooks</p>
+          <p class="carousel-meta" data-carousel-meta>Showing 1–1 of 3</p>
+        </div>
+
+        <div class="carousel-viewport" data-carousel-viewport>
+          <div class="carousel-track" data-carousel-track>
+            <article class="carousel-slide" data-carousel-slide>
+              <div data-slot="media">
+                <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500'%3E%3Crect width='100%25' height='100%25' fill='%23eceff4'/%3E%3C/svg%3E" alt="Workflow">
+              </div>
+              <div data-slot="body">
+                <h3>Lightning Handoffs</h3>
+                <p>Route intents over EventBus, keep CSS in control of rendering, and ship UI updates without touching business logic.</p>
+                <button class="button" type="button">Read Case Study</button>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <div data-slot="media">
+                <video muted loop playsinline poster="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80" data-carousel-lazy data-src="https://storage.googleapis.com/coverr-main/mp4/Mt_Baker.mp4"></video>
+              </div>
+              <div data-slot="body">
+                <h3>Interactive Guides</h3>
+                <p>Embed walkthroughs inline. Videos pause automatically when offscreen to save battery.</p>
+                <div class="carousel-overlay-text">Use overlays for copy requiring higher contrast.</div>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <div data-slot="media">
+                <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Embedded walkthrough" loading="lazy" allow="autoplay; encrypted-media" style="width:100%;height:100%;border:0;"></iframe>
+              </div>
+              <div data-slot="body">
+                <h3>Embedded Reports</h3>
+                <p>Drop in analytics iframes (YouTube, Vimeo, Looker) while maintaining responsive height transitions.</p>
+                <button class="button" data-variant="primary" type="button">Launch dashboard</button>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="carousel-controls">
+          <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous story">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 19 8.5 12l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="carousel-button" type="button" data-carousel-next aria-label="Next story">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5 15.5 12l-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="carousel-dots" data-carousel-dots></div>
+      </div>
+    </section>
+
+    <!-- Product Carousel -->
+    <section class="demo-block" aria-labelledby="product-carousel-title">
+      <header>
+        <h2 id="product-carousel-title">Product Carousel</h2>
+        <p>Responsive product grid with hover effects, ratings, sale pricing, and quick actions.</p>
+      </header>
+
+      <div class="carousel" data-carousel data-variant="product" data-visible="1" data-visible-md="2" data-visible-lg="3" data-loop="true" aria-label="Featured products" tabindex="0">
+        <div class="carousel-header">
+          <p class="carousel-title">Studio Drop</p>
+          <p class="carousel-meta" data-carousel-meta>Showing 1–3 of 6</p>
+        </div>
+
+        <div class="carousel-viewport" data-carousel-viewport>
+          <div class="carousel-track" data-carousel-track>
+            <!-- product cards repeated -->
+            <article class="carousel-slide" data-carousel-slide>
+              <div class="carousel-product-card">
+                <div class="carousel-product-card__top" data-slot="media" data-aspect="square">
+                  <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f4f4f5'/%3E%3C/svg%3E" alt="Aurora Lamp">
+                  <div class="carousel-product-card__actions">
+                    <button data-variant="ghost" type="button">Quick view</button>
+                    <button data-variant="primary" type="button">Add</button>
+                  </div>
+                </div>
+                <div>
+                  <h3>Aurora Lamp</h3>
+                  <p class="carousel-product-card__price">$129 <del>$159</del></p>
+                  <p class="carousel-product-card__rating">★★★★★ 4.8</p>
+                  <p>Ambient glass diffuser with adaptive warmth.</p>
+                  <div class="carousel-product-card__actions" style="position:static;padding:0;gap:0.5rem;">
+                    <button data-variant="primary" type="button">Add to cart</button>
+                    <button data-variant="ghost" type="button">Save</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <div class="carousel-product-card">
+                <div data-slot="media" data-aspect="square">
+                  <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?auto=format&fit=crop&w=800&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f4f4f5'/%3E%3C/svg%3E" alt="Focus Headphones">
+                </div>
+                <div>
+                  <h3>Focus Headphones</h3>
+                  <p class="carousel-product-card__price">$249</p>
+                  <p class="carousel-product-card__rating">★★★★☆ 4.6</p>
+                  <p>Spatial monitoring with adaptive noise shields.</p>
+                  <div class="carousel-product-card__actions" style="position:static;padding:0;gap:0.5rem;">
+                    <button data-variant="primary" type="button">Add to cart</button>
+                    <button data-variant="ghost" type="button">Details</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <div class="carousel-product-card">
+                <div data-slot="media" data-aspect="square">
+                  <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=800&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f4f4f5'/%3E%3C/svg%3E" alt="Desk Essentials">
+                </div>
+                <div>
+                  <h3>Desk Essentials</h3>
+                  <p class="carousel-product-card__price">$89</p>
+                  <p>Aluminum tray, jotter, charging stand.</p>
+                  <div class="carousel-product-card__actions" style="position:static;padding:0;gap:0.5rem;">
+                    <button data-variant="primary" type="button">Buy now</button>
+                    <button data-variant="ghost" type="button">Customize</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <div class="carousel-product-card">
+                <div data-slot="media" data-aspect="square">
+                  <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1481277542470-605612bd2d61?auto=format&fit=crop&w=800&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f4f4f5'/%3E%3C/svg%3E" alt="Pulse Speaker">
+                </div>
+                <div>
+                  <h3>Pulse Speaker</h3>
+                  <p class="carousel-product-card__price">$169</p>
+                  <p class="carousel-product-card__rating">★★★★★ 4.9</p>
+                  <p>Multi-room sync with adaptive EQ curves.</p>
+                  <div class="carousel-product-card__actions" style="position:static;padding:0;gap:0.5rem;">
+                    <button data-variant="primary" type="button">Add to cart</button>
+                    <button data-variant="ghost" type="button">Quick view</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <div class="carousel-product-card">
+                <div data-slot="media" data-aspect="square">
+                  <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=800&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f4f4f5'/%3E%3C/svg%3E" alt="Orbit Turntable">
+                </div>
+                <div>
+                  <h3>Orbit Turntable</h3>
+                  <p class="carousel-product-card__price">$349</p>
+                  <p>Carbon arm, sapphire bearings, belt drive.</p>
+                  <div class="carousel-product-card__actions" style="position:static;padding:0;gap:0.5rem;">
+                    <button data-variant="ghost" type="button">Pre-order</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <div class="carousel-product-card">
+                <div data-slot="media" data-aspect="square">
+                  <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1452851435344-64f6ebc7ec70?auto=format&fit=crop&w=800&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Crect width='100%25' height='100%25' fill='%23f4f4f5'/%3E%3C/svg%3E" alt="Analog notebook">
+                </div>
+                <div>
+                  <h3>Analog Notebook</h3>
+                  <p class="carousel-product-card__price">$39</p>
+                  <p>A5 hardcover, dot grid, recycled stock.</p>
+                  <div class="carousel-product-card__actions" style="position:static;padding:0;gap:0.5rem;">
+                    <button data-variant="primary" type="button">Add to cart</button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="carousel-controls">
+          <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous product">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 19 8.5 12l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="carousel-button" type="button" data-carousel-next aria-label="Next product">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5 15.5 12l-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="carousel-dots" data-carousel-dots></div>
+      </div>
+    </section>
+
+    <!-- Testimonial Carousel -->
+    <section class="demo-block" aria-labelledby="testimonial-carousel-title">
+      <header>
+        <h2 id="testimonial-carousel-title">Testimonial Carousel</h2>
+        <p>Fade transition, auto-rotation, avatars, ratings, and pause on hover.</p>
+      </header>
+
+      <div class="carousel" data-carousel data-variant="testimonial" data-transition="fade" data-autoplay="6500" data-loop="true" aria-label="Customer testimonials" tabindex="0">
+        <div class="carousel-header">
+          <p class="carousel-title">Loved by operators</p>
+          <div class="carousel-play-pause">
+            <button type="button" aria-label="Toggle autoplay" data-carousel-toggle data-state="playing">⏯</button>
+          </div>
+        </div>
+
+        <div class="carousel-viewport" data-carousel-viewport>
+          <div class="carousel-track" data-carousel-track>
+            <article class="carousel-slide" data-carousel-slide>
+              <span class="carousel-quote-icon">“</span>
+              <p>We replaced three brittle dashboards with a single CSMA carousel. Marketing updates copy, engineering trusts contracts, and performance stayed sub-20ms.</p>
+              <div class="carousel-testimonial__footer">
+                <img class="carousel-avatar" src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=160&q=60" alt="Amelia portrait">
+                <div>
+                  <strong>Amelia Tran</strong>
+                  <p class="carousel-testimonial__role">VP Operations · Northwind</p>
+                </div>
+                <span class="carousel-testimonial__rating">★★★★★</span>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <span class="carousel-quote-icon">“</span>
+              <p>Hero variants let us schedule brand takeovers without new templates. We just flip data attributes for CTA density, autoplay, and backgrounds.</p>
+              <div class="carousel-testimonial__footer">
+                <img class="carousel-avatar" src="https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&w=160&q=60" alt="Wade portrait">
+                <div>
+                  <strong>Wade Cooper</strong>
+                  <p class="carousel-testimonial__role">Creative Director · Loft</p>
+                </div>
+                <span class="carousel-testimonial__rating">★★★★☆</span>
+              </div>
+            </article>
+
+            <article class="carousel-slide" data-carousel-slide>
+              <span class="carousel-quote-icon">“</span>
+              <p>Lazy loading plus autoplay pause-on-visibility boosted mobile Lighthouse without touching marketing copy. The CSS-class contract keeps QA simple.</p>
+              <div class="carousel-testimonial__footer">
+                <img class="carousel-avatar" src="https://images.unsplash.com/photo-1528892952291-009c663ce843?auto=format&fit=crop&w=160&q=60" alt="Priya portrait">
+                <div>
+                  <strong>Priya Kapoor</strong>
+                  <p class="carousel-testimonial__role">Growth Lead · Sprout</p>
+                </div>
+                <span class="carousel-testimonial__rating">★★★★★</span>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="carousel-controls">
+          <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous testimonial">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 19 8.5 12l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="carousel-button" type="button" data-carousel-next aria-label="Next testimonial">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5 15.5 12l-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="carousel-dots" data-carousel-dots></div>
+      </div>
+    </section>
+
+    <!-- Hero Carousel -->
+    <section class="demo-block hero-wrapper" aria-labelledby="hero-carousel-title">
+      <header>
+        <h2 id="hero-carousel-title">Hero Carousel</h2>
+        <p>Full-width banners with background video/images, gradient overlays, CTA buttons, and auto-advance.</p>
+      </header>
+
+      <div class="carousel" data-carousel data-variant="hero" data-fullwidth="true" data-visible="1" data-loop="true" data-autoplay="6800" data-hover-controls="true" aria-label="Hero promotions" tabindex="0">
+        <div class="carousel-viewport" data-carousel-viewport>
+          <div class="carousel-track" data-carousel-track>
+            <article class="carousel-slide carousel-hero-slide" data-carousel-slide>
+              <div class="carousel-hero-media">
+                <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'%3E%3Crect width='100%25' height='100%25' fill='%230a0f1f'/%3E%3C/svg%3E" alt="Launch dashboard">
+              </div>
+              <div class="carousel-hero-overlay"></div>
+              <div class="carousel-hero-content">
+                <span class="carousel-chip">Launch Week</span>
+                <h2>Orchestrate every channel</h2>
+                <p>Broadcast intents over EventBus, trigger product carousels, and keep CSS in control. Ship promos that react instantly.</p>
+                <div class="carousel-hero-actions">
+                  <button data-variant="primary" type="button">Get Started</button>
+                  <button data-variant="ghost" type="button">See docs</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="carousel-slide carousel-hero-slide" data-carousel-slide>
+              <div class="carousel-hero-media">
+                <video muted loop playsinline data-carousel-lazy data-src="https://storage.googleapis.com/coverr-main/mp4/Sunrise_Lapse.mp4"></video>
+              </div>
+              <div class="carousel-hero-overlay"></div>
+              <div class="carousel-hero-content">
+                <span class="carousel-chip">Brand Story</span>
+                <h2>Tell bold stories</h2>
+                <p>Custom slots for media, stats, or testimonials let marketers remix hero layouts without new code paths.</p>
+                <div class="carousel-hero-actions">
+                  <button data-variant="primary" type="button">Book a demo</button>
+                  <button data-variant="ghost" type="button">Download deck</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="carousel-slide carousel-hero-slide" data-carousel-slide>
+              <div class="carousel-hero-media">
+                <img data-carousel-lazy data-src="https://images.unsplash.com/photo-1454165205744-3b78555e5572?auto=format&fit=crop&w=1600&q=80" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'%3E%3Crect width='100%25' height='100%25' fill='%230a0f1f'/%3E%3C/svg%3E" alt="Security dashboard">
+              </div>
+              <div class="carousel-hero-overlay"></div>
+              <div class="carousel-hero-content">
+                <span class="carousel-chip">Zero-Trust</span>
+                <h2>Security-first storytelling</h2>
+                <p>Runtime validation keeps every hero intent contract-safe—even when creative swaps assets at runtime.</p>
+                <div class="carousel-hero-actions">
+                  <button data-variant="primary" type="button">Review controls</button>
+                  <button data-variant="ghost" type="button">Audit logs</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+        <div class="carousel-controls">
+          <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous hero">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 19 8.5 12l7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="carousel-button" type="button" data-carousel-next aria-label="Next hero">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5 15.5 12l-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="carousel-dots" data-carousel-dots></div>
+        <div class="carousel-progress" data-carousel-progress>
+          <div class="carousel-progress__bar"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    import { EventBus } from '../../../runtime/EventBus.js';
+    import { Contracts } from '../../../runtime/Contracts.js';
+    import { initCarouselSystem } from './carousel.js';
+
+    const eventBus = new EventBus();
+    eventBus.contracts = Contracts;
+
+    const cleanup = initCarouselSystem(eventBus);
+
+    window.addEventListener('beforeunload', cleanup);
+  </script>
+</body>
+
+</html>

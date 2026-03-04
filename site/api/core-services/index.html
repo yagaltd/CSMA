@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://example.com/csma/api/core-services/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Core Services - CSMA Kit Docs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">CSMA Kit Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../guides/csma-in-a-nutshell/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/getting-started/" class="dropdown-item">Setup</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/features/" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/validation/" class="dropdown-item">Validation</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/pwa-setup/" class="dropdown-item">PWA Setup</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Guides</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../guides/building-components/" class="dropdown-item">Building Components</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/customizing-theme/" class="dropdown-item">Customizing Theme</a>
+</li>
+                                    
+<li>
+    <a href="../../guides/for-llms/" class="dropdown-item">For LLMs</a>
+</li>
+                                    
+<li>
+    <a href="../../css-foundation/" class="dropdown-item">CSS Foundation</a>
+</li>
+                                    
+<li>
+    <a href="../../complete-csma-guide/" class="dropdown-item">Complete Guide</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Core Services</a>
+</li>
+                                    
+<li>
+    <a href="../llm-service/" class="dropdown-item">LLM Service</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Advanced</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../advanced/contract-governance/" class="dropdown-item">Contract Governance</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/optimistic-sync/" class="dropdown-item">Optimistic Sync</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/llm-instructor/" class="dropdown-item">LLM Instructor</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Platforms</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../platforms/capacitor/" class="dropdown-item">Capacitor</a>
+</li>
+                                    
+<li>
+    <a href="../../platforms/neutralino/" class="dropdown-item">Neutralino</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../examples/todo-app/" class="dropdown-item">Todo App</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Security</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../security/security-map/" class="dropdown-item">Security Map</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Operations</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../release-checklist/" class="dropdown-item">Release Checklist</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Roadmap</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../roadmap/" class="dropdown-item">Overview</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Priority Tracks</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/OPFS-worker/" class="dropdown-item">OPFS Worker</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/ai-modularity-tanstack/" class="dropdown-item">AI Modularity</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Proposed</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/proposed/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/csma-split-proposal/" class="dropdown-item">CSMA Split Proposal</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/llm-portable-architecture/" class="dropdown-item">LLM Portable Architecture</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/url-bookmark-universal-module-proposal/" class="dropdown-item">URL Bookmark Module Proposal</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Considerations</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/considerations/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/CSMA-future-ideas/" class="dropdown-item">CSMA Future Ideas</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/Security-tracking-nstjs-stryle/" class="dropdown-item">Security Tracking</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/ocr-image-insights-module/" class="dropdown-item">OCR Image Insights</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/services-ontop-flexsearch/" class="dropdown-item">Services on FlexSearch</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/showcase-website/" class="dropdown-item">Showcase Website</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Research</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/research/" class="dropdown-item">Index</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../../complete-csma-guide/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../llm-service/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/example/CSMA-SSMA/edit/main/docs/api/core-services.md" class="nav-link">Edit on CSMA-SSMA/CSMA
+                                    </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#csma-core-services" class="nav-link">CSMA Core Services</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#overview" class="nav-link">Overview</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#quick-start" class="nav-link">Quick Start</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#cachemanager" class="nav-link">CacheManager</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#dataaggregator" class="nav-link">DataAggregator</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#apiwrapper" class="nav-link">APIWrapper</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#authservice" class="nav-link">AuthService</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#formvalidator" class="nav-link">FormValidator</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#service-dependencies" class="nav-link">Service Dependencies</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#all-eventbus-events" class="nav-link">All EventBus Events</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#real-world-example" class="nav-link">Real-World Example</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#bundle-size-impact" class="nav-link">Bundle Size Impact</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#configuration" class="nav-link">Configuration</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#api-reference" class="nav-link">API Reference</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#license" class="nav-link">License</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="csma-core-services">CSMA Core Services<a class="headerlink" href="#csma-core-services" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Production-ready services for data, API, and form management</p>
+</blockquote>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>This directory contains 5 optional core services for CSMA applications:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Purpose</th>
+<th>Bundle Size</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#cachemanager">CacheManager</a></td>
+<td>Multi-strategy caching</td>
+<td>~4KB</td>
+<td>✅ Stable</td>
+</tr>
+<tr>
+<td><a href="#dataaggregator">DataAggregator</a></td>
+<td>Parallel API orchestration</td>
+<td>~2KB</td>
+<td>✅ Stable</td>
+</tr>
+<tr>
+<td><a href="#apiwrapper">APIWrapper</a></td>
+<td>HTTP client with interceptors</td>
+<td>~3.5KB</td>
+<td>✅ Stable</td>
+</tr>
+<tr>
+<td><a href="#authservice">AuthService</a></td>
+<td>JWT authentication</td>
+<td>~4KB</td>
+<td>✅ Stable</td>
+</tr>
+<tr>
+<td><a href="#formvalidator">FormValidator</a></td>
+<td>Real-time form validation</td>
+<td>~2.8KB</td>
+<td>✅ Stable</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total</strong>: ~16KB (all services, gzipped)</p>
+<hr />
+<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Permanent link">&para;</a></h2>
+<h3 id="1-enable-services">1. Enable Services<a class="headerlink" href="#1-enable-services" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">// src/config.js
+export const FEATURES = {
+    CACHE_MANAGER: true,      // Offline-first caching
+    DATA_AGGREGATOR: true,    // Parallel API calls
+    API_WRAPPER: true,        // HTTP client
+    AUTH_SERVICE: true,       // Authentication (requires API_WRAPPER)
+    FORM_VALIDATOR: true,     // Form validation
+};
+</code></pre>
+<h3 id="2-use-services">2. Use Services<a class="headerlink" href="#2-use-services" title="Permanent link">&para;</a></h3>
+<p>All services are registered with <code>ServiceManager</code> and available via:</p>
+<pre><code class="language-javascript">const cache = serviceManager.get('cacheManager');
+const aggregator = serviceManager.get('dataAggregator');
+const api = serviceManager.get('api');
+const auth = serviceManager.get('auth');
+const formValidator = serviceManager.get('formValidator');
+</code></pre>
+<hr />
+<h2 id="cachemanager">CacheManager<a class="headerlink" href="#cachemanager" title="Permanent link">&para;</a></h2>
+<p><strong>Multi-strategy caching with TTL expiration</strong></p>
+<h3 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h3>
+<ul>
+<li>3 caching strategies (cache-first, network-first, stale-while-revalidate)</li>
+<li>3 storage backends (memory, localStorage, IndexedDB)</li>
+<li>TTL expiration</li>
+<li>Pattern-based invalidation</li>
+<li>Hit/miss statistics</li>
+</ul>
+<h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">const cache = serviceManager.get('cacheManager');
+
+// Cache-first: return cached if available
+const users = await cache.fetch('/api/users',
+    () =&gt; api.get('/api/users'),
+    { strategy: 'cache-first', ttl: 5 * 60 * 1000 }
+);
+
+// Invalidate by pattern
+cache.invalidate(/^\/api\/users/);
+
+// Get statistics
+const stats = cache.getStats();
+console.log('Hit rate:', stats.hitRate);
+</code></pre>
+<h3 id="eventbus-events">EventBus Events<a class="headerlink" href="#eventbus-events" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>CACHE_HIT</code> - Cache hit occurred</li>
+<li><code>CACHE_MISS</code> - Cache miss, fetcher called</li>
+<li><code>CACHE_SET</code> - Value cached</li>
+<li><code>CACHE_INVALIDATED</code> - Pattern invalidation</li>
+</ul>
+<hr />
+<h2 id="dataaggregator">DataAggregator<a class="headerlink" href="#dataaggregator" title="Permanent link">&para;</a></h2>
+<p><strong>Orchestrate multiple API calls in parallel</strong></p>
+<h3 id="features_1">Features<a class="headerlink" href="#features_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Parallel composition (Promise.allSettled)</li>
+<li>Waterfall (sequential with passing results)</li>
+<li>Batch requests with deduplication</li>
+<li>Race (first successful wins)</li>
+<li>Graceful partial failure handling</li>
+</ul>
+<h3 id="usage_1">Usage<a class="headerlink" href="#usage_1" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">const aggregator = serviceManager.get('dataAggregator');
+
+// Parallel composition
+const { results, errors } = await aggregator.compose('dashboard', {}, {
+    stats: () =&gt; api.get('/api/stats'),
+    orders: () =&gt; api.get('/api/orders/recent'),
+    notifications: () =&gt; api.get('/api/notifications')
+});
+
+// Even if notifications fails, you get stats + orders!
+renderDashboard(results);
+</code></pre>
+<h3 id="eventbus-events_1">EventBus Events<a class="headerlink" href="#eventbus-events_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>DATA_AGGREGATION_STARTED</code> - Composition started</li>
+<li><code>DATA_AGGREGATION_COMPLETED</code> - Composition finished</li>
+<li><code>DATA_AGGREGATION_FAILED</code> - Composition failed</li>
+</ul>
+<hr />
+<h2 id="apiwrapper">APIWrapper<a class="headerlink" href="#apiwrapper" title="Permanent link">&para;</a></h2>
+<p><strong>Unified HTTP client with interceptors and auto-retry</strong></p>
+<h3 id="features_2">Features<a class="headerlink" href="#features_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>HTTP methods (GET, POST, PUT, PATCH, DELETE)</li>
+<li>Request/response interceptors</li>
+<li>Exponential backoff retry (up to 3x)</li>
+<li>Request cancellation</li>
+<li>Timeout handling</li>
+<li>Error handling</li>
+</ul>
+<h3 id="usage_2">Usage<a class="headerlink" href="#usage_2" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">const api = serviceManager.get('api');
+
+// Simple requests
+const users = await api.get('/api/users');
+await api.post('/api/users', { name: 'John' });
+await api.put('/api/users/1', { name: 'Jane' });
+await api.delete('/api/users/1');
+
+// Add interceptor
+api.addRequestInterceptor((config) =&gt; {
+    config.headers['X-Custom-Header'] = 'value';
+    return config;
+});
+
+// Auto-retry on failure (with exponential backoff)
+const data = await api.get('/api/flaky-endpoint');
+// Retries: 1s delay, 2s delay, 4s delay (max)
+</code></pre>
+<h3 id="eventbus-events_2">EventBus Events<a class="headerlink" href="#eventbus-events_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>API_REQUEST_START</code> - Request initiated</li>
+<li><code>API_REQUEST_SUCCESS</code> - Request succeeded</li>
+<li><code>API_REQUEST_ERROR</code> - Request failed</li>
+<li><code>API_REQUEST_RETRY</code> - Retry attempt</li>
+</ul>
+<hr />
+<h2 id="authservice">AuthService<a class="headerlink" href="#authservice" title="Permanent link">&para;</a></h2>
+<p><strong>JWT authentication with auto-refresh</strong></p>
+<h3 id="features_3">Features<a class="headerlink" href="#features_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>JWT token management</li>
+<li>Login/logout/register flows</li>
+<li><strong>Auto-refresh</strong> before expiry</li>
+<li>RBAC (roles + permissions)</li>
+<li>Session persistence</li>
+<li>Token expiry detection</li>
+<li>Publishes <code>AUTH_SESSION_UPDATED</code> on every change so transport-aware services (ChannelManager, Checkout, Optimistic Sync) can re-evaluate access in real time.</li>
+<li>Uses cookie-based sessions (<code>credentials: 'include'</code>) so the same token automatically rides with <code>/optimistic/ws</code> upgrades.</li>
+</ul>
+<h3 id="usage_3">Usage<a class="headerlink" href="#usage_3" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">const auth = serviceManager.get('auth');
+
+// Login
+const { user } = await auth.login({
+    email: 'user@example.com',
+    password: 'secure-password'
+});
+
+// Check authentication
+if (auth.isAuthenticated()) {
+    console.log('Logged in as:', auth.getCurrentUser().name);
+}
+
+// Role-based access
+if (auth.hasRole('admin')) {
+    showAdminPanel();
+}
+
+// Logout
+await auth.logout();
+</code></pre>
+<h4 id="session-cookies-transport">Session cookies &amp; transport<a class="headerlink" href="#session-cookies-transport" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Every request sent through <code>AuthService</code> includes <code>credentials: 'include'</code>, so the SSMA cookie (<code>ssma_session</code> by default) stays up to date without manually attaching headers.</li>
+<li><code>AUTH_SESSION_UPDATED</code> fires whenever <code>register</code>, <code>login</code>, <code>logout</code>, or <code>refreshSession</code> runs. Subscribe to it if you need to flip UI state or re-register optimistic intents:</li>
+</ul>
+<pre><code class="language-js">eventBus.subscribe('AUTH_SESSION_UPDATED', ({ user }) =&gt; {
+  channelManager.reevaluateAccess();
+  checkoutService?.syncOptimisticMode?.(user);
+});
+</code></pre>
+<h4 id="guest-fallback-coordination">Guest fallback coordination<a class="headerlink" href="#guest-fallback-coordination" title="Permanent link">&para;</a></h4>
+<p>Some modules (e.g., checkout) now downgrade to synchronous EventBus handling when <code>auth.isAuthenticated()</code> is <code>false</code> unless you explicitly opt-in to guest optimistic sync (<code>window.csma.config.optimisticSync.allowGuestCheckout = true</code>). The AuthService role helpers (<code>getRole</code>, <code>hasRole</code>) let you build the same guardrails in your own features.</p>
+<h3 id="auto-integration-with-apiwrapper">Auto-Integration with APIWrapper<a class="headerlink" href="#auto-integration-with-apiwrapper" title="Permanent link">&para;</a></h3>
+<p>When <code>AUTH_SERVICE</code> is enabled, auth headers are <strong>automatically</strong> injected:</p>
+<pre><code class="language-javascript">// No need to manually add auth headers!
+const profile = await api.get('/api/user/profile');
+// Authorization: Bearer eyJ... (auto-added!)
+</code></pre>
+<p>401 responses trigger automatic token refresh:</p>
+<pre><code class="language-javascript">// Token expired? Auto-refresh and retry!
+const data = await api.get('/api/protected');
+// Transparent refresh, no user intervention needed
+</code></pre>
+<h3 id="eventbus-events_3">EventBus Events<a class="headerlink" href="#eventbus-events_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>USER_LOGGED_IN</code> - Login successful</li>
+<li><code>USER_LOGGED_OUT</code> - Logout occurred</li>
+<li><code>USER_REGISTERED</code> - New user registered</li>
+<li><code>TOKEN_REFRESHED</code> - Token auto-refreshed</li>
+<li><code>SESSION_EXPIRED</code> - Session expired</li>
+<li><code>AUTH_ERROR</code> - Auth error occurred</li>
+<li><code>AUTH_SESSION_UPDATED</code> - Fired for every change (login, logout, auto-refresh, explicit <code>refreshSession()</code> call)</li>
+</ul>
+<hr />
+<h2 id="formvalidator">FormValidator<a class="headerlink" href="#formvalidator" title="Permanent link">&para;</a></h2>
+<p><strong>Real-time form validation with contract integration</strong></p>
+<h3 id="features_4">Features<a class="headerlink" href="#features_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Field-level validation</li>
+<li>Form-level validation</li>
+<li>Debounced real-time validation (300ms)</li>
+<li>Contract integration (reuse schemas!)</li>
+<li>ARIA accessibility</li>
+<li>Auto-bind to forms</li>
+</ul>
+<h3 id="usage_4">Usage<a class="headerlink" href="#usage_4" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">import { object, string, number } from './runtime/validation/index.js';
+import { email } from './runtime/validation/validators/semantic.js';
+
+const formValidator = serviceManager.get('formValidator');
+
+// Register form
+formValidator.register('contact-form', object({
+    name: string(),
+    email: email(),
+    age: number()
+}));
+
+// Auto-bind (easiest!)
+const form = document.getElementById('contact-form');
+formValidator.bindToForm(form, 'contact-form');
+
+// Listen for validated data
+form.addEventListener('validated', async (e) =&gt; {
+    // Data is already validated!
+    await api.post('/contact', e.detail);
+});
+</code></pre>
+<h3 id="eventbus-events_4">EventBus Events<a class="headerlink" href="#eventbus-events_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>FIELD_VALIDATION_STARTED</code> - Field validation started</li>
+<li><code>FIELD_VALIDATION_PASSED</code> - Field is valid</li>
+<li><code>FIELD_VALIDATION_FAILED</code> - Field has errors</li>
+<li><code>FORM_VALIDATION_PASSED</code> - Form is valid</li>
+<li><code>FORM_VALIDATION_FAILED</code> - Form has errors</li>
+</ul>
+<hr />
+<h2 id="service-dependencies">Service Dependencies<a class="headerlink" href="#service-dependencies" title="Permanent link">&para;</a></h2>
+<pre><code>AuthService → APIWrapper → EventBus
+            ↘ Storage (optional)
+
+APIWrapper → EventBus
+
+CacheManager → EventBus
+             ↘ Storage (optional for IndexedDB backend)
+
+DataAggregator → EventBus
+
+FormValidator → EventBus
+              ↘ Validation library
+</code></pre>
+<h3 id="load-order">Load Order<a class="headerlink" href="#load-order" title="Permanent link">&para;</a></h3>
+<p>Services are loaded in dependency order in <code>main.js</code>:</p>
+<ol>
+<li>CacheManager (no dependencies)</li>
+<li>DataAggregator (no dependencies)</li>
+<li>APIWrapper (no dependencies)</li>
+<li>AuthService (depends on APIWrapper)</li>
+<li>FormValidator (no dependencies)</li>
+</ol>
+<hr />
+<h2 id="all-eventbus-events">All EventBus Events<a class="headerlink" href="#all-eventbus-events" title="Permanent link">&para;</a></h2>
+<p>Complete list of events published by all services:</p>
+<h3 id="cachemanager-4-events">CacheManager (4 events)<a class="headerlink" href="#cachemanager-4-events" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>CACHE_HIT</code></li>
+<li><code>CACHE_MISS</code></li>
+<li><code>CACHE_SET</code></li>
+<li><code>CACHE_INVALIDATED</code></li>
+</ul>
+<h3 id="dataaggregator-3-events">DataAggregator (3 events)<a class="headerlink" href="#dataaggregator-3-events" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>DATA_AGGREGATION_STARTED</code></li>
+<li><code>DATA_AGGREGATION_COMPLETED</code></li>
+<li><code>DATA_AGGREGATION_FAILED</code></li>
+</ul>
+<h3 id="apiwrapper-4-events">APIWrapper (4 events)<a class="headerlink" href="#apiwrapper-4-events" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>API_REQUEST_START</code></li>
+<li><code>API_REQUEST_SUCCESS</code></li>
+<li><code>API_REQUEST_ERROR</code></li>
+<li><code>API_REQUEST_RETRY</code></li>
+</ul>
+<h3 id="authservice-6-events">AuthService (6 events)<a class="headerlink" href="#authservice-6-events" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>USER_LOGGED_IN</code></li>
+<li><code>USER_LOGGED_OUT</code></li>
+<li><code>USER_REGISTERED</code></li>
+<li><code>TOKEN_REFRESHED</code></li>
+<li><code>SESSION_EXPIRED</code></li>
+<li><code>AUTH_ERROR</code></li>
+</ul>
+<h3 id="formvalidator-5-events">FormValidator (5 events)<a class="headerlink" href="#formvalidator-5-events" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>FIELD_VALIDATION_STARTED</code></li>
+<li><code>FIELD_VALIDATION_PASSED</code></li>
+<li><code>FIELD_VALIDATION_FAILED</code></li>
+<li><code>FORM_VALIDATION_PASSED</code></li>
+<li><code>FORM_VALIDATION_FAILED</code></li>
+</ul>
+<p><strong>Total</strong>: 22 EventBus events</p>
+<hr />
+<h2 id="real-world-example">Real-World Example<a class="headerlink" href="#real-world-example" title="Permanent link">&para;</a></h2>
+<p>Complete app using all services:</p>
+<pre><code class="language-javascript">// 1. LOGIN
+const auth = serviceManager.get('auth');
+const formValidator = serviceManager.get('formValidator');
+
+formValidator.register('login-form', object({
+    email: email(),
+    password: string()
+}));
+
+const loginForm = document.getElementById('login-form');
+formValidator.bindToForm(loginForm, 'login-form');
+
+loginForm.addEventListener('validated', async (e) =&gt; {
+    await auth.login(e.detail);
+    router.navigate('/dashboard');
+});
+
+// 2. DASHBOARD (cached + aggregated)
+const cache = serviceManager.get('cacheManager');
+const aggregator = serviceManager.get('dataAggregator');
+const api = serviceManager.get('api');
+
+async function loadDashboard() {
+    const data = await cache.fetch('dashboard',
+        () =&gt; aggregator.compose('dashboard', {}, {
+            stats: () =&gt; api.get('/api/stats'),
+            orders: () =&gt; api.get('/api/orders')
+        }).then(({ results }) =&gt; results),
+        { strategy: 'stale-while-revalidate' }
+    );
+
+    renderDashboard(data);
+}
+
+// 3. AUTO-LOGOUT ON EXPIRY
+eventBus.subscribe('SESSION_EXPIRED', () =&gt; {
+    router.navigate('/login');
+    showToast('Session expired');
+});
+</code></pre>
+<hr />
+<h2 id="bundle-size-impact">Bundle Size Impact<a class="headerlink" href="#bundle-size-impact" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th>Size (gzipped)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Core only (no services)</td>
+<td>~8KB</td>
+</tr>
+<tr>
+<td>+ CacheManager</td>
+<td>~12KB</td>
+</tr>
+<tr>
+<td>+ DataAggregator</td>
+<td>~14KB</td>
+</tr>
+<tr>
+<td>+ APIWrapper</td>
+<td>~17.5KB</td>
+</tr>
+<tr>
+<td>+ AuthService</td>
+<td>~21.5KB</td>
+</tr>
+<tr>
+<td>+ FormValidator</td>
+<td>~24KB</td>
+</tr>
+<tr>
+<td><strong>All services</strong></td>
+<td><strong>~24KB</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tree-shaking</strong>: Disabled services = 0KB overhead!</p>
+<hr />
+<h2 id="configuration">Configuration<a class="headerlink" href="#configuration" title="Permanent link">&para;</a></h2>
+<h3 id="enable-all-services">Enable All Services<a class="headerlink" href="#enable-all-services" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">// src/config.js
+export const FEATURES = {
+    // Core Services
+    CACHE_MANAGER: true,
+    DATA_AGGREGATOR: true,
+    API_WRAPPER: true,
+    AUTH_SERVICE: true,
+    FORM_VALIDATOR: true,
+};
+</code></pre>
+<h3 id="minimal-no-services">Minimal (No Services)<a class="headerlink" href="#minimal-no-services" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">export const FEATURES = {
+    CACHE_MANAGER: false,
+    DATA_AGGREGATOR: false,
+    API_WRAPPER: false,
+    AUTH_SERVICE: false,
+    FORM_VALIDATOR: false,
+};
+</code></pre>
+<p>Bundle size: ~8KB → ~24KB (all enabled)</p>
+<hr />
+<h2 id="api-reference">API Reference<a class="headerlink" href="#api-reference" title="Permanent link">&para;</a></h2>
+<p>See inline documentation in each service file:
+- <code>CacheManager.js</code> - Cache management
+- <code>DataAggregator.js</code> - API orchestration
+- <code>APIWrapper.js</code> - HTTP client
+- <code>AuthService.js</code> - Authentication
+- <code>FormValidator.js</code> - Form validation</p>
+<p>All services support:
+- Debug mode (<code>debug: true</code>)
+- EventBus integration
+- Error handling
+- Production-ready defaults</p>
+<hr />
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
+<p>MIT - Same as CSMA starter template</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

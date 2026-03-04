@@ -1,0 +1,84 @@
+/**
+ * Radio Component CSS
+ * CSMA-compliant styles - Extracted from kimi-ui-phase3-4.html
+ */
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.radio-group[data-orientation="horizontal"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+}
+
+.radio-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+}
+
+.radio-item[data-state="disabled"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-circle {
+    position: relative;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1px solid var(--fx-color-border);
+    border-radius: 50%;
+    background: var(--fx-color-bg);
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.radio-item:hover .radio-circle {
+    border-color: var(--fx-color-primary);
+}
+
+.radio-circle::after {
+    content: '';
+    position: absolute;
+    display: none;
+    width: 0.5rem;
+    height: 0.5rem;
+    background: var(--fx-color-on-primary);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.radio-item[data-state="checked"] .radio-circle {
+    background: var(--fx-color-primary);
+    border-color: var(--fx-color-primary);
+}
+
+.radio-item[data-state="checked"] .radio-circle::after {
+    display: block;
+}
+
+.radio-label {
+    font-size: var(--font-size-sm);
+    user-select: none;
+}
+
+.radio-description {
+    font-size: 0.8125rem;
+    color: var(--fx-color-fg-muted);
+    margin-left: calc(1.25rem + var(--spacing-sm));
+    margin-top: calc(-1 * var(--spacing-xs));
+}

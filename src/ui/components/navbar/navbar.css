@@ -1,0 +1,336 @@
+/**
+ * CSMA Navbar Component
+ * Responsive navigation with mobile hamburger menu
+ *
+ * Features:
+ * - Mobile-first responsive design
+ * - Hamburger menu animation
+ * - Smooth transitions
+ * - Active state styling
+ * - Touch-friendly mobile interactions
+ * - Theme support (light/dark)
+ */
+
+.navbar {
+    position: relative;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    z-index: 1000;
+}
+
+/* Navbar container */
+.navbar-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4rem;
+}
+
+/* Brand/Logo */
+.navbar-brand {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.navbar-brand:hover {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+/* Desktop Navigation */
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.navbar-nav .navbar-item {
+    position: relative;
+}
+
+.navbar-link {
+    color: var(--fx-color-fg-muted);
+    text-decoration: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    position: relative;
+}
+
+.navbar-link:hover {
+    color: var(--fx-color-primary);
+    background-color: var(--fx-color-surface-muted);
+}
+
+.navbar-link:focus {
+    outline: 2px solid var(--fx-color-primary);
+    outline-offset: 2px;
+}
+
+/* Active state */
+.navbar-link[data-active="true"] {
+    color: var(--fx-color-primary);
+    font-weight: 600;
+}
+
+.navbar-link[data-active="true"]::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 2px;
+    background: var(--fx-color-primary);
+    border-radius: 1px;
+}
+
+/* Hamburger Menu Button */
+.navbar-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+    transition: background-color var(--transition-fast);
+}
+
+.navbar-hamburger:hover {
+    background-color: var(--fx-color-surface-muted);
+}
+
+.navbar-hamburger:focus {
+    outline: 2px solid var(--fx-color-primary);
+    outline-offset: 2px;
+}
+
+.navbar-hamburger-lines {
+    width: 1.5rem;
+    height: 2px;
+    background: var(--fx-color-fg);
+    border-radius: 1px;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.navbar-hamburger-lines::before,
+.navbar-hamburger-lines::after {
+    content: '';
+    position: absolute;
+    width: 1.5rem;
+    height: 2px;
+    background: var(--fx-color-fg);
+    border-radius: 1px;
+    transition: all var(--transition-fast);
+}
+
+.navbar-hamburger-lines::before {
+    top: -6px;
+}
+
+.navbar-hamburger-lines::after {
+    top: 6px;
+}
+
+/* Hamburger animation when menu is open */
+.navbar[data-mobile-open="true"] .navbar-hamburger-lines {
+    background: transparent;
+}
+
+.navbar[data-mobile-open="true"] .navbar-hamburger-lines::before {
+    top: 0;
+    transform: rotate(45deg);
+}
+
+.navbar[data-mobile-open="true"] .navbar-hamburger-lines::after {
+    top: 0;
+    transform: rotate(-45deg);
+}
+
+/* Mobile Menu Overlay */
+.navbar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.navbar[data-mobile-open="true"] .navbar-overlay {
+    display: block;
+    opacity: 1;
+}
+
+/* Mobile Menu */
+.navbar-mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: var(--fx-color-bg);
+    border-left: 1px solid var(--fx-color-surface-muted);
+    padding: 5rem var(--spacing-lg) var(--spacing-xl);
+    transition: right var(--transition-normal);
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: var(--shadow-xl);
+}
+
+.navbar[data-mobile-open="true"] .navbar-mobile-menu {
+    right: 0;
+}
+
+.navbar-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.navbar-mobile-nav .navbar-link {
+    padding: var(--spacing-md);
+    width: 100%;
+    justify-content: flex-start;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-lg);
+    font-weight: 500;
+}
+
+.navbar-mobile-nav .navbar-link:hover {
+    background-color: var(--fx-color-surface-muted);
+    transform: translateX(4px);
+}
+
+/* Mobile-specific styles */
+@media (max-width: 767px) {
+    .navbar-nav {
+        display: none;
+    }
+
+    .navbar-hamburger {
+        display: flex;
+    }
+
+    .navbar-container {
+        padding: 0 var(--spacing-md);
+        min-height: 3.5rem;
+    }
+
+    .navbar-brand {
+        font-size: var(--font-size-lg);
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .navbar-nav {
+        gap: var(--spacing-md);
+    }
+
+    .navbar-link {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: var(--font-size-sm);
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+    .navbar-container {
+        padding: 0 var(--spacing-xl);
+    }
+
+    .navbar-nav {
+        gap: var(--spacing-xl);
+    }
+}
+
+/* Dark theme support */
+[data-theme="dark"] .navbar {
+    background: var(--fx-color-bg);
+    border-bottom-color: var(--fx-color-border);
+}
+
+[data-theme="dark"] .navbar-link:hover {
+    background-color: var(--fx-color-surface-muted);
+}
+
+[data-theme="dark"] .navbar-mobile-menu {
+    background: var(--fx-color-bg);
+    border-left-color: var(--fx-color-border);
+}
+
+/* Hidden navbar (for sticky navbars) */
+.navbar[data-hidden="true"] {
+    display: none;
+}
+
+/* Focus management */
+.navbar-link:focus-visible {
+    outline: 2px solid var(--fx-color-primary);
+    outline-offset: 2px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .navbar-link {
+        border: 1px solid transparent;
+    }
+
+    .navbar-link:hover,
+    .navbar-link:focus,
+    .navbar-link[data-active="true"] {
+        border-color: currentColor;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+    .navbar-mobile-menu,
+    .navbar-overlay,
+    .navbar-hamburger-lines,
+    .navbar-hamburger-lines::before,
+    .navbar-hamburger-lines::after {
+        transition: none;
+    }
+
+    .navbar-mobile-nav .navbar-link:hover {
+        transform: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .navbar {
+        display: none;
+    }
+}

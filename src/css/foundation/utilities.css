@@ -1,0 +1,103 @@
+/* CSMA Foundation Utility Layer */
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-md);
+}
+
+.stack[data-gap="sm"] { gap: var(--fx-space-sm); }
+.stack[data-gap="lg"] { gap: var(--fx-space-lg); }
+.stack[data-gap="xl"] { gap: var(--fx-space-xl); }
+
+.stack[data-align="start"] { align-items: flex-start; }
+.stack[data-align="center"] { align-items: center; }
+.stack[data-align="end"] { align-items: flex-end; }
+
+.grid {
+  display: grid;
+  gap: var(--fx-space-md);
+}
+
+.grid[data-columns] {
+  grid-template-columns: repeat(var(--grid-columns, 1), minmax(0, 1fr));
+}
+
+.grid[data-columns="2"] { --grid-columns: 2; }
+.grid[data-columns="3"] { --grid-columns: 3; }
+.grid[data-columns="4"] { --grid-columns: 4; }
+
+.grid[data-responsive-columns] {
+  grid-template-columns: repeat(var(--grid-responsive-columns, 1), minmax(0, 1fr));
+}
+
+@media (min-width: var(--fx-breakpoint-md)) {
+  .grid[data-responsive-columns="2"] { --grid-responsive-columns: 2; }
+  .grid[data-responsive-columns="3"] { --grid-responsive-columns: 3; }
+  .grid[data-responsive-columns="4"] { --grid-responsive-columns: 4; }
+}
+
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-sm);
+  align-items: center;
+}
+
+.cluster[data-align="center"] { justify-content: center; }
+.cluster[data-align="end"] { justify-content: flex-end; }
+.cluster[data-align="space-between"] { justify-content: space-between; }
+
+.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fx-space-xs);
+}
+
+.surface {
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-lg);
+  box-shadow: var(--fx-shadow-sm);
+}
+
+.bleed {
+  width: calc(100% + var(--fx-space-lg));
+  margin-inline: calc(var(--fx-space-lg) / -2);
+}
+
+.focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--fx-color-bg), 0 0 0 4px var(--fx-color-primary);
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px var(--fx-color-bg), 0 0 0 4px var(--fx-color-primary);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.motion-safe {
+  transition: all var(--fx-transition-fast);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.inline-gap-sm { gap: var(--fx-space-sm); }
+.inline-gap-md { gap: var(--fx-space-md); }
+.inline-gap-lg { gap: var(--fx-space-lg); }

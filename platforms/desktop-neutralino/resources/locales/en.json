@@ -1,0 +1,34 @@
+{
+    "app": {
+        "title": "CSMA App",
+        "loading": "Loading...",
+        "error": "An error occurred"
+    },
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "confirm": "Confirm",
+        "back": "Back",
+        "next": "Next",
+        "submit": "Submit"
+    },
+    "errors": {
+        "generic": "Something went wrong",
+        "network": "Network error",
+        "validation": "Validation failed",
+        "notFound": "Not found"
+    },
+    "validation": {
+        "required": "{field} is required",
+        "email": "Invalid email address",
+        "minLength": "{field} must be at least {min} characters",
+        "maxLength": "{field} must be less than {max} characters"
+    },
+    "items": {
+        "zero": "No items",
+        "one": "{count} item",
+        "other": "{count} items"
+    }
+}

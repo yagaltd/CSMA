@@ -1,0 +1,34 @@
+{
+    "app": {
+        "title": "Aplicación CSMA",
+        "loading": "Cargando...",
+        "error": "Ocurrió un error"
+    },
+    "common": {
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "confirm": "Confirmar",
+        "back": "Atrás",
+        "next": "Siguiente",
+        "submit": "Enviar"
+    },
+    "errors": {
+        "generic": "Algo salió mal",
+        "network": "Error de red",
+        "validation": "Validación fallida",
+        "notFound": "No encontrado"
+    },
+    "validation": {
+        "required": "{field} es requerido",
+        "email": "Dirección de email inválida",
+        "minLength": "{field} debe tener al menos {min} caracteres",
+        "maxLength": "{field} debe tener menos de {max} caracteres"
+    },
+    "items": {
+        "zero": "Sin elementos",
+        "one": "{count} elemento",
+        "other": "{count} elementos"
+    }
+}

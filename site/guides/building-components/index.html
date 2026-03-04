@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://example.com/csma/guides/building-components/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Building Components - CSMA Kit Docs</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">CSMA Kit Docs</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Getting Started</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../csma-in-a-nutshell/" class="dropdown-item">Overview</a>
+</li>
+                                    
+<li>
+    <a href="../getting-started/" class="dropdown-item">Setup</a>
+</li>
+                                    
+<li>
+    <a href="../features/" class="dropdown-item">Features</a>
+</li>
+                                    
+<li>
+    <a href="../validation/" class="dropdown-item">Validation</a>
+</li>
+                                    
+<li>
+    <a href="../pwa-setup/" class="dropdown-item">PWA Setup</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Guides</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Building Components</a>
+</li>
+                                    
+<li>
+    <a href="../customizing-theme/" class="dropdown-item">Customizing Theme</a>
+</li>
+                                    
+<li>
+    <a href="../for-llms/" class="dropdown-item">For LLMs</a>
+</li>
+                                    
+<li>
+    <a href="../../css-foundation/" class="dropdown-item">CSS Foundation</a>
+</li>
+                                    
+<li>
+    <a href="../../complete-csma-guide/" class="dropdown-item">Complete Guide</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">API</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../api/core-services/" class="dropdown-item">Core Services</a>
+</li>
+                                    
+<li>
+    <a href="../../api/llm-service/" class="dropdown-item">LLM Service</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Advanced</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../advanced/contract-governance/" class="dropdown-item">Contract Governance</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/optimistic-sync/" class="dropdown-item">Optimistic Sync</a>
+</li>
+                                    
+<li>
+    <a href="../../advanced/llm-instructor/" class="dropdown-item">LLM Instructor</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Platforms</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../platforms/capacitor/" class="dropdown-item">Capacitor</a>
+</li>
+                                    
+<li>
+    <a href="../../platforms/neutralino/" class="dropdown-item">Neutralino</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Examples</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../examples/todo-app/" class="dropdown-item">Todo App</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Security</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../security/security-map/" class="dropdown-item">Security Map</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Operations</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../release-checklist/" class="dropdown-item">Release Checklist</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Roadmap</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../roadmap/" class="dropdown-item">Overview</a>
+</li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Priority Tracks</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/OPFS-worker/" class="dropdown-item">OPFS Worker</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/ai-modularity-tanstack/" class="dropdown-item">AI Modularity</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Proposed</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/proposed/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/csma-split-proposal/" class="dropdown-item">CSMA Split Proposal</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/llm-portable-architecture/" class="dropdown-item">LLM Portable Architecture</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/to-implement/url-bookmark-universal-module-proposal/" class="dropdown-item">URL Bookmark Module Proposal</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Considerations</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/considerations/" class="dropdown-item">Index</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/CSMA-future-ideas/" class="dropdown-item">CSMA Future Ideas</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/Security-tracking-nstjs-stryle/" class="dropdown-item">Security Tracking</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/ocr-image-insights-module/" class="dropdown-item">OCR Image Insights</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/services-ontop-flexsearch/" class="dropdown-item">Services on FlexSearch</a>
+</li>
+            
+<li>
+    <a href="../../roadmap/consideration/showcase-website/" class="dropdown-item">Showcase Website</a>
+</li>
+    </ul>
+  </li>
+                                    
+  <li class="dropdown-submenu">
+    <a href="#" class="dropdown-item">Research</a>
+    <ul class="dropdown-menu">
+            
+<li>
+    <a href="../../roadmap/research/" class="dropdown-item">Index</a>
+</li>
+    </ul>
+  </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../pwa-setup/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../customizing-theme/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/example/CSMA-SSMA/edit/main/docs/guides/building-components.md" class="nav-link">Edit on CSMA-SSMA/CSMA
+                                    </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#building-csma-components" class="nav-link">Building CSMA Components</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#1-the-golden-rules" class="nav-link">1. The Golden Rules</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#2-component-taxonomy" class="nav-link">2. Component Taxonomy</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#3-component-initialization-patterns" class="nav-link">3. Component Initialization Patterns</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#4-how-to-build-a-component-step-by-step" class="nav-link">4. How to Build a Component (Step-by-Step)</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#5-adding-a-new-component" class="nav-link">5. Adding a New Component</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#6-best-practices" class="nav-link">6. Best Practices</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#7-common-patterns" class="nav-link">7. Common Patterns</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#8-naming-conventions" class="nav-link">8. Naming Conventions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#9-error-handling" class="nav-link">9. Error Handling</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="building-csma-components">Building CSMA Components<a class="headerlink" href="#building-csma-components" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Philosophy</strong>: In CSMA, UI components are <strong>dumb</strong>. They do not contain business logic. They simply <strong>render state</strong> provided by services and <strong>publish intents</strong> based on user actions.</p>
+</blockquote>
+<hr />
+<h2 id="1-the-golden-rules">1. The Golden Rules<a class="headerlink" href="#1-the-golden-rules" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>HTML-First</strong>: Start with semantic HTML. Use <code>data-*</code> attributes for behavior hooks.</li>
+<li><strong>CSS-Driven State</strong>: Never use <code>style.property = value</code>. Toggle classes or data attributes.</li>
+<li><strong>Logic-Free</strong>: If it calculates, validates, or stores data, it belongs in a <strong>Service</strong>, not a Component.</li>
+<li><strong>Event-Driven</strong>: Components never talk to each other directly. They use the <code>EventBus</code>.</li>
+</ol>
+<hr />
+<h2 id="2-component-taxonomy">2. Component Taxonomy<a class="headerlink" href="#2-component-taxonomy" title="Permanent link">&para;</a></h2>
+<p>We classify components into <strong>4 Distinct Types</strong> based on complexity and logic ownership.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Characteristics</th>
+<th style="text-align: left;">Example</th>
+<th style="text-align: left;">Logic Owner</th>
+<th style="text-align: left;">Initialization</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>I</strong></td>
+<td style="text-align: left;"><strong>Pure UI</strong></td>
+<td style="text-align: left;">HTML/CSS only. No JavaSript. Visuals only.</td>
+<td style="text-align: left;"><code>Badge</code>, <code>Card</code>, <code>Avatar</code></td>
+<td style="text-align: left;">Browser</td>
+<td style="text-align: left;">None (Static HTML)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>II</strong></td>
+<td style="text-align: left;"><strong>Self-Contained</strong></td>
+<td style="text-align: left;">Handles simple user interactions. "Logic-Light".</td>
+<td style="text-align: left;"><code>Dialog</code>, <code>Popover</code>, <code>Tabs</code></td>
+<td style="text-align: left;">Component (Internal)</td>
+<td style="text-align: left;"><code>initUI</code> calls <code>initComponent(bus)</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>III</strong></td>
+<td style="text-align: left;"><strong>Service-Backed</strong></td>
+<td style="text-align: left;">UI is dumb; "Brain" is a Service.</td>
+<td style="text-align: left;"><code>Slider</code>, <code>FormValidator</code></td>
+<td style="text-align: left;">Service (External)</td>
+<td style="text-align: left;"><code>ServiceManager</code> + <code>initUI</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IV</strong></td>
+<td style="text-align: left;"><strong>Module</strong></td>
+<td style="text-align: left;">Massive feature set. Lazy-loaded bundle.</td>
+<td style="text-align: left;"><code>Router</code>, <code>I18n</code></td>
+<td style="text-align: left;">Module Logic</td>
+<td style="text-align: left;"><code>ModuleManager.loadModule(...)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="components-vs-patterns">Components vs Patterns<a class="headerlink" href="#components-vs-patterns" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Atomic Components</strong> (<code>src/ui/components/</code>): Reusable "Lego Bricks" (Button, Input). Used everywhere.</li>
+<li><strong>Composite Patterns</strong> (<code>src/ui/patterns/</code>): Specific compositions (Sidebar, LoginForm). Often just HTML snippets or specific layout logic. Do NOT make these overly reusable/abstract.</li>
+</ul>
+<h3 id="how-to-choose">How to Choose?<a class="headerlink" href="#how-to-choose" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>"I just need to show a picture"</strong> -&gt; <strong>Type I (Pure UI)</strong></li>
+<li><strong>"I just need to toggle show/hide"</strong> -&gt; <strong>Type II (Self-Contained)</strong></li>
+<li><strong>"I need to calculate numbers or validate data"</strong> -&gt; <strong>Type III (Service-Backed)</strong></li>
+<li><strong>"I am building a whole new sub-application"</strong> -&gt; <strong>Type IV (Module)</strong></li>
+</ul>
+<hr />
+<h2 id="3-component-initialization-patterns">3. Component Initialization Patterns<a class="headerlink" href="#3-component-initialization-patterns" title="Permanent link">&para;</a></h2>
+<p>All UI components must be registered in <code>src/ui/init.js</code> to auto-initialize with EventBus integration.</p>
+<p>⚠️ <strong>WARNING: Manual Registration Required</strong>: 
+When adding a new component to <code>src/ui/init.js</code>, you MUST do all three:
+1. <strong>IMPORT</strong> the component (at top of file)
+2. <strong>INITIALIZE</strong> it in <code>initUI()</code> (mid file)
+3. <strong>ADD CLEANUP</strong> to <code>window.csma.componentCleanup</code> (bottom of file)</p>
+<p>See <code>src/ui/init.js</code> comment block for exact line numbers and full instructions.</p>
+<h3 id="important-eventbus-validation">Important: EventBus Validation<a class="headerlink" href="#important-eventbus-validation" title="Permanent link">&para;</a></h3>
+<p>The validation system used by EventBus returns a tuple <code>[error, validatedValue]</code>, <strong>not</strong> just the validated object. When using EventBus validation internally, you must destructure the tuple:</p>
+<pre><code class="language-javascript">// ❌ WRONG - Returns array
+const validated = schema.validate(payload);
+
+// ✅ CORRECT - Destructure tuple
+const [error, validated] = schema.validate(payload);
+if (error) throw error;
+</code></pre>
+<p>The EventBus <code>_validatePayload()</code> method internally handles this tuple unpacking, but if you use validation directly in your code, you must handle it correctly.</p>
+<h3 id="pattern-1-self-contained-type-ii">Pattern 1: Self-Contained (Type II)<a class="headerlink" href="#pattern-1-self-contained-type-ii" title="Permanent link">&para;</a></h3>
+<p><strong>Used for</strong>: Components that manage their own state via EventBus - Dialog, Toast, Popover, Tabs, Accordion, Dropdown</p>
+<pre><code class="language-javascript">// Component exports
+export function init[Component]System(eventBus) {
+  // Auto-discover all instances on page
+  const dialogs = document.querySelectorAll('.dialog-overlay');
+  dialogs.forEach(dialog =&gt; initDialog(dialog, eventBus));
+
+  // Subscribe to INTENT_[COMPONENT]_* events
+  const unsubscribe = eventBus.subscribe('INTENT_MODAL_OPEN', (payload) =&gt; {
+    openDialog(payload.modalId);
+  });
+
+  // Return cleanup function for hot reload
+  return () =&gt; {
+    unsubscribe();
+    // ... other cleanup
+  };
+}
+
+// In init.js
+export function initUI(eventBus) {
+  const dialogCleanup = initDialogSystem(eventBus);
+}
+</code></pre>
+<p><strong>Characteristics</strong>:
+- ✅ Self-contained (no external Service needed)
+- ✅ Subscribes to its own INTENT_* events
+- ✅ Publishes events for other components
+- ✅ Returns cleanup function for hot reload</p>
+<p><strong>Naming Convention</strong>: <code>init[Component]System(eventBus)</code> (singular, System suffix)</p>
+<p><strong>Examples</strong>:
+- <code>dialog.js</code> - <code>initDialogSystem(eventBus)</code>
+- <code>toast.js</code> - <code>initToastSystem(eventBus)</code>
+- <code>popover.js</code> - Should be <code>initPopoverSystem(eventBus)</code></p>
+<hr />
+<h3 id="pattern-2-service-backed-type-iii">Pattern 2: Service-Backed (Type III)<a class="headerlink" href="#pattern-2-service-backed-type-iii" title="Permanent link">&para;</a></h3>
+<p><strong>Used for</strong>: Components needing complex business logic - Slider, FormValidator</p>
+<pre><code class="language-javascript">// Service exports factory
+export function create[Component]Service(eventBus) {
+  return {
+    validate(input) { /* ... */, eventBus.publish('VALIDATION_RESULT', result) },
+    calculate(data) { /* ... */, eventBus.publish('CALCULATION_RESULT', result) }
+  };
+}
+
+// Component exports UI init
+export function init[Component]UI(eventBus) {
+  // UI-specific initialization only
+  const items = document.querySelectorAll('.component-item');
+  items.forEach(item =&gt; initComponentItem(item, eventBus));
+
+  return cleanupFunction;
+}
+
+// In init.js
+export function initUI(eventBus) {
+  const service = createSliderService(eventBus);
+  window.serviceManager.register('slider', service);
+  const sliderCleanup = initSliderUI(eventBus);
+}
+</code></pre>
+<p><strong>Characteristics</strong>:
+- ✅ Complex business logic separated from UI
+- ✅ Service registers with ServiceManager
+- ✅ UI component handles only rendering
+- ✅ Good for data-intensive components</p>
+<p><strong>Naming Convention</strong>: 
+- Service: <code>create[Component]Service(eventBus)</code> → serviceInstance
+- UI: <code>init[Component]UI(eventBus)</code> → cleanupFunction</p>
+<p><strong>Examples</strong>:
+- <code>SliderService.js</code> - <code>createSliderService(eventBus)</code> + <code>initSliderUI(eventBus)</code></p>
+<hr />
+<h3 id="pattern-3-pure-css-type-i">Pattern 3: Pure CSS (Type I)<a class="headerlink" href="#pattern-3-pure-css-type-i" title="Permanent link">&para;</a></h3>
+<p><strong>Used for</strong>: Static visual components - Badge, Card, Avatar, Separator, Skeleton</p>
+<pre><code class="language-javascript">// No JavaScript file needed
+// CSS only in src/ui/components/badge/badge.css
+// Demo HTML in badge.demo.html
+</code></pre>
+<p><strong>Characteristics</strong>:
+- ✅ Zero JavaScript
+- ✅ CSS variables for theming
+- ✅ <code>data-state</code> for states (if any)
+- ✅ Semantic HTML</p>
+<p><strong>Examples</strong>:
+- <code>badge</code> - Visual only
+- <code>card</code> - Visual only
+- <code>avatar</code> - Visual only</p>
+<hr />
+<h2 id="4-how-to-build-a-component-step-by-step">4. How to Build a Component (Step-by-Step)<a class="headerlink" href="#4-how-to-build-a-component-step-by-step" title="Permanent link">&para;</a></h2>
+<p>Let's build a <strong>"Like Button"</strong> that updates a counter.</p>
+<h3 id="step-1-define-html-structure">Step 1: Define HTML Structure<a class="headerlink" href="#step-1-define-html-structure" title="Permanent link">&para;</a></h3>
+<p>Use <code>data-</code> attributes to mark interactive elements.</p>
+<pre><code class="language-html">&lt;!-- In index.html or a template --&gt;
+&lt;div id=&quot;like-widget&quot; class=&quot;like-widget&quot;&gt;
+  &lt;span class=&quot;count&quot;&gt;0&lt;/span&gt;
+&lt;button data-action=&quot;like&quot; class=&quot;button&quot; data-variant=&quot;secondary&quot;&gt;
+    ♥ Like
+  &lt;/button&gt;
+&lt;/div&gt;
+</code></pre>
+<h3 id="step-2-define-css-states">Step 2: Define CSS States<a class="headerlink" href="#step-2-define-css-states" title="Permanent link">&para;</a></h3>
+<p>Define how the component looks in different states using CSS classes or attributes.</p>
+<pre><code class="language-css">/* src/css/components.css */
+.like-widget[data-state=&quot;liked&quot;] .button {
+  color: red;
+  font-weight: bold;
+}
+
+.like-widget[data-state=&quot;loading&quot;] {
+  opacity: 0.7;
+  pointer-events: none;
+}
+</code></pre>
+<h3 id="step-3-create-js-component">Step 3: Create JS Component<a class="headerlink" href="#step-3-create-js-component" title="Permanent link">&para;</a></h3>
+<p>Create <code>src/ui/components/like-widget/like-widget.js</code>.</p>
+<pre><code class="language-javascript">import { setState } from '../init.js'; // Helper for data-state
+
+export class LikeWidget {
+    constructor(eventBus) {
+        this.eventBus = eventBus;
+        this.container = document.getElementById('like-widget');
+
+        // 1. Subscribe to state changes
+        this.eventBus.subscribe('LIKE_UPDATED', this.render.bind(this));
+    }
+
+    init() {
+        if (!this.container) return;
+
+        // 2. Handle user interaction (Publish Intent)
+        const btn = this.container.querySelector('[data-action=&quot;like&quot;]');
+        btn.addEventListener('click', () =&gt; {
+            // Optimistic UI update (optional)
+            setState(this.container, 'loading');
+
+            this.eventBus.publish('INTENT_LIKE_CLICKED', {
+                widgetId: 'main-like',
+                timestamp: Date.now()
+            });
+        });
+    }
+
+    // 3. Render State (Update DOM)
+    render({ count, isLiked }) {
+        // Clear loading state
+        setState(this.container, isLiked ? 'liked' : null);
+
+        // Update text safely
+        this.container.querySelector('.count').textContent = count;
+    }
+}
+</code></pre>
+<h3 id="step-4-define-contracts">Step 4: Define Contracts<a class="headerlink" href="#step-4-define-contracts" title="Permanent link">&para;</a></h3>
+<p>Define the events in <code>src/runtime/Contracts.js</code>.</p>
+<pre><code class="language-javascript">// Intent
+INTENT_LIKE_CLICKED: {
+    type: 'intent',
+    schema: object({ widgetId: string(), timestamp: number() })
+},
+
+// Event
+LIKE_UPDATED: {
+    type: 'event',
+    schema: object({ count: number(), isLiked: boolean() })
+}
+</code></pre>
+<h3 id="step-5-register-in-srcuiinitjs">Step 5: Register in <code>src/ui/init.js</code><a class="headerlink" href="#step-5-register-in-srcuiinitjs" title="Permanent link">&para;</a></h3>
+<p>Initialize the component in the central UI registry.</p>
+<pre><code class="language-javascript">import { initLikeWidget } from '../components/like-widget/like-widget.js';
+
+export function initUI(eventBus) {
+    // ...
+    initLikeWidget(eventBus);
+}
+</code></pre>
+<h3 id="step-6-initialize-demo-files-critical-type-iiiii-only">Step 6: Initialize Demo Files (CRITICAL - Type II/III Only)<a class="headerlink" href="#step-6-initialize-demo-files-critical-type-iiiii-only" title="Permanent link">&para;</a></h3>
+<p><strong>For Type II (Self-Contained) and Type III (Service-Backed) components</strong>, you MUST initialize EventBus:</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;!-- ... --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Your component HTML --&gt;
+
+    &lt;script type=&quot;module&quot;&gt;
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { init[Component]System } from './[component].js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+
+        init[Component]System(eventBus);
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p><strong>IMPORTANT</strong>: This pattern is for <strong>Type II and III components only</strong> (EventBus-based). Do NOT use this for Type I (CSS-only) components.</p>
+<p><strong>Why this matters</strong>: Without EventBus initialization, Type II/III components won't be interactive in demos. They subscribe to EventBus events, so the EventBus must exist and have Contracts defined.</p>
+<hr />
+<h3 id="step-6b-type-i-pure-css-components">Step 6b: Type I (Pure CSS) Components<a class="headerlink" href="#step-6b-type-i-pure-css-components" title="Permanent link">&para;</a></h3>
+<p>For <strong>Type I components</strong> (CSS-only, no EventBus), use a different pattern:</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;!-- ... --&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;!-- Your component HTML --&gt;
+
+    &lt;script type=&quot;module&quot;&gt;
+        import { helperFunction } from './[component].js';
+
+        // Expose functions for onclick handlers
+        window.helperFunction = helperFunction;
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p><strong>Example</strong> (Alert Dialog - Type I):</p>
+<pre><code class="language-html">&lt;script type=&quot;module&quot;&gt;
+    import { openAlertDialog, closeAlertDialog } from './alert-dialog.js';
+
+    window.openAlertDialog = openAlertDialog;
+    window.closeAlertDialog = closeAlertDialog;
+&lt;/script&gt;
+</code></pre>
+<p><strong>Why different patterns?</strong>
+- <strong>Type I</strong>: Helper functions are called directly from HTML via onclick handlers
+- <strong>Type II/III</strong>: Components publish/subscribe to EventBus events, EventBus manages all interactions</p>
+<hr />
+<h3 id="step-7-optional-register-service">Step 7: (Optional) Register Service<a class="headerlink" href="#step-7-optional-register-service" title="Permanent link">&para;</a></h3>
+<p>If your component has a paired <em>Service</em> (business logic), register in <code>src/main.js</code>.</p>
+<pre><code class="language-javascript">import { NoteService } from './services/NoteService.js';
+serviceManager.register('note', new NoteService());
+</code></pre>
+<hr />
+<h2 id="5-adding-a-new-component">5. Adding a New Component<a class="headerlink" href="#5-adding-a-new-component" title="Permanent link">&para;</a></h2>
+<h3 id="for-type-ii-self-contained">For Type II (Self-Contained):<a class="headerlink" href="#for-type-ii-self-contained" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create <code>src/ui/components/my-component/my-component.js</code></li>
+<li>Export <code>initMyComponentSystem(eventBus)</code></li>
+<li>In component:</li>
+<li>Query all instances: <code>document.querySelectorAll('.my-component')</code></li>
+<li>Subscribe to events: <code>eventBus.subscribe('INTENT_MY_COMPONENT_*, handler)</code></li>
+<li>Return cleanup function</li>
+<li>Add to <code>src/ui/init.js</code>:
+   ```javascript
+   import { initMyComponentSystem } from './components/my-component/my-component.js';</li>
+</ol>
+<p>export function initUI(eventBus) {
+     const myComponentCleanup = initMyComponentSystem(eventBus);
+     // ... other components ...
+   }
+   ```</p>
+<h3 id="for-type-iii-service-backed">For Type III (Service-Backed):<a class="headerlink" href="#for-type-iii-service-backed" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create <code>src/services/MyComponentService.js</code></li>
+<li>Export <code>createMyComponentService(eventBus)</code></li>
+<li>Create <code>src/ui/components/my-component/my-component.js</code></li>
+<li>Export <code>initMyComponentUI(eventBus)</code></li>
+<li>In <code>src/ui/init.js</code>:
+   ```javascript
+   import { createMyComponentService } from '../services/MyComponentService.js';
+   import { initMyComponentUI } from './components/my-component/my-component.js';</li>
+</ol>
+<p>export function initUI(eventBus) {
+     const service = createMyComponentService(eventBus);
+     window.serviceManager.register('my-component', service);
+     const cleanup = initMyComponentUI(eventBus);
+   }
+   ```</p>
+<h3 id="for-type-i-pure-css">For Type I (Pure CSS):<a class="headerlink" href="#for-type-i-pure-css" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Create <code>src/ui/components/my-component/my-component.css</code></li>
+<li>Use CSS variables from <code>src/css/foundation/tokens.css</code></li>
+<li>No JavaScript needed</li>
+<li>Add demo in <code>my-component.demo.html</code></li>
+</ol>
+<hr />
+<h2 id="6-best-practices">6. Best Practices<a class="headerlink" href="#6-best-practices" title="Permanent link">&para;</a></h2>
+<h3 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>DO</strong>: Use <code>textContent</code> to set text.</li>
+<li>❌ <strong>DON'T</strong>: Use <code>innerHTML</code> (XSS risk).</li>
+</ul>
+<h3 id="performance">Performance<a class="headerlink" href="#performance" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>DO</strong>: Use <code>className</code> or <code>dataset</code> changes (1 reflow).</li>
+<li>❌ <strong>DON'T</strong>: Use <code>style.color = 'red'</code> (triggers reflows per property).</li>
+</ul>
+<h3 id="state-management">State Management<a class="headerlink" href="#state-management" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>DO</strong>: Use <code>data-state="error"</code> or <code>data-state="success"</code>.</li>
+<li>❌ <strong>DON'T</strong>: Store state in JS variables (except transient UI state like "isMenuOpen").</li>
+</ul>
+<h3 id="validation">Validation<a class="headerlink" href="#validation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>✅ <strong>DO</strong>: Validate inputs before publishing intents.</li>
+<li>✅ <strong>DO</strong>: Let the Service handle complex business validation.</li>
+</ul>
+<hr />
+<h2 id="7-common-patterns">7. Common Patterns<a class="headerlink" href="#7-common-patterns" title="Permanent link">&para;</a></h2>
+<h3 id="input-validation-debounced">Input Validation (Debounced)<a class="headerlink" href="#input-validation-debounced" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">let timeout;
+input.addEventListener('input', (e) =&gt; {
+    clearTimeout(timeout);
+    timeout = setTimeout(() =&gt; {
+        // Validate and publish INTENT_INPUT_CHANGED
+    }, 300);
+});
+</code></pre>
+<h3 id="modals-native-dialog">Modals (Native <code>&lt;dialog&gt;</code>)<a class="headerlink" href="#modals-native-dialog" title="Permanent link">&para;</a></h3>
+<pre><code class="language-javascript">// Open for better accessibility
+dialog.showModal(); // Native method (handles focus trap)
+eventBus.publish('INTENT_MODAL_OPEN', ...);
+
+// Close
+dialog.close();
+eventBus.publish('INTENT_MODAL_CLOSE', ...);
+</code></pre>
+<hr />
+<h2 id="8-naming-conventions">8. Naming Conventions<a class="headerlink" href="#8-naming-conventions" title="Permanent link">&para;</a></h2>
+<h3 id="type-ii-self-contained">Type II (Self-Contained)<a class="headerlink" href="#type-ii-self-contained" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Export</strong>: <code>init[Component]System(eventBus)</code> (singular component name, System suffix)</li>
+<li><strong>Examples</strong>: initDialogSystem, initToastSystem, initPopoverSystem (not initPopovers)</li>
+<li><strong>Don't</strong>: initPopovers, initAllComponents, initComponentService</li>
+<li><strong>Why</strong>: Consistency across all Type II components</li>
+</ul>
+<h3 id="type-iii-service-backed">Type III (Service-Backed)<a class="headerlink" href="#type-iii-service-backed" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Service</strong>: <code>create[Component]Service(eventBus)</code></li>
+<li><strong>UI</strong>: <code>init[Component]UI(eventBus)</code></li>
+<li><strong>Examples</strong>: createSliderService + initSliderUI (not initAllSliders)</li>
+<li><strong>Don't</strong>: initAllSliders (confusing - sounds Type II)</li>
+</ul>
+<hr />
+<h2 id="9-error-handling">9. Error Handling<a class="headerlink" href="#9-error-handling" title="Permanent link">&para;</a></h2>
+<h3 id="when-to-warn-consolewarn">When to warn (console.warn)<a class="headerlink" href="#when-to-warn-consolewarn" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Optional EventBus (component works in demo mode)</li>
+<li>Non-critical missing elements (graceful degradation)</li>
+<li>Expected failures (user can fix)</li>
+</ul>
+<h3 id="when-to-throw-throw-new-error">When to throw (throw new Error)<a class="headerlink" href="#when-to-throw-throw-new-error" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Contract violations (invalid event payloads)</li>
+<li>Required dependencies missing (Critical Service)</li>
+<li>Security issues (XSS attempts, validation failures)</li>
+</ul>
+<h3 id="use-csma-validation">Use CSMA Validation<a class="headerlink" href="#use-csma-validation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>All event payloads validated with validation library (fork of superstruct)</li>
+<li>Use StructError for validation failures</li>
+<li>Example: <code>const result = validate(payload, schema);</code></li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+        <script src="../../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

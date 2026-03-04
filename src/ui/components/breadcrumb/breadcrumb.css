@@ -1,0 +1,204 @@
+/**
+ * CSMA Breadcrumb Component (Type I - Pure CSS)
+ * Semantic breadcrumb navigation with truncation support
+ *
+ * Features:
+ * - Semantic HTML structure (nav > ol > li)
+ * - Customizable separators via CSS variables
+ * - Automatic truncation for long paths
+ * - Mobile-responsive design
+ * - Uses foundation token custom properties
+ */
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    color: var(--muted-foreground);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Breadcrumb container (nav element) */
+.breadcrumb-nav {
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--fx-color-surface-muted);
+}
+
+/* Individual breadcrumb items */
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.breadcrumb-item:not(:last-child)::after {
+    content: var(--breadcrumb-separator, '/');
+    color: var(--fx-color-fg-muted);
+    font-weight: normal;
+    margin-left: var(--spacing-xs);
+}
+
+/* Custom separators */
+.breadcrumb[data-separator="arrow"] .breadcrumb-item:not(:last-child)::after {
+    content: '→';
+}
+
+.breadcrumb[data-separator="chevron"] .breadcrumb-item:not(:last-child)::after {
+    content: '›';
+}
+
+.breadcrumb[data-separator="bullet"] .breadcrumb-item:not(:last-child)::after {
+    content: '•';
+}
+
+/* Links in breadcrumbs */
+.breadcrumb-link {
+    color: var(--fx-color-fg-muted);
+    text-decoration: none;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.breadcrumb-link:hover {
+    color: var(--fx-color-primary);
+    background-color: var(--fx-color-surface-muted);
+}
+
+.breadcrumb-link:focus {
+    outline: 2px solid var(--fx-color-primary);
+    outline-offset: 2px;
+    color: var(--fx-color-primary);
+}
+
+/* Current/active page (last item) */
+.breadcrumb-item:last-child .breadcrumb-link {
+    color: var(--fx-color-fg);
+    font-weight: 500;
+    cursor: default;
+    pointer-events: none;
+}
+
+.breadcrumb-item:last-child .breadcrumb-link:hover {
+    background-color: transparent;
+    color: var(--fx-color-fg);
+}
+
+/* Icons in breadcrumbs */
+.breadcrumb-icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+}
+
+/* Truncation for long paths */
+.breadcrumb[data-truncate="true"] {
+    max-width: 100%;
+}
+
+.breadcrumb[data-truncate="true"] .breadcrumb-item:not(:first-child):not(:last-child) {
+    display: none;
+}
+
+.breadcrumb[data-truncate="true"] .breadcrumb-item:nth-child(2):not(:last-child)::before {
+    content: '...';
+    color: var(--fx-color-fg-muted);
+    margin-right: var(--spacing-xs);
+}
+
+/* Show more items on larger screens */
+@media (min-width: 640px) {
+    .breadcrumb[data-truncate="true"] .breadcrumb-item:not(:first-child):not(:nth-last-child(2)):not(:last-child) {
+        display: flex;
+    }
+
+    .breadcrumb[data-truncate="true"] .breadcrumb-item:nth-child(2):not(:last-child)::before {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .breadcrumb[data-truncate="true"] .breadcrumb-item:not(:first-child):not(:nth-last-child(3)):not(:last-child) {
+        display: flex;
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .breadcrumb-nav {
+        padding: var(--spacing-xs) 0;
+    }
+
+    .breadcrumb-link {
+        padding: var(--spacing-xs);
+        font-size: var(--font-size-xs);
+    }
+
+    .breadcrumb-item:not(:last-child)::after {
+        margin-left: var(--spacing-xs);
+    }
+
+    /* Hide middle items on very small screens */
+    .breadcrumb[data-truncate="auto"] .breadcrumb-item:not(:first-child):not(:last-child) {
+        display: none;
+    }
+
+    .breadcrumb[data-truncate="auto"] .breadcrumb-item:nth-child(2):not(:last-child)::before {
+        content: '...';
+        color: var(--fx-color-fg-muted);
+        margin-right: var(--spacing-xs);
+    }
+}
+
+/* Dark theme support */
+[data-theme="dark"] .breadcrumb-nav {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .breadcrumb-link:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .breadcrumb-link {
+        border: 1px solid transparent;
+    }
+
+    .breadcrumb-link:hover,
+    .breadcrumb-link:focus {
+        border-color: currentColor;
+        background-color: transparent;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .breadcrumb-link {
+        transition: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .breadcrumb-nav {
+        border-bottom: 1px solid #000;
+        padding: 0.5rem 0;
+    }
+
+    .breadcrumb-link {
+        color: #000 !important;
+        text-decoration: none !important;
+    }
+
+    .breadcrumb-link:hover {
+        background-color: transparent !important;
+    }
+}

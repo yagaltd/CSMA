@@ -1,0 +1,115 @@
+/**
+ * Alert Dialog Component CSS
+ * CSMA-compliant styles - Extracted from kimi-ui-phase3-4.html
+ */
+
+.alert-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    /* JS toggles to 'flex' */
+    align-items: center;
+    justify-content: center;
+    z-index: 60;
+    padding: var(--spacing-lg);
+}
+
+.alert-dialog-overlay[data-state="open"] {
+    display: flex;
+    animation: fade-in var(--transition-fast) ease-out;
+}
+
+.alert-dialog-content {
+    width: 100%;
+    max-width: 450px;
+    background: var(--fx-color-bg);
+    border: 1px solid var(--fx-color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    animation: scale-in var(--transition-fast) ease-out;
+}
+
+.alert-dialog-header {
+    padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-lg);
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: flex-start;
+}
+
+.alert-dialog-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.alert-dialog-icon img {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.alert-dialog-icon[data-variant="info"] {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--fx-color-info);
+}
+
+.alert-dialog-icon[data-variant="warning"] {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--fx-color-warning);
+}
+
+.alert-dialog-icon[data-variant="danger"] {
+    background: rgba(220, 38, 38, 0.1);
+    color: var(--fx-color-danger);
+}
+
+.alert-dialog-title-group {
+    flex: 1;
+}
+
+.alert-dialog-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+}
+
+.alert-dialog-description {
+    color: var(--fx-color-fg-muted);
+    font-size: var(--font-size-sm);
+}
+
+.alert-dialog-body {
+    padding: 0 var(--spacing-2xl) var(--spacing-2xl);
+}
+
+.alert-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-lg) var(--spacing-2xl) var(--spacing-2xl);
+    border-top: 1px solid var(--fx-color-border);
+}
+
+.alert-dialog-cancel {
+    background: var(--fx-color-secondary);
+    color: var(--fx-color-on-secondary);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: 1px solid var(--fx-color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+}
+
+.alert-dialog-action {
+    background: var(--fx-color-danger);
+    color: var(--fx-color-on-danger);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+}

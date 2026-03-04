@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Product Detail • CSMA Hybrid Pilot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/foundation/components/card.css" />
+  </head>
+  <body>
+    <article data-route="/products/:id" class="product-detail">
+      <header>
+        <p class="eyebrow">Hybrid Example</p>
+        <h1>Heritage Backpack</h1>
+        <p class="sku">SKU-001</p>
+      </header>
+
+      <section class="gallery">
+        <img src="/public/images/demo/backpack-1.jpg" alt="Front view" />
+        <img src="/public/images/demo/backpack-2.jpg" alt="Side view" />
+      </section>
+
+      <section class="buy-box">
+        <p class="price">$168.00</p>
+        <p class="lead">
+          Pre-rendered description so search and static crawlers get meaningful content even
+          before hydration.
+        </p>
+        <div
+          class="inventory island-skeleton"
+          data-island="product-inventory"
+          data-contract="INVENTORY_INQUIRY"
+          data-trigger="load"
+          data-product-id="SKU-001"
+        >
+          <span class="label">Checking stock…</span>
+        </div>
+      </section>
+
+      <section
+        class="reviews island-skeleton"
+        data-island="product-reviews"
+        data-contract="PRODUCT_REVIEWS_REQUESTED"
+        data-trigger="visible"
+        data-product-id="SKU-001"
+      >
+        <header>
+          <h2>Recent Reviews</h2>
+        </header>
+        <p>Reviews hydrate when scrolled into view.</p>
+      </section>
+    </article>
+  </body>
+</html>

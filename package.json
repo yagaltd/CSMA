@@ -1,0 +1,56 @@
+{
+    "name": "csma",
+    "version": "1.0.0",
+    "description": "Lean, secure, reactive CSMA with ready-to-use components",
+    "type": "module",
+    "dependencies": {
+        "flexsearch": "^0.7.43"
+    },
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build && npm run build:static",
+        "build:static": "node scripts/build-static.js",
+        "build:hybrid": "node scripts/build/hybrid-build.js",
+        "build:prod": "vite build --mode production --minify terser --sourcemap",
+        "analyze:bundle": "npm run build:prod && node scripts/analyze-bundle.mjs",
+        "preview": "vite preview",
+        "test": "vitest",
+        "test:e2e": "npm run build && playwright test",
+        "test:contracts": "vitest run tests/contracts.test.js",
+        "test:validation": "vitest run tests/validation.test.js",
+        "test:smoke": "vitest run tests/todo-app.smoke.test.js",
+        "check:hybrid:perf": "vitest run tests/perf-budget.test.js",
+        "deploy:cdn": "node scripts/deploy/cdn.mjs",
+        "generate-map": "node scripts/generate-ai-map.js",
+        "security-check": "node scripts/check-security.js",
+        "prebuild": "npm run security-check",
+        "postinstall": "npm run generate-map",
+        "build:mobile:capacitor": "node scripts/build-mobile-capacitor.js",
+        "build:desktop:neutralino": "node scripts/build-desktop-neutralino.js",
+        "build:all": "npm run build && npm run build:mobile:capacitor && npm run build:desktop:neutralino",
+        "lint:styles": "node scripts/check-styles.js"
+    },
+    "devDependencies": {
+        "@capacitor/camera": "^6.0.0",
+        "@capacitor/core": "^6.0.0",
+        "@capacitor/filesystem": "^6.0.0",
+        "@capacitor/local-notifications": "^6.0.0",
+        "@playwright/test": "^1.57.0",
+        "jsdom": "^27.3.0",
+        "mikado-compile": "^0.7.0",
+        "terser": "^5.44.1",
+        "vite": "^5.0.0",
+        "vitest": "^1.0.0",
+        "@aws-sdk/client-s3": "^3.685.0"
+    },
+    "keywords": [
+        "csma",
+        "vanilla-js",
+        "microservices",
+        "reactive",
+        "security",
+        "zero-trust"
+    ],
+    "author": "",
+    "license": "MIT"
+}

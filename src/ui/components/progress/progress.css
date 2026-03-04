@@ -1,0 +1,86 @@
+/**
+ * Progress Component CSS
+ * CSMA-compliant styles - Extracted from kimi-atomic1.html
+ */
+
+.progress-container {
+    width: 100%;
+    background-color: var(--fx-color-bg-muted);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    height: 0.75rem;
+    --progress-value: 0%;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--fx-color-primary);
+    transition: width 0.3s ease;
+    position: relative;
+    width: var(--progress-value);
+}
+
+.progress-indeterminate .progress-bar {
+    width: 100%;
+    animation: progress-indeterminate 1.5s infinite;
+}
+
+@keyframes progress-indeterminate {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: var(--font-size-sm);
+}
+
+.progress-percentage {
+    font-weight: 500;
+    color: var(--fx-color-fg);
+}
+
+/* Progress Sizes */
+.progress-sm {
+    height: 0.5rem;
+}
+
+.progress-md {
+    height: 0.75rem;
+}
+
+.progress-lg {
+    height: 1rem;
+}
+
+/* Progress Variants */
+.progress-success .progress-bar {
+    background-color: var(--fx-color-success);
+}
+
+.progress-warning .progress-bar {
+    background-color: #a16207;
+    /* Not standard? */
+    /* Wait, warning color is defined in theme. use var */
+    background-color: var(--fx-color-warning);
+    /* Override with variable */
+}
+
+/* Original had #a16207 which is darker than confirm warning. 
+ * I will stick to var(--fx-color-warning) for consistency as requested.
+ */
+.progress-warning .progress-bar {
+    background-color: var(--fx-color-warning);
+}
+
+.progress-error .progress-bar {
+    background-color: var(--fx-color-danger);
+}

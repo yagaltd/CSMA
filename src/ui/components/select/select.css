@@ -1,0 +1,89 @@
+/**
+ * Select Component CSS
+ * CSMA-compliant styles - Extracted from kimi-ui-phase3-4.html
+ */
+
+.select-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    width: 100%;
+    max-width: 400px;
+}
+
+.select-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--fx-color-fg);
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select {
+    width: 100%;
+    appearance: none;
+    background: var(--fx-color-bg);
+    border: 1px solid var(--fx-color-border);
+    border-radius: var(--radius-md);
+    color: var(--fx-color-fg);
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-md) var(--spacing-3xl) var(--spacing-md) var(--spacing-lg);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--fx-color-primary);
+    box-shadow: 0 0 0 2px rgba(250, 250, 250, 0.1);
+}
+
+.select-arrow {
+    position: absolute;
+    right: var(--spacing-md);
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--fx-color-fg-muted);
+    font-size: var(--font-size-xs);
+}
+
+.select-group[data-state="error"] .select {
+    border-color: var(--fx-color-danger);
+}
+
+.select-group[data-state="disabled"] .select {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.select optgroup {
+    background: var(--fx-color-bg-muted);
+    color: var(--fx-color-fg);
+    font-weight: 500;
+}
+
+.select-helper,
+.select-error {
+    font-size: 0.8125rem;
+    margin-top: var(--spacing-xs);
+}
+
+.select-helper {
+    color: var(--fx-color-fg-muted);
+}
+
+.select-error {
+    color: var(--fx-color-danger);
+    display: none;
+}
+
+.select-group[data-state="error"] .select-helper {
+    display: none;
+}
+
+.select-group[data-state="error"] .select-error {
+    display: block;
+}

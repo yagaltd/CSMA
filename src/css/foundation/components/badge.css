@@ -1,0 +1,96 @@
+/* CSMA Foundation — Badge */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fx-space-2xs);
+  padding: 0 var(--fx-space-sm);
+  min-height: 1.5rem;
+  border-radius: var(--fx-radius-full);
+  font-size: var(--fx-font-size-xs);
+  font-weight: var(--fx-font-weight-medium);
+  text-transform: none;
+  letter-spacing: 0;
+  background: color-mix(in srgb, var(--fx-color-fg-muted) 12%, transparent);
+  color: var(--fx-color-fg);
+  border: 1px solid color-mix(in srgb, var(--fx-color-border) 70%, transparent);
+}
+
+.badge[data-size="sm"] {
+  font-size: calc(var(--fx-font-size-xs) - 1px);
+  min-height: 1.25rem;
+  padding: 0 var(--fx-space-xs);
+}
+
+.badge[data-size="md"],
+.badge:not([data-size]) {
+  min-height: 1.5rem;
+}
+
+.badge[data-size="lg"] {
+  font-size: var(--fx-font-size-sm);
+  min-height: 1.75rem;
+  padding: 0 var(--fx-space-md);
+}
+
+.badge[data-variant="primary"] {
+  background: var(--fx-color-primary);
+  border-color: transparent;
+  color: var(--fx-color-on-primary);
+}
+
+.badge[data-variant="secondary"] {
+  background: var(--fx-color-secondary);
+  border-color: transparent;
+  color: var(--fx-color-on-secondary);
+}
+
+.badge[data-variant="success"] {
+  background: var(--fx-color-success);
+  border-color: transparent;
+  color: var(--fx-color-on-success);
+}
+
+.badge[data-variant="warning"] {
+  background: var(--fx-color-warning);
+  border-color: transparent;
+  color: var(--fx-color-on-warning);
+}
+
+.badge[data-variant="danger"],
+.badge[data-variant="destructive"] {
+  background: var(--fx-color-danger);
+  border-color: transparent;
+  color: var(--fx-color-on-danger);
+}
+
+.badge[data-variant="info"] {
+  background: var(--fx-color-info);
+  border-color: transparent;
+  color: var(--fx-color-on-info);
+}
+
+.badge[data-variant="outline"] {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--fx-color-border) 80%, transparent);
+  color: var(--fx-color-fg);
+}
+
+.badge[data-variant="muted"] {
+  background: color-mix(in srgb, var(--fx-color-bg-muted) 80%, transparent);
+  border-color: color-mix(in srgb, var(--fx-color-border) 60%, transparent);
+  color: var(--fx-color-fg-muted);
+}
+
+.badge[data-pill="true"] {
+  border-radius: var(--fx-radius-full);
+}
+
+.badge[data-leading-dot="true"]::before {
+  content: "";
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: currentColor;
+}

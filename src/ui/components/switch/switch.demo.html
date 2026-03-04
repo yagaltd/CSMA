@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Switch Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+<link rel="stylesheet" href="./switch.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+            color: var(--fx-color-fg);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <h1>Switch Component</h1>
+
+    <p class="intro">Toggle switches with sizes, label positions, and disabled state.</p>
+
+    <section>
+        <h2>Sizes</h2>
+        <div class="switch-group" data-state="unchecked" data-size="sm" role="switch" aria-checked="false" tabindex="0">
+            <input type="checkbox" class="switch-input" id="sw-1">
+            <div class="switch-track">
+                <div class="switch-thumb"></div>
+            </div>
+            <label for="sw-1" class="switch-label">Small</label>
+        </div>
+
+        <div class="switch-group" data-state="checked" data-size="md" role="switch" aria-checked="true" tabindex="0">
+            <input type="checkbox" class="switch-input" id="sw-2" checked>
+            <div class="switch-track">
+                <div class="switch-thumb"></div>
+            </div>
+            <label for="sw-2" class="switch-label">Medium (checked)</label>
+        </div>
+
+        <div class="switch-group" data-state="unchecked" data-size="lg" role="switch" aria-checked="false" tabindex="0">
+            <input type="checkbox" class="switch-input" id="sw-3">
+            <div class="switch-track">
+                <div class="switch-thumb"></div>
+            </div>
+            <label for="sw-3" class="switch-label">Large</label>
+        </div>
+    </section>
+
+    <section>
+        <h2>Label Position</h2>
+        <div class="switch-group" data-state="checked" data-size="md" data-label-position="left" role="switch"
+            aria-checked="true" tabindex="0">
+            <input type="checkbox" class="switch-input" id="sw-4" checked>
+            <div class="switch-track">
+                <div class="switch-thumb"></div>
+            </div>
+            <label for="sw-4" class="switch-label">Dark Mode</label>
+        </div>
+    </section>
+
+    <section>
+        <h2>Disabled</h2>
+        <div class="switch-group" data-state="disabled" data-size="md" role="switch" aria-checked="false"
+            aria-disabled="true">
+            <input type="checkbox" class="switch-input" id="sw-5" disabled>
+            <div class="switch-track">
+                <div class="switch-thumb"></div>
+            </div>
+            <label for="sw-5" class="switch-label">Disabled switch</label>
+        </div>
+    </section>
+
+    <footer
+        style="text-align: center; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--fx-color-border); color: var(--fx-color-fg-muted);">
+        <p>Switch Component - CSMA UI Library</p>
+    </footer>
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initSwitchSystem } from './switch.js';
+        
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+        
+        initSwitchSystem(eventBus);
+    </script>
+</body>
+
+</html>

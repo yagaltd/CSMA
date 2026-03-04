@@ -1,0 +1,75 @@
+/* CSMA Foundation — Card Component */
+
+.card {
+  background: var(--fx-color-surface);
+  color: var(--fx-color-fg);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-lg);
+  padding: var(--fx-space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-md);
+  box-shadow: var(--fx-shadow-sm);
+  transition: box-shadow var(--fx-transition-fast), transform var(--fx-transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--fx-shadow-md);
+  transform: translateY(-2px);
+}
+
+.card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-xs);
+}
+
+.card__title {
+  font-size: var(--fx-font-size-lg);
+  font-weight: var(--fx-font-weight-semibold);
+  margin: 0;
+}
+
+.card__description {
+  margin: 0;
+  color: var(--fx-color-fg-muted);
+  font-size: var(--fx-font-size-sm);
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-sm);
+}
+
+.card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fx-space-sm);
+  margin-top: var(--fx-space-md);
+}
+
+.card[data-variant="primary"] {
+  background: var(--fx-color-primary);
+  color: var(--fx-color-on-primary);
+  border-color: transparent;
+}
+
+.card[data-variant="muted"] {
+  background: var(--fx-color-bg-muted);
+}
+
+.card[data-variant="outline"] {
+  background: transparent;
+  border-style: dashed;
+}
+
+.card[data-size="sm"] {
+  padding: var(--fx-space-lg);
+  border-radius: var(--fx-radius-md);
+}
+
+.card[data-size="lg"] {
+  padding: var(--fx-space-2xl);
+  border-radius: var(--fx-radius-xl);
+}

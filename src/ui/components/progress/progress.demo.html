@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Component Demo - CSMA</title>
+
+    <link rel="stylesheet" href="../../../css/main.css">
+    <link rel="stylesheet" href="./progress.css">
+
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--fx-color-fg);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .intro {
+            color: var(--fx-color-fg-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--fx-color-border);
+        }
+
+        .demo-box {
+            padding: 1.5rem;
+            background: var(--fx-color-bg);
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Progress Component</h1>
+    <p class="intro">Progress bars with determinate and indeterminate states.</p>
+
+    <section>
+        <h2>Determinate Progress</h2>
+        <div class="demo-box">
+            <div class="progress-label">
+                <span>Loading...</span>
+                <span class="progress-percentage">75%</span>
+            </div>
+            <div class="progress-container" id="demo-progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: var(--progress-value, 75%);"></div>
+            </div>
+            <div class="demo-controls">
+                <button class="button" data-size="sm" data-variant="secondary"
+                    onclick="window.setProgress('demo-progress', 0)">0%</button>
+                <button class="button" data-size="sm" data-variant="secondary"
+                    onclick="window.setProgress('demo-progress', 25)">25%</button>
+                <button class="button" data-size="sm" data-variant="secondary"
+                    onclick="window.setProgress('demo-progress', 50)">50%</button>
+                <button class="button" data-size="sm" data-variant="secondary"
+                    onclick="window.setProgress('demo-progress', 75)">75%</button>
+                <button class="button" data-size="sm" data-variant="secondary"
+                    onclick="window.setProgress('demo-progress', 100)">100%</button>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Indeterminate Progress</h2>
+        <div class="demo-box">
+            <p class="intro" style="margin-bottom: 0.5rem;">Processing your request...</p>
+            <div class="progress-container progress-indeterminate">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Progress Variants</h2>
+        <div class="demo-box">
+            <h3>Success</h3>
+            <div class="progress-container progress-success" style="margin-bottom: 1rem;">
+                <div class="progress-bar" style="width: 100%;"></div>
+            </div>
+
+            <h3>Warning</h3>
+            <div class="progress-container progress-warning" style="margin-bottom: 1rem;">
+                <div class="progress-bar" style="width: 60%;"></div>
+            </div>
+
+            <h3>Error</h3>
+            <div class="progress-container progress-error">
+                <div class="progress-bar" style="width: 30%;"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; margin-top: 2rem; color: var(--fx-color-fg-muted);">
+        <p>Progress Component - CSMA UI Library</p>
+    </footer>
+
+    <script type="module">
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initProgressSystem } from './progress.js';
+        
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+        
+        initProgressSystem(eventBus);
+        
+        // Expose setProgress for demo buttons
+        window.setProgress = (containerId, percentage) => {
+            eventBus.publish('INTENT_PROGRESS_UPDATE', {
+                progressId: containerId,
+                percentage: percentage
+            });
+        };
+        
+        window.setIndeterminate = (containerId, indeterminate) => {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.dataset.state = indeterminate ? 'indeterminate' : 'default';
+            }
+        };
+    </script>
+</body>
+
+</html>
