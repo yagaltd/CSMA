@@ -1,0 +1,101 @@
+{
+  "templateId": "csma-base-web",
+  "engine": "csma",
+  "runtime": "web",
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "description": "Core CSMA frontend template for web projects.",
+  "requiredFiles": [
+    "index.html",
+    "package.json",
+    "vite.config.js",
+    "src/main.js",
+    "src/runtime/EventBus.js",
+    "src/config.js"
+  ],
+  "sourcePaths": [
+    "index.html",
+    "package.json",
+    "package-lock.json",
+    "vite.config.js",
+    "src",
+    "public",
+    "scripts",
+    "docs"
+  ],
+  "optionalFeatures": {
+    "modules": [
+      "ai",
+      "camera",
+      "checkout",
+      "data-table",
+      "example-module",
+      "file-system",
+      "form-management",
+      "i18n",
+      "image-optimizer",
+      "llm",
+      "location",
+      "media-capture",
+      "media-transform",
+      "modal-system",
+      "network-status",
+      "optimistic-sync",
+      "router",
+      "search",
+      "static-render",
+      "storage",
+      "sync-queue"
+    ],
+    "components": [
+      "accordion",
+      "alert-dialog",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "carousel",
+      "checkbox",
+      "datepicker",
+      "dialog",
+      "dropdown",
+      "file-upload",
+      "input",
+      "navbar",
+      "otp",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "select",
+      "skeleton",
+      "slider",
+      "switch",
+      "tabs",
+      "textarea",
+      "toast",
+      "tooltip"
+    ],
+    "patterns": [
+      "auth-ui",
+      "checkout",
+      "data-table",
+      "modal-system",
+      "search-demo",
+      "sidebar"
+    ],
+    "platforms": [
+      "web",
+      "capacitor",
+      "neutralino"
+    ]
+  },
+  "compat": {
+    "recommendedCli": ">=0.1.0"
+  },
+  "postScaffoldHints": [
+    "npm install",
+    "npm run dev"
+  ]
+}

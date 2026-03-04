@@ -1,16 +1,31 @@
-# CSMA Hybrid Templates
+# CSMA Template Catalog
 
-We keep authored pages in `src/pages/**` so they can be compiled into static shells or dynamic routes. Suggested starter set (feel free to extend):
+This folder is the template discovery root for `csma-ssma-cli`.
 
-1. `src/pages/products/detail.html` – product detail page with multiple islands (inventory, reviews).
-2. `src/pages/blog/post.html` – mostly static article with a comment island.
-3. `src/pages/about/index.html` – pure static marketing page to validate non-island builds.
+## Available Templates
 
-To add a new template:
+- `base-web` (`templateId: csma-base-web`)
+  - Lean CSMA web starter with runtime, modules, UI primitives, and docs.
+- `web-plus-ssma-client` (`templateId: csma-web-plus-ssma-client`)
+  - Web starter intended for SSMA-backed optimistic sync flows.
 
-1. Drop the HTML file under `src/pages/...` (nested folders map to route segments).
-2. Use `data-island`, `data-contract`, and `data-trigger` attributes to mark dynamic regions.
-3. Run `npm run build:hybrid` (or `npm run build` which already chains Vite + hybrid build) to produce `dist/pages/**` + `_islands/registry.json`.
-4. For local iteration, `npm run build:hybrid -- --incremental` will reuse the previous manifest and rebuild only changed templates.
+## Manifest Contract
 
-Keep templates framework-free (vanilla HTML + Mikado-friendly structure). Use `{{ }}` placeholders only if your authoring workflow replaces them prior to running the hybrid builder.
+Each template directory must provide `template.manifest.json` with at least:
+
+- `templateId`
+- `engine`
+- `runtime`
+- `version`
+- `schemaVersion`
+- `requiredFiles`
+
+The CLI should read manifests from this folder and render template choices dynamically.
+
+## Validation
+
+Run:
+
+```bash
+npm run validate:templates
+```

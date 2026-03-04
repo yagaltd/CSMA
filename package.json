@@ -28,7 +28,8 @@
         "build:mobile:capacitor": "node scripts/build-mobile-capacitor.js",
         "build:desktop:neutralino": "node scripts/build-desktop-neutralino.js",
         "build:all": "npm run build && npm run build:mobile:capacitor && npm run build:desktop:neutralino",
-        "lint:styles": "node scripts/check-styles.js"
+        "lint:styles": "node scripts/check-styles.js",
+        "validate:templates": "node scripts/validate-templates.mjs"
     },
     "devDependencies": {
         "@capacitor/camera": "^6.0.0",

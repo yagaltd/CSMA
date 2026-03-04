@@ -35,6 +35,31 @@ npm install
 npm run dev
 ```
 
+## Template IDs (CLI Source of Truth)
+
+The CLI should discover templates from `templates/*/template.manifest.json`.
+
+- `csma-base-web`: base CSMA web scaffold
+- `csma-web-plus-ssma-client`: CSMA web scaffold preconfigured for SSMA sync use cases
+
+Validate template metadata:
+
+```bash
+npm run validate:templates
+```
+
+## Repository Policy
+
+This repository is template-first source.
+
+- Keep source files, docs source, and minimal examples.
+- Do not commit generated outputs:
+  - `site/`
+  - `dist/`
+  - `platforms/desktop-neutralino/resources/assets/`
+  - `platforms/mobile-capacitor/www/assets/`
+  - `platforms/desktop-neutralino/csma-desktop-app/bin/`
+
 ### 1. Environment Setup
 
 ```bash

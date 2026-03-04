@@ -1,0 +1,41 @@
+{
+  "templateId": "csma-web-plus-ssma-client",
+  "engine": "csma",
+  "runtime": "web",
+  "version": "1.0.0",
+  "schemaVersion": "1.0.0",
+  "description": "CSMA frontend template preconfigured for SSMA optimistic sync integration.",
+  "requiredFiles": [
+    "index.html",
+    "package.json",
+    "src/main.js",
+    "src/modules/optimistic-sync/index.js",
+    "src/runtime/ChannelManager.js"
+  ],
+  "sourcePaths": [
+    "index.html",
+    "package.json",
+    "package-lock.json",
+    "vite.config.js",
+    "src",
+    "public",
+    "scripts",
+    "docs"
+  ],
+  "defaults": {
+    "modules": [
+      "network-status",
+      "sync-queue",
+      "optimistic-sync",
+      "router"
+    ]
+  },
+  "compat": {
+    "recommendedCli": ">=0.1.0"
+  },
+  "postScaffoldHints": [
+    "npm install",
+    "npm run dev",
+    "Configure SSMA endpoint values in src/config.js"
+  ]
+}
