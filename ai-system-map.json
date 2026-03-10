@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generated": "2026-03-09T09:50:34.277Z",
+  "generated": "2026-03-10T12:37:36.127Z",
   "project": {
     "name": "csma",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Lean, secure, reactive CSMA with ready-to-use components"
   },
   "architecture": {
@@ -726,15 +726,30 @@
       }
     },
     "runtime": {
+      "AdapterRegistry.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/AdapterRegistry.js"
+      },
       "ChannelManager.js": {
         "type": "file",
         "ext": ".js",
         "path": "runtime/ChannelManager.js"
       },
+      "CommandRegistry.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/CommandRegistry.js"
+      },
       "Contracts.js": {
         "type": "file",
         "ext": ".js",
         "path": "runtime/Contracts.js"
+      },
+      "ContributionRegistry.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ContributionRegistry.js"
       },
       "CrossTabLeader.js": {
         "type": "file",
@@ -745,6 +760,11 @@
         "type": "file",
         "ext": ".js",
         "path": "runtime/EventBus.js"
+      },
+      "LifecycleScope.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/LifecycleScope.js"
       },
       "LogAccumulator.js": {
         "type": "file",
@@ -761,10 +781,30 @@
         "ext": ".js",
         "path": "runtime/ModuleManager.js"
       },
+      "ModuleManifest.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ModuleManifest.js"
+      },
+      "NavigationRegistry.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/NavigationRegistry.js"
+      },
+      "PanelRegistry.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/PanelRegistry.js"
+      },
       "RateLimiter.js": {
         "type": "file",
         "ext": ".js",
         "path": "runtime/RateLimiter.js"
+      },
+      "RouteRegistry.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/RouteRegistry.js"
       },
       "ServiceManager.js": {
         "type": "file",
@@ -964,6 +1004,13 @@
             "path": "ui/components/analytics-consent/analytics-consent.js"
           }
         },
+        "aspect-ratio": {
+          "aspect-ratio.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/aspect-ratio/aspect-ratio.css"
+          }
+        },
         "avatar": {
           "avatar.css": {
             "type": "file",
@@ -1005,6 +1052,11 @@
             "type": "file",
             "ext": ".css",
             "path": "ui/components/button/button.css"
+          },
+          "button.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/button/button.demo.html"
           },
           "manifest.json": {
             "type": "file",
@@ -1094,6 +1146,18 @@
             "path": "ui/components/collapsible/collapsible.js"
           }
         },
+        "combobox": {
+          "combobox.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/combobox/combobox.css"
+          },
+          "combobox.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/combobox/combobox.js"
+          }
+        },
         "command": {
           "command.css": {
             "type": "file",
@@ -1106,6 +1170,11 @@
             "path": "ui/components/command/command.js"
           }
         },
+        "component-registry.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "ui/components/component-registry.js"
+        },
         "context-menu": {
           "context-menu.css": {
             "type": "file",
@@ -1116,6 +1185,18 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/context-menu/context-menu.js"
+          }
+        },
+        "date-range-picker": {
+          "date-range-picker.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/date-range-picker/date-range-picker.css"
+          },
+          "date-range-picker.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/date-range-picker/date-range-picker.js"
           }
         },
         "datepicker": {
@@ -1134,11 +1215,6 @@
             "ext": ".js",
             "path": "ui/components/datepicker/datepicker.js"
           }
-        },
-        "demos.html": {
-          "type": "file",
-          "ext": ".html",
-          "path": "ui/components/demos.html"
         },
         "dialog": {
           "dialog.css": {
@@ -1213,6 +1289,11 @@
             "type": "file",
             "ext": ".html",
             "path": "ui/components/form/form.demo.html"
+          },
+          "form.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/form/form.js"
           }
         },
         "hover-card": {
@@ -1232,6 +1313,11 @@
           "ext": ".css",
           "path": "ui/components/index.css"
         },
+        "index.html": {
+          "type": "file",
+          "ext": ".html",
+          "path": "ui/components/index.html"
+        },
         "input": {
           "input.css": {
             "type": "file",
@@ -1247,6 +1333,18 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/input/input.js"
+          }
+        },
+        "menubar": {
+          "menubar.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/menubar/menubar.css"
+          },
+          "menubar.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/menubar/menubar.js"
           }
         },
         "multi-select": {
@@ -1276,6 +1374,30 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/navbar/navbar.js"
+          }
+        },
+        "navigation-menu": {
+          "navigation-menu.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/navigation-menu/navigation-menu.css"
+          },
+          "navigation-menu.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/navigation-menu/navigation-menu.js"
+          }
+        },
+        "number-field": {
+          "number-field.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/number-field/number-field.css"
+          },
+          "number-field.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/number-field/number-field.js"
           }
         },
         "otp": {
@@ -1310,6 +1432,18 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/pagination/pagination.js"
+          }
+        },
+        "pin-input": {
+          "pin-input.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/pin-input/pin-input.css"
+          },
+          "pin-input.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/pin-input/pin-input.js"
           }
         },
         "popover": {
@@ -1363,6 +1497,18 @@
             "path": "ui/components/radio/radio.js"
           }
         },
+        "resizable": {
+          "resizable.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/resizable/resizable.css"
+          },
+          "resizable.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/resizable/resizable.js"
+          }
+        },
         "scroll-area": {
           "scroll-area.css": {
             "type": "file",
@@ -1385,6 +1531,11 @@
             "type": "file",
             "ext": ".html",
             "path": "ui/components/select/select.demo.html"
+          },
+          "select.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/select/select.js"
           }
         },
         "separator": {
@@ -1431,6 +1582,18 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/slider/slider.js"
+          }
+        },
+        "slider-range": {
+          "slider-range.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/slider-range/slider-range.css"
+          },
+          "slider-range.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/slider-range/slider-range.js"
           }
         },
         "switch": {
@@ -1516,6 +1679,18 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/toast/toast.js"
+          }
+        },
+        "toggle-group": {
+          "toggle-group.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/toggle-group/toggle-group.css"
+          },
+          "toggle-group.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/toggle-group/toggle-group.js"
           }
         },
         "tooltip": {
