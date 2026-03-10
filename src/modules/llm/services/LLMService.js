@@ -3,11 +3,13 @@
  * Demonstrates complete 5-layer prompt injection defense
  */
 import { sanitizeLLMInput } from '../../../utils/sanitize.js';
-import { object, string, number, enums, optional, array } from '../../../runtime/validation/index.js';
+import { object, number, enums } from '../../../runtime/validation/index.js';
 
 export class LLMService {
-    constructor() {
-        this.eventBus = null;
+    constructor(eventBus = null) {
+        this.eventBus = eventBus;
+        this.subscriptions = [];
+        this.handleClassifyBound = this.handleClassify.bind(this);
 
         // Layer 2: System prompt isolation
         this.systemPrompt = `You are a text classification assistant.
@@ -23,7 +25,17 @@ CRITICAL RULES:
     }
 
     init() {
-        this.eventBus.subscribe('INTENT_CLASSIFY_TEXT', this.handleClassify.bind(this));
+        if (!this.eventBus?.subscribe || this.subscriptions.length > 0) {
+            return;
+        }
+
+        this.subscriptions.push(
+            this.eventBus.subscribe('INTENT_CLASSIFY_TEXT', this.handleClassifyBound)
+        );
+    }
+
+    destroy() {
+        this.subscriptions.splice(0).forEach((unsubscribe) => unsubscribe?.());
     }
 
     async handleClassify({ text, userId }) {

@@ -6,6 +6,8 @@ export class ExampleService {
     constructor() {
         this.eventBus = null;
         this.items = new Map();
+        this.subscriptions = [];
+        this.initialized = false;
     }
 
     /**
@@ -19,6 +21,10 @@ export class ExampleService {
      * Initialize service (called by ServiceManager)
      */
     init() {
+        if (this.initialized) {
+            return;
+        }
+        this.initialized = true;
         this.setupSubscriptions();
         this.loadFromStorage();
     }
@@ -27,8 +33,14 @@ export class ExampleService {
      * Setup event subscriptions
      */
     setupSubscriptions() {
-        this.eventBus.subscribe('INTENT_CREATE_ITEM', this.handleCreateItem.bind(this));
-        this.eventBus.subscribe('ITEM_STATUS_CHANGED', this.handleStatusChanged.bind(this));
+        if (!this.eventBus?.subscribe) {
+            return;
+        }
+
+        this.subscriptions.push(
+            this.eventBus.subscribe('INTENT_CREATE_ITEM', this.handleCreateItem.bind(this)),
+            this.eventBus.subscribe('ITEM_STATUS_CHANGED', this.handleStatusChanged.bind(this))
+        );
     }
 
     /**
@@ -119,6 +131,8 @@ export class ExampleService {
      * Cleanup (called by ServiceManager on unregister)
      */
     destroy() {
+        this.initialized = false;
+        this.subscriptions.splice(0).forEach((unsubscribe) => unsubscribe?.());
         this.items.clear();
     }
 }

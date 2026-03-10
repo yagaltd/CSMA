@@ -15,88 +15,230 @@ import { PlatformService } from './services/PlatformService.js';
 import { FEATURES, SEARCH_CONFIG, STATIC_RENDER_CONFIG, PROTOCOL } from './config.js';
 import { initUI } from './ui/init.js';
 
-// Initialize CSMA runtime
-const eventBus = new EventBus();
-const serviceManager = new ServiceManager(eventBus);
-const moduleManager = new ModuleManager(eventBus, serviceManager);
+const CORE_SERVICE_NAMES = new Set(['leader', 'example', 'llm', 'platform', 'channels']);
+
+let eventBus = null;
+let serviceManager = null;
+let moduleManager = null;
 let routerServiceRef = null;
 let i18nServiceRef = null;
 const apiBaseUrl = resolveApiBaseUrl();
 let authServiceRef = null;
+let channelManager = null;
+let metaManager = null;
+let logAccumulator = null;
+let leaderService = null;
+let uiCleanup = null;
+let themeToggleCleanup = null;
+let authAccessSubscription = null;
+let welcomeTimer = null;
+let initPromise = null;
+let appInitialized = false;
+let appDestroyed = false;
 
-// Set contracts for validation
-eventBus.contracts = Contracts;
+function syncWindowRuntime() {
+    window.serviceManager = serviceManager;
+    window.csma = {
+        ...(window.csma || {}),
+        eventBus,
+        serviceManager,
+        moduleManager,
+        channels: channelManager,
+        leader: leaderService,
+        metaManager,
+        logAccumulator,
+        router: routerServiceRef,
+        i18n: i18nServiceRef,
+        auth: authServiceRef,
+        apiBaseUrl,
+        destroyApp,
+        exportAnalytics: () => logAccumulator?.export?.() || { logs: [], sessionId: null }
+    };
+}
 
-// Initialize runtime components
-const channelManager = new ChannelManager(eventBus);
-const metaManager = new MetaManager(eventBus);
-const logAccumulator = new LogAccumulator(eventBus);
+function ensureRuntime() {
+    if (eventBus && serviceManager && moduleManager) {
+        syncWindowRuntime();
+        return;
+    }
 
-// Make serviceManager globally accessible (for UI components)
-window.serviceManager = serviceManager;
-window.csma = window.csma || {};
-window.csma.moduleManager = moduleManager;
-window.csma.channels = channelManager;
+    eventBus = new EventBus();
+    eventBus.contracts = Contracts;
 
-// Register services
-const leaderService = new CrossTabLeader(eventBus);
-serviceManager.register('leader', leaderService, {
-    version: '1.0.0',
-    description: 'Cross-tab leader election and coordination'
-});
-leaderService.init();
+    serviceManager = new ServiceManager(eventBus);
+    moduleManager = new ModuleManager(eventBus, serviceManager);
+    channelManager = new ChannelManager(eventBus);
+    metaManager = new MetaManager(eventBus);
+    logAccumulator = new LogAccumulator(eventBus);
+    leaderService = new CrossTabLeader(eventBus);
 
-serviceManager.register('example', new ExampleService());
-serviceManager.register('llm', new LLMService());
-serviceManager.register('platform', new PlatformService(eventBus));
-serviceManager.register('channels', channelManager, {
-    version: '1.0.0',
-    description: 'Channel subscription orchestration'
-});
+    serviceManager.register('leader', leaderService, {
+        version: '1.0.0',
+        description: 'Cross-tab leader election and coordination'
+    });
+    serviceManager.register('example', new ExampleService());
+    serviceManager.register('llm', new LLMService(eventBus));
+    serviceManager.register('platform', new PlatformService(eventBus));
+    serviceManager.register('channels', channelManager, {
+        version: '1.0.0',
+        description: 'Channel subscription orchestration'
+    });
 
-window.csma = window.csma || {};
-window.csma.leader = leaderService;
+    leaderService.init();
+    appDestroyed = false;
+    syncWindowRuntime();
+}
 
 // Initialize UI
 // Wait for DOM ready
+const handleDOMContentLoaded = () => {
+    init();
+};
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', handleDOMContentLoaded, { once: true });
 } else {
     init();
 }
 
 async function init() {
-    console.log('[CSMA] Initializing application...');
+    if (initPromise) {
+        return initPromise;
+    }
 
-    // Load optional features based on config
-    await loadOptionalFeatures();
+    initPromise = (async () => {
+        if (appInitialized) {
+            return;
+        }
 
-    // Initialize UI components (dropdowns, inputs, modals, etc.)
-    initUI(eventBus);
+        ensureRuntime();
+        console.log('[CSMA] Initializing application...');
 
-    // Setup theme toggle (kept for backward compatibility with index.html)
-    setupThemeToggle();
+        // Load optional features based on config
+        await loadOptionalFeatures();
 
-    // Load saved theme
-    loadTheme();
+        // Initialize UI components (dropdowns, inputs, modals, etc.)
+        uiCleanup = initUI(eventBus) || window.csma?.componentCleanup || null;
 
-    // Update page metadata
-    eventBus.publish('PAGE_CHANGED', {
-        title: 'CSMA Kit',
-        description: 'A lean, secure, reactive CSMA application kit',
-        locale: 'en'
+        // Setup theme toggle (kept for backward compatibility with index.html)
+        themeToggleCleanup?.();
+        themeToggleCleanup = setupThemeToggle();
+
+        // Load saved theme
+        loadTheme();
+
+        const logEndpoint = buildLogEndpoint(apiBaseUrl);
+        logAccumulator?.init?.({
+            endpoint: logEndpoint,
+            source: window.csma?.config?.logSource || 'csma',
+            appVersion: window.csma?.config?.version || import.meta.env?.VITE_APP_VERSION || 'dev',
+            maxBatchSize: 5,
+            authProvider: () => {
+                const authService = serviceManager?.get('auth');
+                return authService?.getToken?.() || null;
+            }
+        });
+
+        // Update page metadata
+        eventBus.publish('PAGE_CHANGED', {
+            title: 'CSMA Kit',
+            description: 'A lean, secure, reactive CSMA application kit',
+            locale: 'en'
+        });
+
+        console.log('[CSMA] Application ready');
+
+        // Example: Create initial item
+        welcomeTimer = window.setTimeout(() => {
+            eventBus.publish('INTENT_CREATE_ITEM', {
+                title: 'Welcome to CSMA!',
+                description: 'This is an example card demonstrating CSS-class reactivity.',
+                priority: 'high'
+            });
+        }, 500);
+        appInitialized = true;
+        syncWindowRuntime();
+    })().finally(() => {
+        initPromise = null;
     });
 
-    console.log('[CSMA] Application ready');
+    return initPromise;
+}
 
-    // Example: Create initial item
-    setTimeout(() => {
-        eventBus.publish('INTENT_CREATE_ITEM', {
-            title: 'Welcome to CSMA!',
-            description: 'This is an example card demonstrating CSS-class reactivity.',
-            priority: 'high'
-        });
-    }, 500);
+async function destroyApp() {
+    if (appDestroyed) {
+        return;
+    }
+
+    appDestroyed = true;
+    appInitialized = false;
+    if (welcomeTimer) {
+        clearTimeout(welcomeTimer);
+        welcomeTimer = null;
+    }
+    authAccessSubscription?.();
+    authAccessSubscription = null;
+    themeToggleCleanup?.();
+    themeToggleCleanup = null;
+    uiCleanup?.();
+    uiCleanup = null;
+
+    try {
+        await moduleManager?.destroy?.();
+    } catch (error) {
+        console.warn('[CSMA] Failed to destroy modules:', error);
+    }
+
+    const nonCoreServices = serviceManager
+        ? serviceManager.getAllStatus().map((entry) => entry.name).filter((name) => !CORE_SERVICE_NAMES.has(name))
+        : [];
+    for (const name of nonCoreServices.reverse()) {
+        await serviceManager?.unregister(name);
+    }
+
+    try {
+        await serviceManager?.destroyAll?.();
+    } catch (error) {
+        console.warn('[CSMA] Failed to destroy services:', error);
+    }
+
+    try {
+        metaManager?.destroy?.();
+        logAccumulator?.destroy?.();
+    } catch (error) {
+        console.warn('[CSMA] Failed to destroy runtime managers:', error);
+    }
+
+    eventBus = null;
+    serviceManager = null;
+    moduleManager = null;
+    channelManager = null;
+    metaManager = null;
+    logAccumulator = null;
+    leaderService = null;
+    routerServiceRef = null;
+    i18nServiceRef = null;
+    authServiceRef = null;
+
+    window.serviceManager = null;
+    window.csma = {
+        ...(window.csma || {}),
+        eventBus: null,
+        serviceManager: null,
+        moduleManager: null,
+        channels: null,
+        leader: null,
+        metaManager: null,
+        logAccumulator: null,
+        router: null,
+        i18n: null,
+        auth: null,
+        destroyApp
+    };
+
+    if (document.readyState === 'loading') {
+        document.removeEventListener('DOMContentLoaded', handleDOMContentLoaded);
+    }
 }
 
 /**
@@ -177,7 +319,8 @@ async function loadOptionalFeatures() {
             await authService.init();
             authServiceRef = authService;
             channelManager.setContextResolver(() => authServiceRef?.getUser?.());
-            eventBus.subscribe('AUTH_SESSION_UPDATED', () => channelManager.reevaluateAccess());
+            authAccessSubscription?.();
+            authAccessSubscription = eventBus.subscribe('AUTH_SESSION_UPDATED', () => channelManager.reevaluateAccess());
             window.csma = window.csma || {};
             window.csma.auth = authService;
             console.log('[AuthService] Session management ready');
@@ -610,21 +753,27 @@ async function loadOptionalFeatures() {
  */
 function setupThemeToggle() {
     const toggleBtn = document.getElementById('theme-toggle') || document.getElementById('themeToggle');
-    if (!toggleBtn || toggleBtn.dataset.themeBound === 'true') return;
+    if (!toggleBtn || toggleBtn.dataset.themeBound === 'true') return () => {};
 
-    toggleBtn.addEventListener('click', () => {
+    const handleClick = () => {
         const currentTheme = document.documentElement.dataset.theme || 'light';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
 
         // Publish theme change event
-        eventBus.publish('THEME_CHANGED', { theme: newTheme });
+        eventBus?.publish('THEME_CHANGED', { theme: newTheme });
 
         // Apply theme
         document.documentElement.dataset.theme = newTheme;
         localStorage.setItem('theme', newTheme);
-    });
+    };
+
+    toggleBtn.addEventListener('click', handleClick);
 
     toggleBtn.dataset.themeBound = 'true';
+    return () => {
+        toggleBtn.removeEventListener('click', handleClick);
+        delete toggleBtn.dataset.themeBound;
+    };
 }
 
 /**
@@ -634,38 +783,6 @@ function loadTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.dataset.theme = savedTheme;
 }
-
-
-// Export for debugging (optional)
-const storageServiceRef = serviceManager.get('Storage') || serviceManager.get('storage');
-
-// Initialize LogAccumulator with auth support
-const logEndpoint = buildLogEndpoint(apiBaseUrl);
-if (logAccumulator) {
-    logAccumulator.init({
-        endpoint: logEndpoint,
-        source: window.csma?.config?.logSource || 'csma',
-        appVersion: window.csma?.config?.version || import.meta.env?.VITE_APP_VERSION || 'dev',
-        maxBatchSize: 5,
-        authProvider: () => {
-            const authService = serviceManager.get('auth');
-            return authService?.getToken() || null;
-        }
-    });
-}
-
-window.csma = {
-    ...window.csma,
-    eventBus,
-    serviceManager,
-    metaManager,
-    logAccumulator,
-    router: routerServiceRef,
-    storage: storageServiceRef,
-    i18n: i18nServiceRef,
-    apiBaseUrl,
-    exportAnalytics: () => logAccumulator.export()
-};
 
 function resolveApiBaseUrl() {
     const envUrl = import.meta.env?.VITE_API_URL?.trim();

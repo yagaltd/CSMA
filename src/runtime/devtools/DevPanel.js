@@ -2,6 +2,8 @@
  * DevPanel - Development tools panel
  * Only loaded in development mode - 0KB in production!
  */
+import { LifecycleScope } from '../LifecycleScope.js';
+
 export class DevPanel {
     constructor(logAccumulator) {
         this.logAccumulator = logAccumulator;
@@ -10,6 +12,11 @@ export class DevPanel {
         this.channelManager = window.csma?.channels || null;
         this.optimisticEvents = [];
         this.optimisticActions = [];
+        this.lifecycle = new LifecycleScope('DevPanel');
+        this.originalPublish = null;
+        this.domReadyHandler = this.create.bind(this);
+        this.resizeDragCleanup = null;
+        this.destroyed = false;
 
         this.init();
     }
@@ -17,13 +24,17 @@ export class DevPanel {
     init() {
         // Wait for DOM to be ready
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.create());
+            this.lifecycle.listen(document, 'DOMContentLoaded', this.domReadyHandler, { once: true });
         } else {
             this.create();
         }
     }
 
     create() {
+        if (this.panel || this.destroyed) {
+            return;
+        }
+
         const panel = document.createElement('div');
         panel.id = 'csma-devtools';
         panel.className = 'csma-devtools collapsed';
@@ -95,12 +106,13 @@ export class DevPanel {
 
     setupListeners() {
         const toggle = this.panel.querySelector('.devtools-toggle');
-        toggle.addEventListener('click', () => {
+        const handleToggleClick = () => {
             this.panel.classList.toggle('collapsed');
-        });
+        };
+        this.lifecycle.listen(toggle, 'click', handleToggleClick);
 
         const minimizeBtn = this.panel.querySelector('.devtools-minimize');
-        minimizeBtn.addEventListener('click', () => {
+        const handleMinimizeClick = () => {
             this.panel.classList.toggle('collapsed');
             if (this.panel.classList.contains('collapsed')) {
                 this.panel.dataset.prevWidth = this.panel.style.width;
@@ -111,29 +123,31 @@ export class DevPanel {
                 this.panel.style.width = this.panel.dataset.prevWidth || this.panel.style.width;
                 this.panel.style.height = this.panel.dataset.prevHeight || this.panel.style.height;
             }
-        });
+        };
+        this.lifecycle.listen(minimizeBtn, 'click', handleMinimizeClick);
 
         // Tab switching
         this.panel.querySelectorAll('.devtools-tab').forEach(btn => {
-            btn.addEventListener('click', () => {
+            const handleTabClick = () => {
                 this.panel.querySelectorAll('.devtools-tab').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 this.render(btn.dataset.tab);
-            });
+            };
+            this.lifecycle.listen(btn, 'click', handleTabClick);
         });
 
         // Clear button
-        this.panel.querySelector('#devtools-clear').addEventListener('click', () => {
+        this.lifecycle.listen(this.panel.querySelector('#devtools-clear'), 'click', () => {
             this.panel.querySelector('.devtools-body').innerHTML = '';
         });
 
         // Copy button
-        this.panel.querySelector('#devtools-copy').addEventListener('click', () => {
+        this.lifecycle.listen(this.panel.querySelector('#devtools-copy'), 'click', () => {
             navigator.clipboard.writeText(JSON.stringify(this.logAccumulator.logs, null, 2));
         });
 
         // Export button
-        this.panel.querySelector('#devtools-export').addEventListener('click', () => {
+        this.lifecycle.listen(this.panel.querySelector('#devtools-export'), 'click', () => {
             const blob = new Blob([
                 this.logAccumulator.logs.map((entry) => JSON.stringify(entry)).join('\n')
             ], { type: 'text/plain' });
@@ -148,7 +162,7 @@ export class DevPanel {
         });
 
         // Filter
-        this.panel.querySelector('.devtools-filter').addEventListener('input', (e) => {
+        this.lifecycle.listen(this.panel.querySelector('.devtools-filter'), 'input', () => {
             const activeTab = this.panel.querySelector('.devtools-tab.active')?.dataset.tab;
             if (activeTab) {
                 this.render(activeTab);
@@ -178,9 +192,10 @@ export class DevPanel {
         const onMouseUp = () => {
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
+            this.resizeDragCleanup = null;
         };
 
-        resizer.addEventListener('mousedown', (event) => {
+        const handleMouseDown = (event) => {
             event.preventDefault();
             startX = event.clientX;
             startY = event.clientY;
@@ -188,19 +203,30 @@ export class DevPanel {
             startHeight = this.panel.getBoundingClientRect().height;
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('mouseup', onMouseUp);
+            this.resizeDragCleanup = () => {
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                this.resizeDragCleanup = null;
+            };
             this.panel.classList.remove('collapsed');
-        });
+        };
+
+        this.lifecycle.listen(resizer, 'mousedown', handleMouseDown);
     }
 
     subscribeToEvents() {
         // Subscribe to all events
-        const originalPublish = this.eventBus.publish.bind(this.eventBus);
+        if (this.originalPublish) {
+            return;
+        }
+
+        this.originalPublish = this.eventBus.publish.bind(this.eventBus);
         this.eventBus.publish = (eventName, payload) => {
             // Log event (except LOG_ENTRY to avoid recursion)
             if (eventName !== 'LOG_ENTRY') {
                 this.logAccumulator.log('event', { eventName, payload });
             }
-            return originalPublish(eventName, payload);
+            return this.originalPublish(eventName, payload);
         };
     }
 
@@ -213,25 +239,25 @@ export class DevPanel {
             }
         };
         ['OPTIMISTIC_ACTION_RECORDED', 'OPTIMISTIC_ACTION_ACKED', 'OPTIMISTIC_ACTION_FAILED', 'OPTIMISTIC_LOG_UPDATED', 'OPTIMISTIC_TRANSPORT_REPLAY']
-            .forEach((eventName) => this.eventBus.subscribe(eventName, (payload) => {
+            .forEach((eventName) => this.lifecycle.subscribe(this.eventBus, eventName, (payload) => {
                 this.captureOptimisticAction(eventName, payload);
                 rerender();
             }));
         ['CHANNEL_SUBSCRIBED', 'CHANNEL_UNSUBSCRIBED', 'CHANNEL_ACCESS_REVOKED']
-            .forEach((eventName) => this.eventBus.subscribe(eventName, rerender));
+            .forEach((eventName) => this.lifecycle.subscribe(this.eventBus, eventName, rerender));
 
         const capture = (type) => (payload) => {
             this.captureOptimisticEvent(type, payload);
             rerender();
         };
 
-        this.eventBus.subscribe('OPTIMISTIC_SERVER_REWORK', capture('server-rework'));
-        this.eventBus.subscribe('CHANNEL_SERVER_EVENT', capture('channel-event'));
-        this.eventBus.subscribe('CHANNEL_SERVER_INVALIDATE', capture('channel-invalidate'));
-        this.eventBus.subscribe('CHANNEL_ACCESS_DENIED', capture('channel-access-denied'));
-        this.eventBus.subscribe('OPTIMISTIC_SERVER_REPLAY', capture('server-replay'));
+        this.lifecycle.subscribe(this.eventBus, 'OPTIMISTIC_SERVER_REWORK', capture('server-rework'));
+        this.lifecycle.subscribe(this.eventBus, 'CHANNEL_SERVER_EVENT', capture('channel-event'));
+        this.lifecycle.subscribe(this.eventBus, 'CHANNEL_SERVER_INVALIDATE', capture('channel-invalidate'));
+        this.lifecycle.subscribe(this.eventBus, 'CHANNEL_ACCESS_DENIED', capture('channel-access-denied'));
+        this.lifecycle.subscribe(this.eventBus, 'OPTIMISTIC_SERVER_REPLAY', capture('server-replay'));
 
-        this.eventBus.subscribe('MODULE_LOADED', () => {
+        this.lifecycle.subscribe(this.eventBus, 'MODULE_LOADED', () => {
             if (!this.actionLogService) {
                 this.actionLogService = window.serviceManager?.get('actionLog') || window.csma?.actionLog || null;
             }
@@ -239,7 +265,7 @@ export class DevPanel {
                 this.channelManager = window.serviceManager?.get('channels') || window.csma?.channels || this.channelManager;
             }
         });
-        this.eventBus.subscribe('OPTIMISTIC_LOG_READY', () => {
+        this.lifecycle.subscribe(this.eventBus, 'OPTIMISTIC_LOG_READY', () => {
             this.actionLogService = window.serviceManager?.get('actionLog') || window.csma?.actionLog || this.actionLogService;
             rerender();
         });
@@ -480,5 +506,24 @@ export class DevPanel {
         link.href = '/src/runtime/devtools/devpanel.css';
         link.dataset.devpanelStyle = 'true';
         document.head.appendChild(link);
+    }
+
+    destroy() {
+        if (this.destroyed) {
+            return;
+        }
+
+        this.destroyed = true;
+
+        if (this.originalPublish) {
+            this.eventBus.publish = this.originalPublish;
+            this.originalPublish = null;
+        }
+
+        this.resizeDragCleanup?.();
+        this.resizeDragCleanup = null;
+        this.lifecycle.destroy();
+        this.panel?.remove();
+        this.panel = null;
     }
 }

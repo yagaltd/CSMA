@@ -30,6 +30,7 @@ export class ModuleManager {
             console.log(`[ModuleManager] Loading: ${module.manifest.name}`);
 
             // Register services with the SHARED ServiceManager
+            const serviceNames = [];
             for (const [serviceName, ServiceClass] of Object.entries(module.services)) {
                 const service = new ServiceClass(this.eventBus);
 
@@ -39,12 +40,14 @@ export class ModuleManager {
                     dependencies: module.manifest.dependencies || [],
                     moduleId: moduleId
                 });
+                serviceNames.push(serviceName);
             }
 
             // Track loaded module
             this.modules.set(moduleId, {
                 manifest: module.manifest,
-                status: 'loaded'
+                status: 'loaded',
+                serviceNames
             });
 
             // Publish event
@@ -81,5 +84,31 @@ export class ModuleManager {
     getModuleManifest(moduleId) {
         const module = this.modules.get(moduleId);
         return module ? module.manifest : null;
+    }
+
+    async unloadModule(moduleId) {
+        const module = this.modules.get(moduleId);
+        if (!module) {
+            return false;
+        }
+
+        const serviceNames = (module.serviceNames || []).slice().reverse();
+        for (const serviceName of serviceNames) {
+            await this.serviceManager.unregister(serviceName);
+        }
+
+        this.modules.delete(moduleId);
+        this.eventBus?.publish('MODULE_UNLOADED', {
+            version: 1,
+            id: moduleId,
+            manifest: module.manifest
+        });
+        return true;
+    }
+
+    async destroy() {
+        for (const moduleId of Array.from(this.modules.keys()).reverse()) {
+            await this.unloadModule(moduleId);
+        }
     }
 }

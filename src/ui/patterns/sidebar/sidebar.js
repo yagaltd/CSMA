@@ -2,42 +2,61 @@
  * Sidebar Navigation Component JavaScript
  */
 
+let sidebarCleanup = null;
+let domReadyCleanup = null;
+
 export function initSidebars() {
-    document.querySelectorAll('.sidebar').forEach(initSidebar);
+    sidebarCleanup?.();
+
+    const cleanups = [];
+    document.querySelectorAll('.sidebar').forEach((sidebar) => {
+        cleanups.push(initSidebar(sidebar));
+    });
+
+    sidebarCleanup = () => {
+        cleanups.splice(0).reverse().forEach((cleanup) => cleanup?.());
+        sidebarCleanup = null;
+    };
+
+    return sidebarCleanup;
 }
 
 export function initSidebar(sidebar) {
     const toggleButtons = getToggleButtons(sidebar);
-    const items = sidebar.querySelectorAll('.sidebar-item');
+    const items = Array.from(sidebar.querySelectorAll('.sidebar-item'));
+    const cleanups = [];
 
-    // Load saved state from localStorage
     const savedState = localStorage.getItem('sidebar-state');
     const initialState = savedState || sidebar.dataset.state || 'expanded';
     setSidebarState(sidebar, toggleButtons, initialState, { persist: false });
 
-    // Toggle buttons
     toggleButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
+        const handleClick = () => {
             const isExpanded = sidebar.dataset.state === 'expanded';
             const newState = isExpanded ? 'collapsed' : 'expanded';
             setSidebarState(sidebar, toggleButtons, newState);
-        });
+        };
+        btn.addEventListener('click', handleClick);
+        cleanups.push(() => btn.removeEventListener('click', handleClick));
     });
 
-    // Navigation items
-    items.forEach(item => {
-        item.addEventListener('click', (e) => {
-            // Remove active from all items
-            items.forEach(i => {
-                i.dataset.active = 'false';
-                i.removeAttribute('aria-current');
+    items.forEach((item) => {
+        const handleClick = () => {
+            items.forEach((entry) => {
+                entry.dataset.active = 'false';
+                entry.removeAttribute('aria-current');
             });
 
-            // Set active on clicked item
             item.dataset.active = 'true';
             item.setAttribute('aria-current', 'page');
-        });
+        };
+        item.addEventListener('click', handleClick);
+        cleanups.push(() => item.removeEventListener('click', handleClick));
     });
+
+    return () => {
+        cleanups.splice(0).reverse().forEach((cleanup) => cleanup?.());
+    };
 }
 
 function getToggleButtons(sidebar) {
@@ -72,11 +91,21 @@ function applySidebarOffset(state) {
     document.documentElement.dataset.sidebarState = state;
 }
 
-// Auto-init
+function bootSidebars() {
+    domReadyCleanup?.();
+    initSidebars();
+}
+
 if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSidebars);
+        const handleReady = () => {
+            domReadyCleanup?.();
+            domReadyCleanup = null;
+            bootSidebars();
+        };
+        document.addEventListener('DOMContentLoaded', handleReady, { once: true });
+        domReadyCleanup = () => document.removeEventListener('DOMContentLoaded', handleReady);
     } else {
-        initSidebars();
+        bootSidebars();
     }
 }

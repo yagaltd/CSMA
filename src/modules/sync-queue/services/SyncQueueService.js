@@ -11,9 +11,16 @@ export class SyncQueueService {
         this.processors = options.processors || {};
         this.queue = [];
         this.flushing = false;
+        this.subscriptions = [];
+        this.initialized = false;
     }
 
     init({ storageService, networkStatusService } = {}) {
+        if (this.initialized) {
+            return;
+        }
+
+        this.initialized = true;
         if (storageService) {
             this.storage = storageService;
         }
@@ -23,12 +30,14 @@ export class SyncQueueService {
         this.#loadQueue();
 
         if (this.eventBus) {
-            this.eventBus.subscribe('INTENT_SYNC_QUEUE_ENQUEUE', (payload) => this.enqueue(payload));
-            this.eventBus.subscribe('NETWORK_STATUS_CHANGED', ({ online }) => {
-                if (online) {
-                    this.flush();
-                }
-            });
+            this.subscriptions.push(
+                this.eventBus.subscribe('INTENT_SYNC_QUEUE_ENQUEUE', (payload) => this.enqueue(payload)),
+                this.eventBus.subscribe('NETWORK_STATUS_CHANGED', ({ online }) => {
+                    if (online) {
+                        this.flush();
+                    }
+                })
+            );
         }
 
         if (this.networkStatus?.online) {
@@ -85,6 +94,12 @@ export class SyncQueueService {
 
     registerProcessor(type, handler) {
         this.processors[type] = handler;
+    }
+
+    destroy() {
+        this.initialized = false;
+        this.subscriptions.splice(0).forEach((unsubscribe) => unsubscribe?.());
+        this.flushing = false;
     }
 
     #loadQueue() {

@@ -268,6 +268,13 @@ export class IslandRuntime {
             return null;
         }
     }
+
+    destroy() {
+        this.subscriptions.splice(0).forEach((unsubscribe) => unsubscribe?.());
+        this.hydratedIslands.clear();
+        this.bundleCache.clear();
+        this.initialized = false;
+    }
 }
 
 export default IslandRuntime;

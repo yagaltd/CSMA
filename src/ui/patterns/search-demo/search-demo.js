@@ -4,26 +4,24 @@ import { createSearchService } from '../../../modules/search/index.js';
 import { LogAccumulator } from '../../../runtime/LogAccumulator.js';
 
 const csma = window.csma || (window.csma = {});
-const eventBus = ensureEventBus();
-const searchService = ensureSearchService();
-const analyticsConsent = ensureAnalyticsConsent();
-const logAccumulator = ensureLogAccumulator();
-
-// Track page load
-logAccumulator.trackPageView('Search Demo');
-
-const container = document.querySelector('.search-demo');
-const loadButton = document.querySelector('[data-load-sample]');
-const clearButton = document.querySelector('[data-clear-search]');
-const randomButton = document.querySelector('[data-random-search]');
-const statusEl = document.querySelector('[data-index-status]');
-const progressFill = document.querySelector('[data-progress]');
-const indexTimeEl = document.querySelector('[data-index-time]');
-const searchInput = document.querySelector('[data-search-input]');
-const resultsList = document.querySelector('[data-results-list]');
-const resultsCount = document.querySelector('[data-results-count]');
-const searchTime = document.querySelector('[data-search-time]');
-const filterBar = document.querySelector('[data-filter-tags]');
+let eventBus = null;
+let searchService = null;
+let logAccumulator = null;
+let ownedSearchService = false;
+let ownedLogAccumulator = false;
+let searchDemoCleanup = null;
+let container = null;
+let loadButton = null;
+let clearButton = null;
+let randomButton = null;
+let statusEl = null;
+let progressFill = null;
+let indexTimeEl = null;
+let searchInput = null;
+let resultsList = null;
+let resultsCount = null;
+let searchTime = null;
+let filterBar = null;
 
 const docs = new Map();
 const dataset = [];
@@ -32,69 +30,6 @@ let activeCategory = null;
 let lastQuery = '';
 
 const randomQueries = ['search', 'CSMA', 'analytics', 'offline', 'FlexSearch'];
-
-loadButton?.addEventListener('click', loadSampleData);
-clearButton?.addEventListener('click', () => {
-    searchInput.value = '';
-    lastQuery = '';
-    renderResults([]);
-    container.dataset.state = datasetLoaded ? 'ready' : 'idle';
-    searchTime.textContent = '0ms';
-});
-randomButton?.addEventListener('click', () => {
-    if (!datasetLoaded) return;
-    const pool = dataset.map((doc) => doc.title.split(' ')[0]).filter(Boolean);
-    const words = pool.length ? pool : randomQueries;
-    const query = words[Math.floor(Math.random() * words.length)];
-    searchInput.value = query;
-    triggerSearch(query);
-});
-
-if (filterBar) {
-    filterBar.querySelectorAll('button').forEach((btn) => {
-        btn.addEventListener('click', () => {
-            if (btn.disabled) return;
-            const value = btn.dataset.category;
-            activeCategory = activeCategory === value ? null : value;
-            filterBar.querySelectorAll('button').forEach((chip) => {
-                chip.dataset.active = chip.dataset.category === activeCategory ? 'true' : 'false';
-            });
-            if (lastQuery) {
-                triggerSearch(lastQuery, { skipInput: true });
-            } else {
-                renderResults([]);
-            }
-        });
-    });
-}
-
-searchInput?.addEventListener('input', debounce((event) => {
-    triggerSearch(event.target.value);
-}, 250));
-
-eventBus.subscribe?.('SEARCH_RESULTS_RETURNED', ({ results, durationMs }) => {
-    if (!Array.isArray(results?.ids)) return;
-    lastQuery && renderResults(results.ids, durationMs);
-});
-
-eventBus.subscribe?.('SEARCH_FACETS_UPDATED', ({ facets }) => {
-    if (!facets || !filterBar) return;
-    filterBar.querySelectorAll('button').forEach((btn) => {
-        const key = btn.dataset.category;
-        const count = facets[key]?.[key] || facets[key]?.total || sumFacetCounts(facets[key]);
-        if (typeof count === 'number') {
-            btn.textContent = `${capitalize(key)} (${count})`;
-        }
-    });
-});
-
-eventBus.subscribe?.('SEARCH_ERROR', ({ message }) => {
-    setStatus(message || 'Search error');
-    container.dataset.state = 'ready';
-    logAccumulator.track('Search Error', { message });
-});
-
-init();
 
 async function loadSampleData() {
     if (datasetLoaded) return;
@@ -341,10 +276,14 @@ function normalizeDoc(raw) {
 
 function debounce(fn, delay) {
     let timeout;
-    return (...args) => {
+    const debounced = (...args) => {
         window.clearTimeout(timeout);
         timeout = window.setTimeout(() => fn(...args), delay);
     };
+    debounced.cancel = () => {
+        window.clearTimeout(timeout);
+    };
+    return debounced;
 }
 
 function setStatus(text) {
@@ -425,6 +364,7 @@ function ensureEventBus() {
 
 function ensureSearchService() {
     if (csma.search) {
+        ownedSearchService = false;
         return csma.search;
     }
     const service = createSearchService(eventBus, {
@@ -434,6 +374,7 @@ function ensureSearchService() {
     });
     service.init({ facets: ['category', 'tags'] });
     csma.search = service;
+    ownedSearchService = true;
     return service;
 }
 
@@ -446,6 +387,7 @@ function ensureAnalyticsConsent() {
 
 function ensureLogAccumulator() {
     if (csma.logAccumulator) {
+        ownedLogAccumulator = false;
         return csma.logAccumulator;
     }
     const acc = new LogAccumulator(eventBus);
@@ -456,9 +398,148 @@ function ensureLogAccumulator() {
         authProvider: () => localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token')
     });
     csma.logAccumulator = acc;
+    ownedLogAccumulator = true;
     return acc;
 }
 
-function init() {
+export function initSearchDemo() {
+    searchDemoCleanup?.();
+    eventBus = ensureEventBus();
+    searchService = ensureSearchService();
+    ensureAnalyticsConsent();
+    logAccumulator = ensureLogAccumulator();
+
+    container = document.querySelector('.search-demo');
+    loadButton = document.querySelector('[data-load-sample]');
+    clearButton = document.querySelector('[data-clear-search]');
+    randomButton = document.querySelector('[data-random-search]');
+    statusEl = document.querySelector('[data-index-status]');
+    progressFill = document.querySelector('[data-progress]');
+    indexTimeEl = document.querySelector('[data-index-time]');
+    searchInput = document.querySelector('[data-search-input]');
+    resultsList = document.querySelector('[data-results-list]');
+    resultsCount = document.querySelector('[data-results-count]');
+    searchTime = document.querySelector('[data-search-time]');
+    filterBar = document.querySelector('[data-filter-tags]');
+
+    const cleanups = [];
+    const addCleanup = (cleanup) => {
+        if (typeof cleanup === 'function') {
+            cleanups.push(cleanup);
+        }
+    };
+
+    logAccumulator?.trackPageView?.('Search Demo');
+
+    if (loadButton) {
+        loadButton.addEventListener('click', loadSampleData);
+        addCleanup(() => loadButton.removeEventListener('click', loadSampleData));
+    }
+
+    if (clearButton) {
+        const handleClear = () => {
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            lastQuery = '';
+            renderResults([]);
+            if (container) {
+                container.dataset.state = datasetLoaded ? 'ready' : 'idle';
+            }
+            if (searchTime) {
+                searchTime.textContent = '0ms';
+            }
+        };
+        clearButton.addEventListener('click', handleClear);
+        addCleanup(() => clearButton.removeEventListener('click', handleClear));
+    }
+
+    if (randomButton) {
+        const handleRandom = () => {
+            if (!datasetLoaded || !searchInput) return;
+            const pool = dataset.map((doc) => doc.title.split(' ')[0]).filter(Boolean);
+            const words = pool.length ? pool : randomQueries;
+            const query = words[Math.floor(Math.random() * words.length)];
+            searchInput.value = query;
+            triggerSearch(query);
+        };
+        randomButton.addEventListener('click', handleRandom);
+        addCleanup(() => randomButton.removeEventListener('click', handleRandom));
+    }
+
+    if (filterBar) {
+        filterBar.querySelectorAll('button').forEach((btn) => {
+            const handleFilterClick = () => {
+                if (btn.disabled) return;
+                const value = btn.dataset.category;
+                activeCategory = activeCategory === value ? null : value;
+                filterBar.querySelectorAll('button').forEach((chip) => {
+                    chip.dataset.active = chip.dataset.category === activeCategory ? 'true' : 'false';
+                });
+                if (lastQuery) {
+                    triggerSearch(lastQuery, { skipInput: true });
+                } else {
+                    renderResults([]);
+                }
+            };
+            btn.addEventListener('click', handleFilterClick);
+            addCleanup(() => btn.removeEventListener('click', handleFilterClick));
+        });
+    }
+
+    if (searchInput) {
+        const debouncedSearch = debounce((event) => {
+            triggerSearch(event.target.value);
+        }, 250);
+        searchInput.addEventListener('input', debouncedSearch);
+        addCleanup(() => {
+            debouncedSearch.cancel?.();
+            searchInput.removeEventListener('input', debouncedSearch);
+        });
+    }
+
+    if (eventBus?.subscribe) {
+        addCleanup(eventBus.subscribe('SEARCH_RESULTS_RETURNED', ({ results, durationMs }) => {
+            if (!Array.isArray(results?.ids)) return;
+            lastQuery && renderResults(results.ids, durationMs);
+        }));
+        addCleanup(eventBus.subscribe('SEARCH_FACETS_UPDATED', ({ facets }) => {
+            if (!facets || !filterBar) return;
+            filterBar.querySelectorAll('button').forEach((btn) => {
+                const key = btn.dataset.category;
+                const count = facets[key]?.[key] || facets[key]?.total || sumFacetCounts(facets[key]);
+                if (typeof count === 'number') {
+                    btn.textContent = `${capitalize(key)} (${count})`;
+                }
+            });
+        }));
+        addCleanup(eventBus.subscribe('SEARCH_ERROR', ({ message }) => {
+            setStatus(message || 'Search error');
+            if (container) {
+                container.dataset.state = 'ready';
+            }
+            logAccumulator?.track?.('Search Error', { message });
+        }));
+    }
+
     setStatus('Load the dataset to begin.');
+    searchDemoCleanup = () => {
+        cleanups.splice(0).reverse().forEach((cleanup) => cleanup?.());
+        if (ownedSearchService) {
+            searchService?.destroy?.();
+            if (csma.search === searchService) {
+                delete csma.search;
+            }
+        }
+        if (ownedLogAccumulator) {
+            logAccumulator?.destroy?.();
+            if (csma.logAccumulator === logAccumulator) {
+                delete csma.logAccumulator;
+            }
+        }
+        searchDemoCleanup = null;
+    };
+    return searchDemoCleanup;
 }
+
+initSearchDemo();

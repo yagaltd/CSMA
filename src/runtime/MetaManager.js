@@ -2,15 +2,28 @@
  * MetaManager - Homemade SEO/Meta tag manager
  * Handles page metadata, locale, and SEO tags
  */
+import { LifecycleScope } from './LifecycleScope.js';
+
 export class MetaManager {
     constructor(eventBus) {
         this.eventBus = eventBus;
         this.translations = {};
-        this.setupSubscriptions();
+        this.lifecycle = new LifecycleScope('MetaManager');
+        this.destroyed = false;
+        this.init();
     }
 
-    setupSubscriptions() {
-        this.eventBus.subscribe('PAGE_CHANGED', this.updateMeta.bind(this));
+    init() {
+        if (!this.destroyed && this.lifecycle.cleanups.length > 0) {
+            return;
+        }
+
+        if (this.destroyed) {
+            this.lifecycle = new LifecycleScope('MetaManager');
+            this.destroyed = false;
+        }
+
+        this.lifecycle.subscribe(this.eventBus, 'PAGE_CHANGED', this.updateMeta.bind(this));
     }
 
     updateMeta({ title, description, image, locale }) {
@@ -72,5 +85,14 @@ export class MetaManager {
                 el.textContent = translations[key];
             }
         });
+    }
+
+    destroy() {
+        if (this.destroyed) {
+            return;
+        }
+
+        this.destroyed = true;
+        this.lifecycle.destroy();
     }
 }

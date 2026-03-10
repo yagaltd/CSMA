@@ -2,6 +2,8 @@
  * Router - Lightweight SPA routing (~2KB)
  * Hash-based routing with EventBus integration
  */
+import { LifecycleScope } from '../../../runtime/LifecycleScope.js';
+
 export class Router {
     constructor(eventBus) {
         this.eventBus = eventBus;
@@ -9,14 +11,17 @@ export class Router {
         this.guards = [];
         this.currentRoute = null;
         this.notFoundHandler = () => this.renderNotFound();
+        this.lifecycle = new LifecycleScope('Router');
+        this.handleRouteChange = this.handleRoute.bind(this);
+        this.destroyed = false;
 
         this.setupRouting();
     }
 
     setupRouting() {
         // Listen to hash changes
-        window.addEventListener('hashchange', () => this.handleRoute());
-        window.addEventListener('load', () => this.handleRoute());
+        this.lifecycle.listen(window, 'hashchange', this.handleRouteChange);
+        this.lifecycle.listen(window, 'load', this.handleRouteChange);
     }
 
     /**
@@ -209,6 +214,15 @@ export class Router {
                 </div>
             `;
         }
+    }
+
+    destroy() {
+        if (this.destroyed) {
+            return;
+        }
+
+        this.destroyed = true;
+        this.lifecycle.destroy();
     }
 }
 

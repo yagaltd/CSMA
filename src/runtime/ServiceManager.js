@@ -9,6 +9,7 @@ class ServiceManager {
     constructor(eventBus) {
         this.services = new Map(); // Map<name, ServiceContext>
         this.eventBus = eventBus;
+        this.registrationOrder = [];
     }
 
     /**
@@ -23,7 +24,11 @@ class ServiceManager {
     register(name, service, metadata = {}) {
         if (this.services.has(name)) {
             console.warn(`Service ${name} is already registered.`);
-            return;
+            return this.get(name);
+        }
+
+        if (service && typeof service.setEventBus === 'function') {
+            service.setEventBus(this.eventBus);
         }
 
         const context = {
@@ -45,7 +50,45 @@ class ServiceManager {
         };
 
         this.services.set(name, context);
+        this.registrationOrder.push(name);
         console.log(`ServiceManager: Registered service ${name} (v${context.metadata.version})`);
+        return service;
+    }
+
+    async unregister(name, { destroy = true } = {}) {
+        const context = this.services.get(name);
+        if (!context) {
+            return false;
+        }
+
+        this.services.delete(name);
+        this.registrationOrder = this.registrationOrder.filter((entry) => entry !== name);
+
+        if (destroy) {
+            const teardown = context.service?.destroy || context.service?.cleanup;
+            if (typeof teardown === 'function') {
+                try {
+                    await teardown.call(context.service);
+                } catch (error) {
+                    context.health.status = 'failed';
+                    context.health.errorCount++;
+                    context.health.lastError = error?.message || String(error);
+                    console.error(`Failed to destroy service ${name}:`, error);
+                }
+            }
+        }
+
+        return true;
+    }
+
+    async destroyAll() {
+        const orderedNames = this.registrationOrder.length
+            ? [...this.registrationOrder].reverse()
+            : Array.from(this.services.keys()).reverse();
+
+        for (const name of orderedNames) {
+            await this.unregister(name);
+        }
     }
 
     /**

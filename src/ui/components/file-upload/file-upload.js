@@ -313,43 +313,52 @@ export function initFileUpload(root, opts = {}) {
     addFiles(files);
   }
 
-  dropzone?.addEventListener('click', () => input?.click());
-  dropzone?.addEventListener('keydown', (e) => {
+  const handleDropzoneClick = () => input?.click();
+  const handleDropzoneKeydown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       input?.click();
     }
-  });
+  };
 
-  input?.addEventListener('change', (e) => {
+  const handleInputChange = (e) => {
     const list = e.target.files;
     handleFiles(list);
     input.value = '';
-  });
+  };
 
-  dropzone?.addEventListener('dragover', (e) => {
+  const handleDragOver = (e) => {
     e.preventDefault();
     setDropzoneState('dragging');
-  });
+  };
 
-  dropzone?.addEventListener('dragleave', (e) => {
+  const handleDragLeave = (e) => {
     e.preventDefault();
     setDropzoneState('idle');
-  });
+  };
 
-  dropzone?.addEventListener('drop', (e) => {
+  const handleDrop = (e) => {
     e.preventDefault();
     setDropzoneState('idle');
     handleFiles(e.dataTransfer?.files);
-  });
+  };
 
   // Prevent window-level navigation on drop of files
-  window.addEventListener('dragover', (e) => e.preventDefault());
-  window.addEventListener('drop', (e) => {
+  const handleWindowDragOver = (e) => e.preventDefault();
+  const handleWindowDrop = (e) => {
     if (e.dataTransfer?.files?.length) {
       e.preventDefault();
     }
-  });
+  };
+
+  dropzone?.addEventListener('click', handleDropzoneClick);
+  dropzone?.addEventListener('keydown', handleDropzoneKeydown);
+  input?.addEventListener('change', handleInputChange);
+  dropzone?.addEventListener('dragover', handleDragOver);
+  dropzone?.addEventListener('dragleave', handleDragLeave);
+  dropzone?.addEventListener('drop', handleDrop);
+  window.addEventListener('dragover', handleWindowDragOver);
+  window.addEventListener('drop', handleWindowDrop);
 
   updateEmptyState();
 
@@ -359,11 +368,19 @@ export function initFileUpload(root, opts = {}) {
       if (entry.abort) entry.abort.abort();
       const url = objectUrls.get(id);
       if (url) URL.revokeObjectURL(url);
+      entry.el?.remove();
     });
     items.clear();
     objectUrls.clear();
-    dropzone?.replaceWith(dropzone.cloneNode(true));
-    input?.replaceWith(input.cloneNode(true));
+    setDropzoneState('idle');
+    dropzone?.removeEventListener('click', handleDropzoneClick);
+    dropzone?.removeEventListener('keydown', handleDropzoneKeydown);
+    input?.removeEventListener('change', handleInputChange);
+    dropzone?.removeEventListener('dragover', handleDragOver);
+    dropzone?.removeEventListener('dragleave', handleDragLeave);
+    dropzone?.removeEventListener('drop', handleDrop);
+    window.removeEventListener('dragover', handleWindowDragOver);
+    window.removeEventListener('drop', handleWindowDrop);
   };
 }
 

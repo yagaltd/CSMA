@@ -199,6 +199,16 @@ export class ChannelManager {
         }
     }
 
+    destroy() {
+        for (const [key, subscription] of Array.from(this.activeSubscriptions.entries())) {
+            this._teardownSubscription(key, subscription, { source: 'destroy' });
+        }
+        this.channels.clear();
+        this.channelSubscriptions.clear();
+        this.desiredSubscriptions.clear();
+        this.contextResolver = null;
+    }
+
     _deliverToSubscription(channelId, params, intents, payload, handlerKey) {
         const key = this._subscriptionKey(channelId, params);
         const subscription = this.activeSubscriptions.get(key);
@@ -298,5 +308,15 @@ export class ChannelManager {
             return JSON.stringify(ordered);
         }
         return JSON.stringify(value);
+    }
+
+    destroy() {
+        Array.from(this.activeSubscriptions.entries()).forEach(([key, subscription]) => {
+            this._teardownSubscription(key, subscription, { source: 'destroy' });
+        });
+        this.channelSubscriptions.clear();
+        this.desiredSubscriptions.clear();
+        this.channels.clear();
+        this.contextResolver = null;
     }
 }

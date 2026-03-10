@@ -6,6 +6,7 @@ export class ImageOptimizerService {
         this.mediaTransform = options.mediaTransform || null;
         this.targets = options.targets || DEFAULT_TARGETS;
         this.fileSystem = options.fileSystem || null;
+        this.subscriptions = [];
     }
 
     init({ mediaTransformService, fileSystemService } = {}) {
@@ -16,9 +17,15 @@ export class ImageOptimizerService {
             this.fileSystem = fileSystemService;
         }
 
-        if (this.eventBus) {
-            this.eventBus.subscribe('INTENT_IMAGE_OPTIMIZE', (payload) => this.optimize(payload).catch((error) => this.#handleError('optimize', error)));
+        if (this.eventBus?.subscribe && this.subscriptions.length === 0) {
+            this.subscriptions.push(
+                this.eventBus.subscribe('INTENT_IMAGE_OPTIMIZE', (payload) => this.optimize(payload).catch((error) => this.#handleError('optimize', error)))
+            );
         }
+    }
+
+    destroy() {
+        this.subscriptions.splice(0).forEach((unsubscribe) => unsubscribe?.());
     }
 
     async optimize({ blob, targets = this.targets, metadata = {} }) {

@@ -18,6 +18,8 @@ export class OptimisticSyncService {
         this.tabId = OptimisticSyncService._createTabId();
         this.isLeader = false;
         this.crdtRegistry = null;
+        this.subscriptions = [];
+        this.initialized = false;
 
         this.handleLeaderEvent = this.handleLeaderEvent.bind(this);
         this.handleNetworkEvent = this.handleNetworkEvent.bind(this);
@@ -27,6 +29,11 @@ export class OptimisticSyncService {
     }
 
     async init({ actionLogService, leaderService, networkStatusService, transportService } = {}) {
+        if (this.initialized) {
+            this.destroy();
+        }
+        this.initialized = true;
+
         if (!actionLogService) {
             throw new Error('[OptimisticSync] ActionLogService is required.');
         }
@@ -56,9 +63,11 @@ export class OptimisticSyncService {
             }
         }
 
-        this.eventBus?.subscribe('LEADER_STATE_CHANGED', this.handleLeaderEvent);
-        this.eventBus?.subscribe('NETWORK_STATUS_CHANGED', this.handleNetworkEvent);
-        this.reworkUnsubscribe = this.eventBus?.subscribe('OPTIMISTIC_SERVER_REWORK', this.handleServerRework);
+        this.subscriptions.push(
+            this.eventBus?.subscribe?.('LEADER_STATE_CHANGED', this.handleLeaderEvent),
+            this.eventBus?.subscribe?.('NETWORK_STATUS_CHANGED', this.handleNetworkEvent)
+        );
+        this.reworkUnsubscribe = this.eventBus?.subscribe?.('OPTIMISTIC_SERVER_REWORK', this.handleServerRework) || null;
 
         // Attempt to flush immediately if we're already leader
         this._scheduleFlush();
@@ -394,6 +403,35 @@ export class OptimisticSyncService {
 
     getReducerSnapshot(reducerId) {
         return this.crdtRegistry?.getSnapshot(reducerId) ?? {};
+    }
+
+    destroy() {
+        this.initialized = false;
+        this.reworkUnsubscribe?.();
+        this.reworkUnsubscribe = null;
+        this.subscriptions.splice(0).forEach((unsubscribe) => unsubscribe?.());
+
+        this.intents.forEach((config) => config?.unsubscribe?.());
+        this.intents.clear();
+
+        if (this.proxyChannel) {
+            this.proxyChannel.removeEventListener('message', this.handleProxyMessage);
+            this.proxyChannel.close();
+            this.proxyChannel = null;
+        }
+
+        if (typeof window !== 'undefined' && window.removeEventListener) {
+            window.removeEventListener('storage', this.handleProxyStorageEvent);
+        }
+
+        this.crdtRegistry?.dispose?.();
+        this.crdtRegistry = null;
+        this.processing = false;
+        this.flushScheduled = false;
+        this.actionLog = null;
+        this.leaderService = null;
+        this.networkStatus = null;
+        this.transport = null;
     }
 
     static _createTabId() {

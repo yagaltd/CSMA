@@ -12,24 +12,38 @@ export class NetworkStatusService {
             : true;
         this.online = defaultOnline;
         this.timer = null;
+        this.subscriptions = [];
+        this.initialized = false;
     }
 
     init() {
+        if (this.initialized) {
+            return;
+        }
+
+        this.initialized = true;
         if (typeof window !== 'undefined') {
             window.addEventListener('online', this.#handleOnline);
             window.addEventListener('offline', this.#handleOffline);
         }
-        this.eventBus?.subscribe('INTENT_NETWORK_STATUS_REFRESH', () => this.refresh().catch((error) => this.#handleError('refresh', error)));
+        if (this.eventBus?.subscribe) {
+            this.subscriptions.push(
+                this.eventBus.subscribe('INTENT_NETWORK_STATUS_REFRESH', () => this.refresh().catch((error) => this.#handleError('refresh', error)))
+            );
+        }
         this.#publishStatus('init', this.online);
         this.#schedulePing();
     }
 
     destroy() {
+        this.initialized = false;
         if (typeof window !== 'undefined') {
             window.removeEventListener('online', this.#handleOnline);
             window.removeEventListener('offline', this.#handleOffline);
         }
         clearTimeout(this.timer);
+        this.timer = null;
+        this.subscriptions.splice(0).forEach((unsubscribe) => unsubscribe?.());
     }
 
     refresh() {

@@ -2,6 +2,8 @@
  * LogAccumulator - Analytics, error tracking, and developer tools
  * Dev panel extracted to separate module for 0KB production overhead
  */
+import { LifecycleScope } from './LifecycleScope.js';
+
 export class LogAccumulator {
     constructor(eventBus) {
         this.eventBus = eventBus;
@@ -23,18 +25,27 @@ export class LogAccumulator {
         this.source = 'csma';
         this.appVersion = window.csma?.config?.version || 'dev';
         this.serverBatchLimit = 200;
+        this.lifecycle = new LifecycleScope('LogAccumulator');
+        this.errorListener = this.handleError.bind(this);
+        this.promiseErrorListener = this.handlePromiseError.bind(this);
+        this.clickTracker = null;
+        this.navigationObserver = null;
+        this.beforeUnloadHandler = null;
+        this.visibilityChangeHandler = null;
+        this.destroyed = false;
+        this.boundaryTimers = new Set();
+        this.activateRuntime();
+    }
 
+    activateRuntime() {
+        this.destroyed = false;
         this.setupTracking();
 
-        // Load dev panel only in development
         if (this.devMode) {
             this.loadDevPanel();
         }
 
-        // Start batch timer
         this.startBatchTimer();
-
-        // Flush on page unload
         this.setupUnloadHandler();
     }
 
@@ -42,6 +53,9 @@ export class LogAccumulator {
         try {
             // Dynamic import - completely tree-shaken in production!
             const { DevPanel } = await import('./devtools/DevPanel.js');
+            if (this.destroyed) {
+                return;
+            }
             this.devPanel = new DevPanel(this);
         } catch (error) {
             console.warn('Failed to load dev panel:', error);
@@ -50,8 +64,8 @@ export class LogAccumulator {
 
     setupTracking() {
         // Error tracking with recovery
-        window.addEventListener('error', this.handleError.bind(this));
-        window.addEventListener('unhandledrejection', this.handlePromiseError.bind(this));
+        this.lifecycle.listen(window, 'error', this.errorListener);
+        this.lifecycle.listen(window, 'unhandledrejection', this.promiseErrorListener);
 
         // CSS change tracking
         this.observeCSSChanges();
@@ -61,13 +75,13 @@ export class LogAccumulator {
         this.trackNavigation();
 
         // Security events
-        this.eventBus.subscribe('SECURITY_VIOLATION', this.logAttack.bind(this));
+        this.lifecycle.subscribe(this.eventBus, 'SECURITY_VIOLATION', this.logAttack.bind(this));
 
         // Contract violations
-        this.eventBus.subscribe('CONTRACT_VIOLATION', this.logContractViolation.bind(this));
+        this.lifecycle.subscribe(this.eventBus, 'CONTRACT_VIOLATION', this.logContractViolation.bind(this));
 
         // Auto-track page views on route changes
-        this.eventBus.subscribe('PAGE_CHANGED', (payload) => {
+        this.lifecycle.subscribe(this.eventBus, 'PAGE_CHANGED', (payload) => {
             this.trackPageView(payload.title || document.title);
         });
     }
@@ -128,12 +142,25 @@ export class LogAccumulator {
         const reloadBtn = document.createElement('button');
         reloadBtn.type = 'button';
         reloadBtn.textContent = 'Reload Page';
-        reloadBtn.addEventListener('click', () => window.location.reload());
 
         const dismissBtn = document.createElement('button');
         dismissBtn.type = 'button';
         dismissBtn.textContent = 'Dismiss';
-        dismissBtn.addEventListener('click', () => boundary.remove());
+        let autoRemoveTimer = null;
+        const removeBoundary = () => {
+            if (autoRemoveTimer) {
+                clearTimeout(autoRemoveTimer);
+                this.boundaryTimers.delete(autoRemoveTimer);
+                autoRemoveTimer = null;
+            }
+            boundary.remove();
+        };
+
+        reloadBtn.addEventListener('click', () => {
+            removeBoundary();
+            window.location.reload();
+        });
+        dismissBtn.addEventListener('click', removeBoundary);
 
         actions.append(reloadBtn, dismissBtn);
         content.appendChild(actions);
@@ -143,7 +170,12 @@ export class LogAccumulator {
 
         // Auto-remove after 10s if not critical
         if (!this.isCriticalError(error)) {
-            setTimeout(() => boundary.remove(), 10000);
+            autoRemoveTimer = setTimeout(() => {
+                this.boundaryTimers.delete(autoRemoveTimer);
+                boundary.remove();
+                autoRemoveTimer = null;
+            }, 10000);
+            this.boundaryTimers.add(autoRemoveTimer);
         }
     }
 
@@ -180,6 +212,7 @@ export class LogAccumulator {
             });
         });
 
+        this.lifecycle.observer(observer);
         observer.observe(document.body, {
             attributes: true,
             attributeOldValue: true,
@@ -189,7 +222,7 @@ export class LogAccumulator {
     }
 
     trackClicks() {
-        document.addEventListener('click', (e) => {
+        this.clickTracker = (e) => {
             const target = e.target.closest('[data-track]');
             if (target) {
                 this.log('click', {
@@ -199,7 +232,8 @@ export class LogAccumulator {
                     timestamp: Date.now()
                 });
             }
-        });
+        };
+        this.lifecycle.listen(document, 'click', this.clickTracker);
     }
 
     trackNavigation() {
@@ -216,10 +250,10 @@ export class LogAccumulator {
             }
         };
 
-        new MutationObserver(checkUrl)
-            .observe(document, { subtree: true, childList: true });
-
-        window.addEventListener('popstate', checkUrl);
+        this.navigationObserver = new MutationObserver(checkUrl);
+        this.lifecycle.observer(this.navigationObserver);
+        this.navigationObserver.observe(document, { subtree: true, childList: true });
+        this.lifecycle.listen(window, 'popstate', checkUrl);
     }
 
     logAttack(details) {
@@ -289,6 +323,11 @@ export class LogAccumulator {
      * Initialize analytics with endpoint
      */
     init(options = {}) {
+        if (this.destroyed) {
+            this.lifecycle = new LifecycleScope('LogAccumulator');
+            this.activateRuntime();
+        }
+
         if (options.endpoint) {
             this.analyticsEndpoint = options.endpoint;
         } else if (!this.analyticsEndpoint) {
@@ -455,6 +494,9 @@ export class LogAccumulator {
      * Start batch timer
      */
     startBatchTimer() {
+        if (this.batchTimer) {
+            clearInterval(this.batchTimer);
+        }
         this.batchTimer = setInterval(() => {
             if (this.analyticsQueue.length > 0) {
                 this.flush();
@@ -625,17 +667,19 @@ export class LogAccumulator {
      */
     setupUnloadHandler() {
         // Flush analytics when page is about to unload
-        window.addEventListener('beforeunload', () => {
+        this.beforeUnloadHandler = () => {
             this.flush();
-        });
+        };
+        this.lifecycle.listen(window, 'beforeunload', this.beforeUnloadHandler);
 
         // Also flush on visibility change (mobile/tab switching)
         if (document.visibilityState) {
-            document.addEventListener('visibilitychange', () => {
+            this.visibilityChangeHandler = () => {
                 if (document.visibilityState === 'hidden') {
                     this.flush();
                 }
-            });
+            };
+            this.lifecycle.listen(document, 'visibilitychange', this.visibilityChangeHandler);
         }
     }
 
@@ -771,5 +815,25 @@ export class LogAccumulator {
             logs: this.logs,
             sessionId: this.getSessionId()
         };
+    }
+
+    destroy() {
+        if (this.destroyed) {
+            return;
+        }
+
+        this.destroyed = true;
+
+        if (this.batchTimer) {
+            clearInterval(this.batchTimer);
+            this.batchTimer = null;
+        }
+
+        this.boundaryTimers.forEach((timerId) => clearTimeout(timerId));
+        this.boundaryTimers.clear();
+        document.querySelectorAll('.error-boundary').forEach((boundary) => boundary.remove());
+        this.devPanel?.destroy?.();
+        this.devPanel = null;
+        this.lifecycle.destroy();
     }
 }

@@ -236,10 +236,18 @@ class ThreadManager {
 
 // Singleton instance
 export const threadManager = new ThreadManager();
+const handleThreadManagerBeforeUnload = () => {
+    threadManager.terminateAll();
+};
 
 // Cleanup on page unload
 if (typeof window !== 'undefined') {
-    window.addEventListener('beforeunload', () => {
-        threadManager.terminateAll();
-    });
+    window.addEventListener('beforeunload', handleThreadManagerBeforeUnload);
+}
+
+export function destroyThreadManager() {
+    threadManager.terminateAll();
+    if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeunload', handleThreadManagerBeforeUnload);
+    }
 }

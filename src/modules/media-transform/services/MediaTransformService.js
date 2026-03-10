@@ -7,14 +7,21 @@ export class MediaTransformService {
         this.eventBus = eventBus;
         this.options = { ...DEFAULT_OPTIONS, ...options };
         this.adapters = options.adapters || this.#createDefaultAdapters();
+        this.subscriptions = [];
     }
 
     init() {
-        if (this.eventBus) {
-            this.eventBus.subscribe('INTENT_MEDIA_TRANSFORM', (payload) => {
-                return this.transform(payload).catch((error) => this.#handleError('transform', error));
-            });
+        if (this.eventBus?.subscribe && this.subscriptions.length === 0) {
+            this.subscriptions.push(
+                this.eventBus.subscribe('INTENT_MEDIA_TRANSFORM', (payload) => {
+                    return this.transform(payload).catch((error) => this.#handleError('transform', error));
+                })
+            );
         }
+    }
+
+    destroy() {
+        this.subscriptions.splice(0).forEach((unsubscribe) => unsubscribe?.());
     }
 
     async transform({ blob, format = 'image/webp', quality = 0.85 }) {
