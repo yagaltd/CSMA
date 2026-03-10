@@ -1,0 +1,108 @@
+/**
+ * Pin Input Component CSS
+ * OTP-style separate digit input boxes
+ */
+
+.pin-input {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-sm);
+}
+
+.pin-input-slot {
+  position: relative;
+  width: 2.5rem;
+  height: 3rem;
+}
+
+.pin-input-field {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  background: var(--fx-color-surface);
+  border: 2px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-md);
+  font-family: var(--fx-font-family-mono);
+  font-size: var(--fx-font-size-xl);
+  font-weight: var(--fx-font-weight-semibold);
+  color: var(--fx-color-fg);
+  text-align: center;
+  caret-color: var(--fx-color-primary);
+  transition: all var(--fx-transition-fast);
+}
+
+.pin-input-field:hover {
+  border-color: var(--fx-color-fg-muted);
+}
+
+.pin-input-field:focus {
+  outline: none;
+  border-color: var(--fx-color-primary);
+  box-shadow: 0 0 0 3px hsl(222.2 47.4% 11.2% / 0.1);
+}
+
+.pin-input-field:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pin-input-field[data-state="error"] {
+  border-color: var(--fx-color-danger);
+}
+
+.pin-input-field[data-state="success"] {
+  border-color: var(--fx-color-success);
+}
+
+.pin-input-field[data-filled="true"] {
+  background: var(--fx-color-bg-muted);
+}
+
+/* Separator between groups */
+.pin-input-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  color: var(--fx-color-fg-muted);
+  font-weight: var(--fx-font-weight-bold);
+}
+
+/* Masked variant (shows dots) */
+.pin-input[data-masked="true"] .pin-input-field {
+  -webkit-text-security: disc;
+  text-security: disc;
+}
+
+/* Size variants */
+.pin-input[data-size="sm"] .pin-input-slot {
+  width: 2rem;
+  height: 2.5rem;
+}
+
+.pin-input[data-size="sm"] .pin-input-field {
+  font-size: var(--fx-font-size-lg);
+}
+
+.pin-input[data-size="lg"] .pin-input-slot {
+  width: 3rem;
+  height: 3.5rem;
+}
+
+.pin-input[data-size="lg"] .pin-input-field {
+  font-size: var(--fx-font-size-2xl);
+}
+
+/* OTP autofill styling */
+.pin-input-field:-webkit-autofill,
+.pin-input-field:-webkit-autofill:hover,
+.pin-input-field:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--fx-color-surface) inset;
+  -webkit-text-fill-color: var(--fx-color-fg);
+  caret-color: var(--fx-color-primary);
+}
+
+/* Complete state */
+.pin-input[data-complete="true"] .pin-input-field {
+  border-color: var(--fx-color-success);
+}

@@ -9,13 +9,29 @@ import { MetaManager } from './runtime/MetaManager.js';
 import { LogAccumulator } from './runtime/LogAccumulator.js';
 import { CrossTabLeader } from './runtime/CrossTabLeader.js';
 import { ChannelManager } from './runtime/ChannelManager.js';
+import { CommandRegistry } from './runtime/CommandRegistry.js';
+import { RouteRegistry } from './runtime/RouteRegistry.js';
+import { NavigationRegistry } from './runtime/NavigationRegistry.js';
+import { PanelRegistry } from './runtime/PanelRegistry.js';
+import { AdapterRegistry } from './runtime/AdapterRegistry.js';
 import { ExampleService } from './services/ExampleService.js';
 import { LLMService } from './modules/llm/services/LLMService.js';
 import { PlatformService } from './services/PlatformService.js';
 import { FEATURES, SEARCH_CONFIG, STATIC_RENDER_CONFIG, PROTOCOL } from './config.js';
 import { initUI } from './ui/init.js';
 
-const CORE_SERVICE_NAMES = new Set(['leader', 'example', 'llm', 'platform', 'channels']);
+const CORE_SERVICE_NAMES = new Set([
+    'leader',
+    'example',
+    'llm',
+    'platform',
+    'channels',
+    'commandRegistry',
+    'routeRegistry',
+    'navigationRegistry',
+    'panelRegistry',
+    'adapterRegistry'
+]);
 
 let eventBus = null;
 let serviceManager = null;
@@ -28,6 +44,7 @@ let channelManager = null;
 let metaManager = null;
 let logAccumulator = null;
 let leaderService = null;
+let registries = null;
 let uiCleanup = null;
 let themeToggleCleanup = null;
 let authAccessSubscription = null;
@@ -47,6 +64,7 @@ function syncWindowRuntime() {
         leader: leaderService,
         metaManager,
         logAccumulator,
+        registries,
         router: routerServiceRef,
         i18n: i18nServiceRef,
         auth: authServiceRef,
@@ -66,11 +84,18 @@ function ensureRuntime() {
     eventBus.contracts = Contracts;
 
     serviceManager = new ServiceManager(eventBus);
-    moduleManager = new ModuleManager(eventBus, serviceManager);
     channelManager = new ChannelManager(eventBus);
     metaManager = new MetaManager(eventBus);
     logAccumulator = new LogAccumulator(eventBus);
     leaderService = new CrossTabLeader(eventBus);
+    registries = {
+        commands: new CommandRegistry({ eventBus, serviceManager }),
+        routes: new RouteRegistry({ eventBus }),
+        navigation: new NavigationRegistry({ eventBus }),
+        panels: new PanelRegistry({ eventBus }),
+        adapters: new AdapterRegistry({ eventBus, serviceManager })
+    };
+    moduleManager = new ModuleManager(eventBus, serviceManager, registries);
 
     serviceManager.register('leader', leaderService, {
         version: '1.0.0',
@@ -82,6 +107,26 @@ function ensureRuntime() {
     serviceManager.register('channels', channelManager, {
         version: '1.0.0',
         description: 'Channel subscription orchestration'
+    });
+    serviceManager.register('commandRegistry', registries.commands, {
+        version: '1.0.0',
+        description: 'Module-owned command contribution registry'
+    });
+    serviceManager.register('routeRegistry', registries.routes, {
+        version: '1.0.0',
+        description: 'Module-owned route contribution registry'
+    });
+    serviceManager.register('navigationRegistry', registries.navigation, {
+        version: '1.0.0',
+        description: 'Module-owned navigation contribution registry'
+    });
+    serviceManager.register('panelRegistry', registries.panels, {
+        version: '1.0.0',
+        description: 'Module-owned panel contribution registry'
+    });
+    serviceManager.register('adapterRegistry', registries.adapters, {
+        version: '1.0.0',
+        description: 'Module-owned adapter contribution registry'
     });
 
     leaderService.init();
@@ -216,6 +261,7 @@ async function destroyApp() {
     metaManager = null;
     logAccumulator = null;
     leaderService = null;
+    registries = null;
     routerServiceRef = null;
     i18nServiceRef = null;
     authServiceRef = null;
@@ -230,6 +276,7 @@ async function destroyApp() {
         leader: null,
         metaManager: null,
         logAccumulator: null,
+        registries: null,
         router: null,
         i18n: null,
         auth: null,
@@ -281,6 +328,7 @@ async function loadOptionalFeatures() {
             routerServiceRef = routerService;
             window.csma = window.csma || {};
             window.csma.router = routerService;
+            registries?.routes?.attachRouter?.(routerService);
 
             // Example routes (customize as needed)
             if (routerService && routerService.register) {

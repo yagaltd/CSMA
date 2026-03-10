@@ -1,0 +1,154 @@
+/* CSMA Form Primitives - Type I (Pure CSS) */
+
+/* Field Wrapper */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-xs);
+}
+
+/* Label */
+.form-label {
+  font-size: var(--fx-font-size-sm);
+  font-weight: var(--fx-font-weight-medium);
+  color: var(--fx-color-fg);
+  line-height: var(--fx-line-height-tight);
+}
+
+.form-label[data-required="true"]::after {
+  content: " *";
+  color: var(--fx-color-danger);
+}
+
+/* Description */
+.form-description {
+  font-size: var(--fx-font-size-xs);
+  color: var(--fx-color-fg-muted);
+  line-height: var(--fx-line-height-base);
+}
+
+/* Error Message */
+.form-error {
+  font-size: var(--fx-font-size-xs);
+  color: var(--fx-color-danger);
+  line-height: var(--fx-line-height-base);
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-2xs);
+}
+
+.form-error::before {
+  content: "";
+  display: inline-block;
+  width: 0.875rem;
+  height: 0.875rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23dc2626'%3E%3Cpath fill-rule='evenodd' d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+  flex-shrink: 0;
+}
+
+/* Field States */
+.form-field[data-state="error"] .form-label {
+  color: var(--fx-color-danger);
+}
+
+.form-field[data-state="success"] .form-label {
+  color: var(--fx-color-success);
+}
+
+/* Form Group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-lg);
+}
+
+/* Form Row (horizontal layout) */
+.form-row {
+  display: flex;
+  gap: var(--fx-space-lg);
+}
+
+.form-row > .form-field {
+  flex: 1;
+}
+
+/* Inline Form */
+.form-inline {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--fx-space-md);
+  flex-wrap: wrap;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: var(--fx-space-md);
+  margin-top: var(--fx-space-lg);
+}
+
+.form-actions[data-align="left"] {
+  justify-content: flex-start;
+}
+
+.form-actions[data-align="center"] {
+  justify-content: center;
+}
+
+.form-actions[data-align="right"] {
+  justify-content: flex-end;
+}
+
+.form-actions[data-align="between"] {
+  justify-content: space-between;
+}
+
+/* Form Divider */
+.form-divider {
+  border: none;
+  border-top: 1px solid var(--fx-color-border);
+  margin: var(--fx-space-xl) 0;
+}
+
+/* Form Section */
+.form-section {
+  padding: var(--fx-space-xl);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-lg);
+  background: var(--fx-color-surface);
+}
+
+.form-section-title {
+  font-size: var(--fx-font-size-lg);
+  font-weight: var(--fx-font-weight-semibold);
+  margin-bottom: var(--fx-space-lg);
+  color: var(--fx-color-fg);
+}
+
+.form-section-description {
+  font-size: var(--fx-font-size-sm);
+  color: var(--fx-color-fg-muted);
+  margin-bottom: var(--fx-space-lg);
+}
+
+/* Disabled State */
+.form-field[disabled],
+.form-field[data-disabled="true"] {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .form-row {
+    flex-direction: column;
+    gap: var(--fx-space-lg);
+  }
+
+  .form-inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -55,9 +55,9 @@
 
     <section>
         <h2>Variants</h2>
-        <button class="button" data-variant="secondary" onclick="openAlertDialog('alert-info')">Info</button>
-        <button class="button" data-variant="outline" onclick="openAlertDialog('alert-warning')">Warning</button>
-        <button class="button" data-variant="destructive" onclick="openAlertDialog('alert-danger')">Danger</button>
+        <button class="button" data-variant="secondary" data-intent-event="INTENT_ALERT_DIALOG_OPEN" data-intent-id="alert-info">Info</button>
+        <button class="button" data-variant="outline" data-intent-event="INTENT_ALERT_DIALOG_OPEN" data-intent-id="alert-warning">Warning</button>
+        <button class="button" data-variant="destructive" data-intent-event="INTENT_ALERT_DIALOG_OPEN" data-intent-id="alert-danger">Danger</button>
     </section>
 
     <!-- Info Alert -->
@@ -71,10 +71,10 @@
                 </div>
             </div>
             <div class="alert-dialog-footer">
-                <button class="alert-dialog-cancel" onclick="closeAlertDialog('alert-info')">Cancel</button>
+                <button class="alert-dialog-cancel" data-intent-event="INTENT_ALERT_DIALOG_CLOSE" data-intent-id="alert-info">Cancel</button>
                 <button class="alert-dialog-action"
                     style="background: var(--fx-color-primary); color: var(--fx-color-on-primary);"
-                    onclick="closeAlertDialog('alert-info')">Continue</button>
+                    data-intent-event="INTENT_ALERT_DIALOG_CLOSE" data-intent-id="alert-info">Continue</button>
             </div>
         </div>
     </div>
@@ -90,9 +90,9 @@
                 </div>
             </div>
             <div class="alert-dialog-footer">
-                <button class="alert-dialog-cancel" onclick="closeAlertDialog('alert-warning')">Cancel</button>
+                <button class="alert-dialog-cancel" data-intent-event="INTENT_ALERT_DIALOG_CLOSE" data-intent-id="alert-warning">Cancel</button>
                 <button class="alert-dialog-action" style="background: var(--fx-color-warning);"
-                    onclick="closeAlertDialog('alert-warning')">Proceed</button>
+                    data-intent-event="INTENT_ALERT_DIALOG_CLOSE" data-intent-id="alert-warning">Proceed</button>
             </div>
         </div>
     </div>
@@ -108,8 +108,8 @@
                 </div>
             </div>
             <div class="alert-dialog-footer">
-                <button class="alert-dialog-cancel" onclick="closeAlertDialog('alert-danger')">Cancel</button>
-                <button class="alert-dialog-action" onclick="closeAlertDialog('alert-danger')">Delete</button>
+                <button class="alert-dialog-cancel" data-intent-event="INTENT_ALERT_DIALOG_CLOSE" data-intent-id="alert-danger">Cancel</button>
+                <button class="alert-dialog-action" data-intent-event="INTENT_ALERT_DIALOG_CLOSE" data-intent-id="alert-danger">Delete</button>
             </div>
         </div>
     </div>
@@ -119,11 +119,24 @@
         <p>Alert Dialog Component - CSMA UI Library</p>
     </footer>
     <script type="module">
-        import { openAlertDialog, closeAlertDialog } from './alert-dialog.js';
-        
-        // Expose functions for onclick handlers
-        window.openAlertDialog = openAlertDialog;
-        window.closeAlertDialog = closeAlertDialog;
+        import { EventBus } from '../../../runtime/EventBus.js';
+        import { Contracts } from '../../../runtime/Contracts.js';
+        import { initAlertDialogSystem } from './alert-dialog.js';
+
+        const eventBus = new EventBus();
+        eventBus.contracts = Contracts;
+        initAlertDialogSystem(eventBus);
+
+        document.body.addEventListener('click', (event) => {
+            const target = event.target.closest('[data-intent-event]');
+            if (!target) return;
+
+            event.preventDefault();
+            eventBus.publish(target.dataset.intentEvent, {
+                id: target.dataset.intentId,
+                timestamp: Date.now()
+            });
+        });
     </script>
 </body>
 

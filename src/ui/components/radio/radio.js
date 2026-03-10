@@ -12,7 +12,8 @@
 export function initRadioSystem(eventBus) {
     if (!eventBus) return () => { };
 
-    const groups = document.querySelectorAll('.radio-group');
+    // Support both CSS class and data attribute selectors
+    const groups = document.querySelectorAll('.radio-group, [data-radio-group]');
     const cleanups = [];
 
     groups.forEach(group => {

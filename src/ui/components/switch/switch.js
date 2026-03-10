@@ -12,7 +12,8 @@
 export function initSwitchSystem(eventBus) {
     if (!eventBus) return () => { };
 
-    const groups = document.querySelectorAll('.switch-group');
+    // Support both CSS class and data attribute selectors
+    const groups = document.querySelectorAll('.switch-group, [data-switch-group]');
     const cleanups = [];
 
     groups.forEach(group => {

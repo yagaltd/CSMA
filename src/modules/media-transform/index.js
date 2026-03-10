@@ -1,10 +1,12 @@
 import { MediaTransformService } from './services/MediaTransformService.js';
 
 export const manifest = {
+    id: 'media-transform',
     name: 'Media Transform',
     version: '1.0.0',
     description: 'Client-side media conversions using canvas/Web APIs',
     dependencies: [],
+    services: ['mediaTransform'],
     bundleSize: '+5KB',
     contracts: [
         'INTENT_MEDIA_TRANSFORM',

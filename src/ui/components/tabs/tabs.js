@@ -27,8 +27,8 @@ export function initTabsSystem(eventBus) {
     // Track initialized tabs
     const tabsCleanups = new Map();
 
-    // Initialize all tabs on page
-    const containers = document.querySelectorAll('.tabs-container');
+    // Initialize all tabs on page - support both CSS class and data attribute
+    const containers = document.querySelectorAll('.tabs-container, .tabs[data-tabs], [data-tabs]');
     containers.forEach(container => {
         const cleanup = initTabsWithEventBus(container, eventBus);
         if (container.id) {
@@ -149,7 +149,7 @@ export function switchTab(container, tabIndex, tabId = null, eventBus = null) {
 
     // Get previous active tab
     const previousTab = Array.from(tabs).find(tab => tab.getAttribute('aria-selected') === 'true');
-    const previousTabId = previousTab ? (previousTab.dataset.tabId || previousTab.id) : null;
+    const previousTabId = previousTab ? (previousTab.dataset.tabId || previousTab.id) : undefined;
 
     tabs.forEach((tab, index) => {
         const isSelected = index === tabIndex;
@@ -162,12 +162,14 @@ export function switchTab(container, tabIndex, tabId = null, eventBus = null) {
 
     // Publish tab switched event if EventBus is available
     if (eventBus) {
-        eventBus.publish('TAB_SWITCHED', {
+        const payload = {
             containerId,
             tabId: tabId || `tab-${tabIndex}`,
-            previousTab: previousTabId,
             timestamp: Date.now()
-        });
+        };
+        if (previousTabId) {
+            payload.previousTab = previousTabId;
+        }
+        eventBus.publish('TAB_SWITCHED', payload);
     }
 }
-

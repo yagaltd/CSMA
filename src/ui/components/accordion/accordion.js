@@ -24,7 +24,8 @@ export function initAccordionSystem(eventBus) {
     }
 
     const cleanups = new Map();
-    const accordions = document.querySelectorAll('.accordion');
+    // Support both CSS class and data attribute selectors
+    const accordions = document.querySelectorAll('.accordion, [data-accordion]');
 
     accordions.forEach(accordion => {
         const cleanup = initAccordionWithEventBus(accordion, eventBus);

@@ -35,7 +35,7 @@ export function initDialogSystem(eventBus) {
 
     const unsubscribeOpen = eventBus.subscribe('INTENT_MODAL_OPEN', (payload) => {
         try {
-            openDialog(payload.modalId);
+            openDialog(payload.id || payload.modalId);
         } catch (error) {
             console.error('[Dialog] Failed to open dialog:', error);
         }
@@ -43,7 +43,7 @@ export function initDialogSystem(eventBus) {
 
     const unsubscribeClose = eventBus.subscribe('INTENT_MODAL_CLOSE', (payload) => {
         try {
-            closeDialog(payload.modalId, payload.reason || 'button');
+            closeDialog(payload.id || payload.modalId, payload.reason || 'button');
         } catch (error) {
             console.error('[Dialog] Failed to close dialog:', error);
         }
@@ -74,8 +74,7 @@ function initDialog(overlay, eventBus) {
     const handleOverlayClick = (e) => {
         if (e.target === overlay && overlay.dataset.state === 'open') {
             eventBus.publish('INTENT_MODAL_CLOSE', {
-                modalId: dialogId,
-                reason: 'backdrop',
+                id: dialogId,
                 timestamp: Date.now()
             });
         }
@@ -87,8 +86,7 @@ function initDialog(overlay, eventBus) {
     if (closeBtn) {
         const handleCloseClick = () => {
             eventBus.publish('INTENT_MODAL_CLOSE', {
-                modalId: dialogId,
-                reason: 'button',
+                id: dialogId,
                 timestamp: Date.now()
             });
         };
@@ -100,8 +98,7 @@ function initDialog(overlay, eventBus) {
     const handleEscape = (e) => {
         if (e.key === 'Escape' && overlay.dataset.state === 'open') {
             eventBus.publish('INTENT_MODAL_CLOSE', {
-                modalId: dialogId,
-                reason: 'escape',
+                id: dialogId,
                 timestamp: Date.now()
             });
         }

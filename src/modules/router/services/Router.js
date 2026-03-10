@@ -37,6 +37,14 @@ export class Router {
     }
 
     /**
+     * Remove a registered route
+     */
+    unregister(path) {
+        this.routes.delete(path);
+        return this;
+    }
+
+    /**
      * Register global navigation guard
      */
     beforeEach(guard) {

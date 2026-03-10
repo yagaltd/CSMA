@@ -1,0 +1,318 @@
+/**
+ * Resizable Component CSS
+ * Panels with draggable resize handles for split views
+ */
+
+.resizable {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.resizable[data-orientation="vertical"] {
+  flex-direction: column;
+}
+
+.resizable-panel {
+  flex: 1;
+  overflow: auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+.resizable-panel[data-collapsed="true"] {
+  flex: 0 0 auto !important;
+}
+
+/* Handle */
+.resizable-handle {
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--fx-color-border);
+  transition: background var(--fx-transition-fast);
+  z-index: 10;
+}
+
+.resizable[data-orientation="horizontal"] .resizable-handle {
+  width: 1px;
+  cursor: col-resize;
+}
+
+.resizable[data-orientation="vertical"] .resizable-handle {
+  height: 1px;
+  cursor: row-resize;
+}
+
+.resizable-handle:hover,
+.resizable-handle[data-active="true"] {
+  background: var(--fx-color-primary);
+}
+
+/* Drag indicator */
+.resizable-handle::after {
+  content: '';
+  position: absolute;
+  background: transparent;
+}
+
+.resizable[data-orientation="horizontal"] .resizable-handle::after {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 2rem;
+  border-radius: 2px;
+  background: var(--fx-color-fg-muted);
+  opacity: 0;
+  transition: opacity var(--fx-transition-fast);
+}
+
+.resizable[data-orientation="vertical"] .resizable-handle::after {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2rem;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--fx-color-fg-muted);
+  opacity: 0;
+  transition: opacity var(--fx-transition-fast);
+}
+
+.resizable-handle:hover::after,
+.resizable-handle[data-active="true"]::after {
+  opacity: 1;
+}
+
+/* Drag area for easier grabbing */
+.resizable-handle-drag {
+  position: absolute;
+  z-index: 1;
+}
+
+.resizable[data-orientation="horizontal"] .resizable-handle-drag {
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  right: -4px;
+}
+
+.resizable[data-orientation="vertical"] .resizable-handle-drag {
+  left: 0;
+  right: 0;
+  top: -4px;
+  bottom: -4px;
+}
+
+/* With handle knob */
+.resizable-handle[data-with-handle="true"] {
+  background: var(--fx-color-bg-muted);
+}
+
+.resizable[data-orientation="horizontal"] .resizable-handle[data-with-handle="true"] {
+  width: 8px;
+}
+
+.resizable[data-orientation="vertical"] .resizable-handle[data-with-handle="true"] {
+  height: 8px;
+}
+
+/* Collapsed panel indicator */
+.resizable-panel-collapsible {
+  position: relative;
+}
+
+.resizable-panel-collapse-btn {
+  position: absolute;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-sm);
+  color: var(--fx-color-fg-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: all var(--fx-transition-fast);
+}
+
+.resizable-panel:hover .resizable-panel-collapse-btn {
+  opacity: 1;
+}
+
+.resizable-panel-collapse-btn:hover {
+  background: var(--fx-color-bg-muted);
+  color: var(--fx-color-fg);
+}
+
+/* Position collapse button based on orientation */
+.resizable[data-orientation="horizontal"] .resizable-panel:first-child .resizable-panel-collapse-btn {
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.resizable[data-orientation="horizontal"] .resizable-panel:last-child .resizable-panel-collapse-btn {
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.resizable[data-orientation="vertical"] .resizable-panel:first-child .resizable-panel-collapse-btn {
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.resizable[data-orientation="vertical"] .resizable-panel:last-child .resizable-panel-collapse-btn {
+  top: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Size constraints (applied via JS) */
+.resizable-panel[data-min-size] {
+  /* min-width/min-height set via JS */
+}
+
+.resizable-panel[data-max-size] {
+  /* max-width/max-height set via JS */
+}
+
+/* Imperative drag overlay */
+.resizable-drag-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  cursor: inherit;
+}
+
+/* Variants */
+.resizable[data-variant="bordered"] .resizable-panel {
+  border: 1px solid var(--fx-color-border);
+}
+
+.resizable[data-variant="bordered"] .resizable-handle {
+  background: transparent;
+}
+
+.resizable[data-variant="bordered"][data-orientation="horizontal"] .resizable-handle {
+  width: 0;
+}
+
+.resizable[data-variant="bordered"][data-orientation="vertical"] .resizable-handle {
+  height: 0;
+}
+
+/* Auto-save indicator */
+.resizable[data-auto-save="true"]::before {
+  content: attr(data-saved-indicator);
+  position: absolute;
+  top: var(--fx-space-xs);
+  right: var(--fx-space-xs);
+  padding: var(--fx-space-2xs) var(--fx-space-xs);
+  background: var(--fx-color-success);
+  color: var(--fx-color-on-success);
+  font-size: var(--fx-font-size-xs);
+  border-radius: var(--fx-radius-sm);
+  opacity: 0;
+  transition: opacity var(--fx-transition-fast);
+  z-index: 100;
+}
+
+.resizable[data-saving="true"]::before {
+  opacity: 1;
+}
+
+/* Focus indicator for keyboard navigation */
+.resizable-handle:focus {
+  outline: none;
+}
+
+.resizable-handle:focus-visible {
+  outline: 2px solid var(--fx-color-primary);
+  outline-offset: 2px;
+}
+
+/* Snap points indicator */
+.resizable-handle[data-snap-points] {
+  position: relative;
+}
+
+.resizable-handle[data-snap-points]::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--fx-color-fg-muted);
+  opacity: 0;
+  transition: opacity var(--fx-transition-fast);
+}
+
+.resizable[data-orientation="horizontal"] .resizable-handle[data-snap-points]::before {
+  width: 4px;
+  height: 1rem;
+  border-radius: 2px;
+}
+
+.resizable[data-orientation="vertical"] .resizable-handle[data-snap-points]::before {
+  width: 1rem;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.resizable-handle[data-snap-active="true"]::before {
+  opacity: 1;
+  background: var(--fx-color-primary);
+}
+
+/* Resize animation */
+.resizable-panel {
+  transition: flex 0.15s ease-out;
+}
+
+/* Handle hover feedback */
+.resizable-handle[data-dragging="true"] {
+  background: var(--fx-color-primary);
+}
+
+.resizable-handle[data-dragging="true"]::after {
+  opacity: 1;
+  background: var(--fx-color-on-primary);
+}
+
+/* Touch-friendly larger handles */
+@media (pointer: coarse) {
+  .resizable[data-orientation="horizontal"] .resizable-handle {
+    width: 8px;
+  }
+
+  .resizable[data-orientation="vertical"] .resizable-handle {
+    height: 8px;
+  }
+
+  .resizable-handle[data-with-handle="true"] {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .resizable-panel {
+    transition: none;
+  }
+
+  .resizable-handle,
+  .resizable-panel-collapse-btn {
+    transition: none;
+  }
+}

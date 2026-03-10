@@ -53,7 +53,8 @@ export function initProgressSystem(eventBus) {
  */
 export function setProgress(container, percentage) {
     const bar = container.querySelector('.progress-bar');
-    const label = container.querySelector('.progress-percentage');
+    const label = container.querySelector('.progress-percentage')
+        || container.parentElement?.querySelector('.progress-percentage');
 
     const value = Math.min(100, Math.max(0, percentage));
 

@@ -1,0 +1,129 @@
+/**
+ * Hover Card Component CSS
+ * Card that appears on hover, similar to tooltip but richer content
+ */
+
+.hover-card-container {
+  position: relative;
+  display: inline-block;
+}
+
+.hover-card-trigger {
+  cursor: pointer;
+  outline: none;
+}
+
+.hover-card-trigger:focus-visible {
+  outline: 2px solid var(--fx-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--fx-radius-sm);
+}
+
+.hover-card {
+  position: absolute;
+  z-index: var(--fx-z-popover);
+  min-width: 200px;
+  max-width: 320px;
+  padding: var(--fx-space-lg);
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-lg);
+  box-shadow: var(--fx-shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(4px);
+  transition: opacity var(--fx-transition-fast), 
+              transform var(--fx-transition-fast),
+              visibility var(--fx-transition-fast);
+}
+
+.hover-card[data-state="open"] {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Placement variants */
+.hover-card[data-placement="top"] {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  margin-bottom: var(--fx-space-xs);
+}
+
+.hover-card[data-placement="top"][data-state="open"] {
+  transform: translateX(-50%) translateY(0);
+}
+
+.hover-card[data-placement="bottom"] {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  margin-top: var(--fx-space-xs);
+}
+
+.hover-card[data-placement="bottom"][data-state="open"] {
+  transform: translateX(-50%) translateY(0);
+}
+
+.hover-card[data-placement="left"] {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(-8px);
+  margin-right: var(--fx-space-xs);
+}
+
+.hover-card[data-placement="left"][data-state="open"] {
+  transform: translateY(-50%) translateX(0);
+}
+
+.hover-card[data-placement="right"] {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%) translateX(8px);
+  margin-left: var(--fx-space-xs);
+}
+
+.hover-card[data-placement="right"][data-state="open"] {
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Content structure */
+.hover-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-sm);
+  margin-bottom: var(--fx-space-sm);
+}
+
+.hover-card-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--fx-radius-full);
+  object-fit: cover;
+}
+
+.hover-card-title {
+  font-size: var(--fx-font-size-sm);
+  font-weight: var(--fx-font-weight-semibold);
+  color: var(--fx-color-fg);
+}
+
+.hover-card-subtitle {
+  font-size: var(--fx-font-size-xs);
+  color: var(--fx-color-fg-muted);
+}
+
+.hover-card-body {
+  font-size: var(--fx-font-size-sm);
+  color: var(--fx-color-fg-muted);
+  line-height: var(--fx-line-height-base);
+}
+
+.hover-card-footer {
+  display: flex;
+  gap: var(--fx-space-sm);
+  margin-top: var(--fx-space-md);
+  padding-top: var(--fx-space-sm);
+  border-top: 1px solid var(--fx-color-border);
+}

@@ -24,7 +24,8 @@ export function initDropdownSystem(eventBus) {
     }
 
     const cleanups = new Map();
-    const dropdowns = document.querySelectorAll('.dropdown');
+    // Support both CSS class and data attribute selectors
+    const dropdowns = document.querySelectorAll('.dropdown, [data-dropdown]');
 
     dropdowns.forEach(dropdown => {
         const cleanup = initDropdownWithEventBus(dropdown, eventBus);

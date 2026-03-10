@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll Area Component - CSMA Demo</title>
+  <link rel="stylesheet" href="../../../css/main.css">
+  <style>
+    body {
+      padding: var(--fx-space-2xl);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .demo-section {
+      margin-bottom: var(--fx-space-2xl);
+    }
+    .demo-section h3 {
+      margin-bottom: var(--fx-space-md);
+      color: var(--fx-color-fg-muted);
+      font-size: var(--fx-font-size-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .demo-box {
+      border: 1px solid var(--fx-color-border);
+      border-radius: var(--fx-radius-lg);
+    }
+    .demo-item {
+      padding: var(--fx-space-md) var(--fx-space-lg);
+      border-bottom: 1px solid var(--fx-color-border);
+    }
+    .demo-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Scroll Area Component</h1>
+  <p style="color: var(--fx-color-fg-muted); margin-bottom: var(--fx-space-xl);">
+    Custom scrollable container with styled scrollbars. Type I component (pure CSS).
+  </p>
+
+  <div class="demo-section">
+    <h3>Default Vertical Scroll</h3>
+    <div class="demo-box" style="height: 200px;">
+      <div class="scroll-area" style="height: 100%;">
+        <div class="scroll-area-viewport">
+          <div class="scroll-area-content">
+            <div class="demo-item">Item 1 - Scroll down to see more content</div>
+            <div class="demo-item">Item 2 - This container has a custom scrollbar</div>
+            <div class="demo-item">Item 3 - The scrollbar matches the theme</div>
+            <div class="demo-item">Item 4</div>
+            <div class="demo-item">Item 5</div>
+            <div class="demo-item">Item 6</div>
+            <div class="demo-item">Item 7</div>
+            <div class="demo-item">Item 8</div>
+            <div class="demo-item">Item 9</div>
+            <div class="demo-item">Item 10 - Last item</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Horizontal Scroll</h3>
+    <div class="demo-box" style="width: 100%;">
+      <div class="scroll-area" data-direction="horizontal">
+        <div class="scroll-area-viewport">
+          <div style="display: flex; gap: var(--fx-space-md); padding: var(--fx-space-lg); width: max-content;">
+            <div class="card" style="min-width: 200px; padding: var(--fx-space-lg);">
+              <div class="card-title">Card 1</div>
+              <p style="color: var(--fx-color-fg-muted);">Horizontal scroll</p>
+            </div>
+            <div class="card" style="min-width: 200px; padding: var(--fx-space-lg);">
+              <div class="card-title">Card 2</div>
+              <p style="color: var(--fx-color-fg-muted);">Scroll right</p>
+            </div>
+            <div class="card" style="min-width: 200px; padding: var(--fx-space-lg);">
+              <div class="card-title">Card 3</div>
+              <p style="color: var(--fx-color-fg-muted);">More cards</p>
+            </div>
+            <div class="card" style="min-width: 200px; padding: var(--fx-space-lg);">
+              <div class="card-title">Card 4</div>
+              <p style="color: var(--fx-color-fg-muted);">Keep scrolling</p>
+            </div>
+            <div class="card" style="min-width: 200px; padding: var(--fx-space-lg);">
+              <div class="card-title">Card 5</div>
+              <p style="color: var(--fx-color-fg-muted);">Last card</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Hover Scrollbar (appears on hover)</h3>
+    <div class="demo-box" style="height: 150px;">
+      <div class="scroll-area" data-scrollbar="hover" style="height: 100%;">
+        <div class="scroll-area-viewport">
+          <div class="scroll-area-content">
+            <div class="demo-item">Hover over this area to see the scrollbar</div>
+            <div class="demo-item">Item 2</div>
+            <div class="demo-item">Item 3</div>
+            <div class="demo-item">Item 4</div>
+            <div class="demo-item">Item 5</div>
+            <div class="demo-item">Item 6</div>
+            <div class="demo-item">Item 7</div>
+            <div class="demo-item">Item 8</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>With Scroll Shadow</h3>
+    <div class="demo-box" style="height: 180px; position: relative;">
+      <div class="scroll-area" data-shadow="true" style="height: 100%;">
+        <div class="scroll-area-viewport">
+          <div class="scroll-area-content">
+            <div class="demo-item">Item 1 - Notice the gradient shadows at top and bottom</div>
+            <div class="demo-item">Item 2</div>
+            <div class="demo-item">Item 3</div>
+            <div class="demo-item">Item 4</div>
+            <div class="demo-item">Item 5</div>
+            <div class="demo-item">Item 6</div>
+            <div class="demo-item">Item 7</div>
+            <div class="demo-item">Item 8</div>
+            <div class="demo-item">Item 9</div>
+            <div class="demo-item">Item 10</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

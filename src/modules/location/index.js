@@ -1,10 +1,12 @@
 import { LocationService } from './services/LocationService.js';
 
 export const manifest = {
+    id: 'location',
     name: 'Location Module',
     version: '1.0.0',
     description: 'Geolocation tracking with optional geofencing and persistence',
     dependencies: [],
+    services: ['location'],
     bundleSize: '+3KB',
     contracts: [
         'INTENT_LOCATION_START',

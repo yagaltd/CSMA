@@ -4,10 +4,12 @@ import { EnhancedSearchService } from './services/EnhancedSearchService.js';
 import { AISearchService } from './services/AISearchService.js';
 
 export const manifest = {
+    id: 'search',
     name: 'Search Module',
     version: '1.0.0',
     description: 'Tiered FlexSearch integration for CSMA',
     dependencies: [],
+    services: ['search'],
     bundleSize: '+13KB',
     contracts: [
         'SEARCH_QUERY_INITIATED',

@@ -8,20 +8,20 @@
 
   /* Color System */
   --fx-color-bg: hsl(0 0% 100%);
-  --fx-color-bg-muted: hsl(210 40% 96.1%);
+  --fx-color-bg-muted: hsl(0 0% 96.1%);
   --fx-color-surface: hsl(0 0% 100%);
-  --fx-color-surface-muted: hsl(210 40% 96.1%);
-  --fx-color-fg: hsl(222.2 84% 4.9%);
-  --fx-color-fg-muted: hsl(215.4 16.3% 46.9%);
-  --fx-color-border: hsl(214.3 31.8% 91.4%);
+  --fx-color-surface-muted: hsl(0 0% 96.1%);
+  --fx-color-fg: hsl(0 0% 3.9%);
+  --fx-color-fg-muted: hsl(0 0% 45.1%);
+  --fx-color-border: hsl(0 0% 89.8%);
   --fx-color-overlay: rgba(15, 23, 42, 0.55);
 
-  --fx-color-primary: hsl(222.2 47.4% 11.2%);
-  --fx-color-on-primary: hsl(210 40% 98%);
-  --fx-color-secondary: hsl(210 40% 96.1%);
-  --fx-color-on-secondary: hsl(222.2 47.4% 11.2%);
-  --fx-color-accent: hsl(210 40% 96.1%);
-  --fx-color-on-accent: hsl(222.2 47.4% 11.2%);
+  --fx-color-primary: hsl(0 0% 9%);
+  --fx-color-on-primary: hsl(0 0% 98%);
+  --fx-color-secondary: hsl(0 0% 96.1%);
+  --fx-color-on-secondary: hsl(0 0% 9%);
+  --fx-color-accent: hsl(0 0% 96.1%);
+  --fx-color-on-accent: hsl(0 0% 9%);
 
   --fx-color-danger: hsl(0 84.2% 60.2%);
   --fx-color-on-danger: hsl(210 40% 98%);

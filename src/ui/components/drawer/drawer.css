@@ -1,0 +1,167 @@
+/**
+ * Drawer/Sheet Component CSS
+ * Slide-out panel for navigation, forms, or content
+ */
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--fx-color-overlay);
+  z-index: var(--fx-z-modal);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fx-transition-normal), visibility var(--fx-transition-normal);
+}
+
+.drawer-overlay[data-state="open"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.drawer {
+  position: fixed;
+  z-index: var(--fx-z-modal);
+  background: var(--fx-color-surface);
+  box-shadow: var(--fx-shadow-xl);
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+  overflow: hidden;
+  transition: transform var(--fx-transition-normal);
+}
+
+/* Default: left drawer */
+.drawer {
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 300px;
+  max-width: 85vw;
+  transform: translateX(-100%);
+}
+
+.drawer[data-state="open"] {
+  transform: translateX(0);
+}
+
+/* Side variants */
+.drawer[data-side="right"] {
+  left: auto;
+  right: 0;
+  transform: translateX(100%);
+}
+
+.drawer[data-side="right"][data-state="open"] {
+  transform: translateX(0);
+}
+
+.drawer[data-side="top"] {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: auto;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  transform: translateY(-100%);
+}
+
+.drawer[data-side="top"][data-state="open"] {
+  transform: translateY(0);
+}
+
+.drawer[data-side="bottom"] {
+  top: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  transform: translateY(100%);
+  border-top-left-radius: var(--fx-radius-xl);
+  border-top-right-radius: var(--fx-radius-xl);
+}
+
+.drawer[data-side="bottom"][data-state="open"] {
+  transform: translateY(0);
+}
+
+/* Drawer structure */
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--fx-space-lg) var(--fx-space-xl);
+  border-bottom: 1px solid var(--fx-color-border);
+}
+
+.drawer-title {
+  font-size: var(--fx-font-size-lg);
+  font-weight: var(--fx-font-weight-semibold);
+  color: var(--fx-color-fg);
+}
+
+.drawer-close {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--fx-radius-sm);
+  color: var(--fx-color-fg-muted);
+  cursor: pointer;
+  transition: all var(--fx-transition-fast);
+}
+
+.drawer-close:hover {
+  background: var(--fx-color-bg-muted);
+  color: var(--fx-color-fg);
+}
+
+.drawer-close:focus-visible {
+  outline: 2px solid var(--fx-color-primary);
+  outline-offset: 2px;
+}
+
+.drawer-body {
+  flex: 1;
+  padding: var(--fx-space-xl);
+  overflow-y: auto;
+}
+
+.drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--fx-space-sm);
+  padding: var(--fx-space-lg) var(--fx-space-xl);
+  border-top: 1px solid var(--fx-color-border);
+}
+
+/* Size variants */
+.drawer[data-size="sm"] {
+  width: 250px;
+}
+
+.drawer[data-size="lg"] {
+  width: 400px;
+}
+
+/* Handle for bottom sheets */
+.drawer-handle {
+  display: none;
+  width: 2.5rem;
+  height: 0.25rem;
+  background: var(--fx-color-border);
+  border-radius: var(--fx-radius-full);
+  margin: var(--fx-space-sm) auto var(--fx-space-sm);
+}
+
+.drawer[data-side="bottom"] .drawer-handle {
+  display: block;
+}

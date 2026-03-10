@@ -27,7 +27,7 @@ export function initPopovers(eventBus) {
 
     // Track initialized popovers and their cleanup functions
     const popoverCleanups = new Map();
-    const outsideClickHandlers = new WeakMap();
+    const outsideClickHandlers = new Map();
 
     // Initialize all popover containers on page
     const popoverContainers = document.querySelectorAll('.popover-container');
@@ -218,4 +218,3 @@ function cleanupOutsideClick(container, outsideClickHandlers) {
         outsideClickHandlers.delete(container);
     }
 }
-

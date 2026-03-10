@@ -1,0 +1,107 @@
+/* CSMA Scroll Area Component - Type I (Pure CSS) */
+
+.scroll-area {
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-area-viewport {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--fx-color-border) transparent;
+}
+
+.scroll-area-viewport::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scroll-area-viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scroll-area-viewport::-webkit-scrollbar-thumb {
+  background: var(--fx-color-border);
+  border-radius: var(--fx-radius-full);
+}
+
+.scroll-area-viewport::-webkit-scrollbar-thumb:hover {
+  background: var(--fx-color-fg-muted);
+}
+
+/* Scrollbar visibility variants */
+.scroll-area[data-scrollbar="hover"] .scroll-area-viewport {
+  scrollbar-color: transparent transparent;
+}
+
+.scroll-area[data-scrollbar="hover"] .scroll-area-viewport::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.scroll-area[data-scrollbar="hover"]:hover .scroll-area-viewport {
+  scrollbar-color: var(--fx-color-border) transparent;
+}
+
+.scroll-area[data-scrollbar="hover"]:hover .scroll-area-viewport::-webkit-scrollbar-thumb {
+  background: var(--fx-color-border);
+}
+
+.scroll-area[data-scrollbar="hidden"] .scroll-area-viewport {
+  scrollbar-width: none;
+}
+
+.scroll-area[data-scrollbar="hidden"] .scroll-area-viewport::-webkit-scrollbar {
+  display: none;
+}
+
+/* Direction variants */
+.scroll-area[data-direction="vertical"] .scroll-area-viewport {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.scroll-area[data-direction="horizontal"] .scroll-area-viewport {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Size variants */
+.scroll-area[data-size="sm"] .scroll-area-viewport::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scroll-area[data-size="lg"] .scroll-area-viewport::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* Scroll shadows */
+.scroll-area[data-shadow="true"]::before,
+.scroll-area[data-shadow="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 16px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.scroll-area[data-shadow="true"]::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--fx-color-bg), transparent);
+}
+
+.scroll-area[data-shadow="true"]::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--fx-color-bg), transparent);
+}
+
+/* Content wrapper */
+.scroll-area-content {
+  min-width: 100%;
+  display: table;
+}

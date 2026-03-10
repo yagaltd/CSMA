@@ -523,45 +523,6 @@ const CoreContracts = {
         })
     },
 
-    // ========================================
-    // Tabs Component Contracts
-    // ========================================
-
-    // UI: Intent to Switch Tab
-    INTENT_TAB_SWITCH: {
-        version: 1,
-        type: 'intent',
-        owner: 'ui-service',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'public',
-        description: 'User intent to switch a tab',
-
-        schema: object({
-            tabId: string(),
-            containerId: optional(string()),
-            timestamp: number()
-        })
-    },
-
-    // UI: Tab Switched Event
-    TAB_SWITCHED: {
-        version: 1,
-        type: 'event',
-        owner: 'ui-service',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'public',
-        description: 'Tab was switched',
-
-        schema: object({
-            tabId: string(),
-            containerId: optional(string()),
-            timestamp: number()
-        })
-    },
-
-    // ========================================
     INTENT_CREATE_ITEM: {
         version: 1,
         type: 'intent',
@@ -1410,6 +1371,124 @@ const CoreContracts = {
             shortcut: optional(string()),
             action: string(),
             payload: optional(object()),
+            timestamp: number()
+        })
+    },
+
+    MODULE_LOADED: {
+        version: 1,
+        type: 'event',
+        owner: 'module-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Module loaded and registered its services/contributions',
+
+        schema: object({
+            version: number(),
+            id: string(),
+            manifest: object({
+                id: string(),
+                name: string(),
+                version: string(),
+                description: string(),
+                dependencies: array(string()),
+                services: array(string()),
+                contracts: array(string()),
+                contributes: optional(any())
+            }),
+            serviceNames: array(string()),
+            contributions: object({
+                commands: number(),
+                routes: number(),
+                navigation: number(),
+                panels: number(),
+                adapters: number()
+            })
+        })
+    },
+
+    MODULE_UNLOADED: {
+        version: 1,
+        type: 'event',
+        owner: 'module-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Module unloaded and removed its services/contributions',
+
+        schema: object({
+            version: number(),
+            id: string(),
+            manifest: object({
+                id: string(),
+                name: string(),
+                version: string(),
+                description: string(),
+                dependencies: array(string()),
+                services: array(string()),
+                contracts: array(string()),
+                contributes: optional(any())
+            }),
+            serviceNames: array(string()),
+            contributions: object({
+                commands: number(),
+                routes: number(),
+                navigation: number(),
+                panels: number(),
+                adapters: number()
+            })
+        })
+    },
+
+    MODULE_CONTRIBUTION_REGISTERED: {
+        version: 1,
+        type: 'event',
+        owner: 'module-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Module contribution registered into a runtime registry',
+
+        schema: object({
+            registry: enums(['commands', 'routes', 'navigation', 'panels', 'adapters']),
+            moduleId: string(),
+            contributionId: string(),
+            timestamp: number()
+        })
+    },
+
+    MODULE_CONTRIBUTION_UNREGISTERED: {
+        version: 1,
+        type: 'event',
+        owner: 'module-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Module contribution removed from a runtime registry',
+
+        schema: object({
+            registry: enums(['commands', 'routes', 'navigation', 'panels', 'adapters']),
+            moduleId: string(),
+            contributionId: string(),
+            timestamp: number()
+        })
+    },
+
+    ROUTE_CONTRIBUTION_REQUESTED: {
+        version: 1,
+        type: 'event',
+        owner: 'route-registry',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A module-contributed route was activated by the router',
+
+        schema: object({
+            routeId: string(),
+            moduleId: string(),
+            path: string(),
+            page: string(),
             timestamp: number()
         })
     },

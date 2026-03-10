@@ -157,17 +157,22 @@ function setupCarousel(root, eventBus, lazyObserver) {
     }
 
     state.current = clampIndex(state.current, visible);
-    const offset = config.transition === 'fade' ? 0 : (state.offsets[state.current] || 0);
+    // Transitions that don't use slide offset
+    const noOffsetTransitions = ['fade', 'zoom', 'flip', 'slide-up'];
+    const offset = noOffsetTransitions.includes(config.transition) ? 0 : (state.offsets[state.current] || 0);
     root.style.setProperty('--carousel-track-offset', `${offset}px`);
 
-    if (options.instant || config.transition === 'fade') {
+    // Disable transition for instant updates and transitions that use CSS
+    if (options.instant || noOffsetTransitions.includes(config.transition)) {
       track.style.transition = 'none';
     } else {
       track.style.transition = '';
     }
 
     slides.forEach((slide, idx) => {
-      const isActive = config.transition === 'fade'
+      // Transitions that show single slide at a time
+      const singleSlideTransitions = ['fade', 'zoom', 'flip', 'slide-up'];
+      const isActive = singleSlideTransitions.includes(config.transition)
         ? idx === state.current
         : idx >= state.current && idx < state.current + visible;
       slide.dataset.state = isActive ? 'active' : 'inactive';
@@ -348,12 +353,31 @@ function setupCarousel(root, eventBus, lazyObserver) {
     } else if (event.key === 'ArrowLeft') {
       event.preventDefault();
       goTo(state.current - step);
+    } else if (event.key === 'ArrowDown') {
+      // For vertical carousels
+      event.preventDefault();
+      goTo(state.current + step);
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      goTo(state.current - step);
     } else if (event.key === 'Home') {
       event.preventDefault();
       goTo(0);
     } else if (event.key === 'End') {
       event.preventDefault();
       goTo(slides.length - step);
+    } else if (event.key === 'PageDown') {
+      // Fast forward
+      event.preventDefault();
+      goTo(state.current + step * 2);
+    } else if (event.key === 'PageUp') {
+      // Fast backward
+      event.preventDefault();
+      goTo(state.current - step * 2);
+    } else if (event.key === ' ') {
+      // Space for play/pause toggle
+      event.preventDefault();
+      if (toggleBtn) toggleBtn.click();
     } else if (event.key === 'Escape') {
       requestPause('manual');
       if (toggleBtn) toggleBtn.dataset.state = 'paused';

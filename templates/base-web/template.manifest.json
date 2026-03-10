@@ -2,7 +2,7 @@
   "templateId": "csma-base-web",
   "engine": "csma",
   "runtime": "web",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": "1.0.0",
   "description": "Core CSMA frontend template for web projects.",
   "requiredFiles": [

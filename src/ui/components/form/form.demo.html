@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Primitives - CSMA Demo</title>
+  <link rel="stylesheet" href="../../../css/main.css">
+  <style>
+    body {
+      padding: var(--fx-space-2xl);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .demo-section {
+      margin-bottom: var(--fx-space-2xl);
+    }
+    .demo-section h3 {
+      margin-bottom: var(--fx-space-md);
+      color: var(--fx-color-fg-muted);
+      font-size: var(--fx-font-size-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .input {
+      width: 100%;
+      padding: var(--fx-space-sm) var(--fx-space-md);
+      border: 1px solid var(--fx-color-border);
+      border-radius: var(--fx-radius-md);
+      font-size: var(--fx-font-size-sm);
+      background: var(--fx-color-bg);
+      color: var(--fx-color-fg);
+    }
+    .input:focus {
+      outline: none;
+      border-color: var(--fx-color-primary);
+      box-shadow: 0 0 0 3px hsl(from var(--fx-color-primary) h s 90%);
+    }
+    .input[data-state="error"] {
+      border-color: var(--fx-color-danger);
+    }
+    .input[data-state="success"] {
+      border-color: var(--fx-color-success);
+    }
+  </style>
+</head>
+<body>
+  <h1>Form Primitives</h1>
+  <p style="color: var(--fx-color-fg-muted); margin-bottom: var(--fx-space-xl);">
+    Form building blocks: Field, Label, Description, Error. Type I component (pure CSS).
+  </p>
+
+  <div class="demo-section">
+    <h3>Basic Field</h3>
+    <div class="form-field">
+      <label class="form-label" for="email">Email</label>
+      <input type="email" id="email" class="input" placeholder="you@example.com">
+      <span class="form-description">We'll never share your email with anyone.</span>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Required Field</h3>
+    <div class="form-field">
+      <label class="form-label" for="name" data-required="true">Full Name</label>
+      <input type="text" id="name" class="input" placeholder="John Doe" required>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Field with Error</h3>
+    <div class="form-field" data-state="error">
+      <label class="form-label" for="password">Password</label>
+      <input type="password" id="password" class="input" data-state="error" value="123">
+      <span class="form-error">Password must be at least 8 characters long.</span>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Field with Success</h3>
+    <div class="form-field" data-state="success">
+      <label class="form-label" for="username">Username</label>
+      <input type="text" id="username" class="input" data-state="success" value="johndoe">
+      <span class="form-description" style="color: var(--fx-color-success);">Username is available!</span>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Form Group</h3>
+    <form class="form-group">
+      <div class="form-field">
+        <label class="form-label" for="first-name">First Name</label>
+        <input type="text" id="first-name" class="input">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="last-name">Last Name</label>
+        <input type="text" id="last-name" class="input">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="bio">Bio</label>
+        <textarea id="bio" class="input" rows="3" placeholder="Tell us about yourself..."></textarea>
+        <span class="form-description">Brief description for your profile.</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="demo-section">
+    <h3>Form Row (Horizontal)</h3>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label" for="city">City</label>
+        <input type="text" id="city" class="input" placeholder="San Francisco">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="state">State</label>
+        <input type="text" id="state" class="input" placeholder="CA">
+      </div>
+      <div class="form-field">
+        <label class="form-label" for="zip">ZIP</label>
+        <input type="text" id="zip" class="input" placeholder="94102">
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Form Actions</h3>
+    <div class="form-actions" data-align="right">
+      <button type="button" class="button" data-variant="ghost">Cancel</button>
+      <button type="button" class="button" data-variant="primary">Save Changes</button>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Form Section</h3>
+    <div class="form-section">
+      <div class="form-section-title">Personal Information</div>
+      <div class="form-section-description">Update your personal details here.</div>
+      <div class="form-group">
+        <div class="form-field">
+          <label class="form-label" for="display-name">Display Name</label>
+          <input type="text" id="display-name" class="input">
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="section-email">Email</label>
+          <input type="email" id="section-email" class="input">
+        </div>
+        <div class="form-actions" data-align="right">
+          <button type="button" class="button" data-variant="primary">Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

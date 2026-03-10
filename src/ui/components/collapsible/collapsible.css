@@ -1,0 +1,131 @@
+/**
+ * Collapsible Component CSS
+ * Expandable/collapsible content areas
+ */
+
+.collapsible {
+  width: 100%;
+}
+
+.collapsible-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--fx-space-md) var(--fx-space-lg);
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-md);
+  font-family: var(--fx-font-family-base);
+  font-size: var(--fx-font-size-sm);
+  font-weight: var(--fx-font-weight-medium);
+  color: var(--fx-color-fg);
+  cursor: pointer;
+  transition: all var(--fx-transition-fast);
+}
+
+.collapsible-trigger:hover {
+  background: var(--fx-color-bg-muted);
+}
+
+.collapsible-trigger:focus-visible {
+  outline: 2px solid var(--fx-color-primary);
+  outline-offset: 2px;
+}
+
+.collapsible-trigger[data-state="open"] {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+
+.collapsible-icon {
+  width: 1rem;
+  height: 1rem;
+  transition: transform var(--fx-transition-fast);
+  flex-shrink: 0;
+}
+
+.collapsible-trigger[data-state="open"] .collapsible-icon {
+  transform: rotate(180deg);
+}
+
+.collapsible-content {
+  overflow: hidden;
+  border: 1px solid var(--fx-color-border);
+  border-top: none;
+  border-bottom-left-radius: var(--fx-radius-md);
+  border-bottom-right-radius: var(--fx-radius-md);
+  background: var(--fx-color-surface);
+}
+
+.collapsible-content[data-state="closed"] {
+  display: none;
+}
+
+.collapsible-content[data-state="open"] {
+  display: block;
+  animation: collapsible-slide-down var(--fx-transition-fast) ease-out;
+}
+
+.collapsible-content > :not(.collapsible-inner) {
+  padding: var(--fx-space-lg);
+  color: var(--fx-color-fg-muted);
+  font-size: var(--fx-font-size-sm);
+  line-height: var(--fx-line-height-base);
+}
+
+@keyframes collapsible-slide-down {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+.collapsible-inner {
+  padding: var(--fx-space-lg);
+  color: var(--fx-color-fg-muted);
+  font-size: var(--fx-font-size-sm);
+  line-height: var(--fx-line-height-base);
+}
+
+/* Chevrons variant */
+.collapsible-trigger[data-chevron="left"] {
+  flex-direction: row-reverse;
+  gap: var(--fx-space-sm);
+}
+
+/* Nested collapsible */
+.collapsible .collapsible {
+  margin-top: var(--fx-space-sm);
+}
+
+/* Group styling */
+.collapsible-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-xs);
+}
+
+.collapsible-group .collapsible-trigger {
+  border-radius: 0;
+}
+
+.collapsible-group .collapsible:first-child .collapsible-trigger {
+  border-top-left-radius: var(--fx-radius-md);
+  border-top-right-radius: var(--fx-radius-md);
+}
+
+.collapsible-group .collapsible:last-child .collapsible-trigger {
+  border-bottom-left-radius: var(--fx-radius-md);
+  border-bottom-right-radius: var(--fx-radius-md);
+}
+
+.collapsible-group .collapsible:not(:last-child) .collapsible-trigger,
+.collapsible-group .collapsible:not(:last-child) .collapsible-content {
+  border-bottom-color: transparent;
+}

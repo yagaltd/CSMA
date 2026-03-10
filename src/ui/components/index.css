@@ -10,6 +10,11 @@
 @import './separator/separator.css';
 @import './avatar/avatar.css';
 @import './skeleton/skeleton.css';
+@import './alert/alert.css';
+@import './scroll-area/scroll-area.css';
+@import './breadcrumb/breadcrumb.css';
+@import './form/form.css';
+@import './button/button.css';
 
 /* Phase 1-2: Interactive Components */
 @import './toast/toast.css';
@@ -17,8 +22,12 @@
 @import './accordion/accordion.css';
 @import './progress/progress.css';
 @import './popover/popover.css';
+@import './collapsible/collapsible.css';
+@import './hover-card/hover-card.css';
+@import './carousel/carousel.css';
 
 /* Phase 3: Form Components */
+@import './input/input.css';
 @import './textarea/textarea.css';
 @import './select/select.css';
 @import './checkbox/checkbox.css';
@@ -26,12 +35,35 @@
 @import './switch/switch.css';
 @import './file-upload/file-upload.css';
 @import './otp/otp.css';
+@import './multi-select/multi-select.css';
+@import './datepicker/datepicker.css';
+@import './slider/slider.css';
 
 /* Phase 4: Overlay & Navigation */
 @import './tooltip/tooltip.css';
 @import './dropdown/dropdown.css';
 @import './dialog/dialog.css';
 @import './alert-dialog/alert-dialog.css';
+@import './drawer/drawer.css';
+@import './context-menu/context-menu.css';
 @import '../patterns/sidebar/sidebar.css';
 @import './pagination/pagination.css';
+@import './navbar/navbar.css';
 @import './analytics-consent/analytics-consent.css';
+
+/* Phase 5: Data & Utility Components */
+@import './calendar/calendar.css';
+@import './command/command.css';
+@import './table/table.css';
+
+/* Phase 6: Additional Form & Utility Components */
+@import './aspect-ratio/aspect-ratio.css';
+@import './number-field/number-field.css';
+@import './pin-input/pin-input.css';
+@import './toggle-group/toggle-group.css';
+@import './combobox/combobox.css';
+@import './menubar/menubar.css';
+@import './navigation-menu/navigation-menu.css';
+@import './resizable/resizable.css';
+@import './date-range-picker/date-range-picker.css';
+@import './slider-range/slider-range.css';

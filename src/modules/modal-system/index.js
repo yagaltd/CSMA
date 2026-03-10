@@ -1,10 +1,12 @@
 import { ModalService } from './services/ModalService.js';
 
 export const manifest = {
+    id: 'modal-system',
     name: 'Modal System',
     version: '1.0.0',
     description: 'Global modal stack controller',
     dependencies: [],
+    services: ['modal'],
     bundleSize: '+4KB',
     contracts: [
         'INTENT_MODAL_OPEN',

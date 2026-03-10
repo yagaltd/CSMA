@@ -9,6 +9,7 @@ platforms/mobile-capacitor/www/assets/
 *.swp
 *.swo
 *~
+roadmap/
 
 # Environment variables (CRITICAL - Never commit!)
 .env
@@ -28,6 +29,12 @@ playwright-report/
 .turbo/
 .vercel/
 .netlify/
+.factory/
+.claude/
+.csma/
+.playwright-mcp/
+.playwright-cli/
+.SSMA/
 
 # OS files
 Thumbs.db
@@ -39,3 +46,16 @@ Desktop.ini
 .fleet/
 .claude/
 .csma/
+
+#files
+CSMA_ui_analysis.md
+2026-03-09-implement-all-remaining-csma-ui-components.md
+skeleton-check.png
+skeleton-fixed.png
+*.snap.png
+playwright/.auth/
+playwright/.cache/
+playwright.config.js
+playwright.config.local.js
+playwright.config.local.mjs
+playwright.config.local.cjs

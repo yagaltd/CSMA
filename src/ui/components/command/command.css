@@ -1,0 +1,193 @@
+/**
+ * Command Palette Component CSS
+ * Keyboard-accessible command palette with search
+ */
+
+.command-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--fx-z-modal);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  background: var(--fx-color-overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fx-transition-fast), visibility var(--fx-transition-fast);
+}
+
+.command-overlay[data-state="open"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.command {
+  width: 100%;
+  max-width: 560px;
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-lg);
+  box-shadow: var(--fx-shadow-xl);
+  overflow: hidden;
+  transform: scale(0.95) translateY(-10px);
+  transition: transform var(--fx-transition-fast);
+}
+
+.command-overlay[data-state="open"] .command {
+  transform: scale(1) translateY(0);
+}
+
+.command-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-sm);
+  padding: var(--fx-space-md) var(--fx-space-lg);
+  border-bottom: 1px solid var(--fx-color-border);
+}
+
+.command-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--fx-color-fg-muted);
+  flex-shrink: 0;
+}
+
+.command-input {
+  flex: 1;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--fx-font-family-base);
+  font-size: var(--fx-font-size-md);
+  color: var(--fx-color-fg);
+}
+
+.command-input::placeholder {
+  color: var(--fx-color-fg-muted);
+}
+
+.command-list {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: var(--fx-space-xs);
+}
+
+.command-list[data-empty="true"] {
+  padding: var(--fx-space-xl);
+}
+
+.command-group {
+  padding: var(--fx-space-xs);
+}
+
+.command-group-heading {
+  padding: var(--fx-space-sm) var(--fx-space-md);
+  font-size: var(--fx-font-size-xs);
+  font-weight: var(--fx-font-weight-medium);
+  color: var(--fx-color-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.command-group-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fx-space-2xs);
+}
+
+.command-item {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-sm);
+  width: 100%;
+  padding: var(--fx-space-sm) var(--fx-space-md);
+  background: transparent;
+  border: none;
+  border-radius: var(--fx-radius-sm);
+  font-family: var(--fx-font-family-base);
+  font-size: var(--fx-font-size-sm);
+  color: var(--fx-color-fg);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--fx-transition-fast);
+}
+
+.command-item:hover,
+.command-item[data-selected="true"] {
+  background: var(--fx-color-bg-muted);
+}
+
+.command-item:focus-visible {
+  outline: 2px solid var(--fx-color-primary);
+  outline-offset: -2px;
+}
+
+.command-item[data-variant="destructive"] {
+  color: var(--fx-color-danger);
+}
+
+.command-item-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--fx-color-fg-muted);
+  flex-shrink: 0;
+}
+
+.command-item-label {
+  flex: 1;
+}
+
+.command-item-shortcut {
+  display: flex;
+  gap: var(--fx-space-2xs);
+}
+
+.command-shortcut-key {
+  padding: var(--fx-space-2xs) var(--fx-space-xs);
+  background: var(--fx-color-bg-muted);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-sm);
+  font-family: var(--fx-font-family-mono);
+  font-size: var(--fx-font-size-xs);
+  color: var(--fx-color-fg-muted);
+}
+
+.command-separator {
+  height: 1px;
+  background: var(--fx-color-border);
+  margin: var(--fx-space-xs) var(--fx-space-md);
+}
+
+.command-empty {
+  padding: var(--fx-space-lg);
+  text-align: center;
+  color: var(--fx-color-fg-muted);
+  font-size: var(--fx-font-size-sm);
+}
+
+.command-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--fx-space-sm) var(--fx-space-lg);
+  border-top: 1px solid var(--fx-color-border);
+  background: var(--fx-color-bg-muted);
+}
+
+.command-footer-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-md);
+  font-size: var(--fx-font-size-xs);
+  color: var(--fx-color-fg-muted);
+}
+
+.command-footer-hint kbd {
+  padding: var(--fx-space-2xs) var(--fx-space-xs);
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-sm);
+  font-family: var(--fx-font-family-mono);
+}

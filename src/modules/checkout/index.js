@@ -1,10 +1,12 @@
 import { CheckoutService } from './services/CheckoutService.js';
 
 export const manifest = {
+    id: 'checkout',
     name: 'Checkout Module',
     version: '1.0.0',
     description: 'Cart + payment orchestration',
     dependencies: ['formManager'],
+    services: ['checkout'],
     bundleSize: '+7KB',
     contracts: [
         'INTENT_CHECKOUT_START',

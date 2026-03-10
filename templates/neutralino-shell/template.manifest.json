@@ -2,7 +2,7 @@
   "templateId": "csma-neutralino-shell",
   "engine": "csma",
   "runtime": "desktop-webview",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": "1.0.0",
   "description": "CSMA web template with Neutralino desktop shell scaffolding and build sync script.",
   "requiredFiles": [

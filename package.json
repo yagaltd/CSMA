@@ -1,6 +1,6 @@
 {
     "name": "csma",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Lean, secure, reactive CSMA with ready-to-use components",
     "type": "module",
     "dependencies": {
@@ -15,7 +15,7 @@
         "analyze:bundle": "npm run build:prod && node scripts/analyze-bundle.mjs",
         "preview": "vite preview",
         "test": "vitest",
-        "test:e2e": "npm run build && playwright test",
+        "test:e2e": "npm run build && playwright test --config playwright.shared.config.js",
         "test:contracts": "vitest run tests/contracts.test.js",
         "test:validation": "vitest run tests/validation.test.js",
         "test:smoke": "vitest run tests/todo-app.smoke.test.js",

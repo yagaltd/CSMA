@@ -7,6 +7,7 @@
 export class ExampleModuleService {
     constructor(eventBus) {
         this.eventBus = eventBus;
+        this.lastMessage = null;
     }
 
     init() {
@@ -19,5 +20,21 @@ export class ExampleModuleService {
     // Service methods
     doSomething() {
         console.log('[ExampleModuleService] Doing something...');
+    }
+
+    runHelloCommand(payload = {}) {
+        const message = payload.message || 'Hello from the example module';
+        this.lastMessage = message;
+        console.log(`[ExampleModuleService] ${message}`);
+        this.eventBus?.publishSync?.('EXAMPLE_MODULE_EVENT', {
+            id: 'example-module',
+            message,
+            timestamp: Date.now()
+        });
+        return { ok: true, message };
+    }
+
+    cleanup() {
+        this.lastMessage = null;
     }
 }

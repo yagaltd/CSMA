@@ -64,7 +64,7 @@ CSMA does **not** currently treat plugins as a core requirement. If you need to 
 
 ## AI System Map
 
-`ai-system-map.json` is a machine-readable map of the runtime/modules for automation and AI coding agents.
+`ai-system-map.json` is a machine-readable map of the runtime/modules for automation and AI coding agents. 
 
 Reference: `docs/operations/ai-system-map.md`
 

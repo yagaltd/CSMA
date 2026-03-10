@@ -1,10 +1,12 @@
 import { FormManagementService } from './services/FormManagementService.js';
 
 export const manifest = {
+    id: 'form-management',
     name: 'Form Management',
     version: '1.0.0',
     description: 'Form state, validation, and auto-save orchestration',
     dependencies: [],
+    services: ['formManager'],
     bundleSize: '+8KB',
     contracts: [
         'INTENT_FORM_REGISTER',

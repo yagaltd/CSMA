@@ -1,10 +1,12 @@
 import { ImageOptimizerService } from './services/ImageOptimizerService.js';
 
 export const manifest = {
+    id: 'image-optimizer',
     name: 'Image Optimizer',
     version: '1.0.0',
     description: 'High-level image optimization powered by Media Transform',
     dependencies: ['mediaTransform'],
+    services: ['imageOptimizer'],
     bundleSize: '+3KB',
     contracts: [
         'INTENT_IMAGE_OPTIMIZE',

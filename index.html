@@ -19,8 +19,8 @@
     <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
     <!-- Content Security Policy (MANDATORY for security) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; 
-                 script-src 'self'; 
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self';
+                 script-src 'self';
                  style-src 'self';
                  connect-src 'self' http://127.0.0.1:5050;
                  img-src 'self' data: https:;
@@ -29,16 +29,14 @@
                  base-uri 'self';
                  form-action 'self';">
 
-    <!-- Theme CSS -->
     <link rel="stylesheet" href="/src/css/main.css">
-    <link rel="stylesheet" href="/src/ui/components/chat/chat.css">
     <link rel="stylesheet" href="/src/ui/pages/index.css">
 </head>
 
 <body>
     <header class="page-header">
         <button type="button" class="consent-trigger" id="openConsent" data-consent-open="#appConsentModal">Open Consent</button>
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <button class="theme-toggle" id="themeToggle" data-theme-toggle aria-label="Toggle theme">
             <img class="theme-icon" src="/src/ui/icons/moon.svg" alt="">
             <span class="theme-label">Dark</span>
         </button>
@@ -85,7 +83,7 @@
             <h1>CSMA Kit</h1>
             <p class="hero-lead">A lean, CSS-first microservices UI kit with consented analytics, zero-trust defaults, and ready-to-use components for web, mobile, and desktop targets.</p>
             <div class="hero-actions">
-                <a class="button" data-variant="primary" href="/src/ui/components/demos.html">Explore components</a>
+                <a class="button" data-variant="primary" href="/src/ui/components/index.html">Explore components</a>
             </div>
         </section>
     </main>
@@ -94,7 +92,6 @@
         <p>Built with CSMA - CSS-first Microservices Architecture</p>
     </footer>
 
-    <!-- HTML Templates -->
     <template id="example-card">
         <div class="card">
             <div class="card-status"></div>
@@ -109,7 +106,6 @@
         </div>
     </template>
 
-    <!-- Main entry point -->
     <script type="module" src="/src/main.js"></script>
     <script type="module" src="/src/ui/pages/index.js"></script>
 </body>

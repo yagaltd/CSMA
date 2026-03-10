@@ -1,10 +1,12 @@
 import { DataTableService } from './services/DataTableService.js';
 
 export const manifest = {
+    id: 'data-table',
     name: 'Data Table Module',
     version: '1.0.0',
     description: 'Remote table loading, sorting, filtering',
     dependencies: [],
+    services: ['dataTable'],
     bundleSize: '+5KB',
     contracts: [
         'INTENT_DATA_TABLE_LOAD',

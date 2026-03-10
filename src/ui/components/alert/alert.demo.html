@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alert Component - CSMA Demo</title>
+  <link rel="stylesheet" href="../../../css/main.css">
+  <style>
+    body {
+      padding: var(--fx-space-2xl);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .demo-section {
+      margin-bottom: var(--fx-space-2xl);
+    }
+    .demo-section h3 {
+      margin-bottom: var(--fx-space-md);
+      color: var(--fx-color-fg-muted);
+      font-size: var(--fx-font-size-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Alert Component</h1>
+  <p style="color: var(--fx-color-fg-muted); margin-bottom: var(--fx-space-xl);">
+    Displays a callout for user attention. Type I component (pure CSS).
+  </p>
+
+  <div class="demo-section">
+    <h3>Default</h3>
+    <div class="alert">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+      </svg>
+      <div class="alert-content">
+        <div class="alert-title">Default Alert</div>
+        <div class="alert-description">This is a default alert with neutral styling.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Info</h3>
+    <div class="alert" data-variant="info">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+      </svg>
+      <div class="alert-content">
+        <div class="alert-title">Information</div>
+        <div class="alert-description">Here's some helpful information for you.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Success</h3>
+    <div class="alert" data-variant="success">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+      </svg>
+      <div class="alert-content">
+        <div class="alert-title">Success!</div>
+        <div class="alert-description">Your changes have been saved successfully.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Warning</h3>
+    <div class="alert" data-variant="warning">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+      </svg>
+      <div class="alert-content">
+        <div class="alert-title">Warning</div>
+        <div class="alert-description">Please review your input before proceeding.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>Destructive</h3>
+    <div class="alert" data-variant="destructive">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+      </svg>
+      <div class="alert-content">
+        <div class="alert-title">Error</div>
+        <div class="alert-description">Something went wrong. Please try again.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-section">
+    <h3>With Action</h3>
+    <div class="alert" data-variant="info">
+      <svg class="alert-icon" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+      </svg>
+      <div class="alert-content">
+        <div class="alert-title">New Feature Available</div>
+        <div class="alert-description">Check out the latest updates to improve your workflow.</div>
+        <div class="alert-action">
+          <button class="button" data-variant="primary" data-size="sm">Learn More</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

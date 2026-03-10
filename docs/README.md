@@ -21,6 +21,7 @@ Consolidated documentation for learning CSMA:
 
 - **[CSMA in a Nutshell](guides/csma-in-a-nutshell.md)** - 6 rules, 3 patterns, quick overview
 - **[Building Components](guides/building-components.md)** - Step-by-step with patterns and examples
+- **[Building Modules](guides/building-modules.md)** - Module manifests, registries, and unload-safe services
 - **[For LLMs](guides/for-llms.md)** - AI coding prompts, workflows, and rules
 - **Validation** - Contract validation with CSMA validation library
 - **Web Analytics** - Log accumulator, consent gating, and telemetry patterns
@@ -59,6 +60,7 @@ Service-specific documentation:
 - [EventBus](complete-csma-guide.md#eventbus)
 - [ServiceManager](complete-csma-guide.md#servicemanager)
 - [Contracts](guides/validation.md)
+- [Building Modules](guides/building-modules.md)
 - [Security Layers](security/security-map.md)
 
 **Modules**:

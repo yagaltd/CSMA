@@ -1,0 +1,152 @@
+/**
+ * Number Field Component CSS
+ * Form input for numbers with increment/decrement controls
+ */
+
+.number-field {
+  display: inline-flex;
+  align-items: stretch;
+  position: relative;
+}
+
+.number-field-input {
+  appearance: textfield;
+  width: 100%;
+  padding: var(--fx-space-sm) var(--fx-space-md);
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-md);
+  font-family: var(--fx-font-family-mono);
+  font-size: var(--fx-font-size-sm);
+  color: var(--fx-color-fg);
+  transition: all var(--fx-transition-fast);
+}
+
+.number-field-input::-webkit-inner-spin-button,
+.number-field-input::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.number-field-input:hover {
+  border-color: var(--fx-color-fg-muted);
+}
+
+.number-field-input:focus {
+  outline: none;
+  border-color: var(--fx-color-primary);
+  box-shadow: 0 0 0 3px hsl(222.2 47.4% 11.2% / 0.1);
+}
+
+.number-field-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.number-field-input[data-state="error"] {
+  border-color: var(--fx-color-danger);
+}
+
+.number-field-input[data-state="error"]:focus {
+  box-shadow: 0 0 0 3px hsl(0 84.2% 60.2% / 0.1);
+}
+
+/* With spinner buttons */
+.number-field[data-spinner="true"] {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-xs);
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-md);
+  padding: var(--fx-space-2xs);
+}
+
+.number-field[data-spinner="true"] .number-field-input {
+  border: none;
+  background: transparent;
+  padding: var(--fx-space-xs) var(--fx-space-sm);
+  text-align: center;
+}
+
+.number-field[data-spinner="true"] .number-field-input:focus {
+  box-shadow: none;
+}
+
+.number-field-spinner {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.number-field-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1rem;
+  padding: 0;
+  background: var(--fx-color-bg-muted);
+  border: none;
+  color: var(--fx-color-fg-muted);
+  cursor: pointer;
+  transition: all var(--fx-transition-fast);
+}
+
+.number-field-btn:first-child {
+  border-radius: var(--fx-radius-sm) var(--fx-radius-sm) 0 0;
+}
+
+.number-field-btn:last-child {
+  border-radius: 0 0 var(--fx-radius-sm) var(--fx-radius-sm);
+}
+
+.number-field-btn:hover {
+  background: var(--fx-color-border);
+  color: var(--fx-color-fg);
+}
+
+.number-field-btn:active {
+  background: var(--fx-color-primary);
+  color: var(--fx-color-on-primary);
+}
+
+.number-field-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Size variants */
+.number-field[data-size="sm"] .number-field-input {
+  padding: var(--fx-space-xs) var(--fx-space-sm);
+  font-size: var(--fx-font-size-xs);
+}
+
+.number-field[data-size="lg"] .number-field-input {
+  padding: var(--fx-space-md) var(--fx-space-lg);
+  font-size: var(--fx-font-size-md);
+}
+
+/* Full width */
+.number-field[data-full-width="true"] {
+  width: 100%;
+}
+
+/* With prefix/suffix */
+.number-field-prefix,
+.number-field-suffix {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--fx-space-sm);
+  color: var(--fx-color-fg-muted);
+  font-size: var(--fx-font-size-sm);
+  white-space: nowrap;
+}
+
+.number-field-prefix {
+  border-right: 1px solid var(--fx-color-border);
+}
+
+.number-field-suffix {
+  border-left: 1px solid var(--fx-color-border);
+}

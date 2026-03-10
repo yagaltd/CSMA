@@ -5,13 +5,15 @@
  */
 
 .skeleton {
-    background: linear-gradient(90deg,
+    background-color: var(--fx-color-bg-muted);
+    background-image: linear-gradient(90deg,
             var(--fx-color-bg-muted) 25%,
-            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0.85) 50%,
             var(--fx-color-bg-muted) 75%);
-    background-size: 200% 100%;
+    background-size: 280% 100%;
     animation: skeleton-loading 1.5s infinite;
     border-radius: var(--radius-md);
+    overflow: hidden;
 }
 
 @keyframes skeleton-loading {
@@ -21,6 +23,115 @@
 
     100% {
         background-position: -200% 0;
+    }
+}
+
+/* Skeleton Pulse Animation */
+.skeleton-pulse {
+    animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    background: var(--fx-color-bg-muted);
+    border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Skeleton Wave Animation */
+.skeleton-wave {
+    background-color: var(--fx-color-bg-muted);
+    background-image: linear-gradient(90deg,
+            var(--fx-color-bg-muted) 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            var(--fx-color-bg-muted) 100%);
+    background-size: 200% 100%;
+    animation: skeleton-wave 1.5s ease-in-out infinite;
+    border-radius: var(--radius-md);
+}
+
+@keyframes skeleton-wave {
+    0% {
+        background-position: 200% 0;
+    }
+    50% {
+        background-position: 0% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Skeleton Shine Animation */
+.skeleton-shine {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--fx-color-bg-muted);
+    border-radius: var(--radius-md);
+}
+
+.skeleton-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.4),
+            transparent);
+    animation: skeleton-shine 2s infinite;
+}
+
+@keyframes skeleton-shine {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* Skeleton Fade Animation */
+.skeleton-fade {
+    background: var(--fx-color-bg-muted);
+    border-radius: var(--radius-md);
+    animation: skeleton-fade 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-fade {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.4;
+    }
+}
+
+/* Skeleton Circular Animation */
+.skeleton-circle {
+    background: var(--fx-color-bg-muted);
+    border-radius: 50%;
+    animation: skeleton-circle 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-circle {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.95);
+        opacity: 0.7;
     }
 }
 
@@ -54,4 +165,45 @@
 .skeleton-image {
     height: 150px;
     width: 100%;
+}
+
+/* Skeleton Dark Mode Optimizations */
+@media (prefers-color-scheme: dark) {
+    .skeleton {
+        background: linear-gradient(90deg,
+                var(--fx-color-bg-muted) 25%,
+                rgba(255, 255, 255, 0.25) 50%,
+                var(--fx-color-bg-muted) 75%);
+    }
+
+    .skeleton-wave {
+        background: linear-gradient(90deg,
+                var(--fx-color-bg-muted) 0%,
+                rgba(255, 255, 255, 0.15) 50%,
+                var(--fx-color-bg-muted) 100%);
+    }
+
+    .skeleton-shine::after {
+        background: linear-gradient(90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent);
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .skeleton,
+    .skeleton-pulse,
+    .skeleton-wave,
+    .skeleton-shine,
+    .skeleton-fade,
+    .skeleton-circle {
+        animation: none;
+    }
+
+    .skeleton-shine::after {
+        animation: none;
+        display: none;
+    }
 }

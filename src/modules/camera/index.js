@@ -1,10 +1,12 @@
 import { CameraService } from './services/CameraService.js';
 
 export const manifest = {
+    id: 'camera',
     name: 'Camera Module',
     version: '1.0.0',
     description: 'Photo and video capture with File System persistence',
     dependencies: ['fileSystem'],
+    services: ['camera'],
     bundleSize: '+5KB',
     contracts: [
         'INTENT_CAMERA_CAPTURE_PHOTO',

@@ -27,7 +27,8 @@ export function initInputSystem(eventBus) {
     console.log('[Input] Initializing CSMA Input system...');
 
     const inputCleanups = new Map();
-    const groups = document.querySelectorAll('.input-group');
+    // Support both CSS class and data attribute selectors
+    const groups = document.querySelectorAll('.input-group, [data-input-group]');
 
     groups.forEach(group => {
         const cleanup = initInputWithEventBus(group, eventBus);

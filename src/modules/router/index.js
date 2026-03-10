@@ -8,10 +8,12 @@
 import { Router } from './services/Router.js';
 
 export const manifest = {
+    id: 'router',
     name: 'Client-Side Router',
     version: '1.0.0',
     description: 'SPA routing with History API',
     dependencies: [],
+    services: ['Router'],
     bundleSize: '5KB',
     contracts: []  // Router handles navigation internally
 };

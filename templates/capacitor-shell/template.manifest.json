@@ -2,7 +2,7 @@
   "templateId": "csma-capacitor-shell",
   "engine": "csma",
   "runtime": "mobile-webview",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": "1.0.0",
   "description": "CSMA web template with Capacitor shell scaffolding and build sync script.",
   "requiredFiles": [

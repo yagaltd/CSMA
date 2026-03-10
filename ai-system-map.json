@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated": "2025-12-18T01:33:29.416Z",
+  "generated": "2026-03-09T09:50:34.277Z",
   "project": {
     "name": "csma",
     "version": "1.0.0",
@@ -841,6 +841,11 @@
       }
     },
     "services": {
+      "CommandService.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "services/CommandService.js"
+      },
       "DateService.js": {
         "type": "file",
         "ext": ".js",
@@ -865,6 +870,11 @@
         "type": "file",
         "ext": ".js",
         "path": "services/SliderService.js"
+      },
+      "TableService.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "services/TableService.js"
       },
       "core": {
         "APIWrapper.js": {
@@ -911,6 +921,18 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/accordion/accordion.js"
+          }
+        },
+        "alert": {
+          "alert.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/alert/alert.css"
+          },
+          "alert.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/alert/alert.demo.html"
           }
         },
         "alert-dialog": {
@@ -990,6 +1012,18 @@
             "path": "ui/components/button/manifest.json"
           }
         },
+        "calendar": {
+          "calendar.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/calendar/calendar.css"
+          },
+          "calendar.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/calendar/calendar.js"
+          }
+        },
         "card": {
           "card.css": {
             "type": "file",
@@ -1048,6 +1082,42 @@
             "path": "ui/components/checkbox/checkbox.js"
           }
         },
+        "collapsible": {
+          "collapsible.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/collapsible/collapsible.css"
+          },
+          "collapsible.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/collapsible/collapsible.js"
+          }
+        },
+        "command": {
+          "command.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/command/command.css"
+          },
+          "command.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/command/command.js"
+          }
+        },
+        "context-menu": {
+          "context-menu.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/context-menu/context-menu.css"
+          },
+          "context-menu.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/context-menu/context-menu.js"
+          }
+        },
         "datepicker": {
           "datepicker.css": {
             "type": "file",
@@ -1087,6 +1157,18 @@
             "path": "ui/components/dialog/dialog.js"
           }
         },
+        "drawer": {
+          "drawer.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/drawer/drawer.css"
+          },
+          "drawer.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/drawer/drawer.js"
+          }
+        },
         "dropdown": {
           "dropdown.css": {
             "type": "file",
@@ -1121,6 +1203,30 @@
             "path": "ui/components/file-upload/file-upload.js"
           }
         },
+        "form": {
+          "form.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/form/form.css"
+          },
+          "form.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/form/form.demo.html"
+          }
+        },
+        "hover-card": {
+          "hover-card.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/hover-card/hover-card.css"
+          },
+          "hover-card.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/hover-card/hover-card.js"
+          }
+        },
         "index.css": {
           "type": "file",
           "ext": ".css",
@@ -1141,6 +1247,18 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/input/input.js"
+          }
+        },
+        "multi-select": {
+          "multi-select.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/multi-select/multi-select.css"
+          },
+          "multi-select.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/multi-select/multi-select.js"
           }
         },
         "navbar": {
@@ -1245,6 +1363,18 @@
             "path": "ui/components/radio/radio.js"
           }
         },
+        "scroll-area": {
+          "scroll-area.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/scroll-area/scroll-area.css"
+          },
+          "scroll-area.demo.html": {
+            "type": "file",
+            "ext": ".html",
+            "path": "ui/components/scroll-area/scroll-area.demo.html"
+          }
+        },
         "select": {
           "select.css": {
             "type": "file",
@@ -1318,6 +1448,18 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/switch/switch.js"
+          }
+        },
+        "table": {
+          "table.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "ui/components/table/table.css"
+          },
+          "table.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/table/table.js"
           }
         },
         "tabs": {

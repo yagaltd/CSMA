@@ -1,0 +1,148 @@
+/**
+ * Toggle Group Component CSS
+ * Group of mutually exclusive or multi-select toggle buttons
+ */
+
+.toggle-group {
+  display: inline-flex;
+  align-items: stretch;
+  background: var(--fx-color-bg-muted);
+  border-radius: var(--fx-radius-md);
+  padding: var(--fx-space-2xs);
+  gap: var(--fx-space-2xs);
+}
+
+.toggle-group[data-orientation="vertical"] {
+  flex-direction: column;
+}
+
+.toggle-group-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fx-space-xs);
+  padding: var(--fx-space-sm) var(--fx-space-md);
+  background: transparent;
+  border: none;
+  border-radius: var(--fx-radius-sm);
+  font-family: var(--fx-font-family-base);
+  font-size: var(--fx-font-size-sm);
+  font-weight: var(--fx-font-weight-medium);
+  color: var(--fx-color-fg-muted);
+  cursor: pointer;
+  transition: all var(--fx-transition-fast);
+}
+
+.toggle-group-item:hover {
+  color: var(--fx-color-fg);
+  background: var(--fx-color-surface);
+}
+
+.toggle-group-item:focus-visible {
+  outline: 2px solid var(--fx-color-primary);
+  outline-offset: 2px;
+}
+
+.toggle-group-item[data-state="on"] {
+  background: var(--fx-color-surface);
+  color: var(--fx-color-fg);
+  box-shadow: var(--fx-shadow-sm);
+}
+
+.toggle-group-item[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Icon only variant */
+.toggle-group-item[data-icon-only="true"] {
+  padding: var(--fx-space-sm);
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+/* Size variants */
+.toggle-group[data-size="sm"] .toggle-group-item {
+  padding: var(--fx-space-xs) var(--fx-space-sm);
+  font-size: var(--fx-font-size-xs);
+}
+
+.toggle-group[data-size="sm"] .toggle-group-item[data-icon-only="true"] {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: var(--fx-space-2xs);
+}
+
+.toggle-group[data-size="lg"] .toggle-group-item {
+  padding: var(--fx-space-md) var(--fx-space-lg);
+  font-size: var(--fx-font-size-md);
+}
+
+.toggle-group[data-size="lg"] .toggle-group-item[data-icon-only="true"] {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+/* Outline variant */
+.toggle-group[data-variant="outline"] {
+  background: transparent;
+  border: 1px solid var(--fx-color-border);
+  gap: 0;
+}
+
+.toggle-group[data-variant="outline"] .toggle-group-item {
+  border-right: 1px solid var(--fx-color-border);
+  border-radius: 0;
+}
+
+.toggle-group[data-variant="outline"] .toggle-group-item:last-child {
+  border-right: none;
+}
+
+.toggle-group[data-variant="outline"] .toggle-group-item:first-child {
+  border-top-left-radius: var(--fx-radius-sm);
+  border-bottom-left-radius: var(--fx-radius-sm);
+}
+
+.toggle-group[data-variant="outline"] .toggle-group-item:last-child {
+  border-top-right-radius: var(--fx-radius-sm);
+  border-bottom-right-radius: var(--fx-radius-sm);
+}
+
+.toggle-group[data-variant="outline"][data-orientation="vertical"] .toggle-group-item {
+  border-right: none;
+  border-bottom: 1px solid var(--fx-color-border);
+}
+
+.toggle-group[data-variant="outline"][data-orientation="vertical"] .toggle-group-item:last-child {
+  border-bottom: none;
+}
+
+.toggle-group[data-variant="outline"][data-orientation="vertical"] .toggle-group-item:first-child {
+  border-radius: var(--fx-radius-sm) var(--fx-radius-sm) 0 0;
+}
+
+.toggle-group[data-variant="outline"][data-orientation="vertical"] .toggle-group-item:last-child {
+  border-radius: 0 0 var(--fx-radius-sm) var(--fx-radius-sm);
+}
+
+.toggle-group[data-variant="outline"] .toggle-group-item[data-state="on"] {
+  background: var(--fx-color-primary);
+  color: var(--fx-color-on-primary);
+  box-shadow: none;
+}
+
+/* Single select indicator (radio-like) */
+.toggle-group[data-type="single"] .toggle-group-item {
+  position: relative;
+}
+
+/* Full width */
+.toggle-group[data-full-width="true"] {
+  width: 100%;
+}
+
+.toggle-group[data-full-width="true"] .toggle-group-item {
+  flex: 1;
+}

@@ -1,10 +1,12 @@
 import { AIService } from './services/AIService.js';
 
 export const manifest = {
+    id: 'ai',
     name: 'AI Module',
     version: '1.0.0',
     description: 'Multi-provider AI orchestration with fallback and tooling',
     dependencies: [],
+    services: ['ai'],
     bundleSize: '+12KB',
     contracts: [
         'AI_PROVIDER_REGISTERED',

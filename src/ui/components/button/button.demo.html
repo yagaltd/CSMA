@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="../theme-loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Component Demo - CSMA</title>
+    <link rel="stylesheet" href="../../../css/main.css">
+    <style>
+        body {
+            padding: 2rem;
+            max-width: 760px;
+            margin: 0 auto;
+            background: var(--fx-color-bg);
+            color: var(--fx-color-fg);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin: 2rem 0 0.75rem;
+            color: var(--fx-color-fg-muted);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--fx-color-primary);
+            text-decoration: none;
+        }
+
+        .button-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="../demos.html" class="back-link">← Back to Demos</a>
+
+    <h1>Button</h1>
+    <p style="color: var(--fx-color-fg-muted);">Foundation button variants and sizes used across the CSMA explorer and demo pages.</p>
+
+    <section>
+        <h2>Variants</h2>
+        <div class="button-row">
+            <button class="button">Default</button>
+            <button class="button" data-variant="primary">Primary</button>
+            <button class="button" data-variant="secondary">Secondary</button>
+            <button class="button" data-variant="ghost">Ghost</button>
+            <button class="button" data-variant="destructive">Destructive</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Sizes</h2>
+        <div class="button-row">
+            <button class="button" data-size="sm">Small</button>
+            <button class="button">Default</button>
+            <button class="button" data-size="lg">Large</button>
+            <button class="button" data-shape="icon" aria-label="Icon button">+</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>States</h2>
+        <div class="button-row">
+            <button class="button" disabled>Disabled</button>
+            <button class="button" data-variant="primary" data-loading="true">Loading</button>
+        </div>
+    </section>
+</body>
+
+</html>

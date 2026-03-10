@@ -16,7 +16,8 @@ import { rateLimiter } from '../../../runtime/RateLimiter.js';
 export function initTextareaSystem(eventBus) {
     if (!eventBus) return () => { };
 
-    const groups = document.querySelectorAll('.textarea-group');
+    // Support both CSS class and data attribute selectors
+    const groups = document.querySelectorAll('.textarea-group, [data-textarea-group]');
     const cleanups = [];
 
     groups.forEach(group => {

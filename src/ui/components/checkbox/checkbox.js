@@ -15,7 +15,8 @@ export function initCheckboxSystem(eventBus) {
         return () => { };
     }
 
-    const items = document.querySelectorAll('.checkbox-item');
+    // Support both CSS class and data attribute selectors
+    const items = document.querySelectorAll('.checkbox-item, [data-checkbox], [data-checkbox-group] .checkbox');
     const cleanups = [];
 
     items.forEach(item => {

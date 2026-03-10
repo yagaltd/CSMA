@@ -1,0 +1,178 @@
+/**
+ * Context Menu Component CSS
+ * Right-click menu for contextual actions
+ */
+
+.context-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.context-menu {
+  position: fixed;
+  z-index: var(--fx-z-popover);
+  min-width: 160px;
+  padding: var(--fx-space-xs);
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-md);
+  box-shadow: var(--fx-shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95);
+  transition: opacity var(--fx-transition-fast),
+              transform var(--fx-transition-fast),
+              visibility var(--fx-transition-fast);
+}
+
+.context-menu[data-state="open"] {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--fx-space-sm);
+  width: 100%;
+  padding: var(--fx-space-sm) var(--fx-space-md);
+  background: transparent;
+  border: none;
+  border-radius: var(--fx-radius-sm);
+  font-family: var(--fx-font-family-base);
+  font-size: var(--fx-font-size-sm);
+  color: var(--fx-color-fg);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--fx-transition-fast);
+}
+
+.context-menu-item:hover {
+  background: var(--fx-color-bg-muted);
+}
+
+.context-menu-item:focus-visible {
+  outline: none;
+  background: var(--fx-color-bg-muted);
+}
+
+.context-menu-item[data-variant="destructive"] {
+  color: var(--fx-color-danger);
+}
+
+.context-menu-item[data-variant="destructive"]:hover {
+  background: hsl(0 84.2% 60.2% / 0.1);
+}
+
+.context-menu-item[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.context-menu-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.context-menu-label {
+  flex: 1;
+}
+
+.context-menu-shortcut {
+  font-size: var(--fx-font-size-xs);
+  color: var(--fx-color-fg-muted);
+  margin-left: auto;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: var(--fx-color-border);
+  margin: var(--fx-space-xs) 0;
+}
+
+/* Submenu support */
+.context-menu-item[data-submenu] {
+  position: relative;
+}
+
+.context-menu-item[data-submenu]::after {
+  content: '';
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  margin-left: auto;
+}
+
+.context-menu-submenu {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  min-width: 160px;
+  padding: var(--fx-space-xs);
+  background: var(--fx-color-surface);
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-md);
+  box-shadow: var(--fx-shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(4px);
+  transition: opacity var(--fx-transition-fast),
+              transform var(--fx-transition-fast),
+              visibility var(--fx-transition-fast);
+}
+
+.context-menu-item[data-submenu]:hover .context-menu-submenu,
+.context-menu-item[data-submenu]:focus-within .context-menu-submenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* Checkbox and radio items */
+.context-menu-checkbox-item,
+.context-menu-radio-item {
+  position: relative;
+  padding-left: var(--fx-space-xl);
+}
+
+.context-menu-checkbox-item::before,
+.context-menu-radio-item::before {
+  content: '';
+  position: absolute;
+  left: var(--fx-space-sm);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid var(--fx-color-border);
+  border-radius: var(--fx-radius-sm);
+  background: var(--fx-color-surface);
+}
+
+.context-menu-radio-item::before {
+  border-radius: var(--fx-radius-full);
+}
+
+.context-menu-checkbox-item[data-checked="true"]::before,
+.context-menu-radio-item[data-checked="true"]::before {
+  background: var(--fx-color-primary);
+  border-color: var(--fx-color-primary);
+}
+
+.context-menu-checkbox-item[data-checked="true"]::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--fx-space-sm) + 0.25rem);
+  top: 50%;
+  transform: translateY(-60%) rotate(45deg);
+  width: 0.25rem;
+  height: 0.5rem;
+  border-right: 2px solid var(--fx-color-on-primary);
+  border-bottom: 2px solid var(--fx-color-on-primary);
+}

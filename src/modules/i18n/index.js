@@ -8,10 +8,12 @@
 import { I18n } from './services/I18n.js';
 
 export const manifest = {
+    id: 'i18n',
     name: 'Internationalization',
     version: '1.0.0',
     description: 'Multi-language support with translation management',
     dependencies: [],
+    services: ['I18n'],
     bundleSize: '4KB',
     contracts: []  // I18n doesn't publish events
 };

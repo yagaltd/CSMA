@@ -1,10 +1,12 @@
 import { MediaCaptureService } from './services/MediaCaptureService.js';
 
 export const manifest = {
+    id: 'media-capture',
     name: 'Media Capture',
     version: '1.0.0',
     description: 'Audio recording via MediaRecorder with File System integration',
     dependencies: ['fileSystem'],
+    services: ['mediaCapture'],
     bundleSize: '+4KB',
     contracts: [
         'INTENT_MEDIA_CAPTURE_START',
