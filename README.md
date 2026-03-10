@@ -39,10 +39,25 @@ Use this CSMA template for the client/app side, and SSMA when you need gateway/r
 - CSMA runtime (`src/runtime`)
 - Modular services and contracts (`src/modules`, `src/services`)
 - Modules-first extension model with contribution registries (`commandRegistry`, `routeRegistry`, `navigationRegistry`, `panelRegistry`, `adapterRegistry`)
-- UI components/patterns (`src/ui`)
+- CSMA-compliant UI components and patterns (`src/ui`)
 - Security and validation primitives
 - Multi-target packaging hooks (web, Capacitor, Neutralino)
 - Tests and examples
+
+## UI Components
+
+This template includes a growing set of CSMA-compliant vanilla JavaScript UI components built around:
+- CSS-defined state
+- EventBus-driven interaction
+- contract-validated runtime behavior
+- lifecycle-safe initialization and cleanup
+
+The component library lives under `src/ui/components/`.
+
+To explore the available components and interaction patterns, use the showcase page:
+- `src/ui/components/index.html`
+
+The showcase is intended as the live reference for component behavior, structure, and styling while the standalone `*.demo.html` files remain useful as isolated per-component smoke fixtures.
 
 ## Extension Model
 
