@@ -10,7 +10,7 @@ In CSMA, services are the "brain" while UI components are "dumb". Services:
 - Validate and transform data
 - Coordinate between components via EventBus
 
-For extension work, services are also the execution target behind module contributions. Command handlers, adapters, and route-backed flows should resolve to service methods instead of putting behavior directly in manifests.
+For extension work, services are also the execution target behind module contributions. Command handlers, adapters, route-backed flows, and long-lived background behavior should resolve to service methods instead of putting behavior directly in manifests.
 
 ## Service Types
 
@@ -189,36 +189,37 @@ Rules:
 
 ## Service Registration
 
-### In src/ui/init.js (Component Services)
+### In `src/ui/init.js` (Component Services)
 ```javascript
 import { createSliderService } from '../services/SliderService.js';
 import { initSliderUI } from './components/slider/slider.js';
 
 export function initUI(eventBus) {
-  // Create and register service
   const sliderService = createSliderService(eventBus);
   if (window.serviceManager) {
     window.serviceManager.register('slider', sliderService);
   }
   
-  // Initialize UI
   const sliderCleanup = initSliderUI(eventBus);
   
-  // Store cleanup
-  window.csma.componentCleanup = () => {
+  return () => {
     sliderCleanup();
     sliderService.cleanup();
   };
 }
 ```
 
-### In src/main.js (Module Services)
+### In module bootstrap
 ```javascript
-import { ServiceManager } from './runtime/ServiceManager.js';
-import { AIService } from './modules/ai/services/AIService.js';
+import { ServiceManager } from '../../runtime/ServiceManager.js';
+import { AIService } from './services/AIService.js';
 
-const serviceManager = new ServiceManager();
-serviceManager.register('ai', new AIService(eventBus));
+export function initAIModule(eventBus) {
+  const serviceManager = window.serviceManager || new ServiceManager();
+  const aiService = new AIService(eventBus);
+  serviceManager.register('ai', aiService);
+  return () => aiService.cleanup();
+}
 ```
 
 ## EventBus Integration

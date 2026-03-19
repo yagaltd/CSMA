@@ -106,17 +106,17 @@ eventBus.subscribe('NOTE_UPDATED', (note) => {
 
 .note-card.pending { 
   opacity: 0.7; 
-  border-left: 4px solid var(--fx-color-warning); 
+  border-left: 4px solid var(--warning); 
 }
 
 .note-card.completed { 
   opacity: 1; 
-  border-left: 4px solid var(--fx-color-success); 
+  border-left: 4px solid var(--success); 
 }
 
 .note-card.failed { 
   opacity: 0.5; 
-  border-left: 4px solid var(--fx-color-danger); 
+  border-left: 4px solid var(--destructive); 
 }
 
 /* Conditional elements */
@@ -800,7 +800,7 @@ publish(eventName, payload) {
 ### ✅ CSS Custom Properties: The Right Solution
 
 ```css
-/* src/css/foundation/tokens.css - Single source of truth */
+/* src/css/theme.css - Single source of truth */
 
 /* ====================================================================
    THEME CONFIGURATION
@@ -809,35 +809,35 @@ publish(eventName, payload) {
 
 :root {
   /* Brand Colors */
-  --fx-color-primary: #3b82f6;
-  --fx-color-secondary: #8b5cf6;
-  --fx-color-accent: #f59e0b;
+  --primary: #3b82f6;
+  --secondary: #8b5cf6;
+  --accent: #f59e0b;
   
   /* Status Colors */
-  --fx-color-success: #10b981;
-  --fx-color-warning: #f59e0b;
-  --fx-color-danger: #ef4444;
-  --fx-color-info: #3b82f6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --destructive: #ef4444;
+  --info: #3b82f6;
   
   /* Neutral Colors */
-  --fx-color-bg: #ffffff;
-  --fx-color-surface-muted: #f5f5f5;
-  --fx-color-fg: #1f2937;
-  --fx-color-fg-muted: #6b7280;
+  --background: #ffffff;
+  --surface-muted: #f5f5f5;
+  --foreground: #1f2937;
+  --foreground-muted: #6b7280;
   
   /* Spacing Scale */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
   
   /* Border Radius */
-  --corner-sm: 4px;
-  --corner-md: 8px;
-  --corner-lg: 12px;
-  --corner-xl: 16px;
-  --corner-full: 9999px;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 1rem;
+  --radius-full: 999px;
   
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -862,10 +862,10 @@ publish(eventName, payload) {
 
 /* Dark theme override */
 [data-theme="dark"] {
-  --fx-color-bg: #1f2937;
-  --fx-color-surface-muted: #111827;
-  --fx-color-fg: #f9fafb;
-  --fx-color-fg-muted: #d1d5db;
+  --background: #1f2937;
+  --surface-muted: #111827;
+  --foreground: #f9fafb;
+  --foreground-muted: #d1d5db;
 }
 
 /* ====================================================================
@@ -873,26 +873,26 @@ publish(eventName, payload) {
    ==================================================================== */
 
 .note-card {
-  padding: var(--spacing-md);
-  border-radius: var(--corner-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-normal);
-  background: var(--fx-color-bg);
+  background: var(--background);
 }
 
 .note-card.pending {
   opacity: 0.7;
-  border-left: 4px solid var(--fx-color-warning);
+  border-left: 4px solid var(--warning);
 }
 
 .note-card.completed {
   opacity: 1;
-  border-left: 4px solid var(--fx-color-success);
+  border-left: 4px solid var(--success);
 }
 
 .note-card.failed {
   opacity: 0.5;
-  border-left: 4px solid var(--fx-color-danger);
+  border-left: 4px solid var(--destructive);
 }
 
 /* Type indicators */
@@ -1502,7 +1502,7 @@ export class LogAccumulator {
    ├─ contracts.md        # Event/Intent schemas
    ├─ ai-system-map.json  # Machine-readable system context
    ├─ docs/adr/           # Architectural Decision Records
-   └─ css/foundation/tokens.css  # CSS custom properties
+   └─ css/theme.css  # CSS custom properties
    ↓
 4. PDR (Review & Approve)
    ↓
@@ -1532,7 +1532,7 @@ OUTPUT FORMAT:
 - agents.md: List all services, responsibilities, contracts
 - contracts.md: All schemas with validation syntax
 - ai-system-map.json: Machine-readable system map
-- css/foundation/tokens.css: CSS custom properties
+- css/theme.css: CSS custom properties
 - docs/adr/NNNN-title.md: Decision records
 
 VALIDATION:
@@ -1604,12 +1604,12 @@ element.style.borderColor = 'green';
 /* ✅ LLM defines all states here */
 .card.completed { 
   opacity: 1; 
-  border-left: 4px solid var(--fx-color-success);
+  border-left: 4px solid var(--success);
 }
 
 .card.pending { 
   opacity: 0.7; 
-  border-left: 4px solid var(--fx-color-warning);
+  border-left: 4px solid var(--warning);
 }
 
 .card.high-priority {
@@ -1622,9 +1622,9 @@ element.style.borderColor = 'green';
 ```css
 /* ✅ LLM edits these values */
 :root {
-  --fx-color-primary: #3b82f6;
-  --spacing-md: 16px;
-  --corner-md: 8px;
+  --primary: #3b82f6;
+  --space-md: 0.75rem;
+  --radius-md: 0.5rem;
 }
 ```
 

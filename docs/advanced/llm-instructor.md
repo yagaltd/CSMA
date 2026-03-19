@@ -4,8 +4,8 @@
 
 ```javascript
 import { createInstructor } from './services/llm/Instructor.js';
-import { object, string, number } from './runtime/validation/index.js';
-import { email } from './runtime/validation/validators/semantic.js';
+import { object, string, number } from '../../src/runtime/validation/index.js';
+import { email } from '../../src/runtime/validation/validators/semantic.js';
 
 // 1. Create instructor instance
 const instructor = createInstructor(eventBus, {
@@ -36,8 +36,8 @@ console.log(user);
 ## With Retry Logic
 
 ```javascript
-import { object, string, array } from './runtime/validation/index.js';
-import { llmInput } from './runtime/validation/validators/security.js';
+import { object, string, array } from '../../src/runtime/validation/index.js';
+import { llmInput } from '../../src/runtime/validation/validators/security.js';
 
 // Schema with security validation
 const TaskSchema = object({
@@ -66,7 +66,7 @@ try {
 ## Streaming Extraction
 
 ```javascript
-import { object, string, array } from './runtime/validation/index.js';
+import { object, string, array } from '../../src/runtime/validation/index.js';
 
 const MeetingNotesSchema = object({
     attendees: array(string()),
@@ -95,8 +95,8 @@ for await (const partial of instructor.extractStream({
 ## With ECCA Metadata
 
 ```javascript
-import { eventContract } from './runtime/validation/contract.js';
-import { object, string, enums } from './runtime/validation/index.js';
+import { eventContract } from '../../src/runtime/validation/contract.js';
+import { object, string, enums } from '../../src/runtime/validation/index.js';
 
 // Define contract with ECCA metadata
 const EmailExtractContract = eventContract({
@@ -131,7 +131,7 @@ if (!error) {
 ## Complex Nested Structures
 
 ```javascript
-import { object, string, array, number, optional } from './runtime/validation/index.js';
+import { object, string, array, number, optional } from '../../src/runtime/validation/index.js';
 
 const ResumeSchema = object({
     name: string(),

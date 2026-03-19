@@ -4,6 +4,13 @@ All notable changes to this repository should be documented in this file.
 
 The format is based on Keep a Changelog and this project uses Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+- synced the docs and skills with the current CSMA theme contract, component registry, and runtime paths
+- replaced stale foundation/package references with the repo's actual `src/css/*` and `src/runtime/*` layout
+- clarified component integration, theme customization, and validation import examples for new contributors
+
 ## [1.1.0] - 2026-03-10
 
 ### Added

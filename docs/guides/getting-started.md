@@ -46,6 +46,8 @@ npm run dev
 
 Visit `http://localhost:5173` and open the DevTools badge to verify logs are flowing. Hot reload is enabled by default.
 
+For the UI library itself, open `src/ui/components/index.html`. The explorer is the canonical component entrypoint and every registered component links to its own standalone demo page.
+
 Want a production build?
 
 ```bash
@@ -62,26 +64,26 @@ Most teams tweak two files immediately:
 
 | File | Purpose |
 |------|---------|
-| `src/css/foundation/tokens.css` + `src/css/foundation/themes/*.css` | Semantic color tokens (`--fx-color-*`). Changing these recolors every component. |
+| `src/css/theme.css` + `src/css/foundation/themes/*.css` | Shared theme contract plus light/dark values. Changing these updates every component. |
 | `src/css/base.css` | Global typography, layout resets, scrollbar + selection styling. |
 
 ### Step-by-step
 
-1. Open `src/css/foundation/tokens.css` (shared scales) and the matching file in `src/css/foundation/themes/` (light/dark overrides).
-2. Update semantic tokens only (example below). Avoid hardcoding colors inside components.
+1. Open `src/css/theme.css` for shared scales and recipe defaults, plus the matching file in `src/css/foundation/themes/` for light/dark color values.
+2. Update semantic tokens only for broad visual changes. Avoid hardcoding colors inside components.
 
 ```css
 :root {
-  --surface-primary: #f6f4ff;
-  --text-strong: #130c2f;
-  --accent: #684cf4;
+  --background: #fffdf8;
+  --foreground: #201a12;
+  --primary: #8b5cf6;
 }
 ```
 
-3. For typography or spacing tweaks, edit `src/css/base.css` → `body` + utility sections. Keep variable names consistent (e.g., `--font-body`).
+3. For typography, spacing, or component recipe tweaks, edit `src/css/theme.css` first and `src/css/base.css` second.
 4. Save files—Vite hot reload will refresh instantly.
 
-LLM hint: When instructing an AI to “update the theme,” include the exact variable names and desired values so it patches the foundation token/theme files (not component styles).
+LLM hint: When instructing an AI to "update the theme," point it at `src/css/theme.css` and `src/css/foundation/themes/*.css`, not component styles.
 
 ---
 
@@ -92,15 +94,17 @@ Before branching, run the lightweight suites:
 ```bash
 npm run test        # Contract + validation unit tests
 npm run test:smoke  # (Added in v1.0) Todo app DOM smoke test
+npm run check:ui-library
 ```
 
-This catches contract regressions and ensures the example app still works.
+This catches contract regressions, missing demo coverage, stale library references, and ensures the example app still works.
 
 ---
 
 ## 6. Next Steps
 
 - Read `docs/guides/building-components.md` to learn Type I–III patterns.
+- Read `docs/guides/integrating-components.md` if you want to copy CSMA components into an existing app instead of running the full repo.
 - Check `docs/examples/todo-app.md` (new) for a full reference implementation with ThreadManager + LogAccumulator.
 - When ready for mobile/desktop, see `docs/platforms/capacitor.md` & `docs/platforms/neutralino.md`.
 

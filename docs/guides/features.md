@@ -411,8 +411,8 @@ Real-time form validation with contract integration.
 
 **Usage**:
 ```javascript
-import { object, string } from './runtime/validation/index.js';
-import { email } from './runtime/validation/validators/semantic.js';
+import { object, string } from '../../src/runtime/validation/index.js';
+import { email } from '../../src/runtime/validation/validators/semantic.js';
 
 const formValidator = serviceManager.get('formValidator');
 

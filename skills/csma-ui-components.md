@@ -1,280 +1,79 @@
 # CSMA UI Components Skill
 
-Expert guidance on building UI components for CSMA, including CSS token system, component structure, and theming.
+Use this skill when building or restyling components in `src/ui/components/*`.
 
-## Design System Foundation
+## Design System Source
 
-CSMA UI uses a token-based design system similar to shadcn/ui.
+- Canonical token contract: [`src/css/theme.css`](/home/aurel/Documents/github/CSMA-SSMA/CSMA/src/css/theme.css)
+- Light overrides: [`src/css/foundation/themes/light.css`](/home/aurel/Documents/github/CSMA-SSMA/CSMA/src/css/foundation/themes/light.css)
+- Dark overrides: [`src/css/foundation/themes/dark.css`](/home/aurel/Documents/github/CSMA-SSMA/CSMA/src/css/foundation/themes/dark.css)
 
-### Token Location
-`src/css/foundation/tokens.css` - Single source of truth
+## Current Token Groups
 
-### Color Tokens
-```css
-/* Semantic colors */
---fx-color-bg: hsl(0 0% 100%);
---fx-color-fg: hsl(222.2 84% 4.9%);
---fx-color-surface: hsl(0 0% 100%);
---fx-color-border: hsl(214.3 31.8% 91.4%);
+### Colors
+- `--background`, `--background-muted`
+- `--surface`, `--surface-muted`
+- `--foreground`, `--foreground-muted`
+- `--border`, `--overlay`
+- `--primary`, `--primary-foreground`
+- `--secondary`, `--secondary-foreground`
+- `--accent`, `--accent-foreground`
+- `--destructive`, `--destructive-foreground`
+- `--success`, `--success-foreground`
+- `--warning`, `--warning-foreground`
+- `--info`, `--info-foreground`
 
-/* Semantic variants */
---fx-color-primary: hsl(222.2 47.4% 11.2%);
---fx-color-on-primary: hsl(210 40% 98%);
---fx-color-secondary: hsl(210 40% 96.1%);
---fx-color-danger: hsl(0 84.2% 60.2%);
---fx-color-success: hsl(142 71% 45%);
---fx-color-warning: hsl(38 92% 50%);
---fx-color-info: hsl(221 83% 53%);
-```
+### Scale and recipe tokens
+- Spacing: `--space-2xs` through `--space-5xl`
+- Radius: `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-xl`, `--radius-2xl`, `--radius-3xl`, `--radius-full`
+- Typography: `--font-family-base`, `--font-family-mono`, `--font-size-*`, `--font-weight-*`, `--line-height-*`
+- Motion: `--transition-fast`, `--transition-normal`, `--transition-slow`
+- Layers: `--z-base`, `--z-overlay`, `--z-modal`, `--z-popover`, `--z-toast`
+- Recipes: `--button-*`, `--input-*`, `--card-*`, `--dialog-*`, `--navbar-*`, `--table-*`
 
-### Spacing Scale
-```css
---fx-space-2xs: 0.125rem;  /* 2px */
---fx-space-xs: 0.25rem;    /* 4px */
---fx-space-sm: 0.5rem;     /* 8px */
---fx-space-md: 0.75rem;    /* 12px */
---fx-space-lg: 1rem;       /* 16px */
---fx-space-xl: 1.5rem;     /* 24px */
---fx-space-2xl: 2rem;      /* 32px */
---fx-space-3xl: 3rem;      /* 48px */
-```
+## Component Rules
 
-### Border Radii
-```css
---fx-radius-sm: 0.25rem;
---fx-radius-md: 0.5rem;
---fx-radius-lg: 0.75rem;
---fx-radius-xl: 1rem;
---fx-radius-full: 999px;
-```
-
-### Typography
-```css
---fx-font-family-base: "Inter", system-ui, sans-serif;
---fx-font-family-mono: "JetBrains Mono", monospace;
---fx-font-size-xs: 0.75rem;
---fx-font-size-sm: 0.875rem;
---fx-font-size-md: 1rem;
---fx-font-size-lg: 1.125rem;
-```
+1. Use semantic HTML first.
+2. Use a single base class and `data-*` attributes for variants, sizes, and state.
+3. Keep visual changes in CSS classes or `data-*` values.
+4. Use EventBus only for Type II and Type III components.
+5. Use `textContent` and safe DOM APIs for user data.
+6. Keep theme-dependent values in the token contract, not in component files.
 
 ## Component Structure
 
-Each component lives in `src/ui/components/[name]/`:
+Each component should live in its own folder:
 
-```
+```text
 button/
-├── button.css        # Styles (required)
-├── button.js         # Behavior (Type II/III only)
-├── button.demo.html  # Demo page
-└── manifest.json     # Metadata (optional)
+├── button.css
+├── button.js
+├── button.demo.html
+└── manifest.json
 ```
 
-## CSS Component Pattern
+For JS-backed components:
+- expose `componentDependencies`
+- define `init[Name]System(eventBus)` for Type II
+- define `create[Name]Service(eventBus)` for Type III services
+- return a cleanup function from the initializer
 
-### Use data-* Attributes for Variants
-```css
-/* Base styles */
-.button {
-  appearance: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--fx-space-xs);
-  border: 1px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-lg);
-  padding: var(--fx-space-sm) var(--fx-space-xl);
-  font-family: var(--fx-font-family-base);
-  cursor: pointer;
-  transition: all var(--fx-transition-fast);
-}
+## Theme Switching
 
-/* Variants via data-variant */
-.button[data-variant="primary"] {
-  background: var(--fx-color-primary);
-  color: var(--fx-color-on-primary);
-  border-color: transparent;
-}
+Themes are switched by setting `document.documentElement.dataset.theme` to `light` or `dark`.
 
-.button[data-variant="secondary"] {
-  background: var(--fx-color-surface-muted);
-  color: var(--fx-color-fg);
-}
+Demo pages should load [`src/ui/components/theme-loader.js`](/home/aurel/Documents/github/CSMA-SSMA/CSMA/src/ui/components/theme-loader.js) before paint so the saved theme is applied immediately.
 
-.button[data-variant="destructive"] {
-  background: var(--fx-color-danger);
-  color: var(--fx-color-on-danger);
-}
+## Current Component Entry Points
 
-/* Sizes via data-size */
-.button[data-size="sm"] {
-  padding: var(--fx-space-xs) var(--fx-space-lg);
-  font-size: var(--fx-font-size-xs);
-}
+- Explorer: [`src/ui/components/index.html`](/home/aurel/Documents/github/CSMA-SSMA/CSMA/src/ui/components/index.html)
+- CSS bundle: [`src/ui/components/index.css`](/home/aurel/Documents/github/CSMA-SSMA/CSMA/src/ui/components/index.css)
+- App stylesheet entry: [`src/css/main.css`](/home/aurel/Documents/github/CSMA-SSMA/CSMA/src/css/main.css)
 
-.button[data-size="lg"] {
-  padding: var(--fx-space-md) var(--fx-space-2xl);
-  font-size: var(--fx-font-size-md);
-}
+## What To Watch For
 
-/* States via data-state or attributes */
-.button[disabled] {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
+- Do not use a `--radius` base token; use the fixed radius scale from `theme.css`.
+- Do not assume every component supports arbitrary theme names.
+- Do not hardcode color fallbacks when a semantic token exists.
+- Do not copy old docs that reference a package-only `@csma/foundation` layout; the repo paths above are the current source of truth.
 
-.button[data-loading="true"] {
-  pointer-events: none;
-}
-```
-
-## HTML Pattern
-
-```html
-<!-- Base button -->
-<button class="button">Default</button>
-
-<!-- Primary button -->
-<button class="button" data-variant="primary">Primary</button>
-
-<!-- Small destructive button -->
-<button class="button" data-variant="destructive" data-size="sm">
-  Delete
-</button>
-
-<!-- Loading state -->
-<button class="button" data-variant="primary" data-loading="true">
-  Saving...
-</button>
-
-<!-- Icon button -->
-<button class="button" data-variant="ghost" data-shape="icon" aria-label="Settings">
-  <svg><!-- icon --></svg>
-</button>
-```
-
-## Theme System
-
-### Light Theme (Default)
-Defined in `tokens.css` under `:root`
-
-### Dark Theme
-Defined in `src/css/foundation/themes/dark.css`:
-
-```css
-:root[data-theme="dark"] {
-  --fx-color-bg: hsl(222.2 84% 4.9%);
-  --fx-color-fg: hsl(210 40% 98%);
-  --fx-color-surface: hsl(222.2 84% 4.9%);
-  --fx-color-border: rgba(148, 163, 184, 0.35);
-  /* ... more overrides */
-}
-
-/* System preference fallback */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    /* Same dark values */
-  }
-}
-```
-
-### Theme Toggle Implementation
-```javascript
-function toggleTheme() {
-  const html = document.documentElement;
-  const current = html.dataset.theme || 'light';
-  const next = current === 'light' ? 'dark' : 'light';
-  html.dataset.theme = next;
-  localStorage.setItem('theme', next);
-  eventBus.publish('THEME_CHANGED', { theme: next });
-}
-```
-
-## State Management Pattern
-
-### Use data-state for Component State
-```css
-.dialog-overlay[data-state="open"] {
-  display: flex;
-}
-
-.dialog-overlay[data-state="closed"] {
-  display: none;
-}
-
-.input[data-state="error"] {
-  border-color: var(--fx-color-danger);
-}
-
-.input[data-state="success"] {
-  border-color: var(--fx-color-success);
-}
-```
-
-### Complex State with Multiple Attributes
-```css
-.card[data-priority="high"][data-status="pending"] {
-  border-left: 4px solid var(--fx-color-danger);
-}
-
-.card[data-priority="low"][data-status="completed"] {
-  border-left: 4px solid var(--fx-color-success);
-  opacity: 0.8;
-}
-```
-
-## Existing Components
-
-| Component | Type | CSS File | JS File |
-|-----------|------|----------|---------|
-| Accordion | II | accordion.css | accordion.js |
-| Alert Dialog | II | alert-dialog.css | alert-dialog.js |
-| Avatar | I | avatar.css | - |
-| Badge | I | badge.css | - |
-| Breadcrumb | I | breadcrumb.css | - |
-| Button | I | button.css | - |
-| Card | I | card.css | - |
-| Carousel | II | carousel.css | carousel.js |
-| Chat | I | chat.css | - |
-| Checkbox | II | checkbox.css | checkbox.js |
-| Datepicker | II | datepicker.css | datepicker.js |
-| Dialog | II | dialog.css | dialog.js |
-| Dropdown | II | dropdown.css | dropdown.js |
-| File Upload | II | file-upload.css | file-upload.js |
-| Input | II | input.css | input.js |
-| Navbar | II | navbar.css | navbar.js |
-| OTP | II | otp.css | otp.js |
-| Pagination | II | pagination.css | pagination.js |
-| Popover | II | popover.css | popover.js |
-| Progress | II | progress.css | progress.js |
-| Radio | II | radio.css | radio.js |
-| Select | I | select.css | - |
-| Separator | I | separator.css | - |
-| Skeleton | I | skeleton.css | - |
-| Slider | III | slider.css | slider.js + SliderService.js |
-| Switch | II | switch.css | switch.js |
-| Tabs | II | tabs.css | tabs.js |
-| Textarea | II | textarea.css | textarea.js |
-| Toast | II | toast.css | toast.js |
-| Tooltip | II | tooltip.css | tooltip.js |
-
-## Missing Components (Priority)
-
-### High Priority
-- Command (Command Palette)
-- Context Menu
-- Drawer/Sheet
-- Form (Field, Label, Description)
-- Multi-Select
-- Number Field
-- Scroll Area
-- Table
-
-### Medium Priority
-- Alert
-- Calendar
-- Collapsible
-- Hover Card
-- Menubar
-- Navigation Menu
-- Resizable

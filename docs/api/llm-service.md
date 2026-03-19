@@ -55,8 +55,8 @@ export OPENAI_API_KEY="sk-..."
 
 ```javascript
 import { createInstructor } from './services/llm/Instructor.js';
-import { object, string, number } from './runtime/validation/index.js';
-import { email } from './runtime/validation/validators/semantic.js';
+import { object, string, number } from '../../src/runtime/validation/index.js';
+import { email } from '../../src/runtime/validation/validators/semantic.js';
 
 // 1. Create instructor
 const instructor = createInstructor(eventBus, {

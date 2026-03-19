@@ -260,8 +260,8 @@ const data = await api.get('/api/protected');
 ### Usage
 
 ```javascript
-import { object, string, number } from './runtime/validation/index.js';
-import { email } from './runtime/validation/validators/semantic.js';
+import { object, string, number } from '../../src/runtime/validation/index.js';
+import { email } from '../../src/runtime/validation/validators/semantic.js';
 
 const formValidator = serviceManager.get('formValidator');
 

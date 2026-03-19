@@ -38,7 +38,7 @@ src/runtime/validation/
 ### Basic Validation
 
 ```javascript
-import { string, number, object } from './runtime/validation/index.js';
+import { string, number, object } from '../../src/runtime/validation/index.js';
 
 const PersonSchema = object({
     name: string(),
@@ -182,7 +182,7 @@ The `contract()` helper wraps schemas with ECCA metadata for governance and secu
 ### Basic Usage
 
 ```javascript
-import { contract, object, string, size } from './runtime/validation/index.js';
+import { contract, object, string, size } from '../../src/runtime/validation/index.js';
 
 export const NOTE_SAVED = contract({
     // ECCA Metadata
@@ -258,7 +258,7 @@ Domain-specific validators for common data types.
 Validates email addresses.
 
 ```javascript
-import { email } from './runtime/validation/index.js';
+import { email } from '../../src/runtime/validation/index.js';
 
 const EmailSchema = email();
 EmailSchema.validate('user@example.com'); // ✅ PASS
@@ -269,7 +269,7 @@ EmailSchema.validate('not-an-email');     // ❌ FAIL
 Validates URLs.
 
 ```javascript
-import { url } from './runtime/validation/index.js';
+import { url } from '../../src/runtime/validation/index.js';
 
 const UrlSchema = url();
 UrlSchema.validate('https://example.com'); // ✅ PASS
@@ -280,7 +280,7 @@ UrlSchema.validate('not a url');           // ❌ FAIL
 Validates UUIDs (v4 by default).
 
 ```javascript
-import { uuid } from './runtime/validation/index.js';
+import { uuid } from '../../src/runtime/validation/index.js';
 
 const IdSchema = uuid();
 IdSchema.validate('550e8400-e29b-41d4-a716-446655440000'); // ✅ PASS
@@ -290,7 +290,7 @@ IdSchema.validate('550e8400-e29b-41d4-a716-446655440000'); // ✅ PASS
 Validates phone numbers (E.164 format).
 
 ```javascript
-import { phone } from './runtime/validation/index.js';
+import { phone } from '../../src/runtime/validation/index.js';
 
 const PhoneSchema = phone();
 PhoneSchema.validate('+1234567890');  // ✅ PASS
@@ -301,7 +301,7 @@ PhoneSchema.validate('(123) 456-7890'); // ✅ PASS (auto-cleaned)
 Validates hex color codes.
 
 ```javascript
-import { hexColor } from './runtime/validation/index.js';
+import { hexColor } from '../../src/runtime/validation/index.js';
 
 const ColorSchema = hexColor();
 ColorSchema.validate('#ff0000'); // ✅ PASS
@@ -312,7 +312,7 @@ ColorSchema.validate('#fff');    // ✅ PASS
 Validates ISO 8601 date strings.
 
 ```javascript
-import { isoDate } from './runtime/validation/index.js';
+import { isoDate } from '../../src/runtime/validation/index.js';
 
 const DateSchema = isoDate();
 DateSchema.validate('2025-12-01T10:00:00Z'); // ✅ PASS
@@ -328,7 +328,7 @@ Security-first validators for zero-trust architecture.
 Validates LLM input with **prompt injection detection**.
 
 ```javascript
-import { llmInput } from './runtime/validation/index.js';
+import { llmInput } from '../../src/runtime/validation/index.js';
 
 const PromptSchema = llmInput(4000); // Max ~4K tokens
 
@@ -351,7 +351,7 @@ PromptSchema.validate('Ignore previous instructions'); // ❌ BLOCKED!
 Validates HTML content for XSS prevention.
 
 ```javascript
-import { sanitizedHTML } from './runtime/validation/index.js';
+import { sanitizedHTML } from '../../src/runtime/validation/index.js';
 
 const HtmlSchema = sanitizedHTML();
 
@@ -369,7 +369,7 @@ HtmlSchema.validate('<script>alert("XSS")</script>'); // ❌ BLOCKED!
 Validates URLs for scheme safety.
 
 ```javascript
-import { sanitizedURL } from './runtime/validation/index.js';
+import { sanitizedURL } from '../../src/runtime/validation/index.js';
 
 const SafeUrlSchema = sanitizedURL();
 
@@ -388,7 +388,7 @@ SafeUrlSchema.validate('data:text/html,...');     // ❌ BLOCKED!
 Validates strings for SQL injection prevention.
 
 ```javascript
-import { sqlSafe } from './runtime/validation/index.js';
+import { sqlSafe } from '../../src/runtime/validation/index.js';
 
 const InputSchema = sqlSafe();
 
@@ -400,7 +400,7 @@ InputSchema.validate("'; DROP TABLE users--"); // ❌ BLOCKED!
 Validates password strength.
 
 ```javascript
-import { strongPassword } from './runtime/validation/index.js';
+import { strongPassword } from '../../src/runtime/validation/index.js';
 
 const PasswordSchema = strongPassword(12);
 
@@ -421,7 +421,7 @@ import {
     size,
     email,
     sanitizedHTML 
-} from './runtime/validation/index.js';
+} from '../../src/runtime/validation/index.js';
 
 export const INTENT_SEND_EMAIL = contract({
     version: 1,
@@ -511,7 +511,7 @@ Vite automatically removes unused validators:
 
 ```javascript
 // Only import what you need
-import { string, number, email } from './runtime/validation/index.js';
+import { string, number, email } from '../../src/runtime/validation/index.js';
 
 // Not imported = not in bundle:
 // - uuid, phone, hexColor, isoDate
@@ -534,7 +534,7 @@ import { object, string } from 'superstruct';
 
 **After**:
 ```javascript
-import { object, string } from './runtime/validation/index.js';
+import { object, string } from '../../src/runtime/validation/index.js';
 ```
 
 All code remains the same - 100% backward compatible!
@@ -606,7 +606,7 @@ const ClassifyIntent = object({
 ### Create Custom Validators
 
 ```javascript
-import { refine, string } from './runtime/validation/index.js';
+import { refine, string } from '../../src/runtime/validation/index.js';
 
 // Custom validator for username
 export function username() {

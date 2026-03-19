@@ -30,7 +30,7 @@ Consolidated documentation for learning CSMA:
 Security-first architecture and best practices:
 
 - **[Security Map](security/security-map.md)** - AI coding guidelines and security checklist
-- **[Implementation Plan](../../../.gemini/antigravity/brain/*/implementation_plan.md)** - Security enhancement roadmap
+- **[Roadmap](roadmap/index.md)** - CSMA planning and future work
 
 ### 🚀 Advanced
 Optional advanced patterns for production apps:

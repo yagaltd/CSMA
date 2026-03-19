@@ -11,7 +11,7 @@
 **Contract Validation**:
 ```javascript
 // ✅ CORRECT: Use validation schemas
-import { object, string, size } from './runtime/validation/index.js';
+import { object, string, size } from '../../src/runtime/validation/index.js';
 
 const schema = object({
     text: size(string(), 1, 16000)  // Max length enforced
@@ -98,7 +98,7 @@ export const INTENT_SUBMIT_FORM = {
 ```javascript
 // ✅ CORRECT: Multi-layer validation
 import { sanitizeLLMInput } from './utils/ sanitize.js';
-import { llmInput } from './runtime/validation/validators/security.js';
+import { llmInput } from '../../src/runtime/validation/validators/security.js';
 
 const userPrompt = sanitizeLLMInput(rawInput);
 validate(userPrompt, llmInput());  // Throws if injection detected
