@@ -14,6 +14,13 @@
  * - Keyboard navigation support
  */
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initSelectUI(eventBus).']
+};
 const csma = window.csma || {};
 const eventBus = csma.eventBus;
 

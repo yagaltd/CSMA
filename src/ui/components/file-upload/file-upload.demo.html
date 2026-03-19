@@ -15,8 +15,8 @@
       padding: 2rem;
       max-width: 900px;
       margin: 0 auto;
-      background: var(--fx-color-bg);
-      color: var(--fx-color-fg);
+      background: var(--background);
+      color: var(--foreground);
     }
 
     h1 {
@@ -27,13 +27,13 @@
     h2 {
       font-size: 1.25rem;
       margin: 1.5rem 0 0.75rem;
-      color: var(--fx-color-fg-muted);
+      color: var(--foreground-muted);
     }
 
     .back-link {
       display: inline-block;
       margin-bottom: 1rem;
-      color: var(--fx-color-primary);
+      color: var(--primary);
       text-decoration: none;
     }
 
@@ -44,10 +44,10 @@
 </head>
 
 <body>
-  <a href="../demos.html" class="back-link">← Back to Demos</a>
+  <a href="../index.html#file-upload" class="back-link">← Back to Demos</a>
 
   <h1>File Upload</h1>
-  <p style="color: var(--fx-color-fg-muted);">Drag & drop, preview, progress, cancel/retry. Client-side only demo (simulated uploads).</p>
+  <p style="color: var(--foreground-muted);">Drag & drop, preview, progress, cancel/retry. Client-side only demo (simulated uploads).</p>
 
   <section>
     <div class="file-upload" data-component="file-upload">
@@ -67,7 +67,7 @@
 
   <section>
     <h2>Keyboard & accessibility</h2>
-    <ul style="color: var(--fx-color-fg-muted); line-height: 1.6;">
+    <ul style="color: var(--foreground-muted); line-height: 1.6;">
       <li>Tab to the dropzone, press Enter/Space to open file picker.</li>
       <li>Screen readers announce dropzone as a button.</li>
       <li>Progress and statuses are text-only; no role announcements required.</li>

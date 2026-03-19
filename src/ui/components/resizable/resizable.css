@@ -32,8 +32,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--fx-color-border);
-  transition: background var(--fx-transition-fast);
+  background: var(--border);
+  transition: background var(--transition-fast);
   z-index: 10;
 }
 
@@ -49,7 +49,7 @@
 
 .resizable-handle:hover,
 .resizable-handle[data-active="true"] {
-  background: var(--fx-color-primary);
+  background: var(--primary);
 }
 
 /* Drag indicator */
@@ -66,9 +66,9 @@
   width: 4px;
   height: 2rem;
   border-radius: 2px;
-  background: var(--fx-color-fg-muted);
+  background: var(--foreground-muted);
   opacity: 0;
-  transition: opacity var(--fx-transition-fast);
+  transition: opacity var(--transition-fast);
 }
 
 .resizable[data-orientation="vertical"] .resizable-handle::after {
@@ -78,9 +78,9 @@
   width: 2rem;
   height: 4px;
   border-radius: 2px;
-  background: var(--fx-color-fg-muted);
+  background: var(--foreground-muted);
   opacity: 0;
-  transition: opacity var(--fx-transition-fast);
+  transition: opacity var(--transition-fast);
 }
 
 .resizable-handle:hover::after,
@@ -110,7 +110,7 @@
 
 /* With handle knob */
 .resizable-handle[data-with-handle="true"] {
-  background: var(--fx-color-bg-muted);
+  background: var(--background-muted);
 }
 
 .resizable[data-orientation="horizontal"] .resizable-handle[data-with-handle="true"] {
@@ -134,13 +134,13 @@
   justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
-  background: var(--fx-color-surface);
-  border: 1px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-sm);
-  color: var(--fx-color-fg-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--foreground-muted);
   cursor: pointer;
   opacity: 0;
-  transition: all var(--fx-transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .resizable-panel:hover .resizable-panel-collapse-btn {
@@ -148,8 +148,8 @@
 }
 
 .resizable-panel-collapse-btn:hover {
-  background: var(--fx-color-bg-muted);
-  color: var(--fx-color-fg);
+  background: var(--background-muted);
+  color: var(--foreground);
 }
 
 /* Position collapse button based on orientation */
@@ -196,7 +196,7 @@
 
 /* Variants */
 .resizable[data-variant="bordered"] .resizable-panel {
-  border: 1px solid var(--fx-color-border);
+  border: 1px solid var(--border);
 }
 
 .resizable[data-variant="bordered"] .resizable-handle {
@@ -215,15 +215,15 @@
 .resizable[data-auto-save="true"]::before {
   content: attr(data-saved-indicator);
   position: absolute;
-  top: var(--fx-space-xs);
-  right: var(--fx-space-xs);
-  padding: var(--fx-space-2xs) var(--fx-space-xs);
-  background: var(--fx-color-success);
-  color: var(--fx-color-on-success);
-  font-size: var(--fx-font-size-xs);
-  border-radius: var(--fx-radius-sm);
+  top: var(--space-xs);
+  right: var(--space-xs);
+  padding: var(--space-2xs) var(--space-xs);
+  background: var(--success);
+  color: var(--success-foreground);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-sm);
   opacity: 0;
-  transition: opacity var(--fx-transition-fast);
+  transition: opacity var(--transition-fast);
   z-index: 100;
 }
 
@@ -237,8 +237,8 @@
 }
 
 .resizable-handle:focus-visible {
-  outline: 2px solid var(--fx-color-primary);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 /* Snap points indicator */
@@ -252,9 +252,9 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background: var(--fx-color-fg-muted);
+  background: var(--foreground-muted);
   opacity: 0;
-  transition: opacity var(--fx-transition-fast);
+  transition: opacity var(--transition-fast);
 }
 
 .resizable[data-orientation="horizontal"] .resizable-handle[data-snap-points]::before {
@@ -271,7 +271,7 @@
 
 .resizable-handle[data-snap-active="true"]::before {
   opacity: 1;
-  background: var(--fx-color-primary);
+  background: var(--primary);
 }
 
 /* Resize animation */
@@ -281,12 +281,12 @@
 
 /* Handle hover feedback */
 .resizable-handle[data-dragging="true"] {
-  background: var(--fx-color-primary);
+  background: var(--primary);
 }
 
 .resizable-handle[data-dragging="true"]::after {
   opacity: 1;
-  background: var(--fx-color-on-primary);
+  background: var(--primary-foreground);
 }
 
 /* Touch-friendly larger handles */

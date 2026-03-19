@@ -23,6 +23,23 @@ const KEYBOARD_NAV_KEYS = new Set([
     'PageDown'
 ]);
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [
+        {
+            id: 'date',
+            importPath: '/src/services/DateService.js',
+            factory: 'createDateService',
+            required: true
+        }
+    ],
+    styles: ['/src/css/main.css'],
+    notes: [
+        'Copy src/ui/components/datepicker plus src/services/DateService.js when integrating outside the CSMA runtime.',
+        'Initialize with initDatepickerUI(eventBus).'
+    ]
+};
+
 export function initDatepickerUI(eventBus) {
     const dateService = createDateService(eventBus);
     const instances = [];

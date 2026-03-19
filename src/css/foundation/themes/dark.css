@@ -2,58 +2,58 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --fx-color-bg: hsl(0 0% 3.9%);
-  --fx-color-bg-muted: hsl(0 0% 14.9%);
-  --fx-color-surface: hsl(0 0% 3.9%);
-  --fx-color-surface-muted: hsl(0 0% 14.9%);
-  --fx-color-fg: hsl(0 0% 98%);
-  --fx-color-fg-muted: hsl(0 0% 63.9%);
-  --fx-color-border: hsl(0 0% 14.9%);
-  --fx-color-overlay: rgba(2, 6, 23, 0.75);
+  --background: hsl(0 0% 3.9%);
+  --background-muted: hsl(0 0% 14.9%);
+  --surface: hsl(0 0% 3.9%);
+  --surface-muted: hsl(0 0% 14.9%);
+  --foreground: hsl(0 0% 98%);
+  --foreground-muted: hsl(0 0% 63.9%);
+  --border: hsl(0 0% 14.9%);
+  --overlay: rgba(2, 6, 23, 0.75);
 
-  --fx-color-primary: hsl(0 0% 98%);
-  --fx-color-on-primary: hsl(0 0% 9%);
-  --fx-color-secondary: hsl(0 0% 14.9%);
-  --fx-color-on-secondary: hsl(0 0% 98%);
-  --fx-color-accent: hsl(0 0% 14.9%);
-  --fx-color-on-accent: hsl(0 0% 98%);
+  --primary: hsl(0 0% 98%);
+  --primary-foreground: hsl(0 0% 9%);
+  --secondary: hsl(0 0% 14.9%);
+  --secondary-foreground: hsl(0 0% 98%);
+  --accent: hsl(0 0% 14.9%);
+  --accent-foreground: hsl(0 0% 98%);
 
-  --fx-color-danger: hsl(0 84.2% 60.2%);
-  --fx-color-on-danger: hsl(210 40% 98%);
-  --fx-color-warning: hsl(38 92% 50%);
-  --fx-color-on-warning: hsl(48 96% 89%);
-  --fx-color-success: hsl(142 71% 45%);
-  --fx-color-on-success: hsl(137 72% 94%);
-  --fx-color-info: hsl(221 83% 53%);
-  --fx-color-on-info: hsl(210 40% 98%);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(210 40% 98%);
+  --warning: hsl(38 92% 50%);
+  --warning-foreground: hsl(48 96% 89%);
+  --success: hsl(142 71% 45%);
+  --success-foreground: hsl(137 72% 94%);
+  --info: hsl(221 83% 53%);
+  --info-foreground: hsl(210 40% 98%);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     color-scheme: dark;
-    --fx-color-bg: hsl(0 0% 3.9%);
-    --fx-color-bg-muted: hsl(0 0% 14.9%);
-    --fx-color-surface: hsl(0 0% 3.9%);
-    --fx-color-surface-muted: hsl(0 0% 14.9%);
-    --fx-color-fg: hsl(0 0% 98%);
-    --fx-color-fg-muted: hsl(0 0% 63.9%);
-    --fx-color-border: hsl(0 0% 14.9%);
-    --fx-color-overlay: rgba(2, 6, 23, 0.75);
+    --background: hsl(0 0% 3.9%);
+    --background-muted: hsl(0 0% 14.9%);
+    --surface: hsl(0 0% 3.9%);
+    --surface-muted: hsl(0 0% 14.9%);
+    --foreground: hsl(0 0% 98%);
+    --foreground-muted: hsl(0 0% 63.9%);
+    --border: hsl(0 0% 14.9%);
+    --overlay: rgba(2, 6, 23, 0.75);
 
-    --fx-color-primary: hsl(0 0% 98%);
-    --fx-color-on-primary: hsl(0 0% 9%);
-    --fx-color-secondary: hsl(0 0% 14.9%);
-    --fx-color-on-secondary: hsl(0 0% 98%);
-    --fx-color-accent: hsl(0 0% 14.9%);
-    --fx-color-on-accent: hsl(0 0% 98%);
+    --primary: hsl(0 0% 98%);
+    --primary-foreground: hsl(0 0% 9%);
+    --secondary: hsl(0 0% 14.9%);
+    --secondary-foreground: hsl(0 0% 98%);
+    --accent: hsl(0 0% 14.9%);
+    --accent-foreground: hsl(0 0% 98%);
 
-    --fx-color-danger: hsl(0 84.2% 60.2%);
-    --fx-color-on-danger: hsl(210 40% 98%);
-    --fx-color-warning: hsl(38 92% 50%);
-    --fx-color-on-warning: hsl(48 96% 89%);
-    --fx-color-success: hsl(142 71% 45%);
-    --fx-color-on-success: hsl(137 72% 94%);
-    --fx-color-info: hsl(221 83% 53%);
-    --fx-color-on-info: hsl(210 40% 98%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(210 40% 98%);
+    --warning: hsl(38 92% 50%);
+    --warning-foreground: hsl(48 96% 89%);
+    --success: hsl(142 71% 45%);
+    --success-foreground: hsl(137 72% 94%);
+    --info: hsl(221 83% 53%);
+    --info-foreground: hsl(210 40% 98%);
   }
 }

@@ -1,6 +1,6 @@
 {
     "name": "csma",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Lean, secure, reactive CSMA with ready-to-use components",
     "type": "module",
     "dependencies": {
@@ -23,7 +23,8 @@
         "deploy:cdn": "node scripts/deploy/cdn.mjs",
         "generate-map": "node scripts/generate-ai-map.js",
         "security-check": "node scripts/check-security.js",
-        "prebuild": "npm run security-check",
+        "check:ui-library": "node scripts/check-ui-library.js",
+        "prebuild": "npm run security-check && npm run check:ui-library",
         "postinstall": "npm run generate-map",
         "build:mobile:capacitor": "node scripts/build-mobile-capacitor.js",
         "build:desktop:neutralino": "node scripts/build-desktop-neutralino.js",

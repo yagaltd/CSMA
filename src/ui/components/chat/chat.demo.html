@@ -15,13 +15,13 @@
             padding: 2rem;
             max-width: 900px;
             margin: 0 auto;
-            background: var(--fx-color-bg);
-            color: var(--fx-color-fg);
+            background: var(--background);
+            color: var(--foreground);
         }
 
         h1,
         h2 {
-            color: var(--fx-color-fg);
+            color: var(--foreground);
             margin-bottom: 1rem;
         }
 
@@ -33,11 +33,11 @@
         h2 {
             font-size: 1.5rem;
             margin-top: 2rem;
-            color: var(--fx-color-fg-muted);
+            color: var(--foreground-muted);
         }
 
         .intro {
-            color: var(--fx-color-fg-muted);
+            color: var(--foreground-muted);
             line-height: 1.6;
             margin-bottom: 1.5rem;
         }
@@ -45,13 +45,13 @@
         section {
             margin-bottom: 3rem;
             padding-bottom: 2rem;
-            border-bottom: 1px solid var(--fx-color-border);
+            border-bottom: 1px solid var(--border);
         }
 
         .back-link {
             display: inline-block;
             margin-bottom: 1rem;
-            color: var(--fx-color-primary);
+            color: var(--primary);
             text-decoration: none;
         }
 
@@ -78,15 +78,15 @@
             font-weight: 500;
             padding: 0.25rem 0.5rem;
             border-radius: var(--radius-sm);
-            background: var(--fx-color-success);
-            color: var(--fx-color-on-success);
+            background: var(--success);
+            color: var(--success-foreground);
             margin-top: 1rem;
         }
 
         footer {
             text-align: center;
             margin-top: 2rem;
-            color: var(--fx-color-fg-muted);
+            color: var(--foreground-muted);
         }
 
         code {
@@ -104,7 +104,7 @@
 </head>
 
 <body>
-    <a href="../demos.html" class="back-link">← Back to Demos</a>
+    <a href="../index.html#chat" class="back-link">← Back to Demos</a>
 
     <h1>Chat Bubble Component</h1>
     <p class="intro">Message bubbles for conversations with avatars, headers, and color variants.</p>
@@ -188,7 +188,7 @@
                 </div>
                 <div class="chat-header">
                     AI Assistant
-                    <time style="margin-left: var(--spacing-lg); font-size: var(--font-size-xs); opacity: 0.6;">12:45</time>
+                    <time style="margin-left: var(--space-lg); font-size: var(--font-size-xs); opacity: 0.6;">12:45</time>
                 </div>
                 <div class="chat-bubble chat-bubble-primary">
                     CSMA is 17KB gzipped and 10x faster than React!
@@ -203,7 +203,7 @@
                     <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiM2NjdlZWEiLz4KPGVsbGlwc2UgY3g9IjE0IiBjeT0iMTYiIHJ4PSIyIiByeT0iMyIgZmlsbD0iIzJkM2Y1MCIvPgo8ZWxsaXBzZSBjeD0iMjYiIGN5PSIxNiIgcng9IjIiIHJ5PSIzIiBmaWxsPSIjMmQzZjUwIi8+CjxwYXRoIGQ9Ik0xMiAyNEMxMiAyNiAyMC4xIDI3IDIzIDI3QzI2IDI3IDI4IDI2IDI4IDI0QzI4IDIyIDI2IDIwIDIzIDIwQzIwLjEgMjAgMTIgMjIgMTIgMjRaIiBmaWxsPSIjMmQzZjUwIi8+Cjwvc3ZnPgo=" alt="User">
                 </div>
                 <div class="chat-header" style="flex-direction: row-reverse;">
-                    <time style="margin-right: var(--spacing-lg); font-size: var(--font-size-xs); opacity: 0.6;">12:46</time>
+                    <time style="margin-right: var(--space-lg); font-size: var(--font-size-xs); opacity: 0.6;">12:46</time>
                     User
                 </div>
                 <div class="chat-bubble chat-bubble-secondary">

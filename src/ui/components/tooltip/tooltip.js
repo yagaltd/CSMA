@@ -17,6 +17,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initTooltipSystem(eventBus).']
+};
 export function initTooltipSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Tooltip] EventBus not provided');

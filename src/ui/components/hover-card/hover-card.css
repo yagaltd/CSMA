@@ -14,27 +14,27 @@
 }
 
 .hover-card-trigger:focus-visible {
-  outline: 2px solid var(--fx-color-primary);
-  outline-offset: 2px;
-  border-radius: var(--fx-radius-sm);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+  border-radius: var(--radius-sm);
 }
 
 .hover-card {
   position: absolute;
-  z-index: var(--fx-z-popover);
+  z-index: var(--z-popover);
   min-width: 200px;
   max-width: 320px;
-  padding: var(--fx-space-lg);
-  background: var(--fx-color-surface);
-  border: 1px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-lg);
-  box-shadow: var(--fx-shadow-lg);
+  padding: var(--space-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   opacity: 0;
   visibility: hidden;
   transform: translateY(4px);
-  transition: opacity var(--fx-transition-fast), 
-              transform var(--fx-transition-fast),
-              visibility var(--fx-transition-fast);
+  transition: opacity var(--transition-fast), 
+              transform var(--transition-fast),
+              visibility var(--transition-fast);
 }
 
 .hover-card[data-state="open"] {
@@ -48,7 +48,7 @@
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(-8px);
-  margin-bottom: var(--fx-space-xs);
+  margin-bottom: var(--space-xs);
 }
 
 .hover-card[data-placement="top"][data-state="open"] {
@@ -59,7 +59,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(8px);
-  margin-top: var(--fx-space-xs);
+  margin-top: var(--space-xs);
 }
 
 .hover-card[data-placement="bottom"][data-state="open"] {
@@ -70,7 +70,7 @@
   right: 100%;
   top: 50%;
   transform: translateY(-50%) translateX(-8px);
-  margin-right: var(--fx-space-xs);
+  margin-right: var(--space-xs);
 }
 
 .hover-card[data-placement="left"][data-state="open"] {
@@ -81,7 +81,7 @@
   left: 100%;
   top: 50%;
   transform: translateY(-50%) translateX(8px);
-  margin-left: var(--fx-space-xs);
+  margin-left: var(--space-xs);
 }
 
 .hover-card[data-placement="right"][data-state="open"] {
@@ -92,38 +92,38 @@
 .hover-card-header {
   display: flex;
   align-items: center;
-  gap: var(--fx-space-sm);
-  margin-bottom: var(--fx-space-sm);
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
 }
 
 .hover-card-avatar {
   width: 2rem;
   height: 2rem;
-  border-radius: var(--fx-radius-full);
+  border-radius: var(--radius-full);
   object-fit: cover;
 }
 
 .hover-card-title {
-  font-size: var(--fx-font-size-sm);
-  font-weight: var(--fx-font-weight-semibold);
-  color: var(--fx-color-fg);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
 }
 
 .hover-card-subtitle {
-  font-size: var(--fx-font-size-xs);
-  color: var(--fx-color-fg-muted);
+  font-size: var(--font-size-xs);
+  color: var(--foreground-muted);
 }
 
 .hover-card-body {
-  font-size: var(--fx-font-size-sm);
-  color: var(--fx-color-fg-muted);
-  line-height: var(--fx-line-height-base);
+  font-size: var(--font-size-sm);
+  color: var(--foreground-muted);
+  line-height: var(--line-height-base);
 }
 
 .hover-card-footer {
   display: flex;
-  gap: var(--fx-space-sm);
-  margin-top: var(--fx-space-md);
-  padding-top: var(--fx-space-sm);
-  border-top: 1px solid var(--fx-color-border);
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border);
 }

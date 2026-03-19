@@ -17,6 +17,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initTabsSystem(eventBus).']
+};
 export function initTabsSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Tabs] EventBus not provided, Tabs system not initialized');

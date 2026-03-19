@@ -72,6 +72,13 @@ function validateFile(file, settings) {
   return errors;
 }
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initFileUpload(eventBus).']
+};
 export function initFileUpload(root, opts = {}) {
   const settings = { ...DEFAULTS, ...opts };
   if (!root) return () => { };

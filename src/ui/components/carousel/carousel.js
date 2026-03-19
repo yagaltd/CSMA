@@ -6,6 +6,13 @@
 const MQ_TABLET = window.matchMedia('(min-width: 768px)');
 const MQ_DESKTOP = window.matchMedia('(min-width: 1024px)');
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initCarouselSystem(eventBus).']
+};
 export function initCarouselSystem(eventBus) {
   const carousels = document.querySelectorAll('[data-carousel]');
   if (!carousels.length) return () => {};
@@ -70,8 +77,26 @@ function setupCarousel(root, eventBus, lazyObserver) {
 
   hydrateLazyNodes(slides, lazyObserver);
   computeOffsets();
+
+  // Temporarily allow overflow to measure true content height
+  const originalOverflow = viewport.style.overflow;
+  viewport.style.overflow = 'visible';
+
   update({ instant: true, recalc: true });
   startAutoplay();
+
+  // Measure height after content is laid out
+  requestAnimationFrame(() => {
+    updateViewportHeight(getVisibleCount());
+    viewport.style.overflow = originalOverflow || '';
+
+    // Double-check after fonts/images load
+    setTimeout(() => {
+      viewport.style.overflow = 'visible';
+      updateViewportHeight(getVisibleCount());
+      viewport.style.overflow = originalOverflow || '';
+    }, 150);
+  });
 
   attach(prevBtn, 'click', () => goTo(state.current - getVisibleCount()));
   attach(nextBtn, 'click', () => goTo(state.current + getVisibleCount()));
@@ -239,13 +264,14 @@ function setupCarousel(root, eventBus, lazyObserver) {
     if (config.transition === 'fade') return;
 
     const activeSlides = slides.slice(state.current, state.current + visible);
-    let targetHeight = Math.max(...activeSlides.map((slide) => slide.offsetHeight), 0);
+    // Use scrollHeight to get full content height including overflow
+    let targetHeight = Math.max(...activeSlides.map((slide) => slide.scrollHeight), 0);
 
     if (variant === 'image') {
       const media = activeSlides[0]?.querySelector('.carousel-slide__media img, [data-slot="media"] img');
       if (media) {
         const rect = media.getBoundingClientRect();
-        if (rect.height) targetHeight = rect.height;
+        if (rect.height) targetHeight = Math.max(targetHeight, rect.height);
       }
     }
 

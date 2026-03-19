@@ -9,6 +9,13 @@
  * - Stability: stable
  */
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initSwitchSystem(eventBus).']
+};
 export function initSwitchSystem(eventBus) {
     if (!eventBus) return () => { };
 

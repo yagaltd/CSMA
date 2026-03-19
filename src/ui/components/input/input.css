@@ -1,1 +1,149 @@
-@import '../../../css/foundation/components/input.css';
+/* CSMA Foundation — Form Controls */
+
+.field,
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.field__label,
+.input-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.field__hint,
+.input-helper {
+  font-size: var(--font-size-xs);
+  color: var(--foreground-muted);
+}
+
+.field__error,
+.input-error {
+  font-size: var(--font-size-xs);
+  color: var(--destructive);
+  display: none;
+}
+
+.field[data-state="error"] .field__error,
+.input-group[data-state="error"] .input-error {
+  display: block;
+}
+
+.field[data-state="error"] .field__hint,
+.input-group[data-state="error"] .input-helper {
+  display: none;
+}
+
+.input,
+.textarea,
+.field input,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--input-radius);
+  background: var(--input-bg);
+  color: var(--foreground);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-base);
+  padding: var(--input-padding-block) var(--input-padding-inline);
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.input,
+.field input {
+  min-height: var(--input-height);
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--input-placeholder);
+}
+
+.input:focus-visible,
+.textarea:focus-visible,
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+.field[data-state="error"] .input:focus-visible,
+.field[data-state="error"] .textarea:focus-visible,
+.input-group[data-state="error"] .input:focus-visible,
+.input-group[data-state="error"] .textarea:focus-visible {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--destructive);
+}
+
+.field[data-state="disabled"] .input,
+.field[data-state="disabled"] .textarea,
+.input-group[data-state="disabled"] .input {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.field[data-state="readonly"] .input,
+.input-group[data-state="readonly"] .input {
+  background: var(--surface-muted);
+}
+
+.field[data-state="error"] .input,
+.input-group[data-state="error"] .input {
+  border-color: var(--destructive);
+}
+
+.field[data-size="sm"] .input,
+.input-group[data-size="sm"] .input {
+  padding: var(--space-xs) var(--space-lg);
+  font-size: var(--font-size-xs);
+}
+
+.field[data-size="lg"] .input,
+.input-group[data-size="lg"] .input {
+  padding: var(--space-md) var(--space-2xl);
+  font-size: var(--font-size-base);
+}
+
+.input-wrapper,
+.field__control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  inset-inline-start: var(--space-lg);
+  color: var(--foreground-muted);
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input-icon + .input {
+  padding-inline-start: var(--space-2xl);
+}
+
+.input-clear {
+  position: absolute;
+  inset-inline-end: var(--space-lg);
+  background: transparent;
+  border: none;
+  color: var(--foreground-muted);
+  display: none;
+  cursor: pointer;
+}
+
+.input-group[data-value] .input-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

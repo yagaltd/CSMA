@@ -17,6 +17,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initAccordionSystem(eventBus).']
+};
 export function initAccordionSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Accordion] EventBus not provided');

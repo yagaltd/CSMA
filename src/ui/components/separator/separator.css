@@ -6,7 +6,7 @@
 .separator {
     height: 1px;
     width: 100%;
-    background-color: var(--fx-color-border);
+    background-color: var(--border);
     margin: 1.5rem 0;
     position: relative;
 }

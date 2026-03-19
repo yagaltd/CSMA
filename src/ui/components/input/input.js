@@ -18,6 +18,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initInputSystem(eventBus).']
+};
 export function initInputSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Input] EventBus not provided, Input system not initialized');

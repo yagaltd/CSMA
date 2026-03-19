@@ -6,6 +6,23 @@
  * Contracts: INTENT_TABLE_SORT, INTENT_TABLE_SELECT, TABLE_SELECTION_CHANGED
  */
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [
+        {
+            id: 'table',
+            importPath: '/src/services/TableService.js',
+            factory: 'createTableService',
+            required: true
+        }
+    ],
+    styles: ['/src/css/main.css'],
+    notes: [
+        'Copy src/ui/components/table plus src/services/TableService.js when integrating outside the CSMA runtime.',
+        'Initialize the service before initTableUI(eventBus) if you want managed sorting, filtering, and pagination.'
+    ]
+};
+
 /**
  * Initialize Table UI with EventBus integration
  * @param {EventBus} eventBus - CSMA EventBus instance

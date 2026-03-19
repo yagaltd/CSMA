@@ -20,6 +20,23 @@
  * Slider Component Class
  * Handles all slider interactions and EventBus communication
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [
+        {
+            id: 'slider',
+            importPath: '/src/services/SliderService.js',
+            factory: 'createSliderService',
+            required: true
+        }
+    ],
+    styles: ['/src/css/main.css'],
+    notes: [
+        'Copy src/ui/components/slider plus src/services/SliderService.js when integrating outside the CSMA runtime.',
+        'Create the slider service before initSliderUI(eventBus) if you want external value/state updates.'
+    ]
+};
+
 export class Slider {
     constructor(eventBus) {
         this.eventBus = eventBus;

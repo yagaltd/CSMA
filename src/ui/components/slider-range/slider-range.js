@@ -10,6 +10,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initSliderRangeSystem(eventBus).']
+};
 export function initSliderRangeSystem(eventBus) {
     if (!eventBus) {
         console.warn('[SliderRange] EventBus not provided');

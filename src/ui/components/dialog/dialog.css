@@ -6,13 +6,13 @@
 .dialog-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--overlay);
     display: none;
     /* JS toggles to 'flex' */
     align-items: center;
     justify-content: center;
-    z-index: 60;
-    padding: var(--spacing-lg);
+    z-index: var(--z-modal);
+    padding: var(--space-lg);
 }
 
 .dialog-overlay[data-state="open"] {
@@ -32,10 +32,10 @@
 
 .dialog-content {
     width: 100%;
-    background: var(--fx-color-bg);
-    border: 1px solid var(--fx-color-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-lg);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--dialog-radius);
+    box-shadow: var(--dialog-shadow);
     animation: scale-in var(--transition-fast) ease-out;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .dialog-header {
-    padding: var(--spacing-2xl) var(--spacing-2xl) var(--spacing-lg);
+    padding: var(--dialog-header-padding);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -86,7 +86,7 @@
 .dialog-close {
     background: none;
     border: none;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
     font-size: var(--font-size-xl);
     cursor: pointer;
     padding: 0;
@@ -99,19 +99,24 @@
 }
 
 .dialog-close:hover {
-    background: var(--fx-color-accent);
-    color: var(--fx-color-fg);
+    background: var(--accent);
+    color: var(--foreground);
+}
+
+.dialog-close:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 .dialog-body {
-    padding: 0 var(--spacing-2xl) var(--spacing-2xl);
-    color: var(--fx-color-fg-muted);
+    padding: var(--dialog-body-padding);
+    color: var(--foreground-muted);
 }
 
 .dialog-footer {
     display: flex;
     justify-content: flex-end;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-lg) var(--spacing-2xl) var(--spacing-2xl);
-    border-top: 1px solid var(--fx-color-border);
+    gap: var(--space-sm);
+    padding: var(--dialog-footer-padding);
+    border-top: 1px solid var(--border);
 }

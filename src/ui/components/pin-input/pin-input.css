@@ -6,7 +6,7 @@
 .pin-input {
   display: flex;
   align-items: center;
-  gap: var(--fx-space-sm);
+  gap: var(--space-sm);
 }
 
 .pin-input-slot {
@@ -19,26 +19,26 @@
   width: 100%;
   height: 100%;
   padding: 0;
-  background: var(--fx-color-surface);
-  border: 2px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-md);
-  font-family: var(--fx-font-family-mono);
-  font-size: var(--fx-font-size-xl);
-  font-weight: var(--fx-font-weight-semibold);
-  color: var(--fx-color-fg);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
   text-align: center;
-  caret-color: var(--fx-color-primary);
-  transition: all var(--fx-transition-fast);
+  caret-color: var(--primary);
+  transition: all var(--transition-fast);
 }
 
 .pin-input-field:hover {
-  border-color: var(--fx-color-fg-muted);
+  border-color: var(--foreground-muted);
 }
 
-.pin-input-field:focus {
+.pin-input-field:focus-visible {
   outline: none;
-  border-color: var(--fx-color-primary);
-  box-shadow: 0 0 0 3px hsl(222.2 47.4% 11.2% / 0.1);
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 .pin-input-field:disabled {
@@ -47,15 +47,15 @@
 }
 
 .pin-input-field[data-state="error"] {
-  border-color: var(--fx-color-danger);
+  border-color: var(--destructive);
 }
 
 .pin-input-field[data-state="success"] {
-  border-color: var(--fx-color-success);
+  border-color: var(--success);
 }
 
 .pin-input-field[data-filled="true"] {
-  background: var(--fx-color-bg-muted);
+  background: var(--background-muted);
 }
 
 /* Separator between groups */
@@ -64,8 +64,8 @@
   align-items: center;
   justify-content: center;
   width: 1rem;
-  color: var(--fx-color-fg-muted);
-  font-weight: var(--fx-font-weight-bold);
+  color: var(--foreground-muted);
+  font-weight: var(--font-weight-bold);
 }
 
 /* Masked variant (shows dots) */
@@ -81,7 +81,7 @@
 }
 
 .pin-input[data-size="sm"] .pin-input-field {
-  font-size: var(--fx-font-size-lg);
+  font-size: var(--font-size-lg);
 }
 
 .pin-input[data-size="lg"] .pin-input-slot {
@@ -90,19 +90,19 @@
 }
 
 .pin-input[data-size="lg"] .pin-input-field {
-  font-size: var(--fx-font-size-2xl);
+  font-size: var(--font-size-2xl);
 }
 
 /* OTP autofill styling */
 .pin-input-field:-webkit-autofill,
 .pin-input-field:-webkit-autofill:hover,
-.pin-input-field:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px var(--fx-color-surface) inset;
-  -webkit-text-fill-color: var(--fx-color-fg);
-  caret-color: var(--fx-color-primary);
+.pin-input-field:-webkit-autofill:focus-visible {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset;
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--primary);
 }
 
 /* Complete state */
 .pin-input[data-complete="true"] .pin-input-field {
-  border-color: var(--fx-color-success);
+  border-color: var(--success);
 }

@@ -2,6 +2,15 @@
  * Alert Dialog Component JavaScript
  */
 
+import { lockDocumentScroll, unlockDocumentScroll } from '../shared/document-state.js';
+
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [{ importPath: '/src/ui/components/shared/document-state.js', required: true }],
+    styles: ['/src/css/main.css'],
+    notes: ['Copy src/ui/components/shared/document-state.js when integrating outside the CSMA runtime.', 'Initialize with initAlertDialogSystem(eventBus).']
+};
 export function initAlertDialogSystem(eventBus) {
     if (!eventBus) {
         console.warn('[AlertDialog] EventBus not provided');
@@ -78,15 +87,21 @@ function initAlertDialog(overlay, eventBus) {
 export function openAlertDialog(dialogId) {
     const overlay = document.getElementById(dialogId);
     if (overlay) {
+        if (overlay.dataset.state === 'open') {
+            return;
+        }
         overlay.dataset.state = 'open';
-        document.body.style.overflow = 'hidden';
+        lockDocumentScroll();
     }
 }
 
 export function closeAlertDialog(dialogId) {
     const overlay = document.getElementById(dialogId);
     if (overlay) {
+        if (overlay.dataset.state !== 'open') {
+            return;
+        }
         overlay.dataset.state = 'closed';
-        document.body.style.overflow = '';
+        unlockDocumentScroll();
     }
 }

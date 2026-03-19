@@ -3,12 +3,10 @@
  * Imports all styles in the correct dependency order
  */
 
-/* 0. CSMA Foundation (tokens + theme overrides + utilities) */
-@import './foundation/tokens.css';
-@import './foundation/themes/light.css';
-@import './foundation/themes/dark.css';
+/* 0. CSMA Theme Contract + utilities */
+@import './theme.css';
 @import './foundation/utilities.css';
-@import './foundation/components/index.css';
+
 
 /* 2. Base Styles - Typography, reset, utilities */
 @import './base.css';
@@ -16,6 +14,7 @@
 
 /* 3. Component Library - All UI components (new structure) */
 @import '../ui/components/index.css';
+@import '../ui/patterns/index.css';
 
 /* 4. Application-specific styles (if any) */
 /* Add custom app styles below this line */

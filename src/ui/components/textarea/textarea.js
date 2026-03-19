@@ -13,6 +13,13 @@
 
 import { rateLimiter } from '../../../runtime/RateLimiter.js';
 
+export const componentDependencies = {
+    runtime: ['EventBus', 'RateLimiter'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Copy src/runtime/RateLimiter.js when integrating outside the CSMA runtime.', 'Initialize with initTextareaSystem(eventBus).']
+};
 export function initTextareaSystem(eventBus) {
     if (!eventBus) return () => { };
 

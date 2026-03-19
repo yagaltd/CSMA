@@ -11,6 +11,13 @@
  * Contracts: INTENT_PROGRESS_UPDATE, PROGRESS_UPDATE, PROGRESS_COMPLETED
  */
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initProgressSystem(eventBus).']
+};
 export function initProgressSystem(eventBus) {
     if (!eventBus) return () => { };
 

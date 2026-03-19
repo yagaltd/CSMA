@@ -6,7 +6,7 @@
 .textarea-group {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--space-xs);
     width: 100%;
     max-width: 400px;
 }
@@ -14,39 +14,39 @@
 .textarea-label {
     font-size: var(--font-size-sm);
     font-weight: 500;
-    color: var(--fx-color-fg);
+    color: var(--foreground);
 }
 
 .textarea {
     width: 100%;
     min-height: 120px;
-    background: var(--fx-color-bg);
-    border: 1px solid var(--fx-color-border);
+    background: var(--background);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    color: var(--fx-color-fg);
+    color: var(--foreground);
     font-size: var(--font-size-sm);
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--space-md) var(--space-lg);
     font-family: inherit;
     resize: vertical;
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .textarea::placeholder {
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }
 
-.textarea:focus {
+.textarea:focus-visible {
     outline: none;
-    border-color: var(--fx-color-primary);
-    box-shadow: 0 0 0 2px rgba(250, 250, 250, 0.1);
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 .textarea-group[data-state="error"] .textarea {
-    border-color: var(--fx-color-danger);
+    border-color: var(--destructive);
 }
 
-.textarea-group[data-state="error"] .textarea:focus {
-    box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.1);
+.textarea-group[data-state="error"] .textarea:focus-visible {
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--destructive);
 }
 
 .textarea-group[data-state="disabled"] .textarea {
@@ -59,7 +59,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: var(--spacing-xs);
+    margin-top: var(--space-xs);
 }
 
 .textarea-helper,
@@ -68,11 +68,11 @@
 }
 
 .textarea-helper {
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }
 
 .textarea-error {
-    color: var(--fx-color-danger);
+    color: var(--destructive);
     display: none;
 }
 
@@ -86,10 +86,10 @@
 
 .textarea-count {
     font-size: 0.8125rem;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
     margin-left: auto;
 }
 
 .textarea-group[data-state="error"] .textarea-count {
-    color: var(--fx-color-danger);
+    color: var(--destructive);
 }

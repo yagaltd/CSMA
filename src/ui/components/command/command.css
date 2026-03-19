@@ -6,15 +6,15 @@
 .command-overlay {
   position: fixed;
   inset: 0;
-  z-index: var(--fx-z-modal);
+  z-index: var(--z-modal);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 15vh;
-  background: var(--fx-color-overlay);
+  background: var(--overlay);
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--fx-transition-fast), visibility var(--fx-transition-fast);
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
 }
 
 .command-overlay[data-state="open"] {
@@ -25,13 +25,13 @@
 .command {
   width: 100%;
   max-width: 560px;
-  background: var(--fx-color-surface);
-  border: 1px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-lg);
-  box-shadow: var(--fx-shadow-xl);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
   overflow: hidden;
   transform: scale(0.95) translateY(-10px);
-  transition: transform var(--fx-transition-fast);
+  transition: transform var(--transition-fast);
 }
 
 .command-overlay[data-state="open"] .command {
@@ -41,15 +41,15 @@
 .command-input-wrapper {
   display: flex;
   align-items: center;
-  gap: var(--fx-space-sm);
-  padding: var(--fx-space-md) var(--fx-space-lg);
-  border-bottom: 1px solid var(--fx-color-border);
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border);
 }
 
 .command-icon {
   width: 1.25rem;
   height: 1.25rem;
-  color: var(--fx-color-fg-muted);
+  color: var(--foreground-muted);
   flex-shrink: 0;
 }
 
@@ -59,34 +59,34 @@
   background: transparent;
   border: none;
   outline: none;
-  font-family: var(--fx-font-family-base);
-  font-size: var(--fx-font-size-md);
-  color: var(--fx-color-fg);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  color: var(--foreground);
 }
 
 .command-input::placeholder {
-  color: var(--fx-color-fg-muted);
+  color: var(--foreground-muted);
 }
 
 .command-list {
   max-height: 320px;
   overflow-y: auto;
-  padding: var(--fx-space-xs);
+  padding: var(--space-xs);
 }
 
 .command-list[data-empty="true"] {
-  padding: var(--fx-space-xl);
+  padding: var(--space-xl);
 }
 
 .command-group {
-  padding: var(--fx-space-xs);
+  padding: var(--space-xs);
 }
 
 .command-group-heading {
-  padding: var(--fx-space-sm) var(--fx-space-md);
-  font-size: var(--fx-font-size-xs);
-  font-weight: var(--fx-font-weight-medium);
-  color: var(--fx-color-fg-muted);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -94,44 +94,44 @@
 .command-group-items {
   display: flex;
   flex-direction: column;
-  gap: var(--fx-space-2xs);
+  gap: var(--space-2xs);
 }
 
 .command-item {
   display: flex;
   align-items: center;
-  gap: var(--fx-space-sm);
+  gap: var(--space-sm);
   width: 100%;
-  padding: var(--fx-space-sm) var(--fx-space-md);
+  padding: var(--space-sm) var(--space-md);
   background: transparent;
   border: none;
-  border-radius: var(--fx-radius-sm);
-  font-family: var(--fx-font-family-base);
-  font-size: var(--fx-font-size-sm);
-  color: var(--fx-color-fg);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
   cursor: pointer;
   text-align: left;
-  transition: background var(--fx-transition-fast);
+  transition: background var(--transition-fast);
 }
 
 .command-item:hover,
 .command-item[data-selected="true"] {
-  background: var(--fx-color-bg-muted);
+  background: var(--background-muted);
 }
 
 .command-item:focus-visible {
-  outline: 2px solid var(--fx-color-primary);
-  outline-offset: -2px;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 .command-item[data-variant="destructive"] {
-  color: var(--fx-color-danger);
+  color: var(--destructive);
 }
 
 .command-item-icon {
   width: 1rem;
   height: 1rem;
-  color: var(--fx-color-fg-muted);
+  color: var(--foreground-muted);
   flex-shrink: 0;
 }
 
@@ -141,53 +141,53 @@
 
 .command-item-shortcut {
   display: flex;
-  gap: var(--fx-space-2xs);
+  gap: var(--space-2xs);
 }
 
 .command-shortcut-key {
-  padding: var(--fx-space-2xs) var(--fx-space-xs);
-  background: var(--fx-color-bg-muted);
-  border: 1px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-sm);
-  font-family: var(--fx-font-family-mono);
-  font-size: var(--fx-font-size-xs);
-  color: var(--fx-color-fg-muted);
+  padding: var(--space-2xs) var(--space-xs);
+  background: var(--background-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  color: var(--foreground-muted);
 }
 
 .command-separator {
   height: 1px;
-  background: var(--fx-color-border);
-  margin: var(--fx-space-xs) var(--fx-space-md);
+  background: var(--border);
+  margin: var(--space-xs) var(--space-md);
 }
 
 .command-empty {
-  padding: var(--fx-space-lg);
+  padding: var(--space-lg);
   text-align: center;
-  color: var(--fx-color-fg-muted);
-  font-size: var(--fx-font-size-sm);
+  color: var(--foreground-muted);
+  font-size: var(--font-size-sm);
 }
 
 .command-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--fx-space-sm) var(--fx-space-lg);
-  border-top: 1px solid var(--fx-color-border);
-  background: var(--fx-color-bg-muted);
+  padding: var(--space-sm) var(--space-lg);
+  border-top: 1px solid var(--border);
+  background: var(--background-muted);
 }
 
 .command-footer-hint {
   display: flex;
   align-items: center;
-  gap: var(--fx-space-md);
-  font-size: var(--fx-font-size-xs);
-  color: var(--fx-color-fg-muted);
+  gap: var(--space-md);
+  font-size: var(--font-size-xs);
+  color: var(--foreground-muted);
 }
 
 .command-footer-hint kbd {
-  padding: var(--fx-space-2xs) var(--fx-space-xs);
-  background: var(--fx-color-surface);
-  border: 1px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-sm);
-  font-family: var(--fx-font-family-mono);
+  padding: var(--space-2xs) var(--space-xs);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
 }

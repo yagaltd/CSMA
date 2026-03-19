@@ -5,11 +5,20 @@
  * Contracts: INTENT_DRAWER_OPEN, INTENT_DRAWER_CLOSE, DRAWER_STATE_CHANGED
  */
 
+import { lockDocumentScroll, unlockDocumentScroll } from '../shared/document-state.js';
+
 /**
  * Initialize Drawer system with EventBus integration
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [{ importPath: '/src/ui/components/shared/document-state.js', required: true }],
+    styles: ['/src/css/main.css'],
+    notes: ['Copy src/ui/components/shared/document-state.js when integrating outside the CSMA runtime.', 'Initialize with initDrawerSystem(eventBus).']
+};
 export function initDrawerSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Drawer] EventBus not provided');
@@ -106,10 +115,11 @@ export function openDrawer(drawerId, eventBus) {
 
     const drawer = overlay.querySelector('.drawer');
     if (!drawer) return;
+    if (overlay.dataset.state === 'open') return;
 
     overlay.dataset.state = 'open';
     drawer.dataset.state = 'open';
-    document.body.style.overflow = 'hidden';
+    lockDocumentScroll();
 
     eventBus.publish('DRAWER_STATE_CHANGED', {
         drawerId,
@@ -130,10 +140,11 @@ export function closeDrawer(drawerId, eventBus, reason = 'button') {
 
     const drawer = overlay.querySelector('.drawer');
     if (!drawer) return;
+    if (overlay.dataset.state !== 'open') return;
 
     overlay.dataset.state = 'closed';
     drawer.dataset.state = 'closed';
-    document.body.style.overflow = '';
+    unlockDocumentScroll();
 
     eventBus.publish('DRAWER_STATE_CHANGED', {
         drawerId,

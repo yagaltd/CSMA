@@ -13,20 +13,21 @@ export const componentRegistry = [
         category: 'CSS-Only',
         type: 'css',
         description: 'Inline labels for status, categories, and counts',
+        demoPath: '/src/ui/components/badge/badge.demo.html',
         preview: `
             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <span class="badge">Default</span>
-                <span class="badge" data-variant="primary">Primary</span>
-                <span class="badge" data-variant="success">Success</span>
-                <span class="badge" data-variant="warning">Warning</span>
-                <span class="badge" data-variant="danger">Danger</span>
+                <span class="badge" data-variant="soft-primary">Primary</span>
+                <span class="badge" data-variant="soft-success">Success</span>
+                <span class="badge" data-variant="soft-warning">Warning</span>
+                <span class="badge" data-variant="soft-danger">Danger</span>
+                <span class="badge" data-variant="soft-info">Info</span>
             </div>
         `,
-        html: `<span class="badge">Default</span>
-<span class="badge" data-variant="primary">Primary</span>
-<span class="badge" data-variant="success">Success</span>
-<span class="badge" data-variant="warning">Warning</span>
-<span class="badge" data-variant="danger">Danger</span>`,
+        html: `<span class="badge" data-variant="soft-primary">Primary</span>
+<span class="badge" data-variant="soft-success">Success</span>
+<span class="badge" data-variant="soft-warning">Warning</span>
+<span class="badge" data-variant="soft-danger">Danger</span>
+<span class="badge" data-variant="soft-info">Info</span>`,
         css: null
     },
     {
@@ -35,6 +36,7 @@ export const componentRegistry = [
         category: 'CSS-Only',
         type: 'css',
         description: 'Container for grouping related content',
+        demoPath: '/src/ui/components/card/card.demo.html',
         preview: `
             <div class="card" style="width: 280px;">
                 <div class="card-content">
@@ -63,6 +65,7 @@ export const componentRegistry = [
         category: 'CSS-Only',
         type: 'css',
         description: 'Visual dividers for separating content',
+        demoPath: '/src/ui/components/separator/separator.demo.html',
         preview: `
             <div style="width: 200px;">
                 <p>Content above</p>
@@ -80,6 +83,7 @@ export const componentRegistry = [
         category: 'CSS-Only',
         type: 'css',
         description: 'User profile images with fallback initials',
+        demoPath: '/src/ui/components/avatar/avatar.demo.html',
         preview: `
             <div style="display: flex; gap: 0.5rem; align-items: center;">
                 <div class="avatar">
@@ -127,6 +131,7 @@ export const componentRegistry = [
         category: 'CSS-Only',
         type: 'css',
         description: 'Contextual feedback messages',
+        demoPath: '/src/ui/components/alert/alert.demo.html',
         preview: `
             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
                 <div class="alert" data-variant="info">This is an info alert</div>
@@ -147,8 +152,9 @@ export const componentRegistry = [
         category: 'CSS-Only',
         type: 'css',
         description: 'Customizable scrollable containers',
+        demoPath: '/src/ui/components/scroll-area/scroll-area.demo.html',
         preview: `
-            <div class="scroll-area" data-scrollbar="hover" style="width: min(100%, 18rem); height: 11rem; border: 1px solid var(--fx-color-border); border-radius: var(--fx-radius-md);">
+            <div class="scroll-area" data-scrollbar="hover" style="width: min(100%, 18rem); height: 11rem; border: 1px solid var(--border); border-radius: var(--radius-md);">
                 <div class="scroll-area-viewport">
                     <div class="scroll-area-content" style="padding: 1rem;">
                         <p style="margin-top: 0;">Scroll inside this panel to review layered notes.</p>
@@ -178,10 +184,11 @@ export const componentRegistry = [
         category: 'CSS-Only',
         type: 'css',
         description: 'Container that maintains a fixed width/height ratio',
+        demoPath: '/src/ui/components/aspect-ratio/aspect-ratio.demo.html',
         preview: `
             <div style="width: 200px;">
-                <div class="aspect-ratio" data-ratio="16/9" style="background: var(--fx-color-bg-muted); border-radius: var(--fx-radius-md);">
-                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--fx-color-fg-muted);">16:9</div>
+                <div class="aspect-ratio" data-ratio="16/9" style="background: var(--background-muted); border-radius: var(--radius-md);">
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--foreground-muted);">16:9</div>
                 </div>
             </div>
         `,
@@ -200,6 +207,7 @@ export const componentRegistry = [
         category: 'Form',
         type: 'js',
         description: 'Form input for numbers with increment/decrement controls',
+        demoPath: '/src/ui/components/number-field/number-field.demo.html',
         preview: `
             <div class="number-field" data-number-field data-min="0" data-max="100" data-value="0">
                 <input type="number" class="number-field-input" data-number-field-input value="0" min="0" max="100">
@@ -224,6 +232,7 @@ export const componentRegistry = [
         category: 'Form',
         type: 'js',
         description: 'OTP-style separate digit input boxes',
+        demoPath: '/src/ui/components/pin-input/pin-input.demo.html',
         preview: `
             <div class="pin-input" data-pin-input data-length="4">
                 <div class="pin-input-slot">
@@ -301,6 +310,7 @@ export const componentRegistry = [
         category: 'Form',
         type: 'js',
         description: 'Multi-line text with character count',
+        demoPath: '/src/ui/components/textarea/textarea.demo.html',
         preview: `
             <div class="textarea-group" data-textarea-group>
                 <textarea class="textarea" data-textarea placeholder="Enter your message..." rows="3" style="width: 100%;"></textarea>
@@ -491,6 +501,7 @@ export const componentRegistry = [
         category: 'Form',
         type: 'js',
         description: 'Group of mutually exclusive toggle buttons',
+        demoPath: '/src/ui/components/toggle-group/toggle-group.demo.html',
         preview: `
             <div class="toggle-group" data-type="single">
                 <button class="toggle-group-item" data-value="left" data-state="on">Left</button>
@@ -511,7 +522,7 @@ export const componentRegistry = [
         category: 'Form',
         type: 'js',
         description: 'Input with autocomplete dropdown',
-        demoPath: null,
+        demoPath: '/src/ui/components/combobox/combobox.demo.html',
         preview: `
             <div class="combobox" style="width: min(100%, 16rem);">
                 <div class="combobox-trigger">
@@ -603,7 +614,7 @@ export const componentRegistry = [
         category: 'Form',
         type: 'js',
         description: 'Calendar for selecting date ranges',
-        demoPath: null,
+        demoPath: '/src/ui/components/date-range-picker/date-range-picker.demo.html',
         preview: `
             <div class="date-range-picker">
                 <div class="date-range-trigger" style="width: min(100%, 18rem);">
@@ -726,6 +737,7 @@ export const componentRegistry = [
         category: 'Form',
         type: 'js',
         description: 'Dual-handle slider for min/max range',
+        demoPath: '/src/ui/components/slider-range/slider-range.demo.html',
         preview: `
             <div class="slider-range" data-slider-range style="width: 200px;">
                 <div class="slider-range-track" data-slider-range-track>
@@ -777,6 +789,7 @@ export const componentRegistry = [
         category: 'Interactive',
         type: 'js',
         description: 'Notification messages that auto-dismiss',
+        demoPath: '/src/ui/components/toast/toast.demo.html',
         preview: `
             <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;">
                 <button class="button" data-variant="primary" data-intent-event="INTENT_TOAST_SHOW" data-intent-type="success" data-intent-title="Deployment succeeded" data-intent-description="The runtime bootstrap completed without contract violations." data-intent-duration="2800">
@@ -803,6 +816,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Interactive',
         type: 'js',
         description: 'Tabbed navigation with keyboard support',
+        demoPath: '/src/ui/components/tabs/tabs.demo.html',
         preview: `
             <div class="tabs" data-tabs style="width: 300px;">
                 <div class="tabs-list">
@@ -915,6 +929,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Interactive',
         type: 'js',
         description: 'Simple collapsible content areas',
+        demoPath: '/src/ui/components/collapsible/collapsible.demo.html',
         preview: `
             <div style="display: flex; flex-direction: column; gap: 0.75rem; width: min(100%, 22rem);">
                 <div class="collapsible" id="explorer-collapsible-1" data-default-state="open">
@@ -964,6 +979,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Interactive',
         type: 'js',
         description: 'Progress bars with animations',
+        demoPath: '/src/ui/components/progress/progress.demo.html',
         preview: `
             <div style="display: flex; flex-direction: column; gap: 0.75rem; width: min(100%, 20rem);">
                 <div class="progress-label">
@@ -1001,7 +1017,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Interactive',
         type: 'js',
         description: 'Calendar component for date selection',
-        demoPath: null,
+        demoPath: '/src/ui/components/calendar/calendar.demo.html',
         preview: `
             <div class="calendar" data-selected="2026-03-10">
                 <div class="calendar-header">
@@ -1046,7 +1062,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
                 </div>
                 <div class="calendar-footer">
                     <button type="button" class="calendar-today-btn">Today</button>
-                    <span style="font-size: var(--fx-font-size-xs); color: var(--fx-color-fg-muted);">Keyboard-ready date selection</span>
+                    <span style="font-size: var(--font-size-xs); color: var(--foreground-muted);">Keyboard-ready date selection</span>
                 </div>
             </div>
         `,
@@ -1093,21 +1109,21 @@ eventBus.publish('INTENT_TOAST_SHOW', {
                 <div class="carousel-viewport" data-carousel-viewport>
                     <div class="carousel-track" data-carousel-track>
                         <article class="carousel-slide" data-carousel-slide>
-                            <div data-slot="media" style="background: linear-gradient(135deg, var(--fx-color-primary), var(--fx-color-info)); min-height: 12rem;"></div>
+                            <div data-slot="media" style="background: linear-gradient(135deg, var(--primary), var(--info)); min-height: 8rem;"></div>
                             <div data-slot="body">
                                 <h3>Real contract</h3>
                                 <p>Uses the same data attributes as the standalone carousel demo.</p>
                             </div>
                         </article>
                         <article class="carousel-slide" data-carousel-slide>
-                            <div data-slot="media" style="background: linear-gradient(135deg, var(--fx-color-success), var(--fx-color-warning)); min-height: 12rem;"></div>
+                            <div data-slot="media" style="background: linear-gradient(135deg, var(--success), var(--warning)); min-height: 8rem;"></div>
                             <div data-slot="body">
                                 <h3>Controls wired</h3>
                                 <p>Prev/next, dots, keyboard navigation, and autoplay come from the shared system.</p>
                             </div>
                         </article>
                         <article class="carousel-slide" data-carousel-slide>
-                            <div data-slot="media" style="background: linear-gradient(135deg, var(--fx-color-danger), var(--fx-color-primary)); min-height: 12rem;"></div>
+                            <div data-slot="media" style="background: linear-gradient(135deg, var(--destructive), var(--primary)); min-height: 8rem;"></div>
                             <div data-slot="body">
                                 <h3>Preview parity</h3>
                                 <p>The explorer is no longer a fake shell for interactive components.</p>
@@ -1116,8 +1132,12 @@ eventBus.publish('INTENT_TOAST_SHOW', {
                     </div>
                 </div>
                 <div class="carousel-controls">
-                    <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous slide">‹</button>
-                    <button class="carousel-button" type="button" data-carousel-next aria-label="Next slide">›</button>
+                    <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous slide">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15.5 19 8.5 12l7-7"/></svg>
+                    </button>
+                    <button class="carousel-button" type="button" data-carousel-next aria-label="Next slide">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M8.5 5 15.5 12l-7 7"/></svg>
+                    </button>
                 </div>
                 <div class="carousel-dots" data-carousel-dots></div>
             </div>
@@ -1135,8 +1155,12 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         </div>
     </div>
     <div class="carousel-controls">
-        <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous slide">‹</button>
-        <button class="carousel-button" type="button" data-carousel-next aria-label="Next slide">›</button>
+        <button class="carousel-button" type="button" data-carousel-prev aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15.5 19 8.5 12l7-7"/></svg>
+        </button>
+        <button class="carousel-button" type="button" data-carousel-next aria-label="Next slide">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M8.5 5 15.5 12l-7 7"/></svg>
+        </button>
     </div>
     <div class="carousel-dots" data-carousel-dots></div>
 </div>`,
@@ -1200,6 +1224,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Overlay',
         type: 'js',
         description: 'Preview cards on hover',
+        demoPath: '/src/ui/components/hover-card/hover-card.demo.html',
         preview: `
             <button class="button" data-hover-card="User info preview">Hover for card</button>
         `,
@@ -1242,9 +1267,10 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Overlay',
         type: 'js',
         description: 'Right-click context menus',
+        demoPath: '/src/ui/components/context-menu/context-menu.demo.html',
         preview: `
             <div class="context-menu-container" style="width: min(100%, 18rem);">
-                <div class="context-menu-trigger" style="padding: 1rem; background: var(--fx-color-bg-muted); border-radius: var(--fx-radius-md); text-align: center;">
+                <div class="context-menu-trigger" style="padding: 1rem; background: var(--background-muted); border-radius: var(--radius-md); text-align: center;">
                     Right-click here
                 </div>
                 <div class="context-menu">
@@ -1375,6 +1401,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Overlay',
         type: 'js',
         description: 'Side panel overlays',
+        demoPath: '/src/ui/components/drawer/drawer.demo.html',
         preview: `
             <button class="button" data-variant="secondary" data-intent-event="INTENT_DRAWER_OPEN" data-intent-drawer-id="explorer-drawer">
                 Open drawer
@@ -1415,6 +1442,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Overlay',
         type: 'js',
         description: 'Command palette for quick actions',
+        demoPath: '/src/ui/components/command/command.demo.html',
         preview: `
             <div style="display: flex; flex-direction: column; gap: 0.75rem; align-items: center; width: 100%;">
                 <button class="button" data-variant="secondary" data-intent-event="INTENT_COMMAND_OPEN" data-intent-trigger="click">
@@ -1539,6 +1567,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Navigation',
         type: 'js',
         description: 'Horizontal menu bar like OS applications',
+        demoPath: '/src/ui/components/menubar/menubar.demo.html',
         preview: `
             <div class="menubar" style="width: min(100%, 28rem);">
                 <div class="menubar-menu" id="explorer-menu-file">
@@ -1576,6 +1605,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Navigation',
         type: 'js',
         description: 'Complex navigation with nested dropdowns',
+        demoPath: '/src/ui/components/navigation-menu/navigation-menu.demo.html',
         preview: `
             <nav class="navigation-menu" style="width: min(100%, 34rem);">
                 <ul class="navigation-menu-list">
@@ -1628,6 +1658,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Navigation',
         type: 'css',
         description: 'Navigation breadcrumbs with truncation',
+        demoPath: '/src/ui/components/breadcrumb/breadcrumb.demo.html',
         preview: `
             <nav class="breadcrumb">
                 <a class="breadcrumb-link" href="#">Home</a>
@@ -1683,6 +1714,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Data',
         type: 'js',
         description: 'Data tables with sorting and selection',
+        demoPath: '/src/ui/components/table/table.demo.html',
         preview: `
             <div class="table-container" style="width: 100%;">
                 <table class="table">
@@ -1729,6 +1761,7 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Data',
         type: 'js',
         description: 'Multiple selection dropdown',
+        demoPath: '/src/ui/components/multi-select/multi-select.demo.html',
         preview: `
             <div class="multi-select" style="width: min(100%, 18rem);" data-selected='["runtime"]'>
                 <div class="multi-select-trigger">
@@ -1805,6 +1838,102 @@ eventBus.publish('INTENT_TOAST_SHOW', {
 </div>`,
         css: null
     },
+    {
+        id: 'chat',
+        name: 'Chat',
+        category: 'CSS-Only',
+        type: 'css',
+        description: 'Conversation layout primitives for assistant and user threads',
+        demoPath: '/src/ui/components/chat/chat.demo.html',
+        preview: `
+            <div class="chat-message">
+                <div class="chat-bubble">CSMA keeps the UI reactive without a framework.</div>
+            </div>
+            <div class="chat-message chat-message-outbound">
+                <div class="chat-bubble">That is exactly the point.</div>
+            </div>
+        `,
+        html: `<div class="chat-message">
+    <div class="chat-bubble">Incoming message</div>
+</div>
+<div class="chat-message chat-message-outbound">
+    <div class="chat-bubble">Outgoing message</div>
+</div>`,
+        css: null
+    },
+    {
+        id: 'form',
+        name: 'Form',
+        category: 'Form',
+        type: 'js',
+        description: 'Validated form wrapper with field-level error handling',
+        demoPath: '/src/ui/components/form/form.demo.html',
+        preview: `
+            <form class="form" data-form>
+                <div class="form-field" data-validation="required|email">
+                    <label class="form-label">Email</label>
+                    <input class="input" type="email" value="hello@csma.dev">
+                    <p class="form-description">Validation state is driven by classes and data attributes.</p>
+                </div>
+            </form>
+        `,
+        html: `<form class="form" data-form>
+    <div class="form-field" data-validation="required|email">
+        <label class="form-label">Email</label>
+        <input class="input" type="email" name="email">
+        <p class="form-description">We'll never share your email.</p>
+    </div>
+</form>`,
+        css: null
+    },
+    {
+        id: 'otp',
+        name: 'OTP',
+        category: 'Form',
+        type: 'js',
+        description: 'One-time-code input flow with paste and auto-advance',
+        demoPath: '/src/ui/components/otp/otp.demo.html',
+        preview: `
+            <div class="csma-otp-inputs">
+                <input class="csma-otp-input" value="1">
+                <input class="csma-otp-input" value="2">
+                <input class="csma-otp-input" value="3">
+                <input class="csma-otp-input" value="4">
+                <input class="csma-otp-input" value="5">
+                <input class="csma-otp-input" value="6">
+            </div>
+        `,
+        html: `<form class="csma-otp-form" data-otp-form>
+    <div class="csma-otp-inputs">
+        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+    </div>
+</form>`,
+        css: null
+    },
+    {
+        id: 'analytics-consent',
+        name: 'Analytics Consent',
+        category: 'Overlay',
+        type: 'js',
+        description: 'Consent center for optional analytics and product telemetry',
+        demoPath: '/src/ui/components/analytics-consent/analytics-consent.demo.html',
+        preview: `
+            <div class="analytics-consent-card">
+                <p>Analytics: enabled</p>
+                <p>Product research: disabled</p>
+            </div>
+        `,
+        html: `<div data-consent-center>
+    <label><input type="checkbox" data-consent-toggle="analytics"> Analytics</label>
+    <label><input type="checkbox" data-consent-toggle="product"> Product research</label>
+</div>`,
+        css: null
+    },
 
     // ============================================
     // Layout Components
@@ -1815,13 +1944,14 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         category: 'Layout',
         type: 'js',
         description: 'Panels with draggable resize handles',
+        demoPath: '/src/ui/components/resizable/resizable.demo.html',
         preview: `
             <div class="resizable" data-orientation="horizontal" data-variant="bordered" style="width: min(100%, 24rem); height: 14rem; position: relative;">
-                <div class="resizable-panel" style="background: var(--fx-color-bg-muted); padding: 1rem;">
+                <div class="resizable-panel" style="background: var(--background-muted); padding: 1rem;">
                     Navigation
                 </div>
                 <div class="resizable-handle" data-with-handle="true"></div>
-                <div class="resizable-panel" style="background: var(--fx-color-surface); padding: 1rem;">
+                <div class="resizable-panel" style="background: var(--surface); padding: 1rem;">
                     Content
                 </div>
             </div>

@@ -17,6 +17,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initPopovers(eventBus).']
+};
 export function initPopovers(eventBus) {
     if (!eventBus) {
         console.warn('[Popover] EventBus not provided, Popover system not initialized');

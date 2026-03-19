@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="../theme-loader.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi Select Demo - CSMA</title>
+  <link rel="stylesheet" href="../../../css/main.css">
+  <style>
+    body { padding: 2rem; max-width: 960px; margin: 0 auto; background: var(--background); color: var(--foreground); }
+    .back-link { display: inline-block; margin-bottom: 1rem; color: var(--primary); text-decoration: none; }
+    .demo-intro { color: var(--foreground-muted); line-height: 1.6; margin-bottom: 1.5rem; max-width: 70ch; }
+    .demo-grid { display: grid; gap: var(--space-xl); }
+    .demo-grid-two-up { grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+    .demo-card { padding: var(--space-xl); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); display: grid; gap: var(--space-lg); }
+    .demo-card-fluid { max-width: 100%; }
+    .demo-copy { color: var(--foreground-muted); line-height: 1.6; }
+    .demo-placeholder, .demo-target { min-height: 10rem; display: grid; place-items: center; border-radius: var(--radius-md); background: var(--surface-muted); color: var(--foreground-muted); }
+    .analytics-consent-card, .analytics-consent-panel { display: grid; gap: var(--space-md); }
+    .analytics-consent-modal[data-open="true"] { display: block; }
+    .analytics-consent-modal { display: none; }
+    .analytics-consent-panel { padding: var(--space-xl); border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+    .analytics-consent-actions, .calendar-month-year, .slider-range-values { display: flex; gap: var(--space-sm); align-items: center; justify-content: space-between; }
+    .analytics-consent-row { display: flex; align-items: center; gap: var(--space-sm); }
+  </style>
+</head>
+<body class="">
+  <a href="../index.html#multi-select" class="back-link">← Back to Explorer</a>
+  <h1>Multi Select</h1>
+  <p class="demo-intro">Tag-driven multi-select with filtering and removable chips.</p>
+  
+<section class="demo-card">
+  <div class="multi-select" data-selected='["runtime","search"]'>
+    <div class="multi-select-trigger">
+      <div class="multi-select-tags"></div>
+      <span class="multi-select-placeholder">Select items...</span>
+      <input class="multi-select-input" type="text" placeholder="Filter components">
+      <span class="multi-select-chevron">▾</span>
+    </div>
+    <div class="multi-select-dropdown" data-state="closed">
+      <input type="hidden" name="features">
+      <div class="multi-select-option" data-value="runtime"><span class="multi-select-option-label">Runtime</span></div>
+      <div class="multi-select-option" data-value="search"><span class="multi-select-option-label">Search</span></div>
+      <div class="multi-select-option" data-value="sync"><span class="multi-select-option-label">Sync</span></div>
+      <div class="multi-select-option" data-value="offline"><span class="multi-select-option-label">Offline</span></div>
+      <p class="multi-select-empty">No matching features.</p>
+    </div>
+  </div>
+</section>
+  <script type="module">
+
+import { EventBus } from '../../../runtime/EventBus.js';
+import { Contracts } from '../../../runtime/Contracts.js';
+window.csma = window.csma || {};
+const eventBus = new EventBus();
+eventBus.contracts = Contracts;
+window.csma.eventBus = eventBus;
+const componentModule = await import('./multi-select.js');
+componentModule.initMultiSelectSystem(eventBus);
+
+  </script>
+</body>
+</html>

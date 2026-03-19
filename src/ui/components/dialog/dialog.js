@@ -12,11 +12,20 @@
  * Contracts: INTENT_MODAL_OPEN, INTENT_MODAL_CLOSE
  */
 
+import { lockDocumentScroll, unlockDocumentScroll } from '../shared/document-state.js';
+
 /**
  * Initialize Dialog system with EventBus integration
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [{ importPath: '/src/ui/components/shared/document-state.js', required: true }],
+    styles: ['/src/css/main.css'],
+    notes: ['Copy src/ui/components/shared/document-state.js when integrating outside the CSMA runtime.', 'Initialize with initDialogSystem(eventBus).']
+};
 export function initDialogSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Dialog] EventBus not provided, Dialog system not initialized');
@@ -122,8 +131,11 @@ function initDialog(overlay, eventBus) {
 export function openDialog(dialogId) {
     const overlay = document.getElementById(dialogId);
     if (overlay) {
+        if (overlay.dataset.state === 'open') {
+            return;
+        }
         overlay.dataset.state = 'open';
-        document.body.style.overflow = 'hidden';
+        lockDocumentScroll();
     }
 }
 
@@ -136,7 +148,10 @@ export function openDialog(dialogId) {
 export function closeDialog(dialogId, reason = 'button') {
     const overlay = document.getElementById(dialogId);
     if (overlay) {
+        if (overlay.dataset.state !== 'open') {
+            return;
+        }
         overlay.dataset.state = 'closed';
-        document.body.style.overflow = '';
+        unlockDocumentScroll();
     }
 }

@@ -12,14 +12,14 @@
 .number-field-input {
   appearance: textfield;
   width: 100%;
-  padding: var(--fx-space-sm) var(--fx-space-md);
-  background: var(--fx-color-surface);
-  border: 1px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-md);
-  font-family: var(--fx-font-family-mono);
-  font-size: var(--fx-font-size-sm);
-  color: var(--fx-color-fg);
-  transition: all var(--fx-transition-fast);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+  transition: all var(--transition-fast);
 }
 
 .number-field-input::-webkit-inner-spin-button,
@@ -29,13 +29,13 @@
 }
 
 .number-field-input:hover {
-  border-color: var(--fx-color-fg-muted);
+  border-color: var(--foreground-muted);
 }
 
-.number-field-input:focus {
+.number-field-input:focus-visible {
   outline: none;
-  border-color: var(--fx-color-primary);
-  box-shadow: 0 0 0 3px hsl(222.2 47.4% 11.2% / 0.1);
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 .number-field-input:disabled {
@@ -44,32 +44,32 @@
 }
 
 .number-field-input[data-state="error"] {
-  border-color: var(--fx-color-danger);
+  border-color: var(--destructive);
 }
 
-.number-field-input[data-state="error"]:focus {
-  box-shadow: 0 0 0 3px hsl(0 84.2% 60.2% / 0.1);
+.number-field-input[data-state="error"]:focus-visible {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--destructive);
 }
 
 /* With spinner buttons */
 .number-field[data-spinner="true"] {
   display: flex;
   align-items: center;
-  gap: var(--fx-space-xs);
-  background: var(--fx-color-surface);
-  border: 1px solid var(--fx-color-border);
-  border-radius: var(--fx-radius-md);
-  padding: var(--fx-space-2xs);
+  gap: var(--space-xs);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2xs);
 }
 
 .number-field[data-spinner="true"] .number-field-input {
   border: none;
   background: transparent;
-  padding: var(--fx-space-xs) var(--fx-space-sm);
+  padding: var(--space-xs) var(--space-sm);
   text-align: center;
 }
 
-.number-field[data-spinner="true"] .number-field-input:focus {
+.number-field[data-spinner="true"] .number-field-input:focus-visible {
   box-shadow: none;
 }
 
@@ -86,29 +86,29 @@
   width: 1.5rem;
   height: 1rem;
   padding: 0;
-  background: var(--fx-color-bg-muted);
+  background: var(--background-muted);
   border: none;
-  color: var(--fx-color-fg-muted);
+  color: var(--foreground-muted);
   cursor: pointer;
-  transition: all var(--fx-transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .number-field-btn:first-child {
-  border-radius: var(--fx-radius-sm) var(--fx-radius-sm) 0 0;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
 }
 
 .number-field-btn:last-child {
-  border-radius: 0 0 var(--fx-radius-sm) var(--fx-radius-sm);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
 }
 
 .number-field-btn:hover {
-  background: var(--fx-color-border);
-  color: var(--fx-color-fg);
+  background: var(--border);
+  color: var(--foreground);
 }
 
 .number-field-btn:active {
-  background: var(--fx-color-primary);
-  color: var(--fx-color-on-primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .number-field-btn:disabled {
@@ -118,13 +118,13 @@
 
 /* Size variants */
 .number-field[data-size="sm"] .number-field-input {
-  padding: var(--fx-space-xs) var(--fx-space-sm);
-  font-size: var(--fx-font-size-xs);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-xs);
 }
 
 .number-field[data-size="lg"] .number-field-input {
-  padding: var(--fx-space-md) var(--fx-space-lg);
-  font-size: var(--fx-font-size-md);
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-base);
 }
 
 /* Full width */
@@ -137,16 +137,16 @@
 .number-field-suffix {
   display: flex;
   align-items: center;
-  padding: 0 var(--fx-space-sm);
-  color: var(--fx-color-fg-muted);
-  font-size: var(--fx-font-size-sm);
+  padding: 0 var(--space-sm);
+  color: var(--foreground-muted);
+  font-size: var(--font-size-sm);
   white-space: nowrap;
 }
 
 .number-field-prefix {
-  border-right: 1px solid var(--fx-color-border);
+  border-right: 1px solid var(--border);
 }
 
 .number-field-suffix {
-  border-left: 1px solid var(--fx-color-border);
+  border-left: 1px solid var(--border);
 }

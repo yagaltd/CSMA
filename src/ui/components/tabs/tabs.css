@@ -10,7 +10,7 @@
 
 .tabs-list {
     display: flex;
-    border-bottom: 1px solid var(--fx-color-border);
+    border-bottom: 1px solid var(--border);
     position: relative;
 }
 
@@ -20,7 +20,7 @@
     padding: 0.75rem 1.5rem;
     cursor: pointer;
     font-size: var(--font-size-sm);
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
     position: relative;
     transition: color 0.2s;
     border-radius: 0;
@@ -28,12 +28,12 @@
 }
 
 .tabs-trigger:hover {
-    color: var(--fx-color-fg);
+    color: var(--foreground);
     background: transparent;
 }
 
 .tabs-trigger[aria-selected="true"] {
-    color: var(--fx-color-fg);
+    color: var(--foreground);
     font-weight: 500;
 }
 
@@ -44,12 +44,17 @@
     left: 0;
     right: 0;
     height: 2px;
-    background-color: var(--fx-color-primary);
+    background-color: var(--primary);
+}
+
+.tabs-trigger:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 .tabs-content {
     padding: 1.5rem;
-    background-color: var(--fx-color-bg);
+    background-color: var(--background);
     border-radius: 0 0 var(--radius-md) var(--radius-md);
     min-height: 100px;
 }

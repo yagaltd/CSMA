@@ -7,45 +7,46 @@
   <link rel="stylesheet" href="../../../css/main.css">
   <style>
     body {
-      padding: var(--fx-space-2xl);
+      padding: var(--space-2xl);
       max-width: 600px;
       margin: 0 auto;
     }
     .demo-section {
-      margin-bottom: var(--fx-space-2xl);
+      margin-bottom: var(--space-2xl);
     }
     .demo-section h3 {
-      margin-bottom: var(--fx-space-md);
-      color: var(--fx-color-fg-muted);
-      font-size: var(--fx-font-size-sm);
+      margin-bottom: var(--space-md);
+      color: var(--foreground-muted);
+      font-size: var(--font-size-sm);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
     .input {
       width: 100%;
-      padding: var(--fx-space-sm) var(--fx-space-md);
-      border: 1px solid var(--fx-color-border);
-      border-radius: var(--fx-radius-md);
-      font-size: var(--fx-font-size-sm);
-      background: var(--fx-color-bg);
-      color: var(--fx-color-fg);
+      padding: var(--space-sm) var(--space-md);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      background: var(--background);
+      color: var(--foreground);
     }
     .input:focus {
       outline: none;
-      border-color: var(--fx-color-primary);
-      box-shadow: 0 0 0 3px hsl(from var(--fx-color-primary) h s 90%);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px hsl(from var(--primary) h s 90%);
     }
     .input[data-state="error"] {
-      border-color: var(--fx-color-danger);
+      border-color: var(--destructive);
     }
     .input[data-state="success"] {
-      border-color: var(--fx-color-success);
+      border-color: var(--success);
     }
   </style>
 </head>
 <body>
+  <a href="../index.html#form" class="back-link">← Back to Explorer</a>
   <h1>Form Primitives</h1>
-  <p style="color: var(--fx-color-fg-muted); margin-bottom: var(--fx-space-xl);">
+  <p style="color: var(--foreground-muted); margin-bottom: var(--space-xl);">
     Form building blocks: Field, Label, Description, Error. Type I component (pure CSS).
   </p>
 
@@ -80,7 +81,7 @@
     <div class="form-field" data-state="success">
       <label class="form-label" for="username">Username</label>
       <input type="text" id="username" class="input" data-state="success" value="johndoe">
-      <span class="form-description" style="color: var(--fx-color-success);">Username is available!</span>
+      <span class="form-description" style="color: var(--success);">Username is available!</span>
     </div>
   </div>
 

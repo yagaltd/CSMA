@@ -7,8 +7,8 @@
 .chat {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
+  column-gap: var(--space-lg);
+  padding: var(--space-lg);
 }
 
 .chat-start {
@@ -22,45 +22,45 @@
 .chat-bubble {
   display: block;
   width: fit-content;
-  padding: var(--spacing-sm) var(--spacing-lg);
+  padding: var(--space-sm) var(--space-lg);
   border-radius: var(--radius-lg);
   max-width: 90%;
   word-wrap: break-word;
 }
 
 .chat-bubble-primary {
-  background-color: var(--fx-color-primary);
-  color: var(--fx-color-on-primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }
 
 .chat-bubble-secondary {
-  background-color: var(--fx-color-secondary);
-  color: var(--fx-color-on-secondary);
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
 }
 
 .chat-bubble-accent {
-  background-color: var(--fx-color-accent);
-  color: var(--fx-color-on-accent);
+  background-color: var(--accent);
+  color: var(--accent-foreground);
 }
 
 .chat-bubble-info {
-  background-color: var(--fx-color-info);
-  color: var(--fx-color-on-info);
+  background-color: var(--info);
+  color: var(--info-foreground);
 }
 
 .chat-bubble-success {
-  background-color: var(--fx-color-success);
-  color: var(--fx-color-on-success);
+  background-color: var(--success);
+  color: var(--success-foreground);
 }
 
 .chat-bubble-warning {
-  background-color: var(--fx-color-warning);
-  color: var(--fx-color-on-warning);
+  background-color: var(--warning);
+  color: var(--warning-foreground);
 }
 
 .chat-bubble-error {
-  background-color: var(--fx-color-danger);
-  color: var(--fx-color-on-danger);
+  background-color: var(--destructive);
+  color: var(--destructive-foreground);
 }
 
 .chat-image {
@@ -81,10 +81,10 @@
   font-size: var(--font-size-sm);
   line-height: 1.25rem;
   opacity: 0.6;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--space-xs);
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--space-sm);
 }
 
 .chat-footer {
@@ -92,7 +92,7 @@
   font-size: var(--font-size-sm);
   line-height: 1.25rem;
   opacity: 0.6;
-  margin-top: var(--spacing-xs);
+  margin-top: var(--space-xs);
 }
 
 

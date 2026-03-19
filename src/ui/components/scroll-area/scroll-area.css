@@ -10,7 +10,7 @@
   width: 100%;
   overflow: auto;
   scrollbar-width: thin;
-  scrollbar-color: var(--fx-color-border) transparent;
+  scrollbar-color: var(--border) transparent;
 }
 
 .scroll-area-viewport::-webkit-scrollbar {
@@ -23,12 +23,12 @@
 }
 
 .scroll-area-viewport::-webkit-scrollbar-thumb {
-  background: var(--fx-color-border);
-  border-radius: var(--fx-radius-full);
+  background: var(--border);
+  border-radius: var(--radius-full);
 }
 
 .scroll-area-viewport::-webkit-scrollbar-thumb:hover {
-  background: var(--fx-color-fg-muted);
+  background: var(--foreground-muted);
 }
 
 /* Scrollbar visibility variants */
@@ -41,11 +41,11 @@
 }
 
 .scroll-area[data-scrollbar="hover"]:hover .scroll-area-viewport {
-  scrollbar-color: var(--fx-color-border) transparent;
+  scrollbar-color: var(--border) transparent;
 }
 
 .scroll-area[data-scrollbar="hover"]:hover .scroll-area-viewport::-webkit-scrollbar-thumb {
-  background: var(--fx-color-border);
+  background: var(--border);
 }
 
 .scroll-area[data-scrollbar="hidden"] .scroll-area-viewport {
@@ -92,12 +92,12 @@
 
 .scroll-area[data-shadow="true"]::before {
   top: 0;
-  background: linear-gradient(to bottom, var(--fx-color-bg), transparent);
+  background: linear-gradient(to bottom, var(--background), transparent);
 }
 
 .scroll-area[data-shadow="true"]::after {
   bottom: 0;
-  background: linear-gradient(to top, var(--fx-color-bg), transparent);
+  background: linear-gradient(to top, var(--background), transparent);
 }
 
 /* Content wrapper */

@@ -9,6 +9,13 @@
  * - Stability: stable
  */
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initRadioSystem(eventBus).']
+};
 export function initRadioSystem(eventBus) {
     if (!eventBus) return () => { };
 

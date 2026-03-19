@@ -10,6 +10,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initMultiSelectSystem(eventBus).']
+};
 export function initMultiSelectSystem(eventBus) {
     if (!eventBus) {
         console.warn('[MultiSelect] EventBus not provided');

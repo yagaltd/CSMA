@@ -1,109 +1,90 @@
-# CSMA Theme Migration Guide
+# CSMA Theme Guide
 
 ## Overview
 
-CSMA has migrated from literal color naming (`--fx-color-bg`) to **semantic naming** (`--background`) based on shadcn/ui's proven convention. This makes the theme system clearer and more maintainable.
+CSMA now uses `src/css/theme.css` as the canonical theme contract.
 
-## Key Changes
+- `src/css/main.css` is the only stylesheet entrypoint applications should import.
+- `src/css/theme.css` defines shared scales, semantic tokens, and component recipe tokens.
+- `src/css/foundation/themes/light.css` and `src/css/foundation/themes/dark.css` define theme-specific variable values only.
 
-### New Token Structure
+## Where To Change What
 
-**Before:**
-```css
---fx-color-primary: hsl(222.2 47.4% 11.2%);
---fx-color-bg: hsl(0 0% 100%);
---fx-color-fg: hsl(222.2 84% 4.9%);
-```
+| File | Purpose |
+|------|---------|
+| `src/css/theme.css` | Shared scales, semantic token contract, component recipe defaults |
+| `src/css/foundation/themes/light.css` | Light theme color values |
+| `src/css/foundation/themes/dark.css` | Dark theme color values |
+| `src/ui/components/*/*.css` | Component implementation details that should consume semantic or recipe tokens |
 
-**After:**
-```css
---primary: hsl(222.2 47.4% 11.2%);
---primary-foreground: hsl(210 40% 98%);
---background: hsl(0 0% 100%);
---foreground: hsl(222.2 84% 4.9%);
-```
+## Token Layers
 
-## Semantic Tokens Explained
+### Semantic tokens
 
-| Token | Usage Example | Old Equivalent |
-|-------|--------------|----------------|
-| `--background` | Page background | `--fx-color-bg` |
-| `--foreground` | Primary text | `--fx-color-fg` |
-| `--primary` | Brand color, CTAs | `--fx-color-primary` |
-| `--primary-foreground` | Text on primary | `--fx-color-on-primary` |
-| `--secondary` | Subtle surfaces | `--fx-color-accent` |
-| `--secondary-foreground` | Text on secondary | (new) |
-| `--accent` | Hover states | `--fx-color-surface-muted` |
-| `--muted` | Muted backgrounds | `--fx-color-bg-muted` |
-| `--border` | Borders | `--fx-color-border` |
-| `--ring` | Focus rings | `--fx-color-primary` |
-
-## Migration Strategy
-
-### Phase 1: Automatic (Current)
-All components continue working via backward compatibility mapping at the bottom of `src/css/foundation/tokens.css`:
+Use these for broad theming across all components:
 
 ```css
---fx-color-primary: var(--primary);
---fx-color-bg: var(--background);
-/* ... etc */
+--background
+--foreground
+--surface
+--border
+--primary
+--secondary
+--accent
+--destructive
+--success
+--warning
+--info
+--ring
 ```
 
-### Phase 2: Gradual Migration
-Update components one at a time. Example for navbar:
+### Recipe tokens
+
+Use these when a component needs structure or behavior beyond palette swaps:
 
 ```css
-/* Old */
-.navbar {
-    background: var(--fx-color-bg);
-    color: var(--fx-color-fg);
-}
-
-/* New - Semantic */
-.navbar {
-    background: var(--background);
-    color: var(--foreground);
-}
-
-/* Nav link */
-.navbar-link {
-    color: var(--muted-foreground);  /* Was: color-text-secondary */
-}
-.navbar-link:hover {
-    background: var(--accent);        /* Was: color-bg-secondary */
-    color: var(--primary);            /* Was: color-primary */
-}
+--button-radius
+--input-height
+--card-shadow
+--dialog-radius
+--navbar-link-hover-bg
+--table-row-selected-bg
 ```
 
-### Phase 3: Remove Legacy (Future)
-After all components migrated, remove the backward compatibility section.
+### Legacy import note
 
-## Benefits
+Legacy token families and the old `tokens.css` entrypoint have been removed from the source tree.
 
-1. **Clarity**: `var(--background)` vs `var(--fx-color-bg)` - immediately obvious
-2. **Consistency**: Matches shadcn/ui, a proven design system
-3. **Flexibility**: Easier to customize themes without breaking components
-4. **Modern**: Uses current best practices for design tokens
-5. **Maintainable**: New developers understand the system faster
+## Theme Switching
 
-## Testing
+Theme switching remains:
 
-To verify the theme works:
+```js
+document.documentElement.dataset.theme = 'dark';
+```
+
+Supported values:
+- `light`
+- `dark`
+
+If no `data-theme` is set, CSMA defaults to the light theme and respects the dark preference fallback defined in `dark.css`.
+
+## Authoring Rules
+
+1. Import only `src/css/main.css` from app and demo pages.
+2. Do not import `foundation/themes/*.css` directly in components.
+3. Prefer semantic tokens first, recipe tokens second, and one-off component overrides last.
+4. Keep theme files variable-only. No component selectors in theme partials.
+
+## Verification
 
 ```bash
-npm run dev
+npm run lint:styles
+npm run build
 ```
 
-Open browser dev tools and toggle `data-theme` attribute on `<html>` element between `"light"` and `"dark"`.
-
-## Next Steps
-
-1. Update component demos to showcase semantic tokens
-2. Gradually migrate component libraries
-3. Update documentation and design tokens
-4. Eventually remove backward compatibility layer
-
-## References
-
-- [shadcn/ui Theming](https://ui.shadcn.com/docs/theming)
-- Original CSMA theme structure in `COMPLETE_CSMA_GUIDE.md`
+The style guard now checks that:
+- `main.css` imports `theme.css`
+- `theme.css` imports both `light.css` and `dark.css`
+- every component CSS file is registered in `src/ui/components/index.css`
+- removed foundation component stylesheet paths are not referenced in source files

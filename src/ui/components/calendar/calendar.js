@@ -10,6 +10,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initCalendarSystem(eventBus).']
+};
 export function initCalendarSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Calendar] EventBus not provided');

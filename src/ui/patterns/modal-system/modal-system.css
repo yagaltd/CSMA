@@ -3,39 +3,39 @@
 
 .csma-modal-demo {
     padding: clamp(2rem, 4vw, 4rem);
-    background: linear-gradient(180deg, color-mix(in srgb, var(--fx-color-primary) 14%, transparent), var(--fx-color-surface-muted));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 14%, transparent), var(--surface-muted));
     min-height: 100vh;
-    color: var(--fx-color-fg);
+    color: var(--foreground);
 }
 
 .csma-modal-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: clamp(1.5rem, 4vw, 3rem);
-    margin-top: var(--spacing-xxl);
+    margin-top: var(--space-2xl);
 }
 
 .csma-modal-card {
-    background: var(--fx-color-bg);
-    border: 1px solid color-mix(in srgb, var(--fx-color-border) 40%, transparent);
-    border-radius: var(--corner-3xl);
+    background: var(--background);
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+    border-radius: var(--radius-3xl);
     box-shadow: var(--shadow-xl);
     padding: clamp(1.5rem, 3vw, 2.75rem);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: var(--space-lg);
     transform: translateY(0);
 }
 
 .csma-modal-card h2 {
     font-size: var(--font-size-lg);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--space-md);
 }
 
 .csma-modal-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--spacing-sm);
+    gap: var(--space-sm);
 }
 
 .csma-modal-stack {
@@ -44,18 +44,18 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-sm);
+    gap: var(--space-sm);
 }
 
 .csma-modal-stack li {
-    border: 1px solid color-mix(in srgb, var(--fx-color-border) 40%, transparent);
-    padding: var(--spacing-md);
-    border-radius: var(--corner-xl);
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+    padding: var(--space-md);
+    border-radius: var(--radius-xl);
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: var(--font-size-sm);
-    background: color-mix(in srgb, var(--fx-color-surface-muted) 95%, transparent);
+    background: color-mix(in srgb, var(--surface-muted) 95%, transparent);
 }
 
 .csma-modal-stack li strong {
@@ -68,7 +68,7 @@
     display: none;
     align-items: center;
     justify-content: center;
-    background: color-mix(in srgb, var(--fx-color-bg) 20%, transparent);
+    background: color-mix(in srgb, var(--background) 20%, transparent);
     backdrop-filter: blur(3px);
     z-index: 100;
 }
@@ -79,10 +79,10 @@
 
 .csma-modal-preview-card {
     width: min(420px, 90vw);
-    background: var(--fx-color-bg);
-    border-radius: var(--corner-3xl);
+    background: var(--background);
+    border-radius: var(--radius-3xl);
     box-shadow: var(--shadow-2xl);
-    border: 1px solid color-mix(in srgb, var(--fx-color-border) 40%, transparent);
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
     padding: clamp(1.5rem, 4vw, 2.75rem);
 }
 
@@ -90,31 +90,31 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--space-md);
 }
 
 .csma-modal-chip {
     display: inline-flex;
     align-items: center;
-    padding: 0 var(--spacing-md);
+    padding: 0 var(--space-md);
     height: 24px;
-    border-radius: var(--corner-pill);
+    border-radius: var(--radius-full);
     font-size: var(--font-size-xs);
     text-transform: uppercase;
-    background: color-mix(in srgb, var(--fx-color-primary) 20%, transparent);
-    color: var(--fx-color-primary);
+    background: color-mix(in srgb, var(--primary) 20%, transparent);
+    color: var(--primary);
 }
 
 .csma-modal-empty {
-    padding: var(--spacing-lg);
-    border-radius: var(--corner-lg);
-    background: var(--fx-color-bg-muted);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    background: var(--background-muted);
     text-align: center;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }
 
 .csma-modal-footer {
-    margin-top: var(--spacing-xl);
+    margin-top: var(--space-xl);
     font-size: var(--font-size-sm);
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }

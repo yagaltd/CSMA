@@ -1,3 +1,11 @@
+export const componentDependencies = {
+    runtime: [],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initAnalyticsConsentControls().']
+};
+
 export function initAnalyticsConsentControls() {
     const consentService = window.csma?.analyticsConsent;
     if (!consentService) {

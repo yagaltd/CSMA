@@ -5,7 +5,7 @@
 
 .progress-container {
     width: 100%;
-    background-color: var(--fx-color-bg-muted);
+    background-color: var(--background-muted);
     border-radius: var(--radius-full);
     overflow: hidden;
     height: 0.75rem;
@@ -14,7 +14,7 @@
 
 .progress-bar {
     height: 100%;
-    background-color: var(--fx-color-primary);
+    background-color: var(--primary);
     transition: width 0.3s ease;
     position: relative;
     width: var(--progress-value);
@@ -45,7 +45,7 @@
 
 .progress-percentage {
     font-weight: 500;
-    color: var(--fx-color-fg);
+    color: var(--foreground);
 }
 
 /* Progress Sizes */
@@ -63,24 +63,24 @@
 
 /* Progress Variants */
 .progress-success .progress-bar {
-    background-color: var(--fx-color-success);
+    background-color: var(--success);
 }
 
 .progress-warning .progress-bar {
     background-color: #a16207;
     /* Not standard? */
     /* Wait, warning color is defined in theme. use var */
-    background-color: var(--fx-color-warning);
+    background-color: var(--warning);
     /* Override with variable */
 }
 
 /* Original had #a16207 which is darker than confirm warning. 
- * I will stick to var(--fx-color-warning) for consistency as requested.
+ * I will stick to var(--warning) for consistency as requested.
  */
 .progress-warning .progress-bar {
-    background-color: var(--fx-color-warning);
+    background-color: var(--warning);
 }
 
 .progress-error .progress-bar {
-    background-color: var(--fx-color-danger);
+    background-color: var(--destructive);
 }

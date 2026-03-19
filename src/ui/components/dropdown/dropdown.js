@@ -17,6 +17,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initDropdownSystem(eventBus).']
+};
 export function initDropdownSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Dropdown] EventBus not provided');
@@ -37,7 +44,7 @@ export function initDropdownSystem(eventBus) {
         try {
             const dropdown = document.getElementById(payload.dropdownId);
             if (dropdown) {
-                const button = dropdown.querySelector('.dropdown-button');
+                const button = dropdown.querySelector('.dropdown-trigger');
                 if (button) toggleDropdown(dropdown, button, eventBus);
             }
         } catch (error) {

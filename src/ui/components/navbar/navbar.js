@@ -18,6 +18,8 @@
  * - Touch-friendly mobile interactions
  */
 
+import { lockDocumentScroll, unlockDocumentScroll } from '../shared/document-state.js';
+
 let navbarInstances = new Map();
 
 /**
@@ -25,6 +27,13 @@ let navbarInstances = new Map();
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [{ importPath: '/src/ui/components/shared/document-state.js', required: true }],
+    styles: ['/src/css/main.css'],
+    notes: ['Copy src/ui/components/shared/document-state.js when integrating outside the CSMA runtime.', 'Initialize with initNavbarSystem(eventBus).']
+};
 export function initNavbarSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Navbar] EventBus not provided, Navbar system not initialized');
@@ -165,8 +174,12 @@ function toggleMobileMenu(navbar) {
  * @param {HTMLElement} navbar - Navbar container
  */
 function openMobileMenu(navbar) {
+    if (navbar.dataset.mobileOpen === 'true') {
+        return;
+    }
+
     navbar.dataset.mobileOpen = 'true';
-    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    lockDocumentScroll();
 
     // Focus management
     const firstLink = navbar.querySelector('.navbar-mobile-menu .navbar-link');
@@ -180,8 +193,12 @@ function openMobileMenu(navbar) {
  * @param {HTMLElement} navbar - Navbar container
  */
 function closeMobileMenu(navbar) {
+    if (navbar.dataset.mobileOpen !== 'true') {
+        return;
+    }
+
     navbar.dataset.mobileOpen = 'false';
-    document.body.style.overflow = ''; // Restore scrolling
+    unlockDocumentScroll();
 
     // Focus management
     const hamburger = navbar.querySelector('.navbar-hamburger');

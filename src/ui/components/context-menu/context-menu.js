@@ -10,6 +10,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initContextMenuSystem(eventBus).']
+};
 export function initContextMenuSystem(eventBus) {
     if (!eventBus) {
         console.warn('[ContextMenu] EventBus not provided');

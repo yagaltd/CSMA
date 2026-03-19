@@ -10,6 +10,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initResizableSystem(eventBus).']
+};
 export function initResizableSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Resizable] EventBus not provided');

@@ -28,8 +28,8 @@ element.style.borderColor = 'green';
 ### 2. Define All States in CSS
 ```css
 /* ✅ DO: Define all visual states */
-.card.pending { border-left: 4px solid var(--fx-color-warning); }
-.card.completed { border: 4px solid var(--fx-color-success); }
+.card.pending { border-left: 4px solid var(--warning); }
+.card.completed { border: 4px solid var(--success); }
 
 /* ❌ DON'T: Define states in JavaScript */
 if (status === 'completed') { element.style.borderLeft = '4px solid green'; }
@@ -124,7 +124,7 @@ button.addEventListener('click', () => {
 .note[data-state="saving"] { opacity: 0.7; }
 .note[data-state="saved"] { 
   opacity: 1; 
-  border-left-color: var(--fx-color-success);
+  border-left-color: var(--success);
 }
 ```
 
@@ -156,7 +156,7 @@ export const Contracts = {
 ## Key Files
 - `src/ui/init.js` - Component registry
 - `src/runtime/Contracts.js` - Event definitions
-- `src/css/foundation/tokens.css` - CSS variables
+- `src/css/theme.css` - Theme contract and CSS variables
 - `src/ui/components/` - UI components (examples)
 
 **Result**: Lean (17KB), fast (15ms updates), secure (6 defense layers), maintainable!

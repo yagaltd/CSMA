@@ -8,9 +8,11 @@
 /* Phase 1-2: CSS-Only Components */
 @import './badge/badge.css';
 @import './separator/separator.css';
+@import './card/card.css';
 @import './avatar/avatar.css';
 @import './skeleton/skeleton.css';
 @import './alert/alert.css';
+@import './chat/chat.css';
 @import './scroll-area/scroll-area.css';
 @import './breadcrumb/breadcrumb.css';
 @import './form/form.css';
@@ -46,7 +48,6 @@
 @import './alert-dialog/alert-dialog.css';
 @import './drawer/drawer.css';
 @import './context-menu/context-menu.css';
-@import '../patterns/sidebar/sidebar.css';
 @import './pagination/pagination.css';
 @import './navbar/navbar.css';
 @import './analytics-consent/analytics-consent.css';

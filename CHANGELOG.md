@@ -4,12 +4,28 @@ All notable changes to this repository should be documented in this file.
 
 The format is based on Keep a Changelog and this project uses Semantic Versioning.
 
-## [Unreleased]
+## [1.2.0] - 2026-03-19
+
+### Added
+- canonical UI theme contract in `src/css/theme.css` for semantic tokens, layer tokens, and shared component recipe tokens
+- standalone demo pages for every component under `src/ui/components/*`
+- explicit `demoPath` coverage for all registered components in `src/ui/components/component-registry.js`
+- `componentDependencies` metadata for JS-backed UI components to document copy-paste integration requirements
+- automated `check:ui-library` validation to verify registry coverage, demo coverage, canonical explorer links, and component dependency metadata
 
 ### Changed
-- synced the docs and skills with the current CSMA theme contract, component registry, and runtime paths
-- replaced stale foundation/package references with the repo's actual `src/css/*` and `src/runtime/*` layout
-- clarified component integration, theme customization, and validation import examples for new contributors
+- made `src/ui/components/index.html` the canonical component explorer entrypoint for docs and demos
+- updated docs and skills to use the current `src/css/*`, `src/runtime/*`, explorer, and component dependency contracts
+- standardized component demos to link back to the canonical explorer anchors
+- aligned overlay components with centralized layer tokens from `src/css/theme.css`
+- extended carousel and file-upload styling to use theme tokens instead of component-local fallback colors
+
+### Fixed
+- removed stale `demos.html` and `src/css/components.css` references across docs, demos, and patterns
+- completed component registry coverage for missing components and explicit demo paths
+- removed hidden copy-paste dependency gaps by documenting non-local runtime/shared dependencies in JS-backed components
+- removed unsupported `data-theme="zinc"` demo scaffolding from dropdown demos
+- reduced remaining theme-contract leaks in components such as alert, breadcrumb, context-menu, datepicker, file-upload, and carousel
 
 ## [1.1.0] - 2026-03-10
 

@@ -6,15 +6,18 @@
  */
 
 :root {
-  --datepicker-radius: var(--corner-md, 0.75rem);
-  --datepicker-border: var(--fx-color-border, #d4d4d8);
-  --datepicker-surface: var(--fx-color-bg, #ffffff);
-  --datepicker-surface-elevated: var(--fx-color-surface, #ffffff);
-  --datepicker-text: var(--fx-color-fg, #111827);
-  --datepicker-muted: var(--fx-color-fg-muted, #6b7280);
-  --datepicker-primary: var(--fx-color-primary, #2563eb);
-  --datepicker-primary-soft: rgba(37, 99, 235, 0.15);
-  --datepicker-shadow: var(--shadow-lg, 0 25px 50px -12px rgba(0, 0, 0, 0.25));
+  --datepicker-radius: var(--radius-md);
+  --datepicker-border: var(--border);
+  --datepicker-surface: var(--background);
+  --datepicker-surface-elevated: var(--surface);
+  --datepicker-text: var(--foreground);
+  --datepicker-muted: var(--foreground-muted);
+  --datepicker-primary: var(--primary);
+  --datepicker-primary-soft: var(--primary-soft);
+  --datepicker-day-hover-bg: var(--accent);
+  --datepicker-focus-ring: color-mix(in srgb, var(--primary) 35%, transparent);
+  --datepicker-shadow: var(--shadow-lg);
+  --datepicker-selected-shadow: var(--shadow-md);
 }
 
 .datepicker {
@@ -50,9 +53,9 @@
 }
 
 .datepicker-field:focus-visible {
-  outline: 2px solid var(--datepicker-primary);
-  outline-offset: 2px;
-  border-color: var(--datepicker-primary);
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 .datepicker-field::placeholder {
@@ -178,7 +181,7 @@
 }
 
 .datepicker-day:hover:not(.is-disabled) {
-  background: rgba(0, 0, 0, 0.05);
+  background: var(--datepicker-day-hover-bg);
 }
 
 .datepicker-day:focus-visible {
@@ -209,8 +212,8 @@
 .datepicker-day.is-range-start,
 .datepicker-day.is-range-end {
   background: var(--datepicker-primary);
-  color: var(--fx-color-on-primary, #ffffff);
-  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.35);
+  color: var(--primary-foreground);
+  box-shadow: var(--datepicker-selected-shadow);
 }
 
 .datepicker-day.is-range-middle {
@@ -224,7 +227,7 @@
 }
 
 .datepicker-day.is-focused {
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.35);
+  box-shadow: 0 0 0 2px var(--datepicker-focus-ring);
 }
 
 .datepicker-footer {
@@ -253,7 +256,7 @@
 .demo-page {
   min-height: 100vh;
   padding: 2rem;
-  background: var(--fx-color-surface-muted, #f5f5f7);
+  background: var(--surface-muted, #f5f5f7);
   color: var(--datepicker-text);
 }
 
@@ -269,7 +272,7 @@
 }
 
 .demo-card {
-  background: var(--fx-color-bg, #ffffff);
+  background: var(--background, #ffffff);
   border-radius: var(--datepicker-radius);
   border: 1px solid var(--datepicker-border);
   padding: 1.5rem;
@@ -294,7 +297,7 @@
   font-family: 'JetBrains Mono', 'Fira Code', monospace;
   font-size: 0.9rem;
   padding: 0.75rem 1rem;
-  background: var(--fx-color-surface-muted, #f3f4f6);
+  background: var(--surface-muted, #f3f4f6);
   border-radius: var(--datepicker-radius);
   border: 1px dashed var(--datepicker-border);
 }

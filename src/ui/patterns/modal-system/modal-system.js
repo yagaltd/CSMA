@@ -44,7 +44,7 @@ export function initModalSystemPattern() {
                     <button class="button" data-variant="ghost" data-shape="icon" aria-label="Close" data-close-preview>✕</button>
                 </header>
                 <p>${entry.props?.message || 'This is a CSMA modal. Use it for confirmations, flows, or announcements.'}</p>
-                <div class="csma-modal-actions" style="margin-top: var(--spacing-lg);">
+                <div class="csma-modal-actions" style="margin-top: var(--space-lg);">
                     <button class="button" data-variant="secondary" type="button" data-close-preview>Maybe later</button>
                     <button class="button" data-variant="primary" type="button">Continue</button>
                 </div>

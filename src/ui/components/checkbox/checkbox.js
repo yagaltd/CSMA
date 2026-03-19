@@ -9,6 +9,13 @@
  * - Stability: stable
  */
 
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initCheckboxSystem(eventBus).']
+};
 export function initCheckboxSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Checkbox] EventBus not provided, Checkbox system not initialized');

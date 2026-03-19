@@ -1,1 +1,185 @@
-@import '../../../css/foundation/components/button.css';
+/* CSMA Foundation — Button Component */
+
+.button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  border: 1px solid var(--border);
+  border-radius: var(--button-radius);
+  padding: var(--button-padding-block) var(--button-padding-inline);
+  min-height: var(--button-height);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--button-font-size);
+  line-height: var(--line-height-tight);
+  color: var(--primary-foreground);
+  background: var(--primary);
+  border-color: transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.button:hover:not([disabled]):not([data-loading="true"]) {
+  background: color-mix(in srgb, var(--primary) 90%, var(--background));
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+.button:active:not([disabled]):not([data-loading="true"]) {
+  box-shadow: none;
+}
+
+.button[disabled],
+.button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+/* Variants - Default/primary matches shadcn (black background) */
+.button[data-variant="primary"],
+.button[data-variant="default"] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: transparent;
+}
+
+.button[data-variant="primary"]:hover:not([disabled]):not([data-loading="true"]),
+.button[data-variant="default"]:hover:not([disabled]):not([data-loading="true"]) {
+  background: color-mix(in srgb, var(--primary) 90%, var(--background));
+}
+
+/* Secondary - matches shadcn's secondary (light gray) */
+.button[data-variant="secondary"] {
+  background: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: transparent;
+}
+
+.button[data-variant="secondary"]:hover:not([disabled]):not([data-loading="true"]) {
+  background: color-mix(in srgb, var(--secondary) 88%, var(--foreground));
+}
+
+/* Ghost - transparent with hover */
+.button[data-variant="ghost"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--foreground);
+}
+
+.button[data-variant="ghost"]:hover:not([disabled]):not([data-loading="true"]) {
+  background: var(--accent);
+}
+
+/* Outline - white bg with border */
+.button[data-variant="outline"] {
+  background: var(--background);
+  border-color: var(--border);
+  color: var(--foreground);
+}
+
+.button[data-variant="outline"]:hover:not([disabled]):not([data-loading="true"]) {
+  background: var(--accent);
+}
+
+/* Text/link - transparent with underline on hover */
+.button[data-variant="text"],
+.button[data-variant="link"] {
+  background: transparent;
+  border-color: transparent;
+  color: var(--primary);
+  padding-inline: var(--space-sm);
+}
+
+/* Destructive - red */
+.button[data-variant="destructive"] {
+  background: var(--destructive);
+  border-color: var(--destructive);
+  color: var(--destructive-foreground);
+}
+
+.button[data-variant="destructive"]:hover:not([disabled]):not([data-loading="true"]) {
+  background: color-mix(in srgb, var(--destructive) 90%, var(--background));
+}
+
+/* Success - green */
+.button[data-variant="success"] {
+  background: var(--success);
+  border-color: var(--success);
+  color: var(--success-foreground);
+}
+
+.button[data-variant="success"]:hover:not([disabled]):not([data-loading="true"]) {
+  background: color-mix(in srgb, var(--success) 90%, var(--background));
+}
+
+/* Info */
+.button[data-variant="info"] {
+  background: var(--info);
+  border-color: var(--info);
+  color: var(--info-foreground);
+}
+
+.button[data-variant="info"]:hover:not([disabled]):not([data-loading="true"]) {
+  background: color-mix(in srgb, var(--info) 90%, var(--background));
+}
+
+/* Sizes */
+.button[data-size="sm"] {
+  padding: var(--space-xs) var(--space-lg);
+  font-size: var(--font-size-xs);
+  min-height: 2.25rem;
+}
+
+.button[data-size="lg"] {
+  padding: var(--space-md) var(--space-2xl);
+  font-size: var(--font-size-base);
+  min-height: 2.75rem;
+}
+
+.button[data-shape="icon"] {
+  width: var(--button-height);
+  height: var(--button-height);
+  padding: 0;
+  border-radius: var(--button-radius);
+}
+
+.button[data-size="sm"][data-shape="icon"] {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.button[data-size="lg"][data-shape="icon"] {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Loading State */
+.button[data-loading="true"] {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.button[data-loading="true"]::after {
+  content: "";
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 999px;
+  animation: fx-spin 600ms linear infinite;
+}
+
+@keyframes fx-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

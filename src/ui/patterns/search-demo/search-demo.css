@@ -1,13 +1,13 @@
 :root {
-    --search-card-bg: color-mix(in srgb, var(--fx-color-bg) 96%, var(--fx-color-fg) 4%);
-    --search-border: var(--fx-color-border);
+    --search-card-bg: color-mix(in srgb, var(--background) 96%, var(--foreground) 4%);
+    --search-border: var(--border);
     --search-radius: var(--radius-lg);
 }
 
 body.search-demo-body {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--fx-color-bg);
-    color: var(--fx-color-fg);
+    background: var(--background);
+    color: var(--foreground);
     padding: clamp(1.5rem, 3vw, 3rem);
 }
 
@@ -25,11 +25,11 @@ body.search-demo-body {
 }
 
 .search-demo[data-state="loading"] {
-    border-color: var(--fx-color-warning-muted);
+    border-color: color-mix(in srgb, var(--warning) 55%, var(--border));
 }
 
 .search-demo[data-state="results"] {
-    border-color: var(--fx-color-primary);
+    border-color: var(--primary);
 }
 
 .search-demo header h1 {
@@ -38,7 +38,7 @@ body.search-demo-body {
 }
 
 .search-demo header p {
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
     margin: 0.25rem 0 0;
 }
 
@@ -49,7 +49,7 @@ body.search-demo-body {
 }
 
 .search-demo-progress {
-    background: color-mix(in srgb, var(--fx-color-border) 60%, transparent);
+    background: color-mix(in srgb, var(--border) 60%, transparent);
     border-radius: 999px;
     height: 6px;
     overflow: hidden;
@@ -58,13 +58,13 @@ body.search-demo-body {
 .search-demo-progress div {
     width: 0;
     height: 100%;
-    background: var(--fx-color-primary);
+    background: var(--primary);
     transition: width 200ms ease;
 }
 
 .search-demo-status {
     font-size: 0.9rem;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }
 
 .search-input-group {
@@ -77,13 +77,13 @@ body.search-demo-body {
     flex: 1;
     padding: 0.85rem 1rem;
     border-radius: var(--radius-md);
-    border: 1px solid var(--fx-color-border);
-    background: var(--fx-color-bg);
+    border: 1px solid var(--border);
+    background: var(--background);
     color: inherit;
 }
 
 .search-input-group button {
-    border: 1px solid var(--fx-color-border);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
     padding: 0.75rem 1rem;
     background: transparent;
@@ -98,7 +98,7 @@ body.search-demo-body {
 }
 
 .search-tag-bar button {
-    border: 1px solid var(--fx-color-border);
+    border: 1px solid var(--border);
     background: transparent;
     color: inherit;
     border-radius: 999px;
@@ -109,16 +109,16 @@ body.search-demo-body {
 }
 
 .search-tag-bar button[data-active="true"] {
-    border-color: var(--fx-color-primary);
-    background: color-mix(in srgb, var(--fx-color-primary) 15%, transparent);
-    color: var(--fx-color-primary);
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 15%, transparent);
+    color: var(--primary);
 }
 
 .search-meta {
     display: flex;
     justify-content: space-between;
     font-size: 0.85rem;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }
 
 .search-results {
@@ -128,10 +128,10 @@ body.search-demo-body {
 }
 
 .search-result-card {
-    border: 1px solid var(--fx-color-border);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
     padding: 1rem;
-    background: var(--fx-color-bg);
+    background: var(--background);
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -144,7 +144,7 @@ body.search-demo-body {
 
 .search-result-snippet {
     font-size: 0.9rem;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
     line-height: 1.4;
 }
 
@@ -158,17 +158,17 @@ body.search-demo-body {
 .search-chip {
     font-size: 0.75rem;
     border-radius: 999px;
-    border: 1px solid var(--fx-color-border);
+    border: 1px solid var(--border);
     padding: 0.15rem 0.45rem;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }
 
 .search-empty {
-    border: 1px dashed var(--fx-color-border);
+    border: 1px dashed var(--border);
     border-radius: var(--radius-md);
     padding: 1.5rem;
     text-align: center;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }
 
 .search-demo[data-state="idle"] .search-input-group,
@@ -203,9 +203,9 @@ body.search-demo-body {
 }
 
 .search-demo button.primary {
-    background: var(--fx-color-primary);
-    border: 1px solid var(--fx-color-primary);
-    color: var(--fx-color-on-primary);
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: var(--primary-foreground);
 }
 
 .search-demo button.primary:disabled {

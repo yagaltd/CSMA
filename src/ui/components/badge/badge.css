@@ -1,1 +1,136 @@
-@import '../../../css/foundation/components/badge.css';
+/* CSMA Foundation — Badge */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  padding: 0 var(--space-sm);
+  min-height: 1.5rem;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: none;
+  letter-spacing: 0;
+  background: color-mix(in srgb, var(--foreground-muted) 12%, transparent);
+  color: var(--foreground);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+.badge[data-size="sm"] {
+  font-size: calc(var(--font-size-xs) - 1px);
+  min-height: 1.25rem;
+  padding: 0 var(--space-xs);
+}
+
+.badge[data-size="md"],
+.badge:not([data-size]) {
+  min-height: 1.5rem;
+}
+
+.badge[data-size="lg"] {
+  font-size: var(--font-size-sm);
+  min-height: 1.75rem;
+  padding: 0 var(--space-md);
+}
+
+/* Solid variants (filled background) */
+.badge[data-variant="primary"] {
+  background: var(--primary);
+  border-color: transparent;
+  color: var(--primary-foreground);
+}
+
+.badge[data-variant="secondary"] {
+  background: var(--secondary);
+  border-color: transparent;
+  color: var(--secondary-foreground);
+}
+
+.badge[data-variant="success"] {
+  background: var(--success);
+  border-color: transparent;
+  color: var(--success-foreground);
+}
+
+.badge[data-variant="warning"] {
+  background: var(--warning);
+  border-color: transparent;
+  color: var(--warning-foreground);
+}
+
+.badge[data-variant="danger"],
+.badge[data-variant="destructive"] {
+  background: var(--destructive);
+  border-color: transparent;
+  color: var(--destructive-foreground);
+}
+
+.badge[data-variant="info"] {
+  background: var(--info);
+  border-color: transparent;
+  color: var(--info-foreground);
+}
+
+.badge[data-variant="outline"] {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--border) 80%, transparent);
+  color: var(--foreground);
+}
+
+.badge[data-variant="muted"] {
+  background: color-mix(in srgb, var(--background-muted) 80%, transparent);
+  border-color: color-mix(in srgb, var(--border) 60%, transparent);
+  color: var(--foreground-muted);
+}
+
+/* Soft variants (light background, colored text) */
+/* Using transparent base works in both light and dark modes */
+.badge[data-variant="soft-primary"] {
+  background-color: color-mix(in srgb, var(--primary) 12%, transparent);
+  border-color: transparent;
+  color: var(--primary);
+}
+
+.badge[data-variant="soft-secondary"] {
+  background-color: color-mix(in srgb, var(--secondary) 50%, transparent);
+  border-color: transparent;
+  color: var(--secondary-foreground);
+}
+
+.badge[data-variant="soft-success"] {
+  background-color: color-mix(in srgb, var(--success) 15%, transparent);
+  border-color: transparent;
+  color: var(--success);
+}
+
+.badge[data-variant="soft-warning"] {
+  background-color: color-mix(in srgb, var(--warning) 18%, transparent);
+  border-color: transparent;
+  color: var(--warning);
+}
+
+.badge[data-variant="soft-danger"],
+.badge[data-variant="soft-destructive"] {
+  background-color: color-mix(in srgb, var(--destructive) 15%, transparent);
+  border-color: transparent;
+  color: var(--destructive);
+}
+
+.badge[data-variant="soft-info"] {
+  background-color: color-mix(in srgb, var(--info) 15%, transparent);
+  border-color: transparent;
+  color: var(--info);
+}
+
+.badge[data-pill="true"] {
+  border-radius: var(--radius-full);
+}
+
+.badge[data-leading-dot="true"]::before {
+  content: "";
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: currentColor;
+}

@@ -68,6 +68,6 @@
 
 /* Rounded variant */
 .aspect-ratio[data-rounded="true"] {
-  border-radius: var(--fx-radius-lg);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }

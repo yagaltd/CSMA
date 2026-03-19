@@ -10,6 +10,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initCollapsibleSystem(eventBus).']
+};
 export function initCollapsibleSystem(eventBus) {
     if (!eventBus) {
         console.warn('[Collapsible] EventBus not provided');

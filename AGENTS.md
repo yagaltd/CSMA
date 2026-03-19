@@ -29,7 +29,8 @@ Project-specific skills are in `skills/`:
 | `src/ui/components/` | Atomic UI components (Button, Dialog, Toast, etc.) |
 | `src/ui/patterns/` | Composite patterns (AuthUI, DataTable, Sidebar) |
 | `src/modules/` | Feature modules with services + contracts |
-| `src/css/foundation/` | Design tokens, themes, base styles |
+| `src/css/` | Theme contract, base styles, and CSS entrypoints |
+| `src/css/foundation/` | Theme partials, compatibility shims, shared utilities |
 
 ## Extension Model
 
@@ -102,10 +103,11 @@ Use `src/modules/example-module/` as the module scaffold.
 
 ## CSS Token System
 
-All components use `--fx-*` tokens from `src/css/foundation/tokens.css`:
-- Colors: `--fx-color-primary`, `--fx-color-danger`, etc.
-- Spacing: `--fx-space-sm`, `--fx-space-lg`, etc.
-- Radii: `--fx-radius-md`, `--fx-radius-lg`, etc.
+Use `src/css/theme.css` as the canonical token contract:
+- Semantic theme tokens: `--background`, `--foreground`, `--primary`, `--border`, `--ring`, etc.
+- Shared scales: `--space-*`, `--radius-*`, `--font-size-*`, `--shadow-*`
+- Component recipe tokens: `--button-radius`, `--input-height`, `--card-shadow`, etc.
+- New component work should use semantic, scale, and recipe tokens only.
 
 Theme switching: `document.documentElement.dataset.theme = 'dark'`
 

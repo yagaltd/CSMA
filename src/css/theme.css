@@ -1,0 +1,135 @@
+@import './foundation/themes/light.css';
+@import './foundation/themes/dark.css';
+
+/**
+ * CSMA Theme Contract
+ * Canonical source for theme tokens, shared scales, and component recipe tokens.
+ */
+
+:root {
+  /* Typography */
+  --font-family-base: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-mono: "JetBrains Mono", "SFMono-Regular", Menlo, monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --line-height-tight: 1.25;
+  --line-height-base: 1.5;
+  --line-height-loose: 1.7;
+
+  /* Spacing */
+  --space-2xs: 0.125rem;
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+  --space-3xl: 4rem;
+  --space-4xl: 5rem;
+  --space-5xl: 6rem;
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+  --radius-full: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.12);
+  --shadow-lg: 0 20px 45px rgba(15, 23, 42, 0.18);
+  --shadow-xl: 0 32px 64px rgba(15, 23, 42, 0.24);
+  --shadow-2xl: 0 35px 80px rgba(15, 23, 42, 0.28);
+
+  /* Motion */
+  --transition-fast: 150ms ease;
+  --transition-normal: 220ms ease;
+  --transition-slow: 320ms ease;
+
+  /* Breakpoints */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* Layers */
+  --z-base: 1;
+  --z-overlay: 1000;
+  --z-modal: 1100;
+  --z-popover: 1200;
+  --z-toast: 1300;
+  --z-lightbox: 1400;
+
+  /* Semantic aliases */
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --muted: var(--background-muted);
+  --muted-foreground: var(--foreground-muted);
+  --input: var(--border);
+  --ring: var(--primary);
+  --primary-soft: color-mix(in srgb, var(--primary) 16%, transparent);
+  --info-soft: color-mix(in srgb, var(--info) 12%, var(--surface) 88%);
+  --success-soft: color-mix(in srgb, var(--success) 12%, var(--surface) 88%);
+  --warning-soft: color-mix(in srgb, var(--warning) 14%, var(--surface) 86%);
+  --destructive-soft: color-mix(in srgb, var(--destructive) 12%, var(--surface) 88%);
+
+  /* Core component recipe tokens */
+  --button-radius: var(--radius-md);
+  --button-height: 2.5rem;
+  --button-padding-block: var(--space-sm);
+  --button-padding-inline: var(--space-lg);
+  --button-font-size: var(--font-size-sm);
+
+  --input-radius: var(--radius-md);
+  --input-height: 2.5rem;
+  --input-padding-block: var(--space-sm);
+  --input-padding-inline: var(--space-md);
+  --input-bg: var(--surface);
+  --input-placeholder: color-mix(in srgb, var(--foreground) 55%, transparent);
+
+  --card-radius: var(--radius-lg);
+  --card-padding: var(--space-xl);
+  --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+  --dialog-radius: var(--radius-md);
+  --dialog-shadow: var(--shadow-lg);
+  --dialog-header-padding: var(--space-2xl) var(--space-2xl) var(--space-lg);
+  --dialog-body-padding: 0 var(--space-2xl) var(--space-2xl);
+  --dialog-footer-padding: var(--space-lg) var(--space-2xl) var(--space-2xl);
+
+  --navbar-height: 4rem;
+  --navbar-link-radius: var(--radius-md);
+  --navbar-link-hover-bg: var(--accent);
+  --navbar-mobile-width: 280px;
+
+  --table-radius: var(--radius-lg);
+  --table-cell-padding-block: var(--space-md);
+  --table-cell-padding-inline: var(--space-lg);
+  --table-header-bg: var(--muted);
+  --table-row-hover-bg: var(--muted);
+  --table-row-selected-bg: color-mix(in srgb, var(--primary) 12%, transparent);
+  --table-pagination-button-size: 2rem;
+
+  --carousel-control-border: color-mix(in srgb, var(--border) 58%, var(--overlay) 42%);
+  --carousel-control-bg: color-mix(in srgb, var(--background) 75%, var(--overlay) 25%);
+  --carousel-image-bg: color-mix(in srgb, var(--background) 68%, var(--overlay) 32%);
+  --carousel-media-scrim: linear-gradient(180deg, transparent 40%, color-mix(in srgb, var(--overlay) 92%, transparent));
+  --carousel-caption-scrim: linear-gradient(180deg, transparent 10%, color-mix(in srgb, var(--overlay) 100%, transparent));
+  --carousel-chip-bg: color-mix(in srgb, var(--surface) 28%, var(--overlay) 72%);
+  --carousel-overlay-panel-bg: color-mix(in srgb, var(--background) 80%, var(--overlay) 20%);
+  --carousel-hero-overlay: linear-gradient(120deg, color-mix(in srgb, var(--overlay) 96%, var(--foreground) 4%), color-mix(in srgb, var(--overlay) 30%, transparent));
+  --carousel-lightbox-backdrop: color-mix(in srgb, var(--overlay) 85%, black 15%);
+}

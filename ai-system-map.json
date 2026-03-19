@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated": "2026-03-10T12:37:36.127Z",
+  "generated": "2026-03-19T03:27:54.907Z",
   "project": {
     "name": "csma",
     "version": "1.1.0",
@@ -53,33 +53,6 @@
         "path": "css/base.css"
       },
       "foundation": {
-        "components": {
-          "badge.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "css/foundation/components/badge.css"
-          },
-          "button.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "css/foundation/components/button.css"
-          },
-          "card.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "css/foundation/components/card.css"
-          },
-          "index.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "css/foundation/components/index.css"
-          },
-          "input.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "css/foundation/components/input.css"
-          }
-        },
         "themes": {
           "dark.css": {
             "type": "file",
@@ -92,11 +65,6 @@
             "path": "css/foundation/themes/light.css"
           }
         },
-        "tokens.css": {
-          "type": "file",
-          "ext": ".css",
-          "path": "css/foundation/tokens.css"
-        },
         "utilities.css": {
           "type": "file",
           "ext": ".css",
@@ -107,6 +75,11 @@
         "type": "file",
         "ext": ".css",
         "path": "css/main.css"
+      },
+      "theme.css": {
+        "type": "file",
+        "ext": ".css",
+        "path": "css/theme.css"
       },
       "touch.css": {
         "type": "file",
@@ -1214,6 +1187,11 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/datepicker/datepicker.js"
+          },
+          "manifest.json": {
+            "type": "file",
+            "ext": ".json",
+            "path": "ui/components/datepicker/manifest.json"
           }
         },
         "dialog": {
@@ -1550,6 +1528,13 @@
             "path": "ui/components/separator/separator.demo.html"
           }
         },
+        "shared": {
+          "document-state.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "ui/components/shared/document-state.js"
+          }
+        },
         "skeleton": {
           "skeleton.css": {
             "type": "file",
@@ -1614,6 +1599,11 @@
           }
         },
         "table": {
+          "manifest.json": {
+            "type": "file",
+            "ext": ".json",
+            "path": "ui/components/table/manifest.json"
+          },
           "table.css": {
             "type": "file",
             "ext": ".css",
@@ -2096,6 +2086,11 @@
             "ext": ".js",
             "path": "ui/patterns/data-table/data-table.js"
           }
+        },
+        "index.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "ui/patterns/index.css"
         },
         "modal-system": {
           "modal-system.css": {

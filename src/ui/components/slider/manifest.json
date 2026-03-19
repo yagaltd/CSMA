@@ -5,7 +5,7 @@
   },
   "component": {
     "name": "slider",
-    "type": "II",
+    "type": "III",
     "owner": "ui-service",
     "lifecycle": "active",
     "stability": "stable"
@@ -128,10 +128,23 @@
   },
   "dependencies": {
     "runtime": ["EventBus", "IntentRegistry"],
+    "services": [
+      {
+        "id": "slider",
+        "importPath": "/src/services/SliderService.js",
+        "factory": "createSliderService",
+        "required": true
+      }
+    ],
     "components": []
   },
   "metadata": {
     "description": "Interactive slider component with mouse, touch, and keyboard support",
-    "features": ["Mouse drag", "Touch support", "Keyboard navigation", "Accessibility"]
+    "features": ["Mouse drag", "Touch support", "Keyboard navigation", "Accessibility"],
+    "copyRequirements": [
+      "Copy src/ui/components/slider/*",
+      "Copy src/services/SliderService.js for managed state updates",
+      "Import src/css/main.css or the slider CSS plus theme contract"
+    ]
   }
 }

@@ -52,8 +52,8 @@ element.style.borderColor = 'green';
 ### Rule 2: Define All States in CSS
 **DO THIS** ✅
 ```css
-.card.pending { border-left: 4px solid var(--fx-color-warning); }
-.card.completed { border: 4px solid var(--fx-color-success); }
+.card.pending { border-left: 4px solid var(--warning); }
+.card.completed { border: 4px solid var(--success); }
 ```
 **NOT THIS** ❌
 ```javascript
@@ -67,7 +67,7 @@ if (status === 'completed') {
 ### Rule 3: Use CSS Custom Properties
 **DO THIS** ✅
 ```css
-:root { --fx-color-primary: #3b82f6; }
+:root { --primary: #3b82f6; }
 ```
 **NOT THIS** ❌
 ```javascript
@@ -172,7 +172,7 @@ class DialogService { openDialog(id) { /* ... */ } } // Overkill!
 **When**: New visual components
 **Strategy**: Visualize First, Connect Later
 
-**Stage 1: HTML/CSS** (Context: `src/css/foundation/tokens.css`)
+**Stage 1: HTML/CSS** (Context: `src/css/theme.css`)
 ```markdown
 # Role: Expert UI Engineer
 # Task: Build [Component Name] with semantic HTML + CSS variables
@@ -204,7 +204,7 @@ Output: Component code + Contracts + init.js registration
 
 ### Workflow B: Restyle Existing Markup
 **When**: You have HTML, need new look
-**Context**: `src/css/foundation/tokens.css`
+**Context**: `src/css/theme.css`
 **Task**: Style with CSS variables, preserve structure
 
 ### Workflow C: Legacy Migration
@@ -263,12 +263,12 @@ class NoteUI {
 /* 3. CSS defines all visual states */
 .card.pending {
   opacity: 0.7;
-  border-left: 4px solid var(--fx-color-warning);
+  border-left: 4px solid var(--warning);
 }
 
 .card.completed {
   opacity: 1;
-  border: 4px solid var(--fx-color-success);
+  border: 4px solid var(--success);
 }
 
 .card[data-priority="high"] {
@@ -344,7 +344,7 @@ Avoid:
 
 - `src/runtime/Contracts.js` - Event definitions
 - `src/ui/init.js` - Component initialization
-- `src/css/foundation/tokens.css` - CSS variables
+- `src/css/theme.css` - Theme contract and semantic CSS variables
 - `src/ui/components/dialog/dialog.js` - Type II example (Perfect)
 - `src/services/SliderService.js` - Type III example (Perfect)
 

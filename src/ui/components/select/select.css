@@ -6,7 +6,7 @@
 .select-group {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-xs);
+    gap: var(--space-xs);
     width: 100%;
     max-width: 400px;
 }
@@ -14,7 +14,7 @@
 .select-label {
     font-size: var(--font-size-sm);
     font-weight: 500;
-    color: var(--fx-color-fg);
+    color: var(--foreground);
 }
 
 .select-wrapper {
@@ -24,34 +24,34 @@
 .select {
     width: 100%;
     appearance: none;
-    background: var(--fx-color-bg);
-    border: 1px solid var(--fx-color-border);
+    background: var(--background);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md);
-    color: var(--fx-color-fg);
+    color: var(--foreground);
     font-size: var(--font-size-sm);
-    padding: var(--spacing-md) var(--spacing-3xl) var(--spacing-md) var(--spacing-lg);
+    padding: var(--space-md) var(--space-3xl) var(--space-md) var(--space-lg);
     cursor: pointer;
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.select:focus {
+.select:focus-visible {
     outline: none;
-    border-color: var(--fx-color-primary);
-    box-shadow: 0 0 0 2px rgba(250, 250, 250, 0.1);
+    border-color: var(--ring);
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
 .select-arrow {
     position: absolute;
-    right: var(--spacing-md);
+    right: var(--space-md);
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
     font-size: var(--font-size-xs);
 }
 
 .select-group[data-state="error"] .select {
-    border-color: var(--fx-color-danger);
+    border-color: var(--destructive);
 }
 
 .select-group[data-state="disabled"] .select {
@@ -60,23 +60,23 @@
 }
 
 .select optgroup {
-    background: var(--fx-color-bg-muted);
-    color: var(--fx-color-fg);
+    background: var(--background-muted);
+    color: var(--foreground);
     font-weight: 500;
 }
 
 .select-helper,
 .select-error {
     font-size: 0.8125rem;
-    margin-top: var(--spacing-xs);
+    margin-top: var(--space-xs);
 }
 
 .select-helper {
-    color: var(--fx-color-fg-muted);
+    color: var(--foreground-muted);
 }
 
 .select-error {
-    color: var(--fx-color-danger);
+    color: var(--destructive);
     display: none;
 }
 

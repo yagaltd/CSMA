@@ -11,6 +11,13 @@
  * @param {EventBus} eventBus - CSMA EventBus instance
  * @returns {Function} Cleanup function
  */
+export const componentDependencies = {
+    runtime: ['EventBus'],
+    services: [],
+    shared: [],
+    styles: ['/src/css/main.css'],
+    notes: ['Initialize with initCommandUI(eventBus).']
+};
 export function initCommandUI(eventBus) {
     if (!eventBus) {
         console.warn('[Command] EventBus not provided');

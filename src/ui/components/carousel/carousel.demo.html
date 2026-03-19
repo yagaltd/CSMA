@@ -17,8 +17,8 @@
 
     body {
       margin: 0;
-      background: var(--fx-color-bg);
-      color: var(--fx-color-fg);
+      background: var(--background);
+      color: var(--foreground);
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       padding: clamp(1.5rem, 3vw, 3rem);
       display: grid;
@@ -34,7 +34,7 @@
     }
 
     .page-header p {
-      color: var(--fx-color-fg-muted);
+      color: var(--foreground-muted);
       margin: 0;
     }
 
@@ -58,7 +58,7 @@
 
     section.demo-block > header p {
       margin: 0;
-      color: var(--fx-color-fg-muted);
+      color: var(--foreground-muted);
     }
 
     .carousel + .carousel-thumbnails {
@@ -74,7 +74,7 @@
 
 <body>
   <div class="page-header">
-    <a href="../demos.html" class="back-link" style="color: var(--fx-color-primary); text-decoration: none;">← Back to Demos</a>
+    <a href="../index.html#carousel" class="back-link" style="color: var(--primary); text-decoration: none;">← Back to Demos</a>
     <h1>CSMA Carousel System</h1>
     <p>Five production-ready carousel archetypes powered by CSS-class reactivity, lazy loading, swipe gestures, autoplay, and keyboard controls.</p>
   </div>

@@ -10,7 +10,7 @@
     height: 3rem;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid var(--fx-color-border);
+    border: 2px solid var(--border);
 }
 
 /* Avatar Sizes */
@@ -46,8 +46,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--fx-color-bg-muted);
-    color: var(--fx-color-fg-muted);
+    background-color: var(--background-muted);
+    color: var(--foreground-muted);
     font-weight: 500;
     text-transform: uppercase;
 }
