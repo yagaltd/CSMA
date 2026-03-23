@@ -15,12 +15,16 @@ export const componentRegistry = [
         description: 'Inline labels for status, categories, and counts',
         demoPath: '/src/ui/components/badge/badge.demo.html',
         preview: `
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div class="showcase-demo">
                 <span class="badge" data-variant="soft-primary">Primary</span>
                 <span class="badge" data-variant="soft-success">Success</span>
                 <span class="badge" data-variant="soft-warning">Warning</span>
                 <span class="badge" data-variant="soft-danger">Danger</span>
                 <span class="badge" data-variant="soft-info">Info</span>
+            </div>
+            <div class="showcase-demo" style="margin-top: var(--space-lg);">
+                <span class="badge" data-variant="outline">Outline</span>
+                <span class="badge">Default</span>
             </div>
         `,
         html: `<span class="badge" data-variant="soft-primary">Primary</span>
@@ -38,13 +42,14 @@ export const componentRegistry = [
         description: 'Container for grouping related content',
         demoPath: '/src/ui/components/card/card.demo.html',
         preview: `
-            <div class="card" style="width: 280px;">
+            <div class="card" style="max-width: 360px;">
                 <div class="card-content">
                     <h3 class="card-title">Card Title</h3>
-                    <p class="card-text">This is a basic card component with content.</p>
+                    <p class="card-text">This is a basic card component with content and actions.</p>
                 </div>
                 <div class="card-actions">
-                    <button class="button" data-variant="primary">Action</button>
+                    <button class="button" data-variant="ghost">Cancel</button>
+                    <button class="button">Save</button>
                 </div>
             </div>
         `,
@@ -768,12 +773,21 @@ export const componentRegistry = [
         description: 'Interactive button elements with variants',
         demoPath: '/src/ui/components/button/button.demo.html',
         preview: `
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                <button class="button">Default</button>
-                <button class="button" data-variant="primary">Primary</button>
+            <div class="showcase-demo">
+                <button class="button">Primary</button>
                 <button class="button" data-variant="secondary">Secondary</button>
-                <button class="button" data-variant="ghost">Ghost</button>
                 <button class="button" data-variant="destructive">Destructive</button>
+                <button class="button" data-variant="outline">Outline</button>
+                <button class="button" data-variant="ghost">Ghost</button>
+                <button class="button" data-variant="link">Link</button>
+            </div>
+            <div class="showcase-demo" style="margin-top: var(--space-lg);">
+                <button class="button" data-size="sm">Small</button>
+                <button class="button">Default</button>
+                <button class="button" data-size="lg">Large</button>
+            </div>
+            <div class="showcase-demo" style="margin-top: var(--space-lg);">
+                <button class="button" disabled>Disabled</button>
             </div>
         `,
         html: `<button class="button">Default</button>
@@ -818,11 +832,11 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         description: 'Tabbed navigation with keyboard support',
         demoPath: '/src/ui/components/tabs/tabs.demo.html',
         preview: `
-            <div class="tabs" data-tabs style="width: 300px;">
+            <div class="tabs" data-tabs>
                 <div class="tabs-list">
-                    <button class="tabs-trigger" data-state="active">Tab 1</button>
-                    <button class="tabs-trigger">Tab 2</button>
-                    <button class="tabs-trigger">Tab 3</button>
+                    <button class="tabs-trigger" data-state="active">Account</button>
+                    <button class="tabs-trigger">Settings</button>
+                    <button class="tabs-trigger">Security</button>
                 </div>
             </div>
         `,
@@ -1891,26 +1905,51 @@ eventBus.publish('INTENT_TOAST_SHOW', {
         name: 'OTP',
         category: 'Form',
         type: 'js',
-        description: 'One-time-code input flow with paste and auto-advance',
+        description: 'Full one-time-code verification flow with status and resend actions',
         demoPath: '/src/ui/components/otp/otp.demo.html',
         preview: `
-            <div class="csma-otp-inputs">
-                <input class="csma-otp-input" value="1">
-                <input class="csma-otp-input" value="2">
-                <input class="csma-otp-input" value="3">
-                <input class="csma-otp-input" value="4">
-                <input class="csma-otp-input" value="5">
-                <input class="csma-otp-input" value="6">
+            <div class="csma-otp-card" style="max-width: 28rem;">
+                <div>
+                    <p class="csma-otp-eyebrow">Verification</p>
+                    <h3 class="csma-otp-title" style="font-size: 1.25rem;">Enter your code</h3>
+                    <p class="csma-otp-text">The OTP component is a complete verification step, not just a row of PIN slots.</p>
+                </div>
+                <form class="csma-otp-form" data-otp-form>
+                    <div>
+                        <p class="csma-otp-label">6-digit code</p>
+                        <div class="csma-otp-inputs" role="group" aria-label="Verification code">
+                            <input class="csma-otp-input" data-otp-input value="1" maxlength="1" inputmode="numeric">
+                            <input class="csma-otp-input" data-otp-input value="2" maxlength="1" inputmode="numeric">
+                            <input class="csma-otp-input" data-otp-input value="3" maxlength="1" inputmode="numeric">
+                            <input class="csma-otp-input" data-otp-input value="4" maxlength="1" inputmode="numeric">
+                            <input class="csma-otp-input" data-otp-input value="5" maxlength="1" inputmode="numeric">
+                            <input class="csma-otp-input" data-otp-input value="6" maxlength="1" inputmode="numeric">
+                        </div>
+                    </div>
+                    <div class="csma-otp-actions">
+                        <button class="button" type="button">Verify code</button>
+                        <p class="csma-otp-status" data-state="success">Code accepted</p>
+                        <a class="csma-otp-resend" href="#">Resend code</a>
+                    </div>
+                </form>
             </div>
         `,
         html: `<form class="csma-otp-form" data-otp-form>
-    <div class="csma-otp-inputs">
-        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
-        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
-        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
-        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
-        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
-        <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+    <div>
+        <p class="csma-otp-label">Enter 6-digit code</p>
+        <div class="csma-otp-inputs" role="group" aria-label="Verification code">
+            <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+            <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+            <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+            <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+            <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+            <input class="csma-otp-input" data-otp-input maxlength="1" inputmode="numeric">
+        </div>
+    </div>
+    <div class="csma-otp-actions">
+        <button class="button" type="submit">Verify code</button>
+        <p class="csma-otp-status" data-otp-status data-state="idle">Idle</p>
+        <a class="csma-otp-resend" data-otp-resend href="#">Resend code</a>
     </div>
 </form>`,
         css: null
