@@ -68,3 +68,79 @@
 @import './resizable/resizable.css';
 @import './date-range-picker/date-range-picker.css';
 @import './slider-range/slider-range.css';
+
+/* -------------------------------------------------------------
+   SHOWCASE LAYOUT (Design Showcase Mode)
+   ------------------------------------------------------------- */
+
+.showcase-view {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.showcase-header {
+    margin-bottom: var(--space-xl);
+}
+
+.showcase-title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--foreground-muted);
+}
+
+.showcase-canvas {
+    flex: 1;
+    padding: var(--space-2xl);
+    min-height: 60vh;
+}
+
+.showcase-demo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    align-items: flex-start;
+}
+
+/* Stacked variant for components that need vertical layout */
+.showcase-demo[data-layout="stack"] {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+/* Centered variant for single-component focus */
+.showcase-demo[data-layout="center"] {
+    justify-content: center;
+    align-items: center;
+}
+
+/* No results state */
+.showcase-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    color: var(--foreground-muted);
+    text-align: center;
+}
+
+.showcase-empty-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--space-md);
+    opacity: 0.5;
+}
+
+.showcase-empty-text {
+    font-size: var(--font-size-base);
+}
+
+/* Error state */
+.showcase-error {
+    padding: var(--space-xl);
+    background: var(--destructive-soft);
+    border-radius: var(--radius-md);
+    color: var(--destructive);
+}
