@@ -14,16 +14,17 @@ export class ModalService {
         if (this.eventBus) {
             this.subscriptions.push(
                 this.eventBus.subscribe('INTENT_MODAL_OPEN', (payload = {}) => this.open(payload).catch((error) => this.#handleError('open', error))),
-                this.eventBus.subscribe('INTENT_MODAL_CLOSE', (payload = {}) => this.close(payload.id).catch((error) => this.#handleError('close', error))),
+                this.eventBus.subscribe('INTENT_MODAL_CLOSE', (payload = {}) => this.close(payload.id || payload.modalId).catch((error) => this.#handleError('close', error))),
                 this.eventBus.subscribe('INTENT_MODAL_CLOSE_ALL', () => this.closeAll())
             );
         }
     }
 
-    async open({ id, title, component, props = {}, modalType = 'default', blocking = false }) {
-        const modalId = id || this.#generateId('modal');
+    async open({ id, modalId, title, component, props = {}, modalType = 'default', blocking = false }) {
+        const resolvedId = id || modalId;
+        const stackId = resolvedId || this.#generateId('modal');
         const entry = {
-            id: modalId,
+            id: stackId,
             title,
             component,
             modalType,
@@ -33,7 +34,7 @@ export class ModalService {
         };
 
         // Remove if already exists
-        this.stack = this.stack.filter((m) => m.id !== modalId);
+        this.stack = this.stack.filter((m) => m.id !== stackId);
         this.stack.push(entry);
 
         if (this.stack.length > this.options.maxStack) {

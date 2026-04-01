@@ -12,6 +12,7 @@ export const ModalSystemContracts = {
 
         schema: object({
             id: optional(string()),
+            modalId: optional(string()),
             title: optional(string()),
             component: optional(string()),
             props: optional(object()),
@@ -32,6 +33,8 @@ export const ModalSystemContracts = {
 
         schema: object({
             id: optional(string()),
+            modalId: optional(string()),
+            reason: optional(string()),
             timestamp: number()
         })
     },

@@ -119,3 +119,43 @@
         right: var(--space-2xl);
     }
 }
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .toast {
+        animation: none;
+    }
+
+    .toast[data-state="closed"] {
+        animation: none;
+        display: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .toast {
+        border-width: 2px;
+    }
+
+    .toast-default {
+        border-left-width: 6px;
+    }
+
+    .toast-success {
+        border-left-width: 6px;
+    }
+
+    .toast-error {
+        border-left-width: 6px;
+    }
+
+    .toast-warning {
+        border-left-width: 6px;
+    }
+
+    .toast-close:focus-visible {
+        outline: 3px solid currentColor;
+        outline-offset: 2px;
+    }
+}

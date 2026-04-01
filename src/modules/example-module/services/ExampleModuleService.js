@@ -34,6 +34,30 @@ export class ExampleModuleService {
         return { ok: true, message };
     }
 
+    renderStatusCard(payload = {}) {
+        const title = payload.props?.title || 'Example Status';
+        const message = payload.props?.message || this.lastMessage || 'No message yet';
+        const tone = payload.state?.tone || 'info';
+
+        this.eventBus?.publishSync?.('EXAMPLE_MODULE_VIEW_RENDERED', {
+            id: 'example-module',
+            viewId: payload.viewId || 'example-module.status-card',
+            target: payload.target || '#example-module-panel',
+            title,
+            message,
+            tone,
+            timestamp: Date.now()
+        });
+
+        return {
+            ok: true,
+            title,
+            message,
+            tone,
+            target: payload.target || '#example-module-panel'
+        };
+    }
+
     cleanup() {
         this.lastMessage = null;
     }

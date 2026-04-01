@@ -1,9 +1,9 @@
 {
-  "version": "1.0",
-  "generated": "2026-03-19T03:27:54.907Z",
+  "version": "1.1",
+  "generated": "2026-04-01T17:59:03.284Z",
   "project": {
     "name": "csma",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Lean, secure, reactive CSMA with ready-to-use components"
   },
   "architecture": {
@@ -27,6 +27,52 @@
       "LogAccumulator",
       "MetaManager"
     ],
+    "observability": {
+      "localDiagnostics": {
+        "owner": "LogAccumulator",
+        "files": [
+          "src/runtime/LogAccumulator.js",
+          "src/runtime/ErrorBoundary.js",
+          "src/runtime/diagnosticSnapshot.js",
+          "src/runtime/devtools/DevPanel.js"
+        ],
+        "responsibilities": [
+          "local error and security logging",
+          "contract-violation capture",
+          "error boundary integration",
+          "diagnostic snapshot export"
+        ]
+      },
+      "outboundTelemetry": {
+        "owner": "AnalyticsService",
+        "files": [
+          "src/modules/analytics/services/AnalyticsService.js",
+          "src/modules/analytics/services/EventClassifier.js",
+          "src/modules/analytics/services/EventAggregator.js",
+          "src/modules/analytics/services/SecurityScanner.js",
+          "src/modules/analytics/consent/ConsentService.js",
+          "src/runtime/seoAudit.js"
+        ],
+        "responsibilities": [
+          "page views and custom analytics events",
+          "classification, aggregation, and batching",
+          "SEO-enriched telemetry",
+          "consent-gated outbound delivery"
+        ]
+      },
+      "publicSurface": [
+        "window.csma.logAccumulator",
+        "window.csma.analytics",
+        "window.csma.analyticsConsent",
+        "window.csma.diagnose()",
+        "window.csma.seoAudit()"
+      ],
+      "rules": [
+        "LogAccumulator is local diagnostics only",
+        "AnalyticsService owns outbound telemetry and website analytics",
+        "Consent gates outbound analytics, not local diagnostics"
+      ]
+    },
     "features": {
       "pwa": "Service Worker + offline support",
       "routing": "Hash-based SPA routing",
@@ -35,40 +81,109 @@
       "devtools": "Development panel (dev mode only)"
     }
   },
+  "observability": {
+    "split": {
+      "diagnostics": "src/runtime/LogAccumulator.js",
+      "telemetry": "src/modules/analytics/services/AnalyticsService.js"
+    },
+    "consent": {
+      "service": "src/modules/analytics/consent/ConsentService.js",
+      "storageKey": "csma.analyticsConsent.v1",
+      "scopes": [
+        "ui_analytics",
+        "performance",
+        "error_tracking",
+        "security"
+      ]
+    },
+    "seo": {
+      "audit": "src/runtime/seoAudit.js",
+      "snapshot": "src/runtime/diagnosticSnapshot.js"
+    },
+    "tests": [
+      "tests/log-accumulator.test.js",
+      "tests/error-boundary.test.js",
+      "tests/devpanel.test.js",
+      "tests/diagnostic-snapshot.test.js",
+      "tests/analytics-service.test.js",
+      "tests/analytics-module.test.js",
+      "tests/seo-audit.test.js",
+      "tests/consent-service.test.js",
+      "tests/analytics-consent-ui.test.js"
+    ]
+  },
+  "integrations": {
+    "ssma": {
+      "aiProvider": {
+        "file": "src/modules/ai/providers/SSMAGatewayProvider.js",
+        "defaultQueryBoundary": "POST /query/ai.generate"
+      },
+      "telemetry": {
+        "logsBatchEndpoint": "/logs/batch"
+      },
+      "realtime": {
+        "websocket": "/optimistic/ws",
+        "sse": "/optimistic/events"
+      }
+    }
+  },
   "structure": {
+    "bootstrap": {
+      "features.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "bootstrap/features.js"
+      },
+      "runtime.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "bootstrap/runtime.js"
+      },
+      "theme.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "bootstrap/theme.js"
+      }
+    },
     "config.js": {
       "type": "file",
       "ext": ".js",
       "path": "config.js"
     },
     "css": {
-      "THEME_MIGRATION_GUIDE.md": {
-        "type": "file",
-        "ext": ".md",
-        "path": "css/THEME_MIGRATION_GUIDE.md"
-      },
       "base.css": {
         "type": "file",
         "ext": ".css",
         "path": "css/base.css"
       },
       "foundation": {
-        "themes": {
-          "dark.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "css/foundation/themes/dark.css"
-          },
-          "light.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "css/foundation/themes/light.css"
-          }
+        "hardening.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "css/foundation/hardening.css"
         },
+        "motion.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "css/foundation/motion.css"
+        },
+        "print.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "css/foundation/print.css"
+        },
+        "themes": {},
         "utilities.css": {
           "type": "file",
           "ext": ".css",
           "path": "css/foundation/utilities.css"
+        }
+      },
+      "generated": {
+        "tokens.css": {
+          "type": "file",
+          "ext": ".css",
+          "path": "css/generated/tokens.css"
         }
       },
       "main.css": {
@@ -91,6 +206,11 @@
       "type": "file",
       "ext": ".js",
       "path": "main.js"
+    },
+    "main.starter.js": {
+      "type": "file",
+      "ext": ".js",
+      "path": "main.starter.js"
     },
     "modules": {
       "ai": {
@@ -139,6 +259,16 @@
             "ext": ".js",
             "path": "modules/ai/providers/GeminiProvider.js"
           },
+          "OpenAICompatibleProvider.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/providers/OpenAICompatibleProvider.js"
+          },
+          "SSMAGatewayProvider.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/ai/providers/SSMAGatewayProvider.js"
+          },
           "TransformersProvider.js": {
             "type": "file",
             "ext": ".js",
@@ -164,6 +294,61 @@
             "type": "file",
             "ext": ".js",
             "path": "modules/ai/utils/id.js"
+          }
+        }
+      },
+      "analytics": {
+        "consent": {
+          "ConsentService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/analytics/consent/ConsentService.js"
+          }
+        },
+        "contracts": {
+          "analytics-contracts.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/analytics/contracts/analytics-contracts.js"
+          }
+        },
+        "index.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "modules/analytics/index.js"
+        },
+        "services": {
+          "AnalyticsService.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/analytics/services/AnalyticsService.js"
+          },
+          "EventAggregator.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/analytics/services/EventAggregator.js"
+          },
+          "EventClassifier.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/analytics/services/EventClassifier.js"
+          },
+          "SecurityScanner.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/analytics/services/SecurityScanner.js"
+          }
+        },
+        "ui": {
+          "analytics-consent.css": {
+            "type": "file",
+            "ext": ".css",
+            "path": "modules/analytics/ui/analytics-consent.css"
+          },
+          "analytics-consent.js": {
+            "type": "file",
+            "ext": ".js",
+            "path": "modules/analytics/ui/analytics-consent.js"
           }
         }
       },
@@ -359,15 +544,6 @@
             "type": "file",
             "ext": ".js",
             "path": "modules/image-optimizer/services/ImageOptimizerService.js"
-          }
-        }
-      },
-      "llm": {
-        "services": {
-          "LLMService.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "modules/llm/services/LLMService.js"
           }
         }
       },
@@ -729,6 +905,11 @@
         "ext": ".js",
         "path": "runtime/CrossTabLeader.js"
       },
+      "ErrorBoundary.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ErrorBoundary.js"
+      },
       "EventBus.js": {
         "type": "file",
         "ext": ".js",
@@ -789,6 +970,23 @@
         "ext": ".js",
         "path": "runtime/ThreadManager.js"
       },
+      "ViewRegistry.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ViewRegistry.js"
+      },
+      "dev": {
+        "dtcg-reader.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "runtime/dev/dtcg-reader.js"
+        },
+        "token-inspector.js": {
+          "type": "file",
+          "ext": ".js",
+          "path": "runtime/dev/token-inspector.js"
+        }
+      },
       "devtools": {
         "DevPanel.js": {
           "type": "file",
@@ -800,6 +998,16 @@
           "ext": ".css",
           "path": "runtime/devtools/devpanel.css"
         }
+      },
+      "diagnosticSnapshot.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/diagnosticSnapshot.js"
+      },
+      "seoAudit.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/seoAudit.js"
       },
       "validation": {
         "contract.js": {
@@ -854,16 +1062,6 @@
       }
     },
     "services": {
-      "CommandService.js": {
-        "type": "file",
-        "ext": ".js",
-        "path": "services/CommandService.js"
-      },
-      "DateService.js": {
-        "type": "file",
-        "ext": ".js",
-        "path": "services/DateService.js"
-      },
       "ExampleService.js": {
         "type": "file",
         "ext": ".js",
@@ -878,16 +1076,6 @@
         "type": "file",
         "ext": ".js",
         "path": "services/PlatformService.js"
-      },
-      "SliderService.js": {
-        "type": "file",
-        "ext": ".js",
-        "path": "services/SliderService.js"
-      },
-      "TableService.js": {
-        "type": "file",
-        "ext": ".js",
-        "path": "services/TableService.js"
       },
       "core": {
         "APIWrapper.js": {
@@ -919,83 +1107,6 @@
     },
     "ui": {
       "components": {
-        "accordion": {
-          "accordion.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/accordion/accordion.css"
-          },
-          "accordion.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/accordion/accordion.demo.html"
-          },
-          "accordion.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/accordion/accordion.js"
-          }
-        },
-        "alert": {
-          "alert.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/alert/alert.css"
-          },
-          "alert.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/alert/alert.demo.html"
-          }
-        },
-        "alert-dialog": {
-          "alert-dialog.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/alert-dialog/alert-dialog.css"
-          },
-          "alert-dialog.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/alert-dialog/alert-dialog.demo.html"
-          },
-          "alert-dialog.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/alert-dialog/alert-dialog.js"
-          }
-        },
-        "analytics-consent": {
-          "analytics-consent.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/analytics-consent/analytics-consent.css"
-          },
-          "analytics-consent.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/analytics-consent/analytics-consent.js"
-          }
-        },
-        "aspect-ratio": {
-          "aspect-ratio.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/aspect-ratio/aspect-ratio.css"
-          }
-        },
-        "avatar": {
-          "avatar.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/avatar/avatar.css"
-          },
-          "avatar.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/avatar/avatar.demo.html"
-          }
-        },
         "badge": {
           "badge.css": {
             "type": "file",
@@ -1006,18 +1117,11 @@
             "type": "file",
             "ext": ".html",
             "path": "ui/components/badge/badge.demo.html"
-          }
-        },
-        "breadcrumb": {
-          "breadcrumb.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/breadcrumb/breadcrumb.css"
           },
-          "breadcrumb.demo.html": {
+          "manifest.json": {
             "type": "file",
-            "ext": ".html",
-            "path": "ui/components/breadcrumb/breadcrumb.demo.html"
+            "ext": ".json",
+            "path": "ui/components/badge/manifest.json"
           }
         },
         "button": {
@@ -1037,624 +1141,17 @@
             "path": "ui/components/button/manifest.json"
           }
         },
-        "calendar": {
-          "calendar.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/calendar/calendar.css"
-          },
-          "calendar.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/calendar/calendar.js"
-          }
-        },
-        "card": {
-          "card.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/card/card.css"
-          },
-          "card.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/card/card.demo.html"
-          }
-        },
-        "carousel": {
-          "carousel.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/carousel/carousel.css"
-          },
-          "carousel.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/carousel/carousel.demo.html"
-          },
-          "carousel.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/carousel/carousel.js"
-          }
-        },
-        "chat": {
-          "chat.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/chat/chat.css"
-          },
-          "chat.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/chat/chat.demo.html"
-          }
-        },
-        "checkbox": {
-          "checkbox.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/checkbox/checkbox.css"
-          },
-          "checkbox.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/checkbox/checkbox.demo.html"
-          },
-          "checkbox.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/checkbox/checkbox.js"
-          }
-        },
-        "collapsible": {
-          "collapsible.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/collapsible/collapsible.css"
-          },
-          "collapsible.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/collapsible/collapsible.js"
-          }
-        },
-        "combobox": {
-          "combobox.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/combobox/combobox.css"
-          },
-          "combobox.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/combobox/combobox.js"
-          }
-        },
-        "command": {
-          "command.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/command/command.css"
-          },
-          "command.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/command/command.js"
-          }
-        },
-        "component-registry.js": {
-          "type": "file",
-          "ext": ".js",
-          "path": "ui/components/component-registry.js"
-        },
-        "context-menu": {
-          "context-menu.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/context-menu/context-menu.css"
-          },
-          "context-menu.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/context-menu/context-menu.js"
-          }
-        },
-        "date-range-picker": {
-          "date-range-picker.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/date-range-picker/date-range-picker.css"
-          },
-          "date-range-picker.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/date-range-picker/date-range-picker.js"
-          }
-        },
-        "datepicker": {
-          "datepicker.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/datepicker/datepicker.css"
-          },
-          "datepicker.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/datepicker/datepicker.demo.html"
-          },
-          "datepicker.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/datepicker/datepicker.js"
-          },
-          "manifest.json": {
-            "type": "file",
-            "ext": ".json",
-            "path": "ui/components/datepicker/manifest.json"
-          }
-        },
-        "dialog": {
-          "dialog.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/dialog/dialog.css"
-          },
-          "dialog.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/dialog/dialog.demo.html"
-          },
-          "dialog.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/dialog/dialog.js"
-          }
-        },
-        "drawer": {
-          "drawer.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/drawer/drawer.css"
-          },
-          "drawer.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/drawer/drawer.js"
-          }
-        },
-        "dropdown": {
-          "dropdown.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/dropdown/dropdown.css"
-          },
-          "dropdown.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/dropdown/dropdown.demo.html"
-          },
-          "dropdown.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/dropdown/dropdown.js"
-          }
-        },
-        "file-upload": {
-          "file-upload.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/file-upload/file-upload.css"
-          },
-          "file-upload.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/file-upload/file-upload.demo.html"
-          },
-          "file-upload.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/file-upload/file-upload.js"
-          }
-        },
-        "form": {
-          "form.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/form/form.css"
-          },
-          "form.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/form/form.demo.html"
-          },
-          "form.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/form/form.js"
-          }
-        },
-        "hover-card": {
-          "hover-card.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/hover-card/hover-card.css"
-          },
-          "hover-card.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/hover-card/hover-card.js"
-          }
-        },
         "index.css": {
           "type": "file",
           "ext": ".css",
           "path": "ui/components/index.css"
         },
-        "index.html": {
-          "type": "file",
-          "ext": ".html",
-          "path": "ui/components/index.html"
-        },
-        "input": {
-          "input.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/input/input.css"
-          },
-          "input.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/input/input.demo.html"
-          },
-          "input.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/input/input.js"
-          }
-        },
-        "menubar": {
-          "menubar.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/menubar/menubar.css"
-          },
-          "menubar.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/menubar/menubar.js"
-          }
-        },
-        "multi-select": {
-          "multi-select.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/multi-select/multi-select.css"
-          },
-          "multi-select.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/multi-select/multi-select.js"
-          }
-        },
-        "navbar": {
-          "navbar.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/navbar/navbar.css"
-          },
-          "navbar.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/navbar/navbar.demo.html"
-          },
-          "navbar.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/navbar/navbar.js"
-          }
-        },
-        "navigation-menu": {
-          "navigation-menu.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/navigation-menu/navigation-menu.css"
-          },
-          "navigation-menu.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/navigation-menu/navigation-menu.js"
-          }
-        },
-        "number-field": {
-          "number-field.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/number-field/number-field.css"
-          },
-          "number-field.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/number-field/number-field.js"
-          }
-        },
-        "otp": {
-          "otp.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/otp/otp.css"
-          },
-          "otp.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/otp/otp.demo.html"
-          },
-          "otp.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/otp/otp.js"
-          }
-        },
-        "pagination": {
-          "pagination.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/pagination/pagination.css"
-          },
-          "pagination.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/pagination/pagination.demo.html"
-          },
-          "pagination.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/pagination/pagination.js"
-          }
-        },
-        "pin-input": {
-          "pin-input.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/pin-input/pin-input.css"
-          },
-          "pin-input.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/pin-input/pin-input.js"
-          }
-        },
-        "popover": {
-          "popover.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/popover/popover.css"
-          },
-          "popover.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/popover/popover.demo.html"
-          },
-          "popover.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/popover/popover.js"
-          }
-        },
-        "progress": {
-          "progress.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/progress/progress.css"
-          },
-          "progress.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/progress/progress.demo.html"
-          },
-          "progress.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/progress/progress.js"
-          }
-        },
-        "radio": {
-          "radio.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/radio/radio.css"
-          },
-          "radio.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/radio/radio.demo.html"
-          },
-          "radio.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/radio/radio.js"
-          }
-        },
-        "resizable": {
-          "resizable.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/resizable/resizable.css"
-          },
-          "resizable.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/resizable/resizable.js"
-          }
-        },
-        "scroll-area": {
-          "scroll-area.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/scroll-area/scroll-area.css"
-          },
-          "scroll-area.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/scroll-area/scroll-area.demo.html"
-          }
-        },
-        "select": {
-          "select.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/select/select.css"
-          },
-          "select.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/select/select.demo.html"
-          },
-          "select.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/select/select.js"
-          }
-        },
-        "separator": {
-          "separator.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/separator/separator.css"
-          },
-          "separator.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/separator/separator.demo.html"
-          }
-        },
-        "shared": {
-          "document-state.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/shared/document-state.js"
-          }
-        },
-        "skeleton": {
-          "skeleton.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/skeleton/skeleton.css"
-          },
-          "skeleton.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/skeleton/skeleton.demo.html"
-          }
-        },
-        "slider": {
-          "manifest.json": {
-            "type": "file",
-            "ext": ".json",
-            "path": "ui/components/slider/manifest.json"
-          },
-          "slider.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/slider/slider.css"
-          },
-          "slider.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/slider/slider.demo.html"
-          },
-          "slider.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/slider/slider.js"
-          }
-        },
-        "slider-range": {
-          "slider-range.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/slider-range/slider-range.css"
-          },
-          "slider-range.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/slider-range/slider-range.js"
-          }
-        },
-        "switch": {
-          "switch.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/switch/switch.css"
-          },
-          "switch.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/switch/switch.demo.html"
-          },
-          "switch.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/switch/switch.js"
-          }
-        },
-        "table": {
-          "manifest.json": {
-            "type": "file",
-            "ext": ".json",
-            "path": "ui/components/table/manifest.json"
-          },
-          "table.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/table/table.css"
-          },
-          "table.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/table/table.js"
-          }
-        },
-        "tabs": {
-          "tabs.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/tabs/tabs.css"
-          },
-          "tabs.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/tabs/tabs.demo.html"
-          },
-          "tabs.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/tabs/tabs.js"
-          }
-        },
-        "textarea": {
-          "textarea.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/textarea/textarea.css"
-          },
-          "textarea.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/textarea/textarea.demo.html"
-          },
-          "textarea.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/textarea/textarea.js"
-          }
-        },
-        "theme-loader.js": {
-          "type": "file",
-          "ext": ".js",
-          "path": "ui/components/theme-loader.js"
-        },
         "toast": {
+          "manifest.json": {
+            "type": "file",
+            "ext": ".json",
+            "path": "ui/components/toast/manifest.json"
+          },
           "toast.css": {
             "type": "file",
             "ext": ".css",
@@ -1669,35 +1166,6 @@
             "type": "file",
             "ext": ".js",
             "path": "ui/components/toast/toast.js"
-          }
-        },
-        "toggle-group": {
-          "toggle-group.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/toggle-group/toggle-group.css"
-          },
-          "toggle-group.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/toggle-group/toggle-group.js"
-          }
-        },
-        "tooltip": {
-          "tooltip.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/components/tooltip/tooltip.css"
-          },
-          "tooltip.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/components/tooltip/tooltip.demo.html"
-          },
-          "tooltip.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/components/tooltip/tooltip.js"
           }
         }
       },
@@ -2022,134 +1490,6 @@
         "type": "file",
         "ext": ".js",
         "path": "ui/init.js"
-      },
-      "pages": {
-        "index.css": {
-          "type": "file",
-          "ext": ".css",
-          "path": "ui/pages/index.css"
-        },
-        "index.js": {
-          "type": "file",
-          "ext": ".js",
-          "path": "ui/pages/index.js"
-        }
-      },
-      "patterns": {
-        "auth-ui": {
-          "auth-ui.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/patterns/auth-ui/auth-ui.css"
-          },
-          "auth-ui.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/patterns/auth-ui/auth-ui.demo.html"
-          },
-          "auth-ui.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/patterns/auth-ui/auth-ui.js"
-          }
-        },
-        "checkout": {
-          "checkout.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/patterns/checkout/checkout.css"
-          },
-          "checkout.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/patterns/checkout/checkout.demo.html"
-          },
-          "checkout.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/patterns/checkout/checkout.js"
-          }
-        },
-        "data-table": {
-          "data-table.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/patterns/data-table/data-table.css"
-          },
-          "data-table.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/patterns/data-table/data-table.demo.html"
-          },
-          "data-table.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/patterns/data-table/data-table.js"
-          }
-        },
-        "index.css": {
-          "type": "file",
-          "ext": ".css",
-          "path": "ui/patterns/index.css"
-        },
-        "modal-system": {
-          "modal-system.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/patterns/modal-system/modal-system.css"
-          },
-          "modal-system.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/patterns/modal-system/modal-system.demo.html"
-          },
-          "modal-system.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/patterns/modal-system/modal-system.js"
-          }
-        },
-        "search-demo": {
-          "data": {
-            "blog-posts.csv": {
-              "type": "file",
-              "ext": ".csv",
-              "path": "ui/patterns/search-demo/data/blog-posts.csv"
-            }
-          },
-          "search-demo.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/patterns/search-demo/search-demo.css"
-          },
-          "search-demo.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/patterns/search-demo/search-demo.demo.html"
-          },
-          "search-demo.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/patterns/search-demo/search-demo.js"
-          }
-        },
-        "sidebar": {
-          "sidebar.css": {
-            "type": "file",
-            "ext": ".css",
-            "path": "ui/patterns/sidebar/sidebar.css"
-          },
-          "sidebar.demo.html": {
-            "type": "file",
-            "ext": ".html",
-            "path": "ui/patterns/sidebar/sidebar.demo.html"
-          },
-          "sidebar.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "ui/patterns/sidebar/sidebar.js"
-          }
-        }
       }
     },
     "utils": {
@@ -2170,6 +1510,50 @@
       }
     }
   },
+  "skills": [
+    {
+      "id": "csma-architecture",
+      "name": "csma-guides",
+      "path": "docs/csma-architecture/SKILL.md",
+      "description": "csma-architecture skill"
+    },
+    {
+      "id": "csma-observability",
+      "name": "csma-observability",
+      "path": "docs/csma-observability/SKILL.md",
+      "description": "csma-observability skill"
+    },
+    {
+      "id": "csma-patterns",
+      "name": "csma-patterns",
+      "path": "docs/csma-patterns/SKILL.md",
+      "description": "csma-patterns skill"
+    },
+    {
+      "id": "csma-runtime",
+      "name": "csma-runtime",
+      "path": "docs/csma-runtime/SKILL.md",
+      "description": "csma-runtime skill"
+    },
+    {
+      "id": "csma-security",
+      "name": "csma-security",
+      "path": "docs/csma-security/SKILL.md",
+      "description": "csma-security skill"
+    },
+    {
+      "id": "csma-service-pattern",
+      "name": "csma-services-api",
+      "path": "docs/csma-service-pattern/SKILL.md",
+      "description": "csma-service-pattern skill"
+    },
+    {
+      "id": "csma-testing",
+      "name": "csma-testing",
+      "path": "docs/csma-testing/SKILL.md",
+      "description": "csma-testing skill"
+    }
+  ],
   "agents": [
     "ExampleService"
   ],

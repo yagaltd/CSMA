@@ -109,72 +109,9 @@ const TodoContracts = {
 
 const eventBus = new EventBus();
 eventBus.contracts = { ...BaseContracts, ...TodoContracts };
-const LOG_STORAGE_KEY = 'csma.todo-app.logs';
 
-// Use global LogAccumulator from main.js, wait for it to be available
-const getLogAccumulator = () => {
-  if (window.csma?.logAccumulator) {
-    return window.csma.logAccumulator;
-  }
-  // Fallback for testing
-  return new LogAccumulator(eventBus);
-};
-
-const logAccumulator = getLogAccumulator();
-
-// Configure todo-app specific settings if needed
-if (window.csma?.logAccumulator) {
-  // Already configured in main.js
-} else {
-  // Fallback initialization for standalone usage
-  const apiBaseUrl = resolveApiBaseUrl();
-  const logEndpoint = buildLogEndpoint(apiBaseUrl);
-  logAccumulator.init({
-    endpoint: logEndpoint,
-    authEndpoint: logEndpoint.replace('/logs/batch', '/auth/guest'),
-    source: 'csma-todo-example',
-    appVersion: 'dev',
-    maxBatchSize: 5,
-    serverBatchLimit: 50,
-    // Auth provider for SSMA backend
-    authProvider: () => localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token')
-  });
-}
-
-eventBus.subscribe('LOG_ENTRY', (entry) => {
-  try {
-    const existing = JSON.parse(localStorage.getItem(LOG_STORAGE_KEY) || '[]');
-    existing.push(entry);
-    if (existing.length > 100) {
-      existing.shift();
-    }
-    localStorage.setItem(LOG_STORAGE_KEY, JSON.stringify(existing));
-  } catch (error) {
-    console.warn('[TodoApp] Unable to persist log entry', error);
-  }
-});
-
-function resolveApiBaseUrl() {
-  const envUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL || '').trim();
-  if (envUrl) return envUrl;
-
-  if (typeof window !== 'undefined') {
-    const globalUrl = window.__CSMA_API_URL || window.csma?.config?.apiBaseUrl;
-    if (globalUrl) return globalUrl;
-  }
-
-  if (typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost') {
-    // Explicitly point to our running SSMA server
-    return 'http://localhost:5050';
-  }
-
-  return '';
-}
-
-function buildLogEndpoint(baseUrl) {
-  if (!baseUrl) return '/logs/batch';
-  return `${baseUrl.replace(/\/$/, '')}/logs/batch`;
-}
+// Local LogAccumulator for dev logging (no server endpoint)
+const logAccumulator = window.csma?.logAccumulator || new LogAccumulator(eventBus);
 
 const appRoot = document.querySelector('[data-todo-app]');
 const form = appRoot?.querySelector('[data-todo-form]');
@@ -185,7 +122,6 @@ const logList = appRoot?.querySelector('[data-todo-log]');
 const template = document.getElementById('todo-item-template');
 const boardTemplate = document.getElementById('todo-board-template');
 const themeToggle = document.querySelector('[data-theme-toggle]');
-const themeLabel = document.querySelector('[data-theme-label]');
 const editDialog = document.querySelector('[data-edit-dialog]');
 const dialogForm = editDialog?.querySelector('[data-dialog-form]');
 const dialogInput = editDialog?.querySelector('[data-dialog-input]');
@@ -193,6 +129,7 @@ const dialogClose = editDialog?.querySelector('[data-dialog-close]');
 const dialogCancel = editDialog?.querySelector('[data-dialog-cancel]');
 const dialogToggle = editDialog?.querySelector('[data-dialog-toggle]');
 const dialogDelete = editDialog?.querySelector('[data-dialog-delete]');
+const submitButton = form?.querySelector('[type="submit"]');
 
 const storage = createStorage();
 const prefersDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
@@ -200,6 +137,7 @@ const storedTheme = storage.getItem(THEME_KEY);
 const initialTheme = storedTheme || (prefersDark?.matches ? 'dark' : 'light');
 let editingTodoId = null;
 let latestState = null;
+let lastDialogTrigger = null;
 
 setTheme(initialTheme, Boolean(storedTheme));
 themeToggle?.addEventListener('click', toggleTheme);
@@ -231,12 +169,19 @@ editDialog?.addEventListener('cancel', (event) => {
 if (appRoot && form && list && filters) {
   appRoot.dataset.view = appRoot.dataset.view || 'list';
   form.addEventListener('submit', handleSubmit);
+  form.addEventListener('input', syncCreateButtonState);
   filters.addEventListener('click', handleFilterClick);
   list.addEventListener('click', handleListAction);
   list.addEventListener('change', handleCheckboxToggle);
 
   const viewToggles = appRoot.querySelectorAll('[data-view-toggle]');
+  const togglesContainer = appRoot.querySelector('.todo-toggles');
+  // Set initial active state for animated indicator
+  if (togglesContainer) {
+    togglesContainer.dataset.active = appRoot.dataset.view || 'list';
+  }
   viewToggles.forEach((btn) => btn.addEventListener('click', () => handleViewToggle(btn, viewToggles)));
+  syncCreateButtonState();
 }
 
 function handleSubmit(event) {
@@ -250,6 +195,7 @@ function handleSubmit(event) {
   });
   logTodoAction('create', { title });
   form.reset();
+  syncCreateButtonState();
 }
 
 function handleFilterClick(event) {
@@ -276,8 +222,13 @@ function handleListAction(event) {
     eventBus.publish('INTENT_TODO_DELETE', { id, timestamp: Date.now() });
     logTodoAction('delete', { id });
   } else if (button.dataset.action === 'edit') {
+    lastDialogTrigger = button;
     openEditDialog(id);
     logTodoAction('edit-open', { id });
+  } else if (button.dataset.action === 'open') {
+    lastDialogTrigger = button;
+    openEditDialog(id);
+    logTodoAction('board-open', { id });
   }
 }
 
@@ -294,6 +245,11 @@ function handleViewToggle(activeButton, buttons) {
   buttons.forEach((button) => button.setAttribute('aria-pressed', button === activeButton ? 'true' : 'false'));
   const mode = activeButton.dataset.viewToggle;
   appRoot.dataset.view = mode;
+  // Update animated indicator position
+  const togglesContainer = appRoot.querySelector('.todo-toggles');
+  if (togglesContainer) {
+    togglesContainer.dataset.active = mode;
+  }
   if (latestState) {
     renderList(latestState, mode);
   }
@@ -317,48 +273,13 @@ function render(state) {
 function renderList(state, viewMode = 'list') {
   if (!list || !template) return;
   const visible = getVisibleTodos(state.todos, state.filter);
-  list.innerHTML = '';
 
   if (!visible.length) {
-    list.innerHTML = '<li class="todo-empty">No todos for this filter. Add one above.</li>';
+    renderEmptyListState(getEmptyStateMessage(state.filter));
     return;
   }
 
-  if (viewMode === 'board' && boardTemplate) {
-    renderBoardList(visible);
-    return;
-  }
-
-  visible.forEach((todo) => {
-    const node = template.content.firstElementChild.cloneNode(true);
-    node.dataset.id = todo.id;
-    node.dataset.state = todo.completed ? 'completed' : 'active';
-    node.dataset.priority = todo.priority || 'medium';
-    node.querySelector('[data-action="toggle"]').checked = todo.completed;
-    node.querySelector('.todo-item__title').textContent = todo.title;
-    node.querySelector('.todo-item__meta').textContent = buildMeta(todo);
-    list.appendChild(node);
-  });
-}
-
-function renderBoardList(todos) {
-  list.innerHTML = '';
-  todos.forEach((todo) => {
-    const node = boardTemplate.content.firstElementChild.cloneNode(true);
-    node.dataset.id = todo.id;
-    node.dataset.state = todo.completed ? 'completed' : 'active';
-    node.dataset.priority = todo.priority || 'medium';
-    node.querySelector('.todo-board-card__title').textContent = todo.title;
-    node.querySelector('.todo-board-card__preview').textContent = buildPreview(todo.title);
-    node.addEventListener('click', () => openEditDialog(todo.id));
-    node.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openEditDialog(todo.id);
-      }
-    });
-    list.appendChild(node);
-  });
+  syncTodoList(visible, viewMode);
 }
 
 function updateStats(stats = { total: 0, active: 0, completed: 0 }) {
@@ -373,23 +294,128 @@ function updateStats(stats = { total: 0, active: 0, completed: 0 }) {
 function updateFilters(activeFilter) {
   if (!filters) return;
   filters.querySelectorAll('[data-filter]').forEach((button) => {
-    button.setAttribute('aria-selected', button.dataset.filter === activeFilter ? 'true' : 'false');
+    button.setAttribute('aria-pressed', button.dataset.filter === activeFilter ? 'true' : 'false');
   });
 }
 
 function renderLog(entries = []) {
   if (!logList) return;
-  logList.innerHTML = '';
   if (!entries.length) {
-    logList.innerHTML = '<li class="todo-log-entry">No activity yet.</li>';
+    const emptyNode = document.createElement('li');
+    emptyNode.className = 'todo-log-entry todo-log-entry--empty';
+    emptyNode.textContent = 'No activity yet. Create or complete a task to see changes here.';
+    logList.replaceChildren(emptyNode);
     return;
   }
+
+  const fragment = document.createDocumentFragment();
   entries.forEach((entry) => {
     const li = document.createElement('li');
     li.className = 'todo-log-entry';
-    li.innerHTML = `<span>${entry.message}</span><span>${formatRelative(entry.timestamp)}</span>`;
-    logList.appendChild(li);
+    const message = document.createElement('span');
+    message.textContent = entry.message;
+    const time = document.createElement('span');
+    time.className = 'log-time';
+    time.textContent = formatRelative(entry.timestamp);
+    li.append(message, time);
+    fragment.appendChild(li);
   });
+  logList.replaceChildren(fragment);
+}
+
+function syncTodoList(todos, viewMode) {
+  if (!list || !template) return;
+  const existingNodes = new Map(
+    Array.from(list.querySelectorAll('[data-id]')).map((node) => [node.dataset.id, node])
+  );
+  const fragment = document.createDocumentFragment();
+
+  todos.forEach((todo) => {
+    const currentNode = existingNodes.get(todo.id);
+    const canReuse = currentNode && currentNode.dataset.viewMode === viewMode;
+    const node = canReuse ? currentNode : createTodoNode(todo, viewMode);
+
+    updateTodoNode(node, todo, viewMode);
+    fragment.appendChild(node);
+    existingNodes.delete(todo.id);
+  });
+
+  list.replaceChildren(fragment);
+}
+
+function createTodoNode(todo, viewMode) {
+  const source = viewMode === 'board' ? boardTemplate : template;
+  const node = source?.content.firstElementChild.cloneNode(true);
+  if (!node) {
+    throw new Error(`Missing todo template for view: ${viewMode}`);
+  }
+  node.dataset.id = todo.id;
+  node.dataset.viewMode = viewMode;
+  return node;
+}
+
+function updateTodoNode(node, todo, viewMode) {
+  node.dataset.id = todo.id;
+  node.dataset.viewMode = viewMode;
+  node.dataset.state = todo.completed ? 'completed' : 'active';
+  node.dataset.priority = todo.priority || 'medium';
+
+  if (viewMode === 'board') {
+    node.querySelector('.todo-board-card__button').setAttribute('aria-label', `Open details for ${todo.title}`);
+    node.querySelector('.todo-board-card__title').textContent = todo.title;
+    node.querySelector('.todo-board-card__preview').textContent = buildPreview(todo.title);
+    return;
+  }
+
+  node.querySelector('[data-action="toggle"]').checked = todo.completed;
+  node.querySelector('.todo-item__title').textContent = todo.title;
+  node.querySelector('.todo-item__title').title = todo.title;
+  node.querySelector('.todo-item__meta').textContent = buildMeta(todo);
+}
+
+function renderEmptyListState(message) {
+  if (!list) return;
+  const emptyNode = document.createElement('li');
+  emptyNode.className = 'todo-empty';
+
+  // Use inline SVG for consistent rendering across platforms
+  const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  icon.setAttribute('class', 'todo-empty__icon');
+  icon.setAttribute('viewBox', '0 0 24 24');
+  icon.setAttribute('fill', 'none');
+  icon.setAttribute('stroke', 'currentColor');
+  icon.setAttribute('stroke-width', '1.5');
+  icon.setAttribute('aria-hidden', 'true');
+
+  const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+  clipPath.setAttribute('id', 'a');
+
+  const clipRect = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  clipRect.setAttribute('d', 'M0 0h24v24H0z');
+  clipPath.appendChild(clipRect);
+  icon.appendChild(clipPath);
+
+  const paths = [
+    'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2',
+    'M9 5a2 2 0 012-2h2a2 2 0 012 2v0a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+    'M9 12h6',
+    'M9 16h6'
+  ];
+
+  paths.forEach((d) => {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    icon.appendChild(path);
+  });
+
+  const text = document.createElement('p');
+  text.textContent = message;
+
+  emptyNode.appendChild(icon);
+  emptyNode.appendChild(text);
+  list.replaceChildren(emptyNode);
 }
 
 function getVisibleTodos(todos, filter) {
@@ -400,7 +426,8 @@ function getVisibleTodos(todos, filter) {
 
 function buildMeta(todo) {
   const updated = formatRelative(todo.updatedAt);
-  return `Updated ${updated}`;
+  const status = todo.completed ? 'Done' : 'Open';
+  return `${status} · Updated ${updated}`;
 }
 
 function formatRelative(timestamp) {
@@ -419,6 +446,16 @@ function buildPreview(text = '') {
   const trimmed = `${text}`.trim();
   if (trimmed.length <= 80) return trimmed;
   return `${trimmed.slice(0, 80)}…`;
+}
+
+function getEmptyStateMessage(filter) {
+  if (filter === 'completed') {
+    return 'No completed tasks yet. Finish one to build history.';
+  }
+  if (filter === 'active') {
+    return 'No open tasks right now. Everything is done.';
+  }
+  return 'No tasks yet. Add the first task above.';
 }
 
 const unsubscribeTodoState = eventBus.subscribe('TODO_STATE_CHANGED', render);
@@ -440,9 +477,7 @@ function setTheme(theme, persist = false) {
   document.documentElement.dataset.theme = theme;
   const pressed = theme === 'dark' ? 'true' : 'false';
   themeToggle?.setAttribute('aria-pressed', pressed);
-  if (themeLabel) {
-    themeLabel.textContent = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-  }
+  themeToggle?.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
   if (persist) {
     storage.setItem(THEME_KEY, theme);
   }
@@ -462,7 +497,8 @@ function openEditDialog(id) {
   } else {
     editDialog.setAttribute('open', '');
   }
-  dialogInput.focus();
+  dialogInput.focus({ preventScroll: true });
+  dialogInput.setSelectionRange(0, dialogInput.value.length);
 }
 
 function closeEditDialog() {
@@ -474,6 +510,8 @@ function closeEditDialog() {
     editDialog.removeAttribute('open');
   }
   dialogForm?.reset();
+  lastDialogTrigger?.focus?.();
+  lastDialogTrigger = null;
 }
 
 function handleDialogSubmit(event) {
@@ -511,8 +549,8 @@ function logTodoAction(action, extra = {}) {
     ...extra
   });
 
-  // Analytics track (Backend)
-  logAccumulator.track('Todo Interaction', {
+  // Phase 1 moved analytics out of LogAccumulator.
+  window.csma?.analytics?.track('Todo Interaction', {
     action,
     component: 'todo-app',
     ...extra
@@ -539,4 +577,11 @@ function createStorage() {
     setItem() { },
     removeItem() { }
   };
+}
+
+function syncCreateButtonState() {
+  if (!form || !submitButton) return;
+  const titleInput = form.elements.namedItem('title');
+  const nextValue = typeof titleInput?.value === 'string' ? titleInput.value.trim() : '';
+  submitButton.disabled = !nextValue;
 }

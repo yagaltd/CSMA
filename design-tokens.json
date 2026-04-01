@@ -1,0 +1,1297 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$metadata": {
+    "name": "CSMA Design System",
+    "version": "1.0.0",
+    "description": "Design tokens for CSMA UI components"
+  },
+  "primitives": {
+    "spacing": {
+      "$type": "dimension",
+      "2xs": {
+        "$value": "0.125rem",
+        "$description": "Hairline - not for layout spacing",
+        "$extensions": {
+          "com.csma.px": 2
+        },
+        "$type": "dimension"
+      },
+      "xs": {
+        "$value": "0.25rem",
+        "$description": "Tight internal spacing",
+        "$extensions": {
+          "com.csma.px": 4
+        },
+        "$type": "dimension"
+      },
+      "sm": {
+        "$value": "0.5rem",
+        "$description": "Small gaps, compact padding",
+        "$extensions": {
+          "com.csma.px": 8
+        },
+        "$type": "dimension"
+      },
+      "md": {
+        "$value": "0.75rem",
+        "$description": "Standard gap",
+        "$extensions": {
+          "com.csma.px": 12
+        },
+        "$type": "dimension"
+      },
+      "lg": {
+        "$value": "1rem",
+        "$description": "Standard padding",
+        "$extensions": {
+          "com.csma.px": 16
+        },
+        "$type": "dimension"
+      },
+      "xl": {
+        "$value": "1.5rem",
+        "$description": "Section gaps",
+        "$extensions": {
+          "com.csma.px": 24
+        },
+        "$type": "dimension"
+      },
+      "2xl": {
+        "$value": "2rem",
+        "$description": "Large section gaps",
+        "$extensions": {
+          "com.csma.px": 32
+        },
+        "$type": "dimension"
+      },
+      "3xl": {
+        "$value": "3rem",
+        "$description": "Page-level spacing",
+        "$extensions": {
+          "com.csma.px": 48
+        },
+        "$type": "dimension"
+      },
+      "4xl": {
+        "$value": "4rem",
+        "$description": "Hero padding",
+        "$extensions": {
+          "com.csma.px": 64
+        },
+        "$type": "dimension"
+      },
+      "5xl": {
+        "$value": "6rem",
+        "$description": "Maximum vertical rhythm",
+        "$extensions": {
+          "com.csma.px": 96
+        },
+        "$type": "dimension"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "$type": "fontFamily",
+        "base": {
+          "$value": "\"IBM Plex Sans\", \"Aptos\", \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+          "$type": "fontFamily"
+        },
+        "mono": {
+          "$value": "\"IBM Plex Mono\", \"JetBrains Mono\", \"SFMono-Regular\", Menlo, monospace",
+          "$type": "fontFamily"
+        }
+      },
+      "fontSize": {
+        "$type": "dimension",
+        "xs": {
+          "$value": "0.625rem",
+          "$extensions": {
+            "com.csma.px": 10,
+            "com.csma.scale": "Major Third (1.25)"
+          },
+          "$type": "dimension"
+        },
+        "sm": {
+          "$value": "0.8125rem",
+          "$extensions": {
+            "com.csma.px": 13,
+            "com.csma.scale": "Major Third (1.25)"
+          },
+          "$type": "dimension"
+        },
+        "base": {
+          "$value": "1rem",
+          "$extensions": {
+            "com.csma.px": 16,
+            "com.csma.scale": "Major Third (1.25)"
+          },
+          "$type": "dimension"
+        },
+        "lg": {
+          "$value": "1.25rem",
+          "$extensions": {
+            "com.csma.px": 20,
+            "com.csma.scale": "Major Third (1.25)"
+          },
+          "$type": "dimension"
+        },
+        "xl": {
+          "$value": "1.5625rem",
+          "$extensions": {
+            "com.csma.px": 25,
+            "com.csma.scale": "Major Third (1.25)"
+          },
+          "$type": "dimension"
+        },
+        "2xl": {
+          "$value": "1.9375rem",
+          "$extensions": {
+            "com.csma.px": 31,
+            "com.csma.scale": "Major Third (1.25)"
+          },
+          "$type": "dimension"
+        },
+        "3xl": {
+          "$value": "2.4375rem",
+          "$extensions": {
+            "com.csma.px": 39,
+            "com.csma.scale": "Major Third (1.25)"
+          },
+          "$type": "dimension"
+        }
+      },
+      "fontWeight": {
+        "$type": "fontWeight",
+        "regular": {
+          "$value": 400,
+          "$type": "fontWeight"
+        },
+        "medium": {
+          "$value": 500,
+          "$type": "fontWeight"
+        },
+        "semibold": {
+          "$value": 600,
+          "$type": "fontWeight"
+        },
+        "bold": {
+          "$value": 700,
+          "$type": "fontWeight"
+        }
+      },
+      "lineHeight": {
+        "$type": "number",
+        "tight": {
+          "$value": 1.15,
+          "$type": "number"
+        },
+        "heading": {
+          "$value": 1.25,
+          "$type": "number"
+        },
+        "body": {
+          "$value": 1.5,
+          "$type": "number"
+        },
+        "base": {
+          "$value": 1.6,
+          "$type": "number"
+        },
+        "loose": {
+          "$value": 1.72,
+          "$type": "number"
+        }
+      }
+    },
+    "radius": {
+      "$type": "dimension",
+      "none": {
+        "$value": "0px",
+        "$type": "dimension"
+      },
+      "sm": {
+        "$value": "0.25rem",
+        "$extensions": {
+          "com.csma.px": 4
+        },
+        "$type": "dimension"
+      },
+      "md": {
+        "$value": "0.5rem",
+        "$extensions": {
+          "com.csma.px": 8
+        },
+        "$type": "dimension"
+      },
+      "lg": {
+        "$value": "0.75rem",
+        "$extensions": {
+          "com.csma.px": 12
+        },
+        "$type": "dimension"
+      },
+      "xl": {
+        "$value": "1rem",
+        "$extensions": {
+          "com.csma.px": 16
+        },
+        "$type": "dimension"
+      },
+      "2xl": {
+        "$value": "1.5rem",
+        "$extensions": {
+          "com.csma.px": 24
+        },
+        "$type": "dimension"
+      },
+      "3xl": {
+        "$value": "2rem",
+        "$extensions": {
+          "com.csma.px": 32
+        },
+        "$type": "dimension"
+      },
+      "full": {
+        "$value": "999px",
+        "$type": "dimension"
+      }
+    },
+    "shadow": {
+      "$type": "shadow",
+      "xs": {
+        "$value": {
+          "offsetX": "0",
+          "offsetY": "1px",
+          "blur": "2px",
+          "spread": "0",
+          "color": "rgb(0 0 0 / 0.05)"
+        },
+        "$description": "Subtle elevation",
+        "$type": "shadow"
+      },
+      "sm": {
+        "$value": [
+          {
+            "offsetX": "0",
+            "offsetY": "1px",
+            "blur": "3px",
+            "spread": "0",
+            "color": "rgb(0 0 0 / 0.1)"
+          },
+          {
+            "offsetX": "0",
+            "offsetY": "1px",
+            "blur": "2px",
+            "spread": "-1px",
+            "color": "rgb(0 0 0 / 0.1)"
+          }
+        ],
+        "$description": "Card elevation",
+        "$type": "shadow"
+      },
+      "md": {
+        "$value": [
+          {
+            "offsetX": "0",
+            "offsetY": "4px",
+            "blur": "6px",
+            "spread": "-1px",
+            "color": "rgb(0 0 0 / 0.1)"
+          },
+          {
+            "offsetX": "0",
+            "offsetY": "2px",
+            "blur": "4px",
+            "spread": "-2px",
+            "color": "rgb(0 0 0 / 0.1)"
+          }
+        ],
+        "$description": "Dropdown/popover",
+        "$type": "shadow"
+      },
+      "lg": {
+        "$value": [
+          {
+            "offsetX": "0",
+            "offsetY": "10px",
+            "blur": "15px",
+            "spread": "-3px",
+            "color": "rgb(0 0 0 / 0.1)"
+          },
+          {
+            "offsetX": "0",
+            "offsetY": "4px",
+            "blur": "6px",
+            "spread": "-4px",
+            "color": "rgb(0 0 0 / 0.1)"
+          }
+        ],
+        "$description": "Modal/dialog",
+        "$type": "shadow"
+      },
+      "xl": {
+        "$value": [
+          {
+            "offsetX": "0",
+            "offsetY": "20px",
+            "blur": "25px",
+            "spread": "-5px",
+            "color": "rgb(0 0 0 / 0.1)"
+          },
+          {
+            "offsetX": "0",
+            "offsetY": "8px",
+            "blur": "10px",
+            "spread": "-6px",
+            "color": "rgb(0 0 0 / 0.1)"
+          }
+        ],
+        "$description": "Large modal",
+        "$type": "shadow"
+      }
+    },
+    "motion": {
+      "duration": {
+        "$type": "duration",
+        "instant": {
+          "$value": {
+            "value": 120,
+            "unit": "ms"
+          },
+          "$description": "Immediate feedback",
+          "$type": "duration"
+        },
+        "fast": {
+          "$value": {
+            "value": 180,
+            "unit": "ms"
+          },
+          "$description": "Hover, focus states",
+          "$type": "duration"
+        },
+        "normal": {
+          "$value": {
+            "value": 260,
+            "unit": "ms"
+          },
+          "$description": "Transitions",
+          "$type": "duration"
+        },
+        "slow": {
+          "$value": {
+            "value": 420,
+            "unit": "ms"
+          },
+          "$description": "Animations",
+          "$type": "duration"
+        },
+        "enter": {
+          "$value": {
+            "value": 560,
+            "unit": "ms"
+          },
+          "$description": "Page enters",
+          "$type": "duration"
+        }
+      },
+      "easing": {
+        "$type": "cubicBezier",
+        "outQuart": {
+          "$value": [0.25, 1, 0.5, 1],
+          "$type": "cubicBezier"
+        },
+        "outQuint": {
+          "$value": [0.22, 1, 0.36, 1],
+          "$type": "cubicBezier"
+        },
+        "outExpo": {
+          "$value": [0.16, 1, 0.3, 1],
+          "$type": "cubicBezier"
+        },
+        "inOutSoft": {
+          "$value": [0.45, 0, 0.2, 1],
+          "$type": "cubicBezier"
+        }
+      }
+    },
+    "breakpoint": {
+      "$type": "dimension",
+      "sm": {
+        "$value": "480px",
+        "$type": "dimension"
+      },
+      "md": {
+        "$value": "768px",
+        "$type": "dimension"
+      },
+      "lg": {
+        "$value": "1024px",
+        "$type": "dimension"
+      },
+      "xl": {
+        "$value": "1280px",
+        "$type": "dimension"
+      }
+    },
+    "zIndex": {
+      "$type": "number",
+      "base": {
+        "$value": 1,
+        "$type": "number"
+      },
+      "overlay": {
+        "$value": 1000,
+        "$type": "number"
+      },
+      "modal": {
+        "$value": 1100,
+        "$type": "number"
+      },
+      "popover": {
+        "$value": 1200,
+        "$type": "number"
+      },
+      "toast": {
+        "$value": 1300,
+        "$type": "number"
+      },
+      "lightbox": {
+        "$value": 1400,
+        "$type": "number"
+      }
+    },
+    "opacity": {
+      "$type": "number",
+      "disabled": {
+        "$value": 0.5,
+        "$description": "Disabled controls and inactive states",
+        "$type": "number"
+      },
+      "muted": {
+        "$value": 0.7,
+        "$description": "De-emphasized content",
+        "$type": "number"
+      },
+      "faded": {
+        "$value": 0.8,
+        "$description": "Slightly faded elements",
+        "$type": "number"
+      },
+      "hover": {
+        "$value": 0.9,
+        "$description": "Hover state dimming",
+        "$type": "number"
+      },
+      "overlay": {
+        "$value": 0.55,
+        "$description": "Backdrop overlay base",
+        "$type": "number"
+      }
+    },
+    "letterSpacing": {
+      "$type": "dimension",
+      "display": {
+        "$value": "-0.32px",
+        "$description": "Hero/display headings (h1)",
+        "$type": "dimension"
+      },
+      "heading": {
+        "$value": "-0.24px",
+        "$description": "Section headings (h2)",
+        "$type": "dimension"
+      },
+      "normal": {
+        "$value": "0px",
+        "$description": "Body text, default tracking",
+        "$type": "dimension"
+      },
+      "label": {
+        "$value": "0.64px",
+        "$description": "Small labels, eyebrow text",
+        "$type": "dimension"
+      },
+      "uppercase": {
+        "$value": "0.8px",
+        "$description": "Uppercase labels, small caps",
+        "$type": "dimension"
+      },
+      "wide": {
+        "$value": "2.24px",
+        "$description": "Wide tracking for OTP/display codes",
+        "$type": "dimension"
+      }
+    },
+    "borderWidth": {
+      "$type": "dimension",
+      "default": {
+        "$value": "1px",
+        "$description": "Standard borders, dividers",
+        "$type": "dimension"
+      },
+      "focus": {
+        "$value": "2px",
+        "$description": "Focus indicator rings",
+        "$type": "dimension"
+      },
+      "emphasis": {
+        "$value": "3px",
+        "$description": "Emphasis borders, selected items",
+        "$type": "dimension"
+      },
+      "accent": {
+        "$value": "4px",
+        "$description": "Severity accents, strong borders",
+        "$type": "dimension"
+      }
+    },
+    "focusRing": {
+      "offsetWidth": {
+        "$type": "dimension",
+        "$value": "2px",
+        "$description": "Gap between element and ring"
+      },
+      "width": {
+        "$type": "dimension",
+        "$value": "4px",
+        "$description": "Ring stroke width"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "offsetX": "0",
+            "offsetY": "0",
+            "blur": "0",
+            "spread": "2px",
+            "color": "0"
+          },
+          {
+            "offsetX": "0",
+            "offsetY": "0",
+            "blur": "0",
+            "spread": "4px",
+            "color": "0"
+          }
+        ],
+        "$description": "Composed focus ring shadow"
+      }
+    },
+    "layout": {
+      "$type": "dimension",
+      "containerNarrow": {
+        "$value": "600px",
+        "$description": "Narrow content width",
+        "$extensions": {
+          "com.csma.px": 600
+        },
+        "$type": "dimension"
+      },
+      "container": {
+        "$value": "900px",
+        "$description": "Default content width",
+        "$extensions": {
+          "com.csma.px": 900
+        },
+        "$type": "dimension"
+      },
+      "containerWide": {
+        "$value": "1200px",
+        "$description": "Wide/full-width content",
+        "$extensions": {
+          "com.csma.px": 1200
+        },
+        "$type": "dimension"
+      },
+      "sidebar": {
+        "$value": "240px",
+        "$description": "Sidebar navigation width",
+        "$extensions": {
+          "com.csma.px": 240
+        },
+        "$type": "dimension"
+      },
+      "touchTarget": {
+        "$value": "44px",
+        "$description": "Minimum touch target size",
+        "$extensions": {
+          "com.csma.px": 44
+        },
+        "$type": "dimension"
+      },
+      "gridMinSm": {
+        "$value": "240px",
+        "$description": "Small grid column minimum",
+        "$extensions": {
+          "com.csma.px": 240
+        },
+        "$type": "dimension"
+      },
+      "gridMinMd": {
+        "$value": "280px",
+        "$description": "Medium grid column minimum",
+        "$extensions": {
+          "com.csma.px": 280
+        },
+        "$type": "dimension"
+      },
+      "gridMinLg": {
+        "$value": "320px",
+        "$description": "Large grid column minimum",
+        "$extensions": {
+          "com.csma.px": 320
+        },
+        "$type": "dimension"
+      }
+    }
+  },
+  "semantic": {
+    "transition": {
+      "$type": "transition",
+      "fast": {
+        "$value": {
+          "duration": "{primitives.motion.duration.fast}",
+          "delay": "0ms",
+          "timingFunction": "{primitives.motion.easing.outQuart}"
+        },
+        "$type": "transition"
+      },
+      "normal": {
+        "$value": {
+          "duration": "{primitives.motion.duration.normal}",
+          "delay": "0ms",
+          "timingFunction": "{primitives.motion.easing.outQuart}"
+        },
+        "$type": "transition"
+      },
+      "slow": {
+        "$value": {
+          "duration": "{primitives.motion.duration.slow}",
+          "delay": "0ms",
+          "timingFunction": "{primitives.motion.easing.outQuint}"
+        },
+        "$type": "transition"
+      }
+    },
+    "shadow": {
+      "$type": "shadow",
+      "card": {
+        "$value": "{primitives.shadow.sm}",
+        "$description": "Default card shadow",
+        "$type": "shadow"
+      },
+      "dialog": {
+        "$value": "{primitives.shadow.lg}",
+        "$description": "Modal/dialog shadow",
+        "$type": "shadow"
+      }
+    }
+  },
+  "components": {
+    "button": {
+      "radius": {
+        "$value": "{primitives.radius.md}",
+        "$type": "dimension"
+      },
+      "height": {
+        "$value": "2.5rem",
+        "$extensions": {
+          "com.csma.px": 40
+        },
+        "$type": "dimension"
+      },
+      "heightSm": {
+        "$value": "2rem",
+        "$extensions": {
+          "com.csma.px": 32
+        },
+        "$type": "dimension"
+      },
+      "heightLg": {
+        "$value": "2.75rem",
+        "$extensions": {
+          "com.csma.px": 44
+        },
+        "$type": "dimension"
+      },
+      "paddingBlock": {
+        "$value": "{primitives.spacing.sm}",
+        "$type": "dimension"
+      },
+      "paddingInline": {
+        "$value": "{primitives.spacing.lg}",
+        "$type": "dimension"
+      },
+      "fontSize": {
+        "$value": "{primitives.typography.fontSize.sm}",
+        "$type": "dimension"
+      }
+    },
+    "input": {
+      "radius": {
+        "$value": "{primitives.radius.md}",
+        "$type": "dimension"
+      },
+      "height": {
+        "$value": "2.5rem",
+        "$extensions": {
+          "com.csma.px": 40
+        },
+        "$type": "dimension"
+      },
+      "paddingBlock": {
+        "$value": "{primitives.spacing.sm}",
+        "$type": "dimension"
+      },
+      "paddingInline": {
+        "$value": "{primitives.spacing.md}",
+        "$type": "dimension"
+      }
+    },
+    "card": {
+      "radius": {
+        "$type": "dimension",
+        "$value": "{primitives.radius.lg}"
+      },
+      "padding": {
+        "$type": "dimension",
+        "$value": "{primitives.spacing.xl}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": "{primitives.shadow.sm}"
+      }
+    },
+    "dialog": {
+      "radius": {
+        "$type": "dimension",
+        "$value": "{primitives.radius.md}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": "{primitives.shadow.lg}"
+      }
+    },
+    "navbar": {
+      "height": {
+        "$value": "4rem",
+        "$extensions": {
+          "com.csma.px": 64
+        },
+        "$type": "dimension"
+      }
+    }
+  },
+  "themes": {
+    "light": {
+      "colors": {
+        "background": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.975, 0.004, 248.0]
+          },
+          "$description": "Page background",
+          "$type": "color"
+        },
+        "backgroundMuted": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.954, 0.008, 248.0]
+          },
+          "$type": "color"
+        },
+        "surface": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [1.0, 0.001, 248.0]
+          },
+          "$description": "Card/panel background",
+          "$type": "color"
+        },
+        "surfaceMuted": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.974, 0.007, 248.0]
+          },
+          "$type": "color"
+        },
+        "foreground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.215, 0.018, 252.0]
+          },
+          "$type": "color"
+        },
+        "foregroundMuted": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.5, 0.015, 248.0]
+          },
+          "$type": "color"
+        },
+        "border": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.88, 0.008, 248.0]
+          },
+          "$type": "color"
+        },
+        "primary": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.29, 0.04, 260.0]
+          },
+          "$type": "color"
+        },
+        "primaryForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.98, 0.005, 248.0]
+          },
+          "$type": "color"
+        },
+        "secondary": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.969, 0.007, 248.0]
+          },
+          "$type": "color"
+        },
+        "secondaryForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.29, 0.04, 260.0]
+          },
+          "$type": "color"
+        },
+        "accent": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.961, 0.01, 235.0]
+          },
+          "$type": "color"
+        },
+        "accentForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.29, 0.04, 260.0]
+          },
+          "$type": "color"
+        },
+        "destructive": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.58, 0.17, 25.0]
+          },
+          "$type": "color"
+        },
+        "destructiveForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.98, 0.005, 248.0]
+          },
+          "$type": "color"
+        },
+        "warning": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.75, 0.16, 75.0]
+          },
+          "$type": "color"
+        },
+        "warningForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.28, 0.04, 75.0]
+          },
+          "$type": "color"
+        },
+        "success": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.55, 0.17, 155.0]
+          },
+          "$type": "color"
+        },
+        "successForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.25, 0.04, 155.0]
+          },
+          "$type": "color"
+        },
+        "info": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.5, 0.16, 260.0]
+          },
+          "$type": "color"
+        },
+        "infoForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.98, 0.005, 248.0]
+          },
+          "$type": "color"
+        },
+        "overlay": {
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.058824, 0.090196, 0.164706],
+            "alpha": 0.55
+          },
+          "$description": "Backdrop behind modals and overlays",
+          "$type": "color"
+        },
+        "$type": "color"
+      },
+      "$extensions": {
+        "com.csma.colorScheme": "light"
+      }
+    },
+    "dark": {
+      "colors": {
+        "background": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.182, 0.01, 255.0]
+          },
+          "$type": "color"
+        },
+        "backgroundMuted": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.242, 0.012, 255.0]
+          },
+          "$type": "color"
+        },
+        "surface": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.23, 0.01, 255.0]
+          },
+          "$description": "Elevated above background",
+          "$type": "color"
+        },
+        "surfaceMuted": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.275, 0.012, 255.0]
+          },
+          "$type": "color"
+        },
+        "foreground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.968, 0.004, 255.0]
+          },
+          "$type": "color"
+        },
+        "foregroundMuted": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.74, 0.012, 252.0]
+          },
+          "$type": "color"
+        },
+        "border": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.32, 0.012, 255.0]
+          },
+          "$type": "color"
+        },
+        "primary": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.93, 0.004, 255.0]
+          },
+          "$description": "Light blue in dark mode",
+          "$type": "color"
+        },
+        "primaryForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.15, 0.02, 255.0]
+          },
+          "$type": "color"
+        },
+        "secondary": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.255, 0.012, 255.0]
+          },
+          "$type": "color"
+        },
+        "secondaryForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.93, 0.004, 255.0]
+          },
+          "$type": "color"
+        },
+        "accent": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.285, 0.015, 236.0]
+          },
+          "$type": "color"
+        },
+        "accentForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.93, 0.004, 255.0]
+          },
+          "$type": "color"
+        },
+        "destructive": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.62, 0.17, 25.0]
+          },
+          "$type": "color"
+        },
+        "destructiveForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.98, 0.005, 248.0]
+          },
+          "$type": "color"
+        },
+        "warning": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.78, 0.14, 75.0]
+          },
+          "$type": "color"
+        },
+        "warningForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.28, 0.04, 75.0]
+          },
+          "$type": "color"
+        },
+        "success": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.6, 0.15, 155.0]
+          },
+          "$type": "color"
+        },
+        "successForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.25, 0.04, 155.0]
+          },
+          "$type": "color"
+        },
+        "info": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.58, 0.14, 260.0]
+          },
+          "$type": "color"
+        },
+        "infoForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [0.98, 0.005, 248.0]
+          },
+          "$type": "color"
+        },
+        "overlay": {
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.007843, 0.023529, 0.090196],
+            "alpha": 0.75
+          },
+          "$description": "Backdrop behind modals and carousels",
+          "$type": "color"
+        },
+        "$type": "color"
+      },
+      "$extensions": {
+        "com.csma.colorScheme": "dark"
+      }
+    },
+    "dark-storm": {
+      "$extends": "themes.dark",
+      "$extensions": {
+        "com.csma.colorScheme": "dark"
+      },
+      "$description": "Tokyo Night Storm inspired variant — lighter dark backgrounds with vivid blue accents",
+      "colors": {
+        "$type": "color",
+        "background": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.141176, 0.156863, 0.231373]
+          },
+          "$description": "Storm base background"
+        },
+        "backgroundMuted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.121569, 0.137255, 0.207843]
+          },
+          "$description": "Sidebar, panels"
+        },
+        "surface": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.117647, 0.12549, 0.188235]
+          },
+          "$description": "Slightly elevated above background"
+        },
+        "surfaceMuted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.160784, 0.180392, 0.258824]
+          },
+          "$description": "Hover and selection backgrounds"
+        },
+        "foreground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.752941, 0.792157, 0.960784]
+          },
+          "$description": "Primary text"
+        },
+        "foregroundMuted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.501961, 0.537255, 0.701961]
+          },
+          "$description": "Secondary/muted text"
+        },
+        "border": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.160784, 0.180392, 0.258824]
+          },
+          "$description": "Borders and dividers"
+        },
+        "primary": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.478431, 0.635294, 0.968627]
+          },
+          "$description": "Storm iconic blue"
+        },
+        "primaryForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.121569, 0.137255, 0.207843]
+          }
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.160784, 0.180392, 0.258824]
+          }
+        },
+        "secondaryForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.662745, 0.694118, 0.839216]
+          }
+        },
+        "accent": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.176471, 0.247059, 0.462745]
+          },
+          "$description": "Blue-tinted accent surface"
+        },
+        "accentForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.478431, 0.635294, 0.968627]
+          }
+        },
+        "destructive": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.968627, 0.462745, 0.556863]
+          },
+          "$description": "Error/danger red"
+        },
+        "destructiveForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.121569, 0.137255, 0.207843]
+          }
+        },
+        "warning": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.878431, 0.686275, 0.407843]
+          },
+          "$description": "Warning yellow"
+        },
+        "warningForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.121569, 0.137255, 0.207843]
+          }
+        },
+        "success": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.45098, 0.854902, 0.792157]
+          },
+          "$description": "Success teal"
+        },
+        "successForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.121569, 0.137255, 0.207843]
+          }
+        },
+        "info": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.490196, 0.811765, 1.0]
+          },
+          "$description": "Info cyan"
+        },
+        "infoForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.121569, 0.137255, 0.207843]
+          }
+        },
+        "overlay": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [0.05098, 0.066667, 0.090196],
+            "alpha": 0.75
+          },
+          "$description": "Backdrop behind modals"
+        }
+      }
+    }
+  }
+}

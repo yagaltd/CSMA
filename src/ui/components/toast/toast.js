@@ -92,6 +92,14 @@ function showToast({ type = 'default', title = '', description = '', duration = 
   toast.dataset.toastId = id;
   toast.dataset.state = 'open';
 
+  // Error toasts use role="alert" for immediate announcement
+  // Other types inherit polite announcement from container
+  if (type === 'error') {
+    toast.setAttribute('role', 'alert');
+  } else {
+    toast.setAttribute('role', 'status');
+  }
+
   // Create structure safely (no innerHTML with user data!)
   const iconDiv = document.createElement('div');
   iconDiv.className = 'toast-icon';
@@ -154,11 +162,15 @@ function dismissToast(id) {
 
 /**
  * Create toast container if it doesn't exist
+ * Container uses aria-live="polite" and role="status" for screen reader announcements
  */
 function createToastContainer() {
   const container = document.createElement('div');
   container.id = 'toastContainer';
   container.className = 'toast-container';
+  container.setAttribute('role', 'status');
+  container.setAttribute('aria-live', 'polite');
+  container.setAttribute('aria-atomic', 'true');
   document.body.appendChild(container);
   return container;
 }

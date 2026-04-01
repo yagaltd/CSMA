@@ -20,7 +20,7 @@ import { SearchContracts } from '../modules/search/contracts/search-contracts.js
 import { AIContracts } from '../modules/ai/contracts/ai-contracts.js';
 import { ExampleModuleContracts } from '../modules/example-module/contracts/example-contracts.js';
 import { StaticRenderContracts } from '../modules/static-render/contracts/island-contracts.js';
-const AnalyticsContracts = {};
+import { AnalyticsContracts } from '../modules/analytics/contracts/analytics-contracts.js';
 
 /**
  * Helper function for creating contracts with full ECCA metadata
@@ -343,6 +343,67 @@ const CoreContracts = {
         schema: object({
             modalId: string(),
             reason: string(),
+            timestamp: number()
+        })
+    },
+
+    INTENT_DRAWER_OPEN: {
+        version: 1,
+        type: 'intent',
+        owner: 'ui-service',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Intent to open a drawer',
+
+        schema: object({
+            drawerId: string(),
+            timestamp: number()
+        })
+    },
+
+    INTENT_DRAWER_CLOSE: {
+        version: 1,
+        type: 'intent',
+        owner: 'ui-service',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Intent to close a drawer',
+
+        schema: object({
+            drawerId: string(),
+            reason: string(),
+            timestamp: number()
+        })
+    },
+
+    INTENT_ALERT_DIALOG_OPEN: {
+        version: 1,
+        type: 'intent',
+        owner: 'ui-service',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Intent to open an alert dialog',
+
+        schema: object({
+            id: string(),
+            timestamp: number()
+        })
+    },
+
+    INTENT_ALERT_DIALOG_CLOSE: {
+        version: 1,
+        type: 'intent',
+        owner: 'ui-service',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Intent to close an alert dialog',
+
+        schema: object({
+            id: string(),
             timestamp: number()
         })
     },
@@ -825,7 +886,7 @@ const CoreContracts = {
         description: 'System log entry',
 
         schema: object({
-            type: enums(['click', 'navigation', 'error', 'security', 'css-change', 'event', 'promise-error']),
+            type: enums(['click', 'navigation', 'error', 'security', 'css-change', 'event', 'promise-error', 'contract-violation']),
             data: object(),
             sessionId: string(),
             timestamp: number()
@@ -881,47 +942,6 @@ const CoreContracts = {
         })
     },
 
-    // LLM: Intent to classify text
-    INTENT_CLASSIFY_TEXT: {
-        version: 1,
-        type: 'intent',
-        owner: 'ui-service',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'public',
-        description: 'Request to classify text using LLM',
-
-        security: {
-            rateLimits: {
-                perUser: { requests: 5, window: 60000 }  // 5 per minute (LLM is expensive)
-            }
-        },
-
-        schema: object({
-            text: size(string(), 1, 16000),  // Max 16K chars (~4K tokens)
-            userId: string()
-        })
-    },
-
-    // LLM: Text classification result
-    TEXT_CLASSIFIED: {
-        version: 1,
-        type: 'event',
-        owner: 'llm-service',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'public',
-        description: 'Text classification result from LLM',
-
-        schema: object({
-            userId: string(),
-            category: enums(['task', 'idea', 'reference']),
-            confidence: number(),
-            tags: optional(object()),
-            timestamp: number()
-        })
-    },
-
     // Security violation event (no validation to avoid infinite loop)
     SECURITY_VIOLATION: contract({
         version: 1,
@@ -931,6 +951,18 @@ const CoreContracts = {
         stability: 'stable',
         compliance: 'internal',
         description: 'Security violation detected',
+
+        // NO SCHEMA - validated in EventBus directly to avoid infinite loop
+    }),
+
+    CONTRACT_VIOLATION: contract({
+        version: 1,
+        type: 'event',
+        owner: 'event-bus',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Contract violation detected during event validation'
 
         // NO SCHEMA - validated in EventBus directly to avoid infinite loop
     }),
@@ -1243,6 +1275,21 @@ const CoreContracts = {
         })
     },
 
+    INTENT_COMMAND_CLOSE: {
+        version: 1,
+        type: 'intent',
+        owner: 'command-ui',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Close command menu',
+
+        schema: object({
+            trigger: string(),
+            timestamp: number()
+        })
+    },
+
     // Command Menu: Search Intent
     INTENT_COMMAND_SEARCH: {
         version: 1,
@@ -1271,8 +1318,28 @@ const CoreContracts = {
 
         schema: object({
             commandId: string(),
-            command: string(), // Action event name
             payload: optional(object()),
+            source: optional(enums(['palette', 'ui', 'ai', 'system'])),
+            timestamp: number()
+        })
+    },
+
+    INTENT_VIEW_RENDER: {
+        version: 1,
+        type: 'intent',
+        owner: 'view-ui',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Render or update a registered safe view capability',
+
+        schema: object({
+            viewId: string(),
+            target: optional(string()),
+            props: optional(object()),
+            state: optional(object()),
+            mode: optional(enums(['replace', 'append', 'prepend', 'update', 'remove'])),
+            source: optional(enums(['palette', 'ui', 'ai', 'system'])),
             timestamp: number()
         })
     },
@@ -1323,13 +1390,10 @@ const CoreContracts = {
             query: string(),
             results: array(object({
                 id: string(),
-                label: string(),
-                type: enums(['navigation', 'action', 'search', 'setting']),
-                icon: optional(string()),
+                title: string(),
+                group: optional(string()),
                 shortcut: optional(string()),
-                action: string(),
-                payload: optional(object()),
-                tags: optional(array(string()))
+                score: optional(number())
             })),
             timestamp: number()
         })
@@ -1349,28 +1413,43 @@ const CoreContracts = {
             commandId: string(),
             command: string(),
             payload: optional(object()),
+            source: optional(enums(['palette', 'ui', 'ai', 'system'])),
             timestamp: number()
         })
     },
 
-    // Command Menu: Command Registered Event (for dynamic registration)
-    COMMAND_REGISTERED: {
+    VIEW_RENDERED: {
         version: 1,
         type: 'event',
-        owner: 'command-ui',
+        owner: 'view-registry',
         lifecycle: 'active',
         stability: 'stable',
         compliance: 'public',
-        description: 'New command was registered',
+        description: 'Registered safe view capability rendered successfully',
 
         schema: object({
-            id: string(),
-            label: string(),
-            type: enums(['navigation', 'action', 'search', 'setting']),
-            icon: optional(string()),
-            shortcut: optional(string()),
-            action: string(),
-            payload: optional(object()),
+            viewId: string(),
+            target: string(),
+            mode: enums(['replace', 'append', 'prepend', 'update', 'remove']),
+            source: optional(enums(['palette', 'ui', 'ai', 'system'])),
+            timestamp: number()
+        })
+    },
+
+    VIEW_RENDER_FAILED: {
+        version: 1,
+        type: 'event',
+        owner: 'view-registry',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Registered safe view capability failed validation or execution',
+
+        schema: object({
+            viewId: string(),
+            target: optional(string()),
+            error: string(),
+            source: optional(enums(['palette', 'ui', 'ai', 'system'])),
             timestamp: number()
         })
     },
@@ -1403,7 +1482,8 @@ const CoreContracts = {
                 routes: number(),
                 navigation: number(),
                 panels: number(),
-                adapters: number()
+                adapters: number(),
+                views: number()
             })
         })
     },
@@ -1436,7 +1516,8 @@ const CoreContracts = {
                 routes: number(),
                 navigation: number(),
                 panels: number(),
-                adapters: number()
+                adapters: number(),
+                views: number()
             })
         })
     },
@@ -1451,7 +1532,7 @@ const CoreContracts = {
         description: 'Module contribution registered into a runtime registry',
 
         schema: object({
-            registry: enums(['commands', 'routes', 'navigation', 'panels', 'adapters']),
+            registry: enums(['commands', 'routes', 'navigation', 'panels', 'adapters', 'views']),
             moduleId: string(),
             contributionId: string(),
             timestamp: number()
@@ -1468,7 +1549,7 @@ const CoreContracts = {
         description: 'Module contribution removed from a runtime registry',
 
         schema: object({
-            registry: enums(['commands', 'routes', 'navigation', 'panels', 'adapters']),
+            registry: enums(['commands', 'routes', 'navigation', 'panels', 'adapters', 'views']),
             moduleId: string(),
             contributionId: string(),
             timestamp: number()
@@ -1510,6 +1591,7 @@ export const Contracts = {
     ...CheckoutContracts,
     ...SearchContracts,
     ...AIContracts,
+
     ...ExampleModuleContracts,
     ...StaticRenderContracts,
     ...AnalyticsContracts,

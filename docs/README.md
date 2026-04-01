@@ -2,102 +2,69 @@
 
 Welcome to the CSMA (Client-Side Microservices Architecture) Kit documentation.
 
+The current template keeps the default UI surface intentionally small: Button, Badge, and Toast ship as starter components, while richer behavior should live in modules under `src/modules/`.
+
 ---
 
 ## Quick Start
 
-**New to CSMA?** Start here:
-1. [CSMA in a Nutshell](guides/csma-in-a-nutshell.md) - 5-minute overview of 6 rules and 3 patterns
-2. [Building Components](guides/building-components.md) - Step-by-step guide with patterns and examples
-3. [For LLMs](guides/for-llms.md) - AI coding workflows, rules, and prompts
-4. [Complete CSMA Guide](complete-csma-guide.md) - Deep dive into the architecture
+```bash
+git clone <your-repo-url> csma && cd csma
+npm install
+npm run dev              # http://localhost:5173 with HMR
+npm run test             # vitest unit tests
+bun run generate-tokens  # regenerate CSS from design-tokens.json
+```
+
+See `README.md` in the project root for full setup details.
 
 ---
 
-## Documentation Structure
+## Skills (for AI Agents)
 
-### 📘 Core Guides
-Consolidated documentation for learning CSMA:
+- **[Architecture](csma-architecture/SKILL.md)** - 6 rules, EventBus, contracts, tokens
+- **[Patterns](csma-patterns/SKILL.md)** - Composite UI section composition
+- **[Services](csma-service-pattern/SKILL.md)** - Service templates and state management
+- **[Runtime](csma-runtime/SKILL.md)** - Bootstrap lifecycle, feature flags, registries, module catalog
+- **[Testing](csma-testing/SKILL.md)** - Test conventions and patterns
+- **[Security](csma-security/SKILL.md)** - 6-layer security model
 
-- **[CSMA in a Nutshell](guides/csma-in-a-nutshell.md)** - 6 rules, 3 patterns, quick overview
-- **[Building Components](guides/building-components.md)** - Step-by-step with patterns and examples
-- **[Building Modules](guides/building-modules.md)** - Module manifests, registries, and unload-safe services
-- **[For LLMs](guides/for-llms.md)** - AI coding prompts, workflows, and rules
-- **Validation** - Contract validation with CSMA validation library
-- **Web Analytics** - Log accumulator, consent gating, and telemetry patterns
+## Examples
 
-### 🔒 Security
-Security-first architecture and best practices:
+- **Todo App** (`examples/todo-app/`) - Full CRUD app demonstrating EventBus, Contracts, and CSS-driven reactivity
 
-- **[Security Map](security/security-map.md)** - AI coding guidelines and security checklist
-- **[Roadmap](roadmap/index.md)** - CSMA planning and future work
+## Platforms
 
-### 🚀 Advanced
-Optional advanced patterns for production apps:
-
-- **[Contract Governance](advanced/contract-governance.md)** - JSON manifests for 50+ contracts
-- **[LLM Instructor](advanced/llm-instructor.md)** - Structured LLM output with instructor
-
-### 🔧 API Reference
-Service-specific documentation:
-
-- **[Core Services](api/core-services.md)** - CacheManager, DataAggregator, APIWrapper
-- **[LLM Service](api/llm-service.md)** - AI integration patterns
-
-### 📚 Reference
-- **[Complete CSMA Guide](complete-csma-guide.md)** - Full architecture reference
+- **Capacitor** - See `platforms/mobile-capacitor/DEPLOYMENT.md`
+- **Neutralino** - See `platforms/desktop-neutralino/DEPLOYMENT.md`
 
 ---
 
-## Quick Links
+## Project Structure
+```
+src/
+├── main.js                      # App entry point
+├── config.js                    # Feature flags
+├── bootstrap/                   # Runtime creation, features, theme
+├── css/
+│   ├── main.css                 # CSS entry point
+│   ├── generated/tokens.css     # Auto-generated design tokens
+│   ├── theme.css                # Thin legacy file
+│   └── foundation/              # Utilities, motion, print, hardening
+├── runtime/
+│   ├── EventBus.js              # Publish/subscribe event system
+│   ├── Contracts.js             # Event/intent schemas
+│   ├── ModuleManager.js         # Module lifecycle
+│   └── validation/              # Payload validation
+├── ui/
+│   ├── init.js                  # Component initialization
+│   └── components/
+│       ├── button/              # Type I starter (CSS only)
+│       ├── badge/               # Type I starter (CSS only)
+│       └── toast/               # Type II starter (CSS + JS)
+├── modules/                     # Feature modules (ai, modal-system, checkout, etc.)
+└── services/                    # Core services (ExampleService, FileUploadService, PlatformService)
 
-**Getting Started**:
-- [Installation](guides/getting-started.md#installation)
-- [Project Structure](guides/getting-started.md#project-structure)
-- [First Steps](guides/getting-started.md#your-first-csma-app)
-
-**Core Concepts**:
-- [EventBus](complete-csma-guide.md#eventbus)
-- [ServiceManager](complete-csma-guide.md#servicemanager)
-- [Contracts](guides/validation.md)
-- [Building Modules](guides/building-modules.md)
-- [Security Layers](security/security-map.md)
-
-**Modules**:
-- [ThreadManager](guides/features.md#threadmanager)
-- [ModuleManager](guides/features.md#modulemanager)
-- [Storage](guides/features.md#storage)
-- [Router](guides/features.md#router)
-
----
-
-## Documentation Philosophy
-
-This kit follows **progressive disclosure**:
-1. **README.md** - 30-second overview
-2. **Getting Started** - 5-minute setup
-3. **Features** - 15-minute tour
-4. **Complete Guide** - Full reference
-5. **Advanced** - Production patterns
-
-Start simple, go deep when needed.
-
----
-
-## Contributing to Docs
-
-When adding documentation:
-- Keep it **concise** - respect the reader's time
-- Use **examples** - show, don't just tell
-- Follow **progressive disclosure** - simple first, details later
-- **Test code samples** - all examples should work
-
----
-
-## Questions?
-
-- Check [Getting Started](guides/getting-started.md)
-- Read [Complete CSMA Guide](complete-csma-guide.md)  
-- Review [Features](guides/features.md)
-
-For advanced topics, see the **Advanced** section above.
+design-tokens.json               # DTCG token source of truth
+scripts/generate-tokens.js       # JSON -> CSS pipeline (requires Bun)
+```

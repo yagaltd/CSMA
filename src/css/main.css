@@ -1,20 +1,31 @@
 /**
  * CSMA Main CSS Entry Point
  * Imports all styles in the correct dependency order
+ *
+ * Token Architecture:
+ * - design-tokens.json → Single source of truth
+ * - generated/tokens.css → Auto-generated from JSON
+ * - theme.css → Legacy fallback (will be phased out)
  */
 
-/* 0. CSMA Theme Contract + utilities */
+/* 0. Generated Design Tokens */
+@import './generated/tokens.css';
+
+/* 1. CSMA Theme Contract + utilities */
 @import './theme.css';
 @import './foundation/utilities.css';
+@import './foundation/motion.css';
+@import './foundation/hardening.css';
 
+/* 1. Print styles */
+@import './foundation/print.css';
 
 /* 2. Base Styles - Typography, reset, utilities */
 @import './base.css';
 @import './touch.css';
 
-/* 3. Component Library - All UI components (new structure) */
+/* 3. Component Library - Starter components */
 @import '../ui/components/index.css';
-@import '../ui/patterns/index.css';
 
 /* 4. Application-specific styles (if any) */
 /* Add custom app styles below this line */

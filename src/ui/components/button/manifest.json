@@ -20,5 +20,88 @@
   },
   "metadata": {
     "description": "Pure CSS button component with CSS custom properties for theming"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "button",
+    "title": "Button",
+    "category": "Interactive",
+    "preferred": true,
+    "summary": "Interactive button elements with variants",
+    "template": "<button class=\"button\">Default</button>\n<button class=\"button\" data-variant=\"primary\">Primary</button>\n<button class=\"button\" data-variant=\"secondary\">Secondary</button>\n<button class=\"button\" data-variant=\"ghost\">Ghost</button>\n<button class=\"button\" data-variant=\"destructive\">Destructive</button>",
+    "propsSchema": {
+      "align": "string",
+      "alt": "string",
+      "body": "string",
+      "description": "string",
+      "helper": "string",
+      "href": "string",
+      "label": "string",
+      "name": "string",
+      "placeholder": "string",
+      "shape": "string",
+      "size": "string",
+      "src": "string",
+      "text": "string",
+      "theme": "string",
+      "title": "string",
+      "tone": "string",
+      "value": "string",
+      "variant": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "render": {
+      "kind": "button",
+      "template": "<button class=\"button\">Default</button>\n<button class=\"button\" data-variant=\"primary\">Primary</button>\n<button class=\"button\" data-variant=\"secondary\">Secondary</button>\n<button class=\"button\" data-variant=\"ghost\">Ghost</button>\n<button class=\"button\" data-variant=\"destructive\">Destructive</button>"
+    },
+    "behavior": {
+      "role": "node",
+      "events": [
+        "click"
+      ],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": "button, a, :root"
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": true,
+      "supportsSize": true,
+      "supportsTone": true
+    },
+    "textTargets": {
+      "title": [
+        ".card-title",
+        ".navbar-title",
+        ".accordion-header span",
+        "h1",
+        "h2",
+        "h3",
+        "label"
+      ],
+      "description": [
+        ".card-description",
+        ".card-text",
+        ".input-helper",
+        ".select-helper",
+        "p"
+      ],
+      "label": [
+        "button",
+        ".button",
+        ".badge",
+        ".accordion-trigger span",
+        ".tabs-trigger",
+        ".navbar-link"
+      ]
+    }
   }
 }

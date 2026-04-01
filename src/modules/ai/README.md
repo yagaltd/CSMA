@@ -1,97 +1,66 @@
-# CSMA AI Module (v1.21)
+# CSMA AI Module
 
 ## Overview
 
-Unified AI client with multi-provider support (cloud APIs + local browser models), automatic fallback, and capabilities-based routing.
+Frontend AI orchestration for CSMA.
 
-**Status**: Skeleton - Ready for implementation  
-**Bundle Impact**: +12KB (see enhancement-plan.md 6.8)  
-**Priority**: HIGH  
+This module owns:
+- frontend chat/session orchestration
+- generation and streaming lifecycle
+- provider/backend transport abstraction
+- tool registration and execution telemetry
+
+This module does **not** own CSMA-specific UI capability validation. That belongs to `src/modules/ai-ui/`.
 
 ## Architecture
 
 ```
 ai/
-├── index.js                      # Main export: createAIClient()
-├── providers/
-│   ├── AIProvider.js            # Abstract base class
-│   ├── stubs/
-│   │   ├── GeminiProvider.js    # Cloud - to be adapted from voice-note-app
-│   │   └── TransformersProvider.js # Local - to be implemented
+├── index.js
 ├── client/
-│   ├── AIClient.js              # Provider orchestrator
-│   └── Chat.js                  # Chat session (future)
-└── README.md                    # This file
+│   ├── AIClient.js
+│   ├── ChatSession.js
+│   └── ToolRegistry.js
+├── providers/
+│   ├── AIProvider.js
+│   ├── SSMAGatewayProvider.js
+│   ├── GeminiProvider.js
+│   └── TransformersProvider.js
+└── README.md
 ```
 
-## Quick Reference
+## Recommended Role
 
-**See enhancement-plan.md section 6.8 for:**
-- Complete API documentation
-- Provider implementation details
-- EventBus contracts
-- Integration examples
-- Use cases
+Default deployment split:
+- frontend chat/UI calls `ai`
+- `ai` sends normalized requests to SSMA
+- SSMA talks to cloud or local models
+- SSMA returns or streams results back to `ai`
+- `ai-ui` optionally validates model output into CSMA command/view operations
 
-## Implementation Status
+`ai` can still support direct providers where needed, but the primary CSMA + SSMA integration path is the SSMA-backed provider.
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| AIClient | ⏳ Stub | Basic structure created |
-| AIProvider (base) | ✅ Complete | Abstract class ready |
-| GeminiProvider | ⏳ Stub | Adapt from voice-note-app/src/providers/GeminiProvider.js |
-| TransformersProvider | ❌ Not started | Use @huggingface/transformers |
-| EventBus integration | ❌ Not started | Replace console.log with eventBus.publish |
-| Streaming | ❌ Not started | Add to GeminiProvider & AIClient |
-| Chat history | ❌ Not started | Create Chat.js client |
-| Tools system | ❌ Not started | TanStack-inspired function calling |
+## Current Pieces
 
-## Next Steps
+- `AIClient` coordinates providers and tool execution
+- `ChatSession` manages multi-turn history
+- `SSMAGatewayProvider` connects the frontend to SSMA's public query boundary
+- `ToolRegistry` handles frontend tool registration/execution
 
-1. **Adapt GeminiProvider**: Copy from voice-note-app, add EventBus events
-2. **Implement TransformersProvider**: Use @huggingface/transformers for local models
-3. **Add streaming**: Support real-time token streaming
-4. **Create Chat.js**: Multi-turn conversation management
-5. **Add tools**: Type-safe function calling system
-6. **Test with voice-note-app**: Verify transcription/classification works
+## Related Module
 
-## Provider Priority
+- `src/modules/ai-ui/` exports CSMA command/view capabilities and validates AI UI actions before execution
 
-Local providers (priority 100) are tried first:
-- Transformers.js (browser models)
-- Ollama (local server)
+## Example Configuration
 
-Cloud providers (priority 50) are fallback:
-- Gemini
-- OpenAI
-- Anthropic
-
-## Example Usage
-
-```javascript
-import { createAIClient } from './modules/ai/index.js';
-
-const ai = createAIClient(eventBus, {
-  providers: {
-    gemini: { apiKey: 'AIza...' },
-    transformers: { enabled: true }
+```js
+window.csma.config = {
+  ai: {
+    providers: {
+      ssma: {
+        queryName: 'ai.generate'
+      }
+    }
   }
-});
-
-const response = await ai.generateText({
-  prompt: 'Explain CSS Grid',
-  stream: true
-});
+};
 ```
-
-## Bundle Breakdown
-
-- Base AI module: 5KB
-- GeminiProvider: 3KB
-- Tool system: 3KB
-- Security: 1KB
-- **Total: 12KB**
-
----
-
-**For detailed documentation, see enhancement-plan.md section 6.8**

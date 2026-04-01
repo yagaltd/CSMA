@@ -13,7 +13,7 @@
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-medium);
   font-size: var(--button-font-size);
-  line-height: var(--line-height-tight);
+  line-height: 1;
   color: var(--primary-foreground);
   background: var(--primary);
   border-color: transparent;
@@ -135,13 +135,13 @@
 
 /* Sizes */
 .button[data-size="sm"] {
-  padding: var(--space-xs) var(--space-lg);
-  font-size: var(--font-size-xs);
-  min-height: 2.25rem;
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  min-height: 2rem;
 }
 
 .button[data-size="lg"] {
-  padding: var(--space-md) var(--space-2xl);
+  padding: var(--space-sm) var(--space-xl);
   font-size: var(--font-size-base);
   min-height: 2.75rem;
 }
@@ -154,8 +154,8 @@
 }
 
 .button[data-size="sm"][data-shape="icon"] {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
 }
 
 .button[data-size="lg"][data-shape="icon"] {
@@ -182,4 +182,36 @@
 @keyframes fx-spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* Text overflow handling */
+.button {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+
+  .button[data-loading="true"]::after {
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .button {
+    border-width: 2px;
+  }
+
+  .button[data-variant="ghost"],
+  .button[data-variant="text"],
+  .button[data-variant="link"] {
+    border-width: 1px;
+    border-style: dashed;
+  }
 }

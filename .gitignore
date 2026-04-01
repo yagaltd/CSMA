@@ -10,6 +10,8 @@ platforms/mobile-capacitor/www/assets/
 *.swo
 *~
 roadmap/
+.frontend-design-system/
+.design-research/
 
 # Environment variables (CRITICAL - Never commit!)
 .env
@@ -48,6 +50,7 @@ Desktop.ini
 .csma/
 
 #files
+csma-lang-consideration.md
 CSMA_ui_analysis.md
 csma-roadmap-css.md
 CSMA_extension_roadmap.md
@@ -61,3 +64,4 @@ playwright.config.js
 playwright.config.local.js
 playwright.config.local.mjs
 playwright.config.local.cjs
+examples/ai-ui-playground/config/ai-provider.local.js

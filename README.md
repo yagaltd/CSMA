@@ -2,20 +2,33 @@
 
 A robust, modules-first, framework-free application template built on the CSMA (Client-Side Microservices Architecture) pattern.
 
-CSMA is designed for teams who want a secure, reactive, portable frontend runtime without React, Astro, or Svelte. This template includes hardened lifecycle ownership, contract-validated runtime boundaries, modular extension points, and a growing vanilla JS component system for web, mobile, and desktop apps.
+CSMA is designed for teams who want a secure, reactive, portable frontend runtime without React, Astro, or Svelte. This template includes hardened lifecycle ownership, contract-validated runtime boundaries, modular extension points, and a deliberately small vanilla JS starter surface for web, mobile, and desktop apps.
 
 ## Features
 
-✅ **Zero frameworks** - Pure vanilla JavaScript<br>
-✅ **17KB gzipped** - Minimal bundle size<br>
-✅ **CSS-class reactivity** - 10x faster than manual DOM manipulation<br>
-✅ **Zero-trust security** - CSP, contracts, sanitization, honeypot, rate limiting<br>
-✅ **Type-safe EventBus** - Contract-validated pub/sub<br>
-✅ **Lifecycle-safe runtime** - Explicit cleanup, unload-safe modules, leak-resistant services<br>
-✅ **Modules-first extension model** - Commands, routes, navigation, panels, adapters<br>
-✅ **Telemetry/Analytics** - LogAccumulator with CSS tracking<br>
-✅ **SEO-ready** - MetaManager for meta tags<br>
-✅ **Dark mode** - Theme switching via CSS custom properties<br>
+- **Zero frameworks** - Pure vanilla JavaScript
+- **17KB gzipped** - Minimal bundle size
+- **CSS-class reactivity** - 10x faster than manual DOM manipulation
+- **Zero-trust security** - CSP, contracts, sanitization, honeypot, rate limiting
+- **Type-safe EventBus** - Contract-validated pub/sub
+- **Lifecycle-safe runtime** - Explicit cleanup, unload-safe modules, leak-resistant services
+- **Modules-first extension model** - Commands, routes, navigation, panels, adapters, views
+- **Observability split** - `LogAccumulator` for local diagnostics, analytics module for outbound telemetry and website analytics
+- **SEO-ready** - MetaManager for meta tags
+- **Dark mode** - Theme switching via CSS custom properties
+
+## Quick Start
+
+```bash
+git clone <your-repo-url> csma && cd csma
+npm install
+npm run dev              # http://localhost:5173 with HMR
+npm run build:prod       # production build to dist/
+npm run test             # vitest unit tests
+bun run generate-tokens  # regenerate CSS from design-tokens.json
+```
+
+Entry point: `src/main.js` boots the runtime and calls `initUI(eventBus)` from `src/ui/init.js`.
 
 ## Template Usage
 
@@ -25,12 +38,21 @@ If you prefer guided setup with selective template extraction, use:
 
 - https://github.com/yagaltd/csma-ssma-cli/
 
-## SSMA Gateway Middleware (JavaScript + Rust)
+## Starting Paths
+
+CSMA supports two practical frontend entry paths:
+
+- **starter** - lean scaffold for smaller apps, uses lightweight seam files for `src/main.js` and `src/ui/init.js`. Intended for CLI-generated projects where you want a narrower default surface.
+- **full** - preserves the full CSMA runtime/bootstrap structure from this repo. Intended when you want to start from the complete app shape and trim later only if needed.
+
+For gateway middleware, SSMA remains an architecture choice in the CLI, not a CSMA mode. Choosing `csma-ssma` adds SSMA exactly as before.
+
+## SSMA Gateway Middleware
 
 For CSMA projects that need gateway middleware, see **SSMA**:
 
 - Repository: https://github.com/yagaltd/SSMA
-- Includes gateway middleware implementations in **JavaScript** and **Rust**.
+- Current runtime is **Rust**. The older JS gateway is archived in the SSMA repo.
 
 Use this CSMA template for the client/app side, and SSMA when you need gateway/runtime integration.
 
@@ -38,7 +60,8 @@ Use this CSMA template for the client/app side, and SSMA when you need gateway/r
 
 - CSMA runtime (`src/runtime`)
 - Modular services and contracts (`src/modules`, `src/services`)
-- Modules-first extension model with contribution registries (`commandRegistry`, `routeRegistry`, `navigationRegistry`, `panelRegistry`, `adapterRegistry`)
+- Modules-first extension model with contribution registries (`commandRegistry`, `routeRegistry`, `navigationRegistry`, `panelRegistry`, `adapterRegistry`, `viewRegistry`)
+- Local diagnostics via `src/runtime/LogAccumulator.js` and outbound telemetry via `src/modules/analytics/`
 - CSMA-compliant UI components and patterns (`src/ui`)
 - Security and validation primitives
 - Multi-target packaging hooks (web, Capacitor, Neutralino)
@@ -46,18 +69,21 @@ Use this CSMA template for the client/app side, and SSMA when you need gateway/r
 
 ## UI Components
 
-This template includes a growing set of CSMA-compliant vanilla JavaScript UI components built around:
+This template intentionally ships a small set of CSMA-compliant vanilla JavaScript UI components built around:
 - CSS-defined state
 - EventBus-driven interaction
 - contract-validated runtime behavior
 - lifecycle-safe initialization and cleanup
 
-The component library lives under `src/ui/components/`.
+The component library lives under `src/ui/components/`. Three starter components ship by default:
 
-To explore the available components and interaction patterns, use the showcase page:
-- `src/ui/components/index.html`
+| Component | Type | Location |
+|-----------|------|----------|
+| Button | Type I (pure CSS) | `src/ui/components/button/` |
+| Badge | Type I (pure CSS) | `src/ui/components/badge/` |
+| Toast | Type II (EventBus) | `src/ui/components/toast/` |
 
-The showcase is intended as the live reference for component behavior, structure, and styling while the standalone `*.demo.html` files remain useful as isolated per-component smoke fixtures.
+Each has a standalone `*.demo.html` for isolated testing. Additional UI should usually be introduced as modules or patterns instead of rebuilding a large generic component catalog in this repo.
 
 ## Extension Model
 
@@ -66,8 +92,13 @@ CSMA is **modules-first**.
 The supported extension story in this template is:
 - trusted modules under `src/modules/*`
 - `Contracts` for payload validation and security
-- contribution registries for commands, routes, navigation, panels, and adapters
+- contribution registries for commands, routes, navigation, panels, adapters, and views
 - lifecycle-safe load/unload through `ModuleManager`, `ServiceManager`, and `destroyApp()`
+
+AI work follows the same rule:
+- `src/modules/ai/` is the frontend orchestration layer for AI requests and transport
+- `src/modules/ai-ui/` is the CSMA-specific layer that exports safe command/view capabilities and validates AI UI actions
+- AI must operate through runtime registries, not raw HTML, arbitrary selectors, or ad hoc DOM mutation
 
 CSMA does **not** currently treat plugins as a core requirement. If you need to add app features, integrations, or backend adapters, start with a module.
 
@@ -75,29 +106,22 @@ CSMA does **not** currently treat plugins as a core requirement. If you need to 
 
 - Canonical module shape: `manifest`, `services`, optional `contracts`, optional `manifest.contributes`
 - Use `src/modules/example-module/` as the copy/adapt scaffold
-- See `docs/guides/building-modules.md` for the manifest and registry contract
-
-## AI System Map
-
-`ai-system-map.json` is a machine-readable map of the runtime/modules for automation and AI coding agents. 
-
-Reference: `docs/operations/ai-system-map.md`
+- See `docs/csma-runtime/SKILL.md` for the manifest and registry contracts
 
 ## AI Agent Guidance
 
 If you use AI coding agents in this repo:
 - `AGENTS.md` is the human-readable agent guide for architecture, rules, and extension patterns
 - `ai-system-map.json` is the machine-readable repo map for fast orientation
-- `skills/` contains project-specific guidance for CSMA architecture, services, and UI components
+- `docs/csma-*/SKILL.md` contains project-specific skills for CSMA architecture, services, patterns, runtime, observability, security, and testing
 
 ## Docs
 
 - Main docs index: `docs/README.md`
-- Getting started: `docs/guides/getting-started.md`
-- CSMA overview: `docs/guides/csma-in-a-nutshell.md`
-- Module authoring: `docs/guides/building-modules.md`
-- Full guide: `docs/complete-csma-guide.md`
-- Template catalog details: `templates/README.md`
+- AI skills: `docs/csma-architecture/SKILL.md`, `docs/csma-runtime/SKILL.md`, `docs/csma-observability/SKILL.md`, `docs/csma-patterns/SKILL.md`, `docs/csma-service-pattern/SKILL.md`, `docs/csma-security/SKILL.md`, `docs/csma-testing/SKILL.md`
+- Examples: `examples/todo-app/`
+- Platforms: `platforms/mobile-capacitor/DEPLOYMENT.md`, `platforms/desktop-neutralino/DEPLOYMENT.md`
+- Template catalog: `templates/README.md`
 
 ## Acknowledgements
 

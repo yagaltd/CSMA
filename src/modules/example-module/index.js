@@ -31,6 +31,9 @@ export const manifest = {
                 handlerService: 'ExampleModuleService',
                 handlerMethod: 'runHelloCommand',
                 group: 'examples',
+                payloadSchema: {
+                    message: 'string'
+                },
                 order: 10
             }
         ],
@@ -65,6 +68,25 @@ export const manifest = {
                 type: 'demo',
                 serviceName: 'ExampleModuleService',
                 capabilities: ['hello']
+            }
+        ],
+        views: [
+            {
+                id: 'example-module.status-card',
+                title: 'Example Status Card',
+                target: '#example-module-panel',
+                renderService: 'ExampleModuleService',
+                renderMethod: 'renderStatusCard',
+                mode: 'replace',
+                allowedTargets: ['#example-module-panel', '#example-output'],
+                propsSchema: {
+                    title: 'string',
+                    message: 'string'
+                },
+                requiredProps: ['title', 'message'],
+                stateSchema: {
+                    tone: 'string'
+                }
             }
         ]
     }

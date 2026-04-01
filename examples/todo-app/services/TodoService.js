@@ -197,8 +197,8 @@ export function createTodoService(eventBus, options = {}) {
   function track(message) {
     activity = [{ message, timestamp: Date.now() }, ...activity].slice(0, 6);
     
-    if (typeof window !== 'undefined' && window.csma?.logAccumulator) {
-      window.csma.logAccumulator.track('Todo Action', {
+    if (typeof window !== 'undefined' && window.csma?.analytics) {
+      window.csma.analytics.track('Todo Action', {
         message,
         action: 'todo-crud'
       });

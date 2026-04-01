@@ -4,8 +4,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2xs);
-  padding: 0 var(--space-sm);
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
   min-height: 1.5rem;
   border-radius: var(--radius-full);
   font-size: var(--font-size-xs);
@@ -133,4 +133,19 @@
   height: 0.35rem;
   border-radius: 999px;
   background: currentColor;
+}
+
+/* Text overflow handling */
+.badge {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .badge[data-variant="outline"] {
+    border-width: 2px;
+  }
 }

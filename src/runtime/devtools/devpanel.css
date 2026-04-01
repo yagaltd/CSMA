@@ -8,16 +8,16 @@
   color: var(--foreground);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg) 0 0 0;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  box-shadow: var(--shadow-md);
   z-index: 999999;
   font-family: var(--font-family-mono, 'JetBrains Mono', monospace);
   font-size: 12px;
+  overflow: hidden;
   transition: height var(--transition-normal);
 }
 
 .csma-devtools.collapsed {
   height: 32px;
-  overflow: hidden;
 }
 
 .devtools-toggle {

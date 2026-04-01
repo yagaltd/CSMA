@@ -11,6 +11,15 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '..');
 
+async function exists(targetPath) {
+    try {
+        await fs.access(targetPath);
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 async function scanDirectory(dir, baseDir = dir) {
     const entries = await fs.readdir(dir, { withFileTypes: true });
     const structure = {};
@@ -76,6 +85,42 @@ async function parseContracts() {
     }
 }
 
+async function parseSkills() {
+    const docsDir = path.join(projectRoot, 'docs');
+    try {
+        const entries = await fs.readdir(docsDir, { withFileTypes: true });
+        const skills = [];
+
+        for (const entry of entries) {
+            if (!entry.isDirectory() || !entry.name.startsWith('csma-')) {
+                continue;
+            }
+
+            const skillPath = path.join(docsDir, entry.name, 'SKILL.md');
+            if (!await exists(skillPath)) {
+                continue;
+            }
+
+            const content = await fs.readFile(skillPath, 'utf-8');
+            const name = content.match(/^name:\s*"?(.*?)"?$/m)?.[1] || entry.name;
+            const description = content.match(/^description:\s*>-\s*$/m)
+                ? `${entry.name} skill`
+                : (content.match(/^description:\s*"?(.*?)"?$/m)?.[1] || null);
+
+            skills.push({
+                id: entry.name,
+                name,
+                path: `docs/${entry.name}/SKILL.md`,
+                description
+            });
+        }
+
+        return skills.sort((a, b) => a.id.localeCompare(b.id));
+    } catch (error) {
+        return [];
+    }
+}
+
 async function getPackageInfo() {
     try {
         const pkgPath = path.join(projectRoot, 'package.json');
@@ -92,10 +137,11 @@ async function generateMap() {
     const structure = await scanDirectory(path.join(projectRoot, 'src'));
     const agents = await parseAgents();
     const contracts = await parseContracts();
+    const skills = await parseSkills();
     const pkg = await getPackageInfo();
 
     const aiSystemMap = {
-        version: '1.0',
+        version: '1.1',
         generated: new Date().toISOString(),
 
         // Project info
@@ -118,6 +164,52 @@ async function generateMap() {
         runtime: {
             core: ['EventBus', 'ServiceManager', 'Validation', 'Contracts'],
             optional: ['Router', 'Storage', 'I18n', 'LogAccumulator', 'MetaManager'],
+            observability: {
+                localDiagnostics: {
+                    owner: 'LogAccumulator',
+                    files: [
+                        'src/runtime/LogAccumulator.js',
+                        'src/runtime/ErrorBoundary.js',
+                        'src/runtime/diagnosticSnapshot.js',
+                        'src/runtime/devtools/DevPanel.js'
+                    ],
+                    responsibilities: [
+                        'local error and security logging',
+                        'contract-violation capture',
+                        'error boundary integration',
+                        'diagnostic snapshot export'
+                    ]
+                },
+                outboundTelemetry: {
+                    owner: 'AnalyticsService',
+                    files: [
+                        'src/modules/analytics/services/AnalyticsService.js',
+                        'src/modules/analytics/services/EventClassifier.js',
+                        'src/modules/analytics/services/EventAggregator.js',
+                        'src/modules/analytics/services/SecurityScanner.js',
+                        'src/modules/analytics/consent/ConsentService.js',
+                        'src/runtime/seoAudit.js'
+                    ],
+                    responsibilities: [
+                        'page views and custom analytics events',
+                        'classification, aggregation, and batching',
+                        'SEO-enriched telemetry',
+                        'consent-gated outbound delivery'
+                    ]
+                },
+                publicSurface: [
+                    'window.csma.logAccumulator',
+                    'window.csma.analytics',
+                    'window.csma.analyticsConsent',
+                    'window.csma.diagnose()',
+                    'window.csma.seoAudit()'
+                ],
+                rules: [
+                    'LogAccumulator is local diagnostics only',
+                    'AnalyticsService owns outbound telemetry and website analytics',
+                    'Consent gates outbound analytics, not local diagnostics'
+                ]
+            },
             features: {
                 pwa: 'Service Worker + offline support',
                 routing: 'Hash-based SPA routing',
@@ -127,8 +219,53 @@ async function generateMap() {
             }
         },
 
+        observability: {
+            split: {
+                diagnostics: 'src/runtime/LogAccumulator.js',
+                telemetry: 'src/modules/analytics/services/AnalyticsService.js'
+            },
+            consent: {
+                service: 'src/modules/analytics/consent/ConsentService.js',
+                storageKey: 'csma.analyticsConsent.v1',
+                scopes: ['ui_analytics', 'performance', 'error_tracking', 'security']
+            },
+            seo: {
+                audit: 'src/runtime/seoAudit.js',
+                snapshot: 'src/runtime/diagnosticSnapshot.js'
+            },
+            tests: [
+                'tests/log-accumulator.test.js',
+                'tests/error-boundary.test.js',
+                'tests/devpanel.test.js',
+                'tests/diagnostic-snapshot.test.js',
+                'tests/analytics-service.test.js',
+                'tests/analytics-module.test.js',
+                'tests/seo-audit.test.js',
+                'tests/consent-service.test.js',
+                'tests/analytics-consent-ui.test.js'
+            ]
+        },
+
+        integrations: {
+            ssma: {
+                aiProvider: {
+                    file: 'src/modules/ai/providers/SSMAGatewayProvider.js',
+                    defaultQueryBoundary: 'POST /query/ai.generate'
+                },
+                telemetry: {
+                    logsBatchEndpoint: '/logs/batch'
+                },
+                realtime: {
+                    websocket: '/optimistic/ws',
+                    sse: '/optimistic/events'
+                }
+            }
+        },
+
         // File structure
         structure,
+
+        skills,
 
         // Services/Agents
         agents: agents.length > 0 ? agents : ['ExampleService'],
@@ -158,6 +295,7 @@ async function generateMap() {
     console.log('✅ Generated ai-system-map.json');
     console.log(`   Agents: ${agents.length}`);
     console.log(`   Contracts: ${contracts.length}`);
+    console.log(`   Skills: ${skills.length}`);
     console.log(`   Location: ${outputPath}`);
 }
 

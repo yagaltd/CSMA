@@ -5,7 +5,8 @@ const REGISTRY_KEY_BY_CONTRIBUTION = {
     routes: 'routes',
     navigation: 'navigation',
     panels: 'panels',
-    adapters: 'adapters'
+    adapters: 'adapters',
+    views: 'views'
 };
 
 /**

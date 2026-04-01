@@ -4,6 +4,7 @@ export class EventBus {
   constructor() {
     this.listeners = new Map();
     this.contracts = null;
+    this.observers = new Set();
   }
 
   subscribe(eventName, handler) {
@@ -18,6 +19,17 @@ export class EventBus {
       if (index > -1) {
         handlers.splice(index, 1);
       }
+    };
+  }
+
+  observe(handler) {
+    if (typeof handler !== 'function') {
+      return () => {};
+    }
+
+    this.observers.add(handler);
+    return () => {
+      this.observers.delete(handler);
     };
   }
 
@@ -52,18 +64,22 @@ export class EventBus {
         payload = validatedPayload;
       } catch (error) {
         console.error(`[SECURITY] Contract violation for ${eventName}:`, error);
-        this._publishSecurityViolation({
+        const details = {
           type: 'contract-violation',
           eventName,
           error: error.message,
           payload
-        });
+        };
+        this._publishContractViolation(details);
+        this._publishSecurityViolation(details);
         return []; // Silently fail
       }
     }
 
     const handlers = this.listeners.get(eventName) || [];
     const results = [];
+
+    this._notifyObservers(eventName, payload);
 
     for (const handler of handlers) {
       try {
@@ -108,17 +124,21 @@ export class EventBus {
         payload = validatedPayload;
       } catch (error) {
         console.error(`[SECURITY] Contract violation for ${eventName}:`, error);
-        this._publishSecurityViolation({
+        const details = {
           type: 'contract-violation',
           eventName,
           error: error.message,
           payload
-        });
+        };
+        this._publishContractViolation(details);
+        this._publishSecurityViolation(details);
         return;
       }
     }
 
     const handlers = this.listeners.get(eventName) || [];
+
+    this._notifyObservers(eventName, payload);
 
     handlers.forEach(handler => {
       try {
@@ -154,13 +174,39 @@ export class EventBus {
   }
 
   _publishSecurityViolation(details) {
-    // Publish security violation event (no validation to avoid infinite loop)
-    const handlers = this.listeners.get('SECURITY_VIOLATION') || [];
+    this._emitDirect('SECURITY_VIOLATION', details);
+  }
+
+  _publishContractViolation(details) {
+    const eventName = details.eventName || details.event || 'unknown';
+    this._emitDirect('CONTRACT_VIOLATION', {
+      type: 'contract-violation',
+      eventName,
+      event: eventName,
+      error: details.error || 'Contract violation',
+      payload: details.payload,
+      timestamp: Date.now()
+    });
+  }
+
+  _emitDirect(eventName, payload) {
+    this._notifyObservers(eventName, payload);
+    const handlers = this.listeners.get(eventName) || [];
     handlers.forEach(handler => {
       try {
-        handler(details);
+        handler(payload);
       } catch (error) {
-        console.error('[EventBus] Security violation handler error:', error);
+        console.error(`[EventBus] ${eventName} handler error:`, error);
+      }
+    });
+  }
+
+  _notifyObservers(eventName, payload) {
+    this.observers.forEach((observer) => {
+      try {
+        observer(eventName, payload);
+      } catch (error) {
+        console.error(`[EventBus] Observer error for ${eventName}:`, error);
       }
     });
   }

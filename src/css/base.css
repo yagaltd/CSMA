@@ -27,7 +27,10 @@ body {
   color: var(--foreground);
   background: var(--background);
   line-height: var(--line-height-base);
-  font-size: 14px;
+  font-size: var(--font-size-base);
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0.0025em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -38,21 +41,35 @@ body[data-scroll-locked="true"] {
 
 /* Typography Scale */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: var(--font-weight-semibold);
   margin-bottom: 0.5em;
+  text-wrap: balance;
 }
 
-h1 { font-size: 2.25rem; letter-spacing: -0.025em; }
-h2 { font-size: 1.875rem; letter-spacing: -0.025em; }
-h3 { font-size: 1.5rem; letter-spacing: -0.025em; }
-h4 { font-size: 1.25rem; }
-h5 { font-size: 1.125rem; }
-h6 { font-size: 1rem; }
+h1 { font-size: var(--font-size-3xl); line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: var(--font-size-2xl); line-height: 1.25; letter-spacing: -0.015em; }
+h3 { font-size: var(--font-size-xl); line-height: 1.3; letter-spacing: -0.01em; }
+h4 { font-size: var(--font-size-lg); line-height: 1.4; letter-spacing: 0; }
+h5 { font-size: var(--font-size-base); font-weight: var(--font-weight-semibold); text-transform: uppercase; letter-spacing: 0.05em; }
+h6 { font-size: var(--font-size-sm); font-weight: var(--font-weight-semibold); text-transform: uppercase; letter-spacing: 0.05em; }
 
 p {
   margin-bottom: 1rem;
-  line-height: 1.6;
+  line-height: var(--line-height-base);
+  max-inline-size: 68ch;
+}
+
+small,
+.text-sm {
+  line-height: 1.5;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Links */
@@ -67,9 +84,9 @@ a:hover {
 }
 
 /* Utility Classes */
-.text-sm { font-size: 0.875rem; }
-.text-lg { font-size: 1.125rem; }
-.text-xl { font-size: 1.25rem; }
+.text-sm { font-size: var(--font-size-sm); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
 
 .font-medium { font-weight: 500; }
 .font-semibold { font-weight: 600; }

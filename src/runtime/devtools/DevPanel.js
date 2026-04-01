@@ -13,7 +13,6 @@ export class DevPanel {
         this.optimisticEvents = [];
         this.optimisticActions = [];
         this.lifecycle = new LifecycleScope('DevPanel');
-        this.originalPublish = null;
         this.domReadyHandler = this.create.bind(this);
         this.resizeDragCleanup = null;
         this.destroyed = false;
@@ -71,7 +70,8 @@ export class DevPanel {
         toolbar.className = 'devtools-toolbar';
         toolbar.innerHTML = `
             <button id="devtools-clear" class="button devtools-action" data-variant="outline">Clear</button>
-            <button id="devtools-copy" class="button devtools-action" data-variant="outline">Copy Logs</button>
+            <button id="devtools-copy" class="button devtools-action" data-variant="outline">Copy Snapshot</button>
+            <button id="devtools-copy-compact" class="button devtools-action" data-variant="outline">Copy Compact</button>
             <button id="devtools-export" class="button devtools-action" data-variant="outline">Export .txt</button>
             <input type="search" placeholder="Filter..." class="devtools-filter">
         `;
@@ -143,13 +143,19 @@ export class DevPanel {
 
         // Copy button
         this.lifecycle.listen(this.panel.querySelector('#devtools-copy'), 'click', () => {
-            navigator.clipboard.writeText(JSON.stringify(this.logAccumulator.logs, null, 2));
+            const snapshot = this.logAccumulator.diagnosticSnapshot({ mode: 'verbose' });
+            navigator.clipboard.writeText(JSON.stringify(snapshot, null, 2));
+        });
+
+        this.lifecycle.listen(this.panel.querySelector('#devtools-copy-compact'), 'click', () => {
+            const snapshot = this.logAccumulator.diagnosticSnapshot({ mode: 'compact' });
+            navigator.clipboard.writeText(JSON.stringify(snapshot, null, 2));
         });
 
         // Export button
         this.lifecycle.listen(this.panel.querySelector('#devtools-export'), 'click', () => {
             const blob = new Blob([
-                this.logAccumulator.logs.map((entry) => JSON.stringify(entry)).join('\n')
+                JSON.stringify(this.logAccumulator.diagnosticSnapshot({ mode: 'verbose' }), null, 2)
             ], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -215,19 +221,15 @@ export class DevPanel {
     }
 
     subscribeToEvents() {
-        // Subscribe to all events
-        if (this.originalPublish) {
+        if (!this.eventBus?.observe) {
             return;
         }
 
-        this.originalPublish = this.eventBus.publish.bind(this.eventBus);
-        this.eventBus.publish = (eventName, payload) => {
-            // Log event (except LOG_ENTRY to avoid recursion)
+        this.lifecycle.add(this.eventBus.observe((eventName, payload) => {
             if (eventName !== 'LOG_ENTRY') {
                 this.logAccumulator.log('event', { eventName, payload });
             }
-            return this.originalPublish(eventName, payload);
-        };
+        }));
     }
 
     subscribeToOptimisticEvents() {
@@ -514,11 +516,6 @@ export class DevPanel {
         }
 
         this.destroyed = true;
-
-        if (this.originalPublish) {
-            this.eventBus.publish = this.originalPublish;
-            this.originalPublish = null;
-        }
 
         this.resizeDragCleanup?.();
         this.resizeDragCleanup = null;

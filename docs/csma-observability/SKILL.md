@@ -1,0 +1,144 @@
+---
+name: csma-observability
+version: "1.0.0"
+description: >-
+  Expert guidance on CSMA observability after the LogAccumulator refactor.
+  Covers local diagnostics, outbound analytics, diagnostic snapshots, SEO audit,
+  consent gating, and the runtime/public seams between these systems. Use this
+  when changing logging, telemetry, devtools export, or observability tests.
+tags:
+  - observability
+  - logaccumulator
+  - analytics
+  - telemetry
+  - consent
+  - diagnostics
+related_files:
+  - src/runtime/LogAccumulator.js
+  - src/runtime/ErrorBoundary.js
+  - src/runtime/diagnosticSnapshot.js
+  - src/runtime/seoAudit.js
+  - src/runtime/devtools/DevPanel.js
+  - src/modules/analytics/services/AnalyticsService.js
+  - src/modules/analytics/services/EventClassifier.js
+  - src/modules/analytics/services/EventAggregator.js
+  - src/modules/analytics/services/SecurityScanner.js
+  - src/modules/analytics/consent/ConsentService.js
+  - src/modules/analytics/ui/analytics-consent.js
+  - tests/log-accumulator.test.js
+  - tests/analytics-service.test.js
+  - tests/diagnostic-snapshot.test.js
+---
+
+# CSMA Observability Skill
+
+How CSMA handles runtime diagnostics, outbound telemetry, SEO analytics, and
+consent after the LogAccumulator refactor.
+
+## Mental Model
+
+Treat observability as two separate subsystems:
+
+- local diagnostics
+  - owned by `LogAccumulator`
+  - never depends on consent to keep the app debuggable
+  - powers devtools and `window.csma.diagnose()`
+- outbound telemetry / website analytics
+  - owned by `AnalyticsService`
+  - consent-gated
+  - responsible for page views, custom events, classification, batching, and shipping
+
+If a change tries to merge these again, that is usually a regression.
+
+## Ownership Boundaries
+
+### `LogAccumulator`
+
+Owns:
+- local `log`, `logError`, `logAttack`
+- contract-violation capture
+- `ErrorBoundary` integration
+- diagnostic snapshot entry source
+- devtools export source
+
+Does not own:
+- `trackPageView`
+- `track`
+- `flush`
+- user/session analytics state
+- outbound batching
+
+### `AnalyticsService`
+
+Owns:
+- page views and custom analytics events
+- event pipeline classification
+- security scanning of analytics payloads
+- aggregation and batch payload construction
+- immediate send for critical/security telemetry
+- SEO-enriched page-view telemetry
+- consent-aware outbound gating
+
+### Shared runtime seams
+
+- `diagnosticSnapshot` reads local diagnostics and analytics session summaries
+- `seoAudit` is reusable by analytics and runtime inspection
+- `window.csma` exposes `logAccumulator`, `analytics`, `analyticsConsent`, `diagnose()`, and `seoAudit()`
+
+## Pipeline Expectations
+
+Current outbound pipeline:
+
+`raw event -> sanitize -> classify -> security scan -> aggregate/batch/immediate -> flush`
+
+Expected behavior:
+- page views usually aggregate by sanitized path
+- critical runtime/security telemetry bypasses normal batch delay
+- dev noise is discarded in production
+- scanner anomalies may upgrade analytics entries into security telemetry
+
+## Consent Rules
+
+Consent only gates outbound analytics categories.
+
+It does not disable:
+- local error logging
+- local security logging
+- local contract-violation logging
+- devtools diagnostics
+
+Default scopes are split so operational/security diagnostics can remain on while
+UI analytics remains opt-in.
+
+## Diagnostic Snapshot
+
+`LogAccumulator.diagnosticSnapshot()` is the canonical diagnostic export.
+
+Expected snapshot families:
+- local runtime/error/security diagnostics
+- analytics session summaries where relevant
+- SEO issue counts derived from page-view audit data
+
+When changing snapshot shape:
+- update `window.csma.diagnose()`
+- update devpanel export/copy flows
+- update snapshot tests explicitly
+
+## Editing Rules
+
+- do not add outbound analytics methods back onto `LogAccumulator`
+- keep consent logic in the analytics subsystem, not in runtime logging
+- keep `ErrorBoundary` isolated from batching/transport concerns
+- prefer extending `AnalyticsService` pipeline helpers over embedding classification logic in UI code
+
+## Test Focus
+
+When observability changes, verify the right subsystem:
+
+- local diagnostics: `tests/log-accumulator.test.js`
+- boundary behavior: `tests/error-boundary.test.js`
+- outbound analytics: `tests/analytics-service.test.js`
+- snapshot shape: `tests/diagnostic-snapshot.test.js`
+- devtools export/copy behavior: `tests/devpanel.test.js`
+- consent persistence/UI: `tests/consent-service.test.js`, `tests/analytics-consent-ui.test.js`
+- SEO enrichment: `tests/seo-audit.test.js`

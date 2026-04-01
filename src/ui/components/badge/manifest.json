@@ -1,0 +1,106 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "badge",
+    "type": "I",
+    "owner": "ui-service",
+    "lifecycle": "stable",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": [],
+    "components": []
+  },
+  "metadata": {
+    "description": "Inline labels for status, categories, and counts"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "badge",
+    "title": "Badge",
+    "category": "CSS-Only",
+    "preferred": true,
+    "summary": "Inline labels for status, categories, and counts",
+    "template": "<span class=\"badge\" data-variant=\"soft-primary\">Primary</span>\n<span class=\"badge\" data-variant=\"soft-success\">Success</span>\n<span class=\"badge\" data-variant=\"soft-warning\">Warning</span>\n<span class=\"badge\" data-variant=\"soft-danger\">Danger</span>\n<span class=\"badge\" data-variant=\"soft-info\">Info</span>",
+    "propsSchema": {
+      "align": "string",
+      "alt": "string",
+      "body": "string",
+      "description": "string",
+      "helper": "string",
+      "href": "string",
+      "label": "string",
+      "name": "string",
+      "placeholder": "string",
+      "size": "string",
+      "src": "string",
+      "text": "string",
+      "theme": "string",
+      "title": "string",
+      "tone": "string",
+      "value": "string",
+      "variant": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "render": {
+      "kind": "inline",
+      "template": "<span class=\"badge\" data-variant=\"soft-primary\">Primary</span>\n<span class=\"badge\" data-variant=\"soft-success\">Success</span>\n<span class=\"badge\" data-variant=\"soft-warning\">Warning</span>\n<span class=\"badge\" data-variant=\"soft-danger\">Danger</span>\n<span class=\"badge\" data-variant=\"soft-info\">Info</span>"
+    },
+    "behavior": {
+      "role": "node",
+      "events": [
+        "click"
+      ],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ":root"
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": true,
+      "supportsSize": true,
+      "supportsTone": true
+    },
+    "textTargets": {
+      "title": [
+        ".card-title",
+        ".navbar-title",
+        ".accordion-header span",
+        "h1",
+        "h2",
+        "h3",
+        "label"
+      ],
+      "description": [
+        ".card-description",
+        ".card-text",
+        ".input-helper",
+        ".select-helper",
+        "p"
+      ],
+      "label": [
+        "button",
+        ".button",
+        ".badge",
+        ".accordion-trigger span",
+        ".tabs-trigger",
+        ".navbar-link"
+      ]
+    }
+  }
+}

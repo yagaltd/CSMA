@@ -34,6 +34,6 @@ export default defineConfig({
     },
     server: {
         port: 5173,
-        open: '/src/ui/components/index.html'
+        open: '/'
     }
 });

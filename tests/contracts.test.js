@@ -6,6 +6,7 @@ import { describe, it, expect } from 'vitest';
 import { Contracts } from '../src/runtime/Contracts.js';
 
 const moduleLoaders = [
+    ['analytics', () => import('../src/modules/analytics/index.js')],
     ['camera', () => import('../src/modules/camera/index.js')],
     ['media-capture', () => import('../src/modules/media-capture/index.js')],
     ['location', () => import('../src/modules/location/index.js')],
@@ -15,11 +16,9 @@ const moduleLoaders = [
     ['sync-queue', () => import('../src/modules/sync-queue/index.js')],
     ['form-management', () => import('../src/modules/form-management/index.js')],
     ['modal-system', () => import('../src/modules/modal-system/index.js')],
-    ['auth-ui', () => import('../src/modules/auth-ui/index.js')],
     ['data-table', () => import('../src/modules/data-table/index.js')],
     ['checkout', () => import('../src/modules/checkout/index.js')],
     ['search', () => import('../src/modules/search/index.js')],
-    ['analytics-consent', () => import('../src/modules/analytics-consent/index.js')],
     ['ai', () => import('../src/modules/ai/index.js')],
     ['file-system', () => import('../src/modules/file-system/index.js')],
     ['example-module', () => import('../src/modules/example-module/index.js')]
@@ -114,6 +113,86 @@ describe('Contract Validation', () => {
 
             const [error] = Contracts.PAGE_CHANGED.schema.validate(payload);
             expect(error).toBeDefined();
+        });
+    });
+
+    describe('Command contracts', () => {
+        it('validates INTENT_COMMAND_EXECUTE with canonical payload shape', () => {
+            const payload = {
+                commandId: 'search.query',
+                payload: { query: 'csma' },
+                source: 'ai',
+                timestamp: Date.now()
+            };
+
+            const [error, validated] = Contracts.INTENT_COMMAND_EXECUTE.schema.validate(payload);
+            expect(error).toBeUndefined();
+            expect(validated.commandId).toBe('search.query');
+            expect(validated.source).toBe('ai');
+        });
+
+        it('rejects INTENT_COMMAND_EXECUTE without commandId', () => {
+            const [error] = Contracts.INTENT_COMMAND_EXECUTE.schema.validate({
+                payload: { query: 'csma' },
+                timestamp: Date.now()
+            });
+
+            expect(error).toBeDefined();
+        });
+
+        it('validates COMMAND_RESULTS_UPDATED with registry-backed result entries', () => {
+            const payload = {
+                query: 'hello',
+                results: [
+                    {
+                        id: 'example-module.say-hello',
+                        title: 'Example: Say Hello',
+                        group: 'examples',
+                        shortcut: 'Cmd+H',
+                        score: 200
+                    }
+                ],
+                timestamp: Date.now()
+            };
+
+            const [error, validated] = Contracts.COMMAND_RESULTS_UPDATED.schema.validate(payload);
+            expect(error).toBeUndefined();
+            expect(validated.results[0].title).toBe('Example: Say Hello');
+        });
+    });
+
+    describe('View contracts', () => {
+        it('validates INTENT_VIEW_RENDER with canonical payload shape', () => {
+            const payload = {
+                viewId: 'example-module.status-card',
+                target: '#example-output',
+                props: {
+                    title: 'Status',
+                    message: 'Hello'
+                },
+                state: {
+                    tone: 'info'
+                },
+                source: 'ai',
+                timestamp: Date.now()
+            };
+
+            const [error, validated] = Contracts.INTENT_VIEW_RENDER.schema.validate(payload);
+            expect(error).toBeUndefined();
+            expect(validated.viewId).toBe('example-module.status-card');
+        });
+
+        it('validates VIEW_RENDERED with canonical payload shape', () => {
+            const payload = {
+                viewId: 'example-module.status-card',
+                target: '#example-output',
+                mode: 'replace',
+                source: 'ai',
+                timestamp: Date.now()
+            };
+
+            const [error] = Contracts.VIEW_RENDERED.schema.validate(payload);
+            expect(error).toBeUndefined();
         });
     });
 });

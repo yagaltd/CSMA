@@ -1,0 +1,556 @@
+/**
+ * CSMA Print Styles
+ * Optimized printing for all UI components
+ *
+ * Usage:
+ * 1. Import in main CSS: @import './foundation/print.css';
+ * 2. Or add to HTML: <link rel="stylesheet" href="print.css" media="print">
+ *
+ * Print Guidelines:
+ * - Remove non-essential UI (navigation, footers, ads)
+ * - Expand collapsed content (accordions, tabs)
+ * - Show link URLs for reference
+ * - Optimize colors for black & white printing
+ * - Ensure text is readable at print resolution
+ */
+
+@media print {
+  /* ============================================
+     PAGE SETUP
+     ============================================ */
+
+  @page {
+    margin: 2cm;
+    size: A4;
+    orphans: 3;
+    widows: 3;
+  }
+
+  @page :first {
+    margin-top: 3cm;
+  }
+
+  /* ============================================
+     GLOBAL PRINT OVERRIDES
+     ============================================ */
+
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.5;
+    font-family: Georgia, "Times New Roman", Times, serif;
+  }
+
+  /* Remove animations */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
+
+  h1 {
+    font-size: 24pt;
+    page-break-after: avoid;
+  }
+
+  h2 {
+    font-size: 18pt;
+    page-break-after: avoid;
+  }
+
+  h3 {
+    font-size: 14pt;
+    page-break-after: avoid;
+  }
+
+  h4, h5, h6 {
+    font-size: 12pt;
+    page-break-after: avoid;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* ============================================
+     LINKS - Show URLs
+     ============================================ */
+
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666 !important;
+  }
+
+  a[href^="#"]::after,
+  a[href^="javascript:"]::after {
+    content: "";
+  }
+
+  a[href^="mailto:"]::after {
+    content: " (" attr(href) ")";
+  }
+
+  /* Don't show URL for linked images */
+  a[href] > img::after {
+    content: "";
+  }
+
+  /* ============================================
+     HIDE NON-ESSENTIAL ELEMENTS
+     ============================================ */
+
+  /* Navigation */
+  .navbar,
+  .navbar-mobile-menu,
+  .navbar-overlay,
+  .navigation-menu,
+  .menubar,
+  nav[aria-label*="navigation"],
+  nav[aria-label*="menu"] {
+    display: none !important;
+  }
+
+  /* Interactive elements */
+  .dropdown,
+  .dropdown-content,
+  .popover,
+  .tooltip,
+  .tooltip-content,
+  .hover-card,
+  .context-menu,
+  .command-overlay,
+  [role="tooltip"],
+  [role="menu"],
+  [role="listbox"] {
+    display: none !important;
+  }
+
+  /* Overlays & modals - print content only */
+  .dialog-overlay,
+  .drawer-overlay,
+  .toast-container,
+  .alert-dialog-overlay {
+    display: none !important;
+  }
+
+  /* Interactive components */
+  .button[data-variant="ghost"],
+  .button[data-variant="text"],
+  .button[data-variant="link"],
+  button.close,
+  .dialog-close,
+  .drawer-close,
+  .toast-close {
+    display: none !important;
+  }
+
+  /* Loading states */
+  .skeleton,
+  [aria-busy="true"]::after {
+    display: none !important;
+  }
+
+  /* Pagination */
+  .pagination,
+  .table-pagination-controls {
+    display: none !important;
+  }
+
+  /* Skip links */
+  .skip-link {
+    display: none !important;
+  }
+
+  /* Ads and promotional content */
+  .ad,
+  .advertisement,
+  .promo,
+  [data-ad] {
+    display: none !important;
+  }
+
+  /* ============================================
+     COMPONENTS - PRINT OPTIMIZED
+     ============================================ */
+
+  /* Buttons - keep primary action visible */
+  .button {
+    border: 1px solid #000 !important;
+    padding: 0.25em 0.5em;
+    text-decoration: none;
+  }
+
+  .button[data-variant="primary"] {
+    background: #000 !important;
+    color: #fff !important;
+  }
+
+  /* Cards - remove shadows, keep borders */
+  .card {
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    page-break-inside: avoid;
+  }
+
+  /* Tables - optimize for print */
+  .table,
+  .table-wrapper {
+    page-break-inside: avoid;
+  }
+
+  .table th {
+    background: #f0f0f0 !important;
+    font-weight: bold;
+  }
+
+  .table td,
+  .table th {
+    border: 1px solid #ccc !important;
+    padding: 0.25em 0.5em;
+  }
+
+  .table tbody tr {
+    page-break-inside: avoid;
+  }
+
+  /* Striping for readability */
+  .table[data-variant="striped"] tbody tr:nth-child(even) {
+    background: #f9f9f9 !important;
+  }
+
+  /* Forms - show labels and values */
+  .field,
+  .input-group,
+  .form-field {
+    margin-bottom: 0.5em;
+    page-break-inside: avoid;
+  }
+
+  .input,
+  .textarea,
+  .select {
+    border: 1px solid #ccc !important;
+    padding: 0.25em 0.5em;
+    min-height: auto;
+  }
+
+  .checkbox-item,
+  .radio-item {
+    margin-bottom: 0.25em;
+  }
+
+  .checkbox-box,
+  .radio-circle {
+    border: 1px solid #000 !important;
+    width: 0.75em;
+    height: 0.75em;
+    display: inline-block;
+    margin-right: 0.25em;
+  }
+
+  .checkbox-item[data-state="checked"] .checkbox-box::after,
+  .radio-item[data-state="checked"] .radio-circle::after {
+    content: "✓";
+    font-size: 0.6em;
+    display: block;
+    text-align: center;
+    line-height: 1;
+  }
+
+  /* Accordions - expand all */
+  .accordion-content,
+  .accordion-item[data-state="open"] .accordion-content {
+    display: block !important;
+    max-height: none !important;
+    grid-template-rows: 1fr !important;
+    page-break-inside: avoid;
+  }
+
+  .accordion-trigger {
+    font-weight: bold;
+  }
+
+  .accordion-icon {
+    display: none;
+  }
+
+  /* Tabs - show all content */
+  .tabs-container {
+    page-break-inside: avoid;
+  }
+
+  .tabs-list {
+    display: none;
+  }
+
+  .tabs-panel,
+  .tabs-panel[data-state="active"],
+  .tabs-panel[data-state="inactive"] {
+    display: block !important;
+    page-break-inside: avoid;
+    border: 1px solid #ccc !important;
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  /* Add tab label before each panel */
+  .tabs-panel::before {
+    content: attr(aria-labelledby);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.25em;
+    text-transform: capitalize;
+  }
+
+  /* Alerts - keep visible with border */
+  .alert {
+    border: 2px solid #000 !important;
+    padding: 0.5em;
+    margin-bottom: 0.5em;
+    page-break-inside: avoid;
+  }
+
+  .alert[data-variant="destructive"],
+  .alert[data-variant="error"] {
+    border-color: #c00 !important;
+  }
+
+  .alert[data-variant="warning"] {
+    border-color: #c90 !important;
+  }
+
+  .alert[data-variant="success"] {
+    border-color: #090 !important;
+  }
+
+  /* Badges - inline styling */
+  .badge {
+    border: 1px solid #000 !important;
+    padding: 0 0.25em;
+    font-size: 0.8em;
+  }
+
+  /* Progress bars */
+  .progress-container {
+    border: 1px solid #000 !important;
+    height: 0.5em;
+  }
+
+  .progress-bar {
+    background: #000 !important;
+  }
+
+  /* Images */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  /* Figures */
+  figure {
+    page-break-inside: avoid;
+    margin: 1em 0;
+  }
+
+  figcaption {
+    font-size: 0.9em;
+    font-style: italic;
+  }
+
+  /* Code blocks */
+  pre,
+  code {
+    font-family: "Courier New", Courier, monospace;
+    font-size: 10pt;
+    border: 1px solid #ccc !important;
+    padding: 0.25em;
+    page-break-inside: avoid;
+    overflow: visible !important;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  /* Blockquotes */
+  blockquote {
+    border-left: 3px solid #000 !important;
+    padding-left: 1em;
+    margin-left: 0;
+    font-style: italic;
+    page-break-inside: avoid;
+  }
+
+  /* Lists */
+  ul,
+  ol {
+    page-break-inside: avoid;
+  }
+
+  /* ============================================
+     EXPAND CONTENT
+     ============================================ */
+
+  /* Collapsible content */
+  [data-collapsed="true"],
+  [hidden],
+  [aria-hidden="true"] {
+    display: block !important;
+  }
+
+  /* Details/Summary */
+  details {
+    page-break-inside: avoid;
+  }
+
+  details[open] summary {
+    font-weight: bold;
+  }
+
+  details:not([open]) {
+    display: block;
+  }
+
+  details:not([open]) > *:not(summary) {
+    display: block !important;
+  }
+
+  /* ============================================
+     DIALOGS - Print content only
+     ============================================ */
+
+  /* If dialog has print-content class, show it */
+  .dialog-content.print-content,
+  .dialog-overlay.print-content .dialog-content {
+    display: block !important;
+    position: static;
+    box-shadow: none;
+    border: 1px solid #ccc;
+    padding: 1em;
+    margin-bottom: 1em;
+  }
+
+  /* ============================================
+     FOOTER & ATTRIBUTION
+     ============================================ */
+
+  /* Show print footer on each page */
+  .print-footer {
+    display: block !important;
+    position: running(footer);
+    text-align: center;
+    font-size: 9pt;
+    color: #666 !important;
+  }
+
+  @page {
+    @bottom-center {
+      content: element(footer);
+    }
+  }
+
+  /* Page numbers */
+  .page-number::after {
+    content: "Page " counter(page) " of " counter(pages);
+  }
+
+  /* ============================================
+     UTILITY CLASSES FOR PRINT
+     ============================================ */
+
+  .print-only {
+    display: none;
+  }
+
+  @media print {
+    .print-only {
+      display: block !important;
+    }
+
+    .no-print {
+      display: none !important;
+    }
+
+    .print-break-before {
+      page-break-before: always;
+    }
+
+    .print-break-after {
+      page-break-after: always;
+    }
+
+    .print-break-avoid {
+      page-break-inside: avoid;
+    }
+  }
+
+  /* ============================================
+     COLOR OPTIMIZATION
+     ============================================ */
+
+  /* Ensure sufficient contrast */
+  h1, h2, h3, h4, h5, h6 {
+    color: #000 !important;
+  }
+
+  /* Grayscale gradients */
+  .gradient,
+  [class*="gradient"] {
+    background: #f0f0f0 !important;
+  }
+
+  /* ============================================
+     RESPONSIVE PRINT
+     ============================================ */
+
+  /* A4 at 96dpi is approximately 794px wide */
+  @page {
+    size: A4;
+  }
+
+  /* Letter size alternative */
+  @page letter {
+    size: letter;
+  }
+
+  /* Landscape mode for tables and charts */
+  @page landscape {
+    size: A4 landscape;
+  }
+
+  .landscape-print {
+    page: landscape;
+  }
+}
+
+/* ============================================
+   PRINT PREVIEW HELPER (screen styles)
+   ============================================ */
+
+@media screen {
+  .print-only {
+    display: none !important;
+  }
+
+  /* Optional: Show print preview styling */
+  .print-preview {
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 20mm;
+  }
+}

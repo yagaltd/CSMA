@@ -5,6 +5,8 @@ import { platformCapabilities } from './utils/platform.js';
  * Toggle features on/off with tree-shaking support
  */
 export const FEATURES = {
+    CSMA_MODE: 'full',
+
     // Core Features (always enabled)
     VALIDATION: true,
     EVENT_BUS: true,
@@ -16,10 +18,7 @@ export const FEATURES = {
     I18N: false,          // Translations
     INDEXEDDB: false,     // Local database
 
-    // LLM Features (Tier 2.5)
     LLM_INSTRUCTOR: false,  // Structured LLM extraction (requires API key)
-
-    // Core Services (Tier 3) - NEW
     CACHE_MANAGER: true,      // Recommended: true (offline-first, performance)
     DATA_AGGREGATOR: true,    // Recommended: true (complex UIs)
     API_WRAPPER: true,        // Recommended: true (centralized HTTP client)
@@ -32,7 +31,8 @@ export const FEATURES = {
     HMAC_INTEGRITY: false,    // Shared HMAC signing service for public forms
     DATA_TABLE_MODULE: false, // Data table utilities
     SEARCH_MODULE: false,     // FlexSearch-powered module
-    ANALYTICS_CONSENT: false, // Centralized analytics consent/telemetry gating
+    ANALYTICS_CONSENT: true, // Centralized analytics consent/telemetry gating
+    ANALYTICS_MODULE: true,  // Web analytics module (extracted from LogAccumulator)
     AI_MODULE: false,         // Multi-provider AI orchestration
     MEDIA_CAPTURE: false,     // Audio recording module (requires user permission)
     CAMERA_MODULE: false,     // Photo/video capture module
@@ -63,45 +63,16 @@ export const FEATURES = {
     VIBRATION: platformCapabilities.vibration(),         // Haptic feedback
 };
 
-/**
- * Get feature status
- */
-export function isEnabled(feature) {
-    return FEATURES[feature] === true;
-}
-
-/**
- * Runtime feature check
- */
-export function requireFeature(feature) {
-    if (!isEnabled(feature)) {
-        throw new Error(`Feature "${feature}" is not enabled. Enable it in src/config.js`);
-    }
-}
-
 export const SEARCH_CONFIG = {
     tier: 'core',
-    indexName: 'default',
-    variant: 'light',
-    persistence: false,
-    pageSize: 20,
-    facets: ['category', 'tags'],
-    suggestions: {
-        enabled: true,
-        max: 5
-    },
-    context: {
-        documents: 5,
-        charLimit: 4000
-    }
+    maxResults: 20,
+    minQueryLength: 2
 };
 
 export const STATIC_RENDER_CONFIG = {
-    enabled: true,
-    pagesDir: './src/pages',
-    outputDir: './dist/pages'
+    enabled: true
 };
 
 export const PROTOCOL = {
-    subprotocol: '1.0.0'
+    subprotocol: 'csma-1.0.0'
 };

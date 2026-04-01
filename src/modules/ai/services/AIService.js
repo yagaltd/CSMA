@@ -1,5 +1,7 @@
 import { AIClient } from '../client/AIClient.js';
 import { GeminiProvider } from '../providers/GeminiProvider.js';
+import { OpenAICompatibleProvider } from '../providers/OpenAICompatibleProvider.js';
+import { SSMAGatewayProvider } from '../providers/SSMAGatewayProvider.js';
 import { TransformersProvider } from '../providers/TransformersProvider.js';
 
 export class AIService {
@@ -8,6 +10,8 @@ export class AIService {
         this.options = options;
         this.client = null;
         this.factories = options.factories || {
+            openaiCompatible: (config = {}) => new OpenAICompatibleProvider(config),
+            ssma: (config = {}) => new SSMAGatewayProvider(config),
             gemini: (config = {}) => new GeminiProvider(config),
             transformers: (config = {}) => new TransformersProvider(config)
         };
