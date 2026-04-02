@@ -1,28 +1,22 @@
+import { registerThemeToggle, applyStoredTheme, cycleTheme, getNextThemeLabel } from '../theme/theme-manager.js';
+
 export function setupThemeToggle(eventBus) {
-    const toggleBtn = document.getElementById('theme-toggle') || document.getElementById('themeToggle');
-    if (!toggleBtn || toggleBtn.dataset.themeBound === 'true') return () => {};
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (!toggleBtn) {
+        return () => {};
+    }
 
-    const handleClick = () => {
-        const currentTheme = document.documentElement.dataset.theme || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    const cleanup = registerThemeToggle(toggleBtn, ({ theme, next }) => {
+        eventBus?.publish('THEME_CHANGED', { theme });
+        toggleBtn.dataset.themeActive = theme;
+        toggleBtn.dataset.themeNext = next;
+    });
 
-        eventBus?.publish('THEME_CHANGED', { theme: newTheme });
-        document.documentElement.dataset.theme = newTheme;
-        localStorage.setItem('theme', newTheme);
-    };
-
-    toggleBtn.addEventListener('click', handleClick);
-    toggleBtn.dataset.themeBound = 'true';
-
-    return () => {
-        toggleBtn.removeEventListener('click', handleClick);
-        delete toggleBtn.dataset.themeBound;
-    };
+    return cleanup;
 }
 
 export function loadTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.dataset.theme = savedTheme;
+    applyStoredTheme();
 }
 
 export function resolveApiBaseUrl() {

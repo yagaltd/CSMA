@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "generated": "2026-04-02T10:37:09.869Z",
+  "generated": "2026-04-02T11:02:18.046Z",
   "project": {
     "name": "csma",
     "version": "1.2.0",
@@ -1088,6 +1088,18 @@
           "ext": ".js",
           "path": "services/core/FormValidator.js"
         }
+      }
+    },
+    "theme": {
+      "theme-entry.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "theme/theme-entry.js"
+      },
+      "theme-manager.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "theme/theme-manager.js"
       }
     },
     "ui": {

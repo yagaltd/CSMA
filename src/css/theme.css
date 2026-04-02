@@ -5,5 +5,25 @@
  (auto-generated)
  *
  * Theme switching via `data-theme` attribute on `<html> element.
- */
+*/
 
+:root[data-theme="contrast"] {
+  color-scheme: dark;
+  --background: #050505;
+  --background-muted: #121212;
+  --surface: #0f0f0f;
+  --surface-muted: #1b1b1b;
+  --foreground: #ffffff;
+  --foreground-muted: #f0f0f0;
+  --border: #303030;
+  --primary: #ffffff;
+  --primary-foreground: #050505;
+  --accent: #ffa500;
+  --accent-foreground: #050505;
+  --destructive: #ff4444;
+  --destructive-foreground: #050505;
+  --warning: #ffd600;
+  --warning-foreground: #050505;
+  --success: #4cff7d;
+  --success-foreground: #050505;
+}
