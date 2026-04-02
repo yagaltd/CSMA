@@ -44,9 +44,6 @@ export const FEATURES = {
     OPTIMISTIC_SYNC: true,    // Action log + optimistic sync module
     STATIC_RENDER: true,
 
-    // Dev Tools (auto-enabled in development)
-    DEVTOOLS: import.meta.env.DEV,
-
     // Analytics
     LOG_ACCUMULATOR: true,
     META_MANAGER: true,

@@ -1,7 +1,6 @@
 /**
- * LogAccumulator - Error tracking and developer tools
+ * LogAccumulator - Local runtime diagnostics
  * Analytics extracted to AnalyticsService module (Phase 1 refactor)
- * Dev panel loaded via dynamic import for 0KB production overhead
  */
 import { LifecycleScope } from './LifecycleScope.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
@@ -13,7 +12,6 @@ export class LogAccumulator {
         this.logs = [];
         this.maxLogs = 1000;
         this.devMode = import.meta.env.DEV;
-        this.devPanel = null;
         this.sessionId = this.getSessionId();
         this.lifecycle = new LifecycleScope('LogAccumulator');
         this.errorBoundary = errorBoundary || new ErrorBoundary({ devMode: this.devMode });
@@ -26,23 +24,6 @@ export class LogAccumulator {
     activateRuntime() {
         this.destroyed = false;
         this.setupTracking();
-
-        if (this.devMode) {
-            this.loadDevPanel();
-        }
-    }
-
-    async loadDevPanel() {
-        try {
-            // Dynamic import - completely tree-shaken in production!
-            const { DevPanel } = await import('./devtools/DevPanel.js');
-            if (this.destroyed) {
-                return;
-            }
-            this.devPanel = new DevPanel(this);
-        } catch (error) {
-            console.warn('Failed to load dev panel:', error);
-        }
     }
 
     setupTracking() {
@@ -122,13 +103,8 @@ export class LogAccumulator {
             this.logs.splice(0, this.maxLogs / 2);
         }
 
-        // Publish for real-time monitoring
+        // Publish for runtime observers and snapshots
         this.eventBus.publish('LOG_ENTRY', entry);
-
-        // Update dev panel if loaded
-        if (this.devPanel) {
-            this.devPanel.update(entry);
-        }
     }
 
     getSessionId() {
@@ -163,8 +139,6 @@ export class LogAccumulator {
 
         this.destroyed = true;
         this.errorBoundary?.destroy?.();
-        this.devPanel?.destroy?.();
-        this.devPanel = null;
         this.lifecycle.destroy();
     }
 }

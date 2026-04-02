@@ -159,6 +159,7 @@ describe('AnalyticsService', () => {
         const eventBus = new EventBus();
         eventBus.contracts = Contracts;
         const violations = [];
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
         eventBus.subscribe('SECURITY_VIOLATION', (payload) => violations.push(payload));
 
         await eventBus.publish('ANALYTICS_PAGE_VIEW', {
@@ -169,5 +170,6 @@ describe('AnalyticsService', () => {
 
         expect(violations).toHaveLength(1);
         expect(violations[0].type).toBe('contract-violation');
+        consoleError.mockRestore();
     });
 });

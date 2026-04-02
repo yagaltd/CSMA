@@ -16,6 +16,7 @@ The format is based on Keep a Changelog and this project uses Semantic Versionin
 - clarified the architecture split between local diagnostics (`LogAccumulator`) and outbound telemetry / website analytics (`src/modules/analytics/`)
 - aligned `SSMAGatewayProvider` with SSMA's public query boundary instead of the older ad hoc AI route
 - updated template metadata to reflect the current starter component set instead of removed UI components and patterns
+- removed the frontend DevPanel UI and kept diagnostics on structured snapshot/export APIs only
 
 ### Removed
 

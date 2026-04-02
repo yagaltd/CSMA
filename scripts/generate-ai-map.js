@@ -170,8 +170,7 @@ async function generateMap() {
                     files: [
                         'src/runtime/LogAccumulator.js',
                         'src/runtime/ErrorBoundary.js',
-                        'src/runtime/diagnosticSnapshot.js',
-                        'src/runtime/devtools/DevPanel.js'
+                        'src/runtime/diagnosticSnapshot.js'
                     ],
                     responsibilities: [
                         'local error and security logging',
@@ -214,8 +213,7 @@ async function generateMap() {
                 pwa: 'Service Worker + offline support',
                 routing: 'Hash-based SPA routing',
                 i18n: 'Internationalization',
-                storage: 'IndexedDB wrapper',
-                devtools: 'Development panel (dev mode only)'
+                storage: 'IndexedDB wrapper'
             }
         },
 
@@ -236,7 +234,6 @@ async function generateMap() {
             tests: [
                 'tests/log-accumulator.test.js',
                 'tests/error-boundary.test.js',
-                'tests/devpanel.test.js',
                 'tests/diagnostic-snapshot.test.js',
                 'tests/analytics-service.test.js',
                 'tests/analytics-module.test.js',

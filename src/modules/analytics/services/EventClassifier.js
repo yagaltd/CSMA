@@ -53,7 +53,7 @@ export class EventClassifier {
         }
 
         const eventName = String(event.name || '');
-        if (/^(DEVTOOLS_|DEV_)/.test(eventName)) {
+        if (/^DEV_/.test(eventName)) {
             return this.normalizeResult(event, {
                 category: 'dev',
                 severity: this.devMode ? 'info' : 'noise',

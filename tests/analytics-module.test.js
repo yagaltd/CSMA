@@ -182,6 +182,7 @@ describe('Analytics module', () => {
         eventBus.contracts = Contracts;
         const securityViolations = [];
         const contractViolations = [];
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
         eventBus.subscribe('SECURITY_VIOLATION', (payload) => {
             securityViolations.push(payload);
@@ -203,12 +204,14 @@ describe('Analytics module', () => {
         expect(securityViolations[0].eventName).toBe('ANALYTICS_PAGE_VIEW');
         expect(contractViolations[0].type).toBe('contract-violation');
         expect(contractViolations[0].eventName).toBe('ANALYTICS_PAGE_VIEW');
+        consoleError.mockRestore();
     });
 
     it('lets LogAccumulator record contract violations raised by analytics contracts', async () => {
         const eventBus = new EventBus();
         eventBus.contracts = Contracts;
         const logAccumulator = new LogAccumulator(eventBus);
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
         await eventBus.publish('ANALYTICS_PAGE_VIEW', {
             type: 'pageview',
@@ -218,6 +221,7 @@ describe('Analytics module', () => {
         });
 
         expect(logAccumulator.logs.some((entry) => entry.type === 'contract-violation')).toBe(true);
+        consoleError.mockRestore();
 
         logAccumulator.destroy();
     });

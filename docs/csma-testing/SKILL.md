@@ -244,14 +244,13 @@ analytics. Test them separately.
 Use:
 - `tests/log-accumulator.test.js`
 - `tests/error-boundary.test.js`
-- `tests/devpanel.test.js`
 - `tests/diagnostic-snapshot.test.js`
 
 Verify:
 1. `LogAccumulator` keeps only local logging APIs
 2. contract violations and security events are recorded locally
 3. `ErrorBoundary` behavior is sanitized and environment-aware
-4. diagnostic export and copy flows call `diagnosticSnapshot()`
+4. diagnostic export flows use structured snapshot/output APIs
 
 ### Outbound analytics
 

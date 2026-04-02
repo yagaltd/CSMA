@@ -17,7 +17,6 @@ tags:
   - config
   - css-layers
   - modules
-  - devtools
   - build
 related_files:
   - src/main.js
@@ -63,7 +62,7 @@ In `src/bootstrap/runtime.js`. Creates in this order:
 2. **ServiceManager** -- service registry and lifecycle
 3. **ChannelManager** -- channel subscription orchestration
 4. **MetaManager** -- page meta / title management
-5. **LogAccumulator** -- local diagnostics observer, error/security logging, devtools feed
+5. **LogAccumulator** -- local diagnostics observer, error/security logging, snapshot/export source
 6. **CrossTabLeader** -- cross-tab leader election
 7. **6 Registries** (see Registries section below)
 8. **ModuleManager** -- receives eventBus, serviceManager, registries
@@ -108,7 +107,7 @@ Current observability architecture is intentionally split:
 - `src/runtime/LogAccumulator.js`
   - local runtime diagnostics only
   - records errors, attacks, and contract violations
-  - owns `diagnosticSnapshot()` and devtools export surface
+  - owns `diagnosticSnapshot()` and structured export surface
   - integrates `ErrorBoundary`
 - `src/modules/analytics/services/AnalyticsService.js`
   - outbound telemetry and website analytics
@@ -164,12 +163,10 @@ requireFeature('LLM_INSTRUCTOR') // throws if not enabled
 `SEARCH_MODULE`, `AI_MODULE`, `MEDIA_CAPTURE`, `CAMERA_MODULE`,
 `LOCATION_MODULE`, `MEDIA_TRANSFORM`, `IMAGE_OPTIMIZER`
 
-**Observability toggles:** `ANALYTICS_MODULE`, `ANALYTICS_CONSENT`, `DEVTOOLS`
+**Observability toggles:** `ANALYTICS_MODULE`, `ANALYTICS_CONSENT`
 
 **Platform-detected (runtime):** `FILE_SYSTEM`, `CAMERA`, `NOTIFICATIONS`,
 `SERVICE_WORKER`, `GEOLOCATION`, `VIBRATION`
-
-**Dev tools:** `DEVTOOLS: import.meta.env.DEV` (auto in development)
 
 ## ServiceManager API
 
@@ -432,13 +429,6 @@ window.csma = {
 `src/runtime/dev/` contains development utilities:
 - `dtcg-reader.js` -- Parse and inspect `design-tokens.json`
 - `token-inspector.js` -- Validate generated CSS tokens match source JSON
-
-### Dev Panel
-
-Dev tools panel auto-appears in development when
-`FEATURES.DEVTOOLS: import.meta.env.DEV` is true. Shows EventBus events,
-errors, contract violations, and analytics in a collapsible bottom-right
-panel.
 
 ## Build Tooling
 

@@ -25,7 +25,7 @@ Project-specific skills live in `docs/`:
 | CSMA Architecture | `docs/csma-architecture/SKILL.md` | 6 rules, EventBus patterns, contracts, component types, tokens |
 | CSMA Patterns | `docs/csma-patterns/SKILL.md` | Pattern types, layout rules, composition |
 | CSMA Services | `docs/csma-service-pattern/SKILL.md` | Service templates, state management, module contributions |
-| CSMA Observability | `docs/csma-observability/SKILL.md` | LogAccumulator, analytics module, snapshots, consent, devtools |
+| CSMA Observability | `docs/csma-observability/SKILL.md` | LogAccumulator, analytics module, snapshots, consent |
 | CSMA Testing | `docs/csma-testing/SKILL.md` | Test conventions, contract testing, module testing, accessibility |
 | CSMA Security | `docs/csma-security/SKILL.md` | 6-layer security model, CSP, rate limiting, input sanitization |
 | CSMA Runtime | `docs/csma-runtime/SKILL.md` | Bootstrap lifecycle, feature flags, ServiceManager, registries, observability seams, CSS layers, module catalog |

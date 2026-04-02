@@ -5,7 +5,7 @@ description: >-
   Expert guidance on CSMA observability after the LogAccumulator refactor.
   Covers local diagnostics, outbound analytics, diagnostic snapshots, SEO audit,
   consent gating, and the runtime/public seams between these systems. Use this
-  when changing logging, telemetry, devtools export, or observability tests.
+  when changing logging, telemetry, snapshot export, or observability tests.
 tags:
   - observability
   - logaccumulator
@@ -18,7 +18,6 @@ related_files:
   - src/runtime/ErrorBoundary.js
   - src/runtime/diagnosticSnapshot.js
   - src/runtime/seoAudit.js
-  - src/runtime/devtools/DevPanel.js
   - src/modules/analytics/services/AnalyticsService.js
   - src/modules/analytics/services/EventClassifier.js
   - src/modules/analytics/services/EventAggregator.js
@@ -42,7 +41,7 @@ Treat observability as two separate subsystems:
 - local diagnostics
   - owned by `LogAccumulator`
   - never depends on consent to keep the app debuggable
-  - powers devtools and `window.csma.diagnose()`
+  - powers structured export and `window.csma.diagnose()`
 - outbound telemetry / website analytics
   - owned by `AnalyticsService`
   - consent-gated
@@ -59,7 +58,7 @@ Owns:
 - contract-violation capture
 - `ErrorBoundary` integration
 - diagnostic snapshot entry source
-- devtools export source
+- structured export source
 
 Does not own:
 - `trackPageView`
@@ -105,7 +104,7 @@ It does not disable:
 - local error logging
 - local security logging
 - local contract-violation logging
-- devtools diagnostics
+- local diagnostics
 
 Default scopes are split so operational/security diagnostics can remain on while
 UI analytics remains opt-in.
@@ -121,7 +120,7 @@ Expected snapshot families:
 
 When changing snapshot shape:
 - update `window.csma.diagnose()`
-- update devpanel export/copy flows
+- update snapshot/export callers explicitly
 - update snapshot tests explicitly
 
 ## Editing Rules
@@ -139,6 +138,5 @@ When observability changes, verify the right subsystem:
 - boundary behavior: `tests/error-boundary.test.js`
 - outbound analytics: `tests/analytics-service.test.js`
 - snapshot shape: `tests/diagnostic-snapshot.test.js`
-- devtools export/copy behavior: `tests/devpanel.test.js`
 - consent persistence/UI: `tests/consent-service.test.js`, `tests/analytics-consent-ui.test.js`
 - SEO enrichment: `tests/seo-audit.test.js`
