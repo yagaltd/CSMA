@@ -14,6 +14,10 @@ function buildQueryEndpoint(queryName) {
     return `/query/${encodeURIComponent(queryName)}`;
 }
 
+function buildQueryStreamEndpoint(queryName) {
+    return `/query/${encodeURIComponent(queryName)}/stream`;
+}
+
 function buildPayload(params = {}) {
     return {
         system: params.system,
@@ -57,7 +61,7 @@ async function readStream(response, onChunk) {
 
             try {
                 const payload = JSON.parse(normalized);
-                const chunk = payload.chunk || payload.text || '';
+                const chunk = payload.delta || payload.chunk || payload.text || '';
                 if (chunk) {
                     output += chunk;
                     onChunk?.({ text: chunk, done: false, meta: payload });
@@ -73,7 +77,7 @@ async function readStream(response, onChunk) {
         const normalized = buffer.trim().replace(/^data:\s*/, '');
         try {
             const payload = JSON.parse(normalized);
-            const chunk = payload.chunk || payload.text || '';
+            const chunk = payload.delta || payload.chunk || payload.text || '';
             if (chunk) {
                 output += chunk;
                 onChunk?.({ text: chunk, done: true, meta: payload });
@@ -92,6 +96,7 @@ export class SSMAGatewayProvider extends AIProvider {
         super();
         this.queryName = options.queryName || DEFAULT_QUERY_NAME;
         this.endpoint = options.endpoint || buildQueryEndpoint(this.queryName);
+        this.streamEndpoint = options.streamEndpoint || buildQueryStreamEndpoint(this.queryName);
         this.fetchImpl = options.fetch || (typeof fetch !== 'undefined' ? fetch.bind(globalThis) : null);
         this.headers = options.headers || {};
     }
@@ -119,7 +124,8 @@ export class SSMAGatewayProvider extends AIProvider {
             throw new Error('SSMAGatewayProvider requires fetch');
         }
 
-        const response = await this.fetchImpl(this.endpoint, {
+        const endpoint = params.stream ? (this.streamEndpoint || this.endpoint) : this.endpoint;
+        const response = await this.fetchImpl(endpoint, {
             method: 'POST',
             headers: headersWithJson(this.headers),
             body: JSON.stringify({
