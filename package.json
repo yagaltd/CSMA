@@ -41,6 +41,7 @@
         "@capacitor/filesystem": "^6.0.0",
         "@capacitor/local-notifications": "^6.0.0",
         "@playwright/test": "^1.57.0",
+        "fast-check": "^4.6.0",
         "jsdom": "^27.3.0",
         "terser": "^5.44.1",
         "vite": "^5.0.0",

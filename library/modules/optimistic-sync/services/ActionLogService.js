@@ -383,8 +383,14 @@ export class ActionLogService {
         if (typeof indexedDB !== 'undefined') {
             return new IndexedDbActionStore({ dbName: DB_NAME, storeName: STORE_NAME });
         }
-        if (typeof localStorage !== 'undefined') {
-            return new LocalStorageActionStore({ storageKey: this.storageKey });
+        const storage = this.windowRef?.localStorage || null;
+        if (
+            storage &&
+            typeof storage.getItem === 'function' &&
+            typeof storage.setItem === 'function' &&
+            typeof storage.removeItem === 'function'
+        ) {
+            return new LocalStorageActionStore({ storageKey: this.storageKey, storage });
         }
         return new MemoryActionStore();
     }
@@ -468,8 +474,9 @@ class IndexedDbActionStore {
 }
 
 class LocalStorageActionStore {
-    constructor({ storageKey }) {
+    constructor({ storageKey, storage }) {
         this.storageKey = storageKey;
+        this.storage = storage;
         this.supportsStorageEvents = true;
     }
 
@@ -478,7 +485,7 @@ class LocalStorageActionStore {
     }
 
     async getAll() {
-        const raw = localStorage.getItem(this.storageKey);
+        const raw = this.storage.getItem(this.storageKey);
         if (!raw) return [];
         try {
             return JSON.parse(raw);
@@ -496,17 +503,17 @@ class LocalStorageActionStore {
         } else {
             items.push(entry);
         }
-        localStorage.setItem(this.storageKey, JSON.stringify(items));
+        this.storage.setItem(this.storageKey, JSON.stringify(items));
     }
 
     async delete(id) {
         const items = await this.getAll();
         const filtered = items.filter(item => item.id !== id);
-        localStorage.setItem(this.storageKey, JSON.stringify(filtered));
+        this.storage.setItem(this.storageKey, JSON.stringify(filtered));
     }
 
     async clear() {
-        localStorage.removeItem(this.storageKey);
+        this.storage.removeItem(this.storageKey);
     }
 }
 

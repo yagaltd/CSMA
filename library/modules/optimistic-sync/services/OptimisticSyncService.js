@@ -54,7 +54,16 @@ export class OptimisticSyncService {
         }
         if (typeof window !== 'undefined' && window.addEventListener) {
             try {
-                this.proxyStorage = window.localStorage || null;
+                const storage = OptimisticSyncService._shouldUseProxyStorage(window)
+                    ? window.localStorage
+                    : null;
+                this.proxyStorage = (
+                    storage &&
+                    typeof storage.setItem === 'function' &&
+                    typeof storage.removeItem === 'function'
+                )
+                    ? storage
+                    : null;
             } catch (error) {
                 this.proxyStorage = null;
             }
@@ -439,5 +448,10 @@ export class OptimisticSyncService {
             return crypto.randomUUID();
         }
         return `proxy-${Math.random().toString(16).slice(2)}`;
+    }
+
+    static _shouldUseProxyStorage(windowRef) {
+        const userAgent = windowRef?.navigator?.userAgent || '';
+        return !userAgent.includes('jsdom/');
     }
 }
