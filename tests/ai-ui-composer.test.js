@@ -5,14 +5,14 @@ import { Contracts } from '../library/runtime/Contracts.js';
 import { ServiceManager } from '../library/runtime/ServiceManager.js';
 import { ModuleManager } from '../library/runtime/ModuleManager.js';
 import { CommandRegistry } from '../library/runtime/CommandRegistry.js';
-import { RouteRegistry } from '../library/runtime/RouteRegistry.js';
 import { NavigationRegistry } from '../library/runtime/NavigationRegistry.js';
 import { PanelRegistry } from '../library/runtime/PanelRegistry.js';
 import { AdapterRegistry } from '../library/runtime/AdapterRegistry.js';
 import { ViewRegistry } from '../library/runtime/ViewRegistry.js';
-import { componentCatalog } from '../library/ui/ai-composer/catalog/componentCatalog.js';
-import { contentArchetypes, layoutArchetypes } from '../library/ui/ai-composer/archetypes/registry.js';
-import { compileContentArchetypeView } from '../library/ui/ai-composer/services/compileArchetype.js';
+import { componentCatalog } from '../library/modules/ai-ui/catalog/componentCatalog.js';
+import { contentArchetypes, layoutArchetypes } from '../library/modules/ai-ui/archetypes/registry.js';
+import { compileContentArchetypeRenderContract } from '../library/modules/ai-ui/services/compileArchetype.js';
+import { validateRenderContract } from '../tooling/scripts/render-contract-utils.js';
 
 function createRuntime() {
   const eventBus = new EventBus();
@@ -20,7 +20,6 @@ function createRuntime() {
   const serviceManager = new ServiceManager(eventBus);
   const registries = {
     commands: new CommandRegistry({ eventBus, serviceManager }),
-    routes: new RouteRegistry({ eventBus }),
     navigation: new NavigationRegistry({ eventBus }),
     panels: new PanelRegistry({ eventBus }),
     adapters: new AdapterRegistry({ eventBus, serviceManager }),
@@ -60,14 +59,14 @@ describe('AI UI composer module', () => {
     });
     const result = results[0];
 
-    expect(result.ok).toBe(true);
-    expect(result.archetypeId).toBe('login-form');
-    expect(result.view.component).toBe('card');
-    expect(result.view.props.title).toBe('Welcome back');
-    expect(result.shell.id).toBe('auth-shell');
-    expect(result.shell.regions.main).toHaveLength(1);
-    expect(result.view.slots.body).toHaveLength(2);
-    expect(result.view.slots.footer[0]).toMatchObject({
+    expect(validateRenderContract(result, 'inline')).toEqual([]);
+    expect(result.page.contentArchetypeId).toBe('login-form');
+    expect(result.regions.main[0].component).toBe('card');
+    expect(result.regions.main[0].props.title).toBe('Welcome back');
+    expect(result.layout.id).toBe('auth-shell');
+    expect(result.regions.main).toHaveLength(1);
+    expect(result.regions.main[0].slots.body).toHaveLength(2);
+    expect(result.regions.main[0].slots.footer[0]).toMatchObject({
       component: 'button',
       props: { variant: 'primary', text: 'Continue' }
     });
@@ -94,20 +93,55 @@ describe('AI UI composer module', () => {
     });
     const result = results[0];
 
-    expect(result.ok).toBe(true);
-    expect(result.archetypeId).toBe('contact-form');
-    expect(result.shell.id).toBe('auth-shell');
-    expect(result.view.component).toBe('card');
-    expect(result.view.props.title).toBe('Talk to sales');
-    expect(result.view.slots.body).toHaveLength(3);
-    expect(result.view.slots.footer[0]).toMatchObject({
+    expect(validateRenderContract(result, 'inline')).toEqual([]);
+    expect(result.page.contentArchetypeId).toBe('contact-form');
+    expect(result.layout.id).toBe('auth-shell');
+    expect(result.regions.main[0].component).toBe('card');
+    expect(result.regions.main[0].props.title).toBe('Talk to sales');
+    expect(result.regions.main[0].slots.body).toHaveLength(3);
+    expect(result.regions.main[0].slots.footer[0]).toMatchObject({
       component: 'button',
       props: { variant: 'primary', text: 'Book intro' }
     });
   });
+
+  it('exposes render contracts for the shared csr and optional ssr pipeline', async () => {
+    await runtime.moduleManager.loadModule('ai-ui');
+
+    const composer = runtime.serviceManager.get('AIUIComposerService');
+    const contract = composer.renderContentContract('login-form', {
+      viewId: 'ai-ui.login-form',
+      target: '#ai-output',
+      props: {
+        title: 'Welcome back'
+      },
+      state: {
+        tone: 'subtle'
+      }
+    }, {
+      source: 'ai'
+    });
+
+    expect(validateRenderContract(contract, 'inline')).toEqual([]);
+    expect(contract.page).toMatchObject({
+      id: 'login-form',
+      viewId: 'ai-ui.login-form',
+      contentArchetypeId: 'login-form',
+      layoutArchetypeId: 'auth-shell'
+    });
+    expect(contract.activation).toMatchObject({
+      mode: 'page',
+      source: 'ai',
+      required: false,
+      runtimeDependencies: [],
+      initialState: {
+        tone: 'subtle'
+      }
+    });
+  });
 });
 
-describe('compileContentArchetypeView failures', () => {
+describe('compileContentArchetypeRenderContract failures', () => {
   const baseLayout = layoutArchetypes.get('auth-shell');
   const baseContent = contentArchetypes.get('login-form');
 
@@ -115,7 +149,7 @@ describe('compileContentArchetypeView failures', () => {
     const content = structuredClone(baseContent);
     content.regions.main[0].component = 'secret-input';
 
-    expect(() => compileContentArchetypeView({
+    expect(() => compileContentArchetypeRenderContract({
       contentArchetype: content,
       layoutArchetype: baseLayout,
       catalog: componentCatalog,
@@ -128,7 +162,7 @@ describe('compileContentArchetypeView failures', () => {
     const content = structuredClone(baseContent);
     content.regions.main[0].slots.footer[0].props.kind = 'cta';
 
-    expect(() => compileContentArchetypeView({
+    expect(() => compileContentArchetypeRenderContract({
       contentArchetype: content,
       layoutArchetype: baseLayout,
       catalog: componentCatalog,
@@ -141,7 +175,7 @@ describe('compileContentArchetypeView failures', () => {
     const content = structuredClone(baseContent);
     delete content.regions.main[0].slots.body[0].slots.control;
 
-    expect(() => compileContentArchetypeView({
+    expect(() => compileContentArchetypeRenderContract({
       contentArchetype: content,
       layoutArchetype: baseLayout,
       catalog: componentCatalog,
@@ -154,7 +188,7 @@ describe('compileContentArchetypeView failures', () => {
     const content = structuredClone(baseContent);
     content.regions.hero = content.regions.main;
 
-    expect(() => compileContentArchetypeView({
+    expect(() => compileContentArchetypeRenderContract({
       contentArchetype: content,
       layoutArchetype: { ...baseLayout, regions: { main: baseLayout.regions.main } },
       catalog: componentCatalog,

@@ -10,7 +10,7 @@ This module owns:
 - provider/backend transport abstraction
 - tool registration and execution telemetry
 
-This module does **not** own CSMA-specific UI capability validation. That belongs to `src/modules/ai-ui/`.
+This module does **not** own CSMA-specific UI capability validation. That belongs to `library/modules/ai-ui/`.
 
 ## Architecture
 
@@ -36,7 +36,7 @@ Default deployment split:
 - `ai` sends normalized requests to SSMA
 - SSMA talks to cloud or local models
 - SSMA returns or streams results back to `ai`
-- `ai-ui` optionally validates model output into CSMA command/view operations
+- `ai-ui` validates model output into CSMA command/view operations
 
 `ai` can still support direct providers where needed, but the primary CSMA + SSMA integration path is the SSMA-backed provider.
 
@@ -49,7 +49,7 @@ Default deployment split:
 
 ## Related Module
 
-- `src/modules/ai-ui/` exports CSMA command/view capabilities and validates AI UI actions before execution
+- `library/modules/ai-ui/` exports CSMA command/view capabilities and validates AI UI actions before execution
 
 ## Example Configuration
 

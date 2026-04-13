@@ -1,7 +1,8 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-04-10T10:30:24.490Z",
-  "source": "design-tokens.json",
+  "generatedAt": "2026-04-11T11:29:08.444Z",
+  "source": "template/design-tokens.json",
+  "appName": "template",
   "totalTokens": 196,
   "categories": {
     "components": 17,

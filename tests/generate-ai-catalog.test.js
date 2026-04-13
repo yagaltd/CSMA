@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { collectComponentCatalog } from '../tooling/scripts/generate-ai-catalog.js';
+import {
+  buildRuntimeComponentCatalog,
+  collectComponentCatalog,
+  serializeRuntimeComponentCatalog
+} from '../tooling/scripts/generate-ai-catalog.js';
+import { toolingGeneratedPath } from '../tooling/scripts/generated-paths.js';
 
 describe('generate-ai-catalog', () => {
   it('builds a catalog from enabled component manifests', async () => {
@@ -35,5 +40,50 @@ describe('generate-ai-catalog', () => {
     expect(toast.dependencies.runtime).toContain('EventBus');
     expect(toast.contracts.subscribed).toContain('INTENT_TOAST_SHOW');
     expect(toast.contracts.published).toContain('TOAST_SHOWN');
+  });
+
+  it('builds a runtime component catalog for ai-ui compilation from the same manifests', async () => {
+    const catalog = await collectComponentCatalog({
+      generatedAt: '2026-04-09T00:00:00.000Z'
+    });
+    const runtimeCatalog = buildRuntimeComponentCatalog(catalog);
+    const source = serializeRuntimeComponentCatalog(runtimeCatalog);
+
+    expect(runtimeCatalog.button).toMatchObject({
+      props: expect.arrayContaining(['variant', 'text']),
+      slots: {
+        default: []
+      },
+      requiredSlots: [],
+      componentType: 'I',
+      render: {
+        kind: 'button'
+      }
+    });
+    expect(runtimeCatalog.field).toMatchObject({
+      slots: {
+        control: ['input']
+      },
+      slotDefinitions: {
+        control: {
+          selector: '.field__control',
+          allowedChildren: ['input']
+        }
+      },
+      requiredSlots: ['control'],
+      componentType: 'I',
+      textTargets: {
+        label: ['.field__label']
+      },
+      defaultSlot: 'control'
+    });
+    expect(runtimeCatalog.card.requiredSlots).toEqual(['body']);
+    expect(runtimeCatalog.card.slotDefinitions.body.selector).toBe('.card__body');
+    expect(runtimeCatalog.toast.componentType).toBe('II');
+    expect(source).toContain('export const componentCatalog =');
+  });
+
+  it('uses tooling/generated for shared catalog artifacts', () => {
+    expect(toolingGeneratedPath('ai-catalog.json').replaceAll('\\', '/')).toMatch(/tooling\/generated\/ai-catalog\.json$/);
   });
 });

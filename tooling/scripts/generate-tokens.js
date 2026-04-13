@@ -1,18 +1,54 @@
 #!/usr/bin/env bun
 /**
  * CSMA Design Token Generator (DTCG-compliant)
- * Reads design-tokens.json in DTCG format and generates CSS custom properties
+ * Reads app-local design-tokens.json files in DTCG format and generates CSS custom properties
  *
- * Usage: bun run scripts/generate-tokens.js
- * Output: generated/tokens.css
+ * Usage: bun run tooling/scripts/generate-tokens.js [--app demo|template]
+ * Output: <app>/generated/tokens.css
  */
 
+import { spawnSync } from 'child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 
+const SUPPORTED_APPS = ['demo', 'template'];
+
+function parseAppArg(argv) {
+  const appIndex = argv.indexOf('--app');
+  if (appIndex >= 0 && argv[appIndex + 1]) {
+    return argv[appIndex + 1];
+  }
+  return '';
+}
+
+function runChild(appName) {
+  const result = spawnSync(process.argv[0], [process.argv[1], '--app', appName], {
+    stdio: 'inherit',
+    env: {
+      ...process.env,
+      CSMA_GENERATE_TOKENS_CHILD: '1'
+    }
+  });
+
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1);
+  }
+}
+
+const APP_NAME = parseAppArg(process.argv.slice(2));
+if (!APP_NAME && process.env.CSMA_GENERATE_TOKENS_CHILD !== '1') {
+  SUPPORTED_APPS.forEach(runChild);
+  process.exit(0);
+}
+
+if (!SUPPORTED_APPS.includes(APP_NAME)) {
+  console.error(`[generate-tokens] Missing or unsupported --app value. Expected one of: ${SUPPORTED_APPS.join(', ')}`);
+  process.exit(1);
+}
+
 // Paths
-const TOKENS_PATH = join(import.meta.dir, '../design-tokens.json');
-const OUTPUT_PATH = join(import.meta.dir, '../../generated/tokens.css');
+const TOKENS_PATH = join(import.meta.dir, `../../${APP_NAME}/design-tokens.json`);
+const OUTPUT_PATH = join(import.meta.dir, `../../${APP_NAME}/generated/tokens.css`);
 
 // Helper: Convert camelCase to kebab-case
 function toKebab(str) {
@@ -415,7 +451,7 @@ css += `  }
 `;
 
 // Write output
-console.log('CSMA Design Token Generator (DTCG)');
+console.log(`CSMA Design Token Generator (DTCG) [${APP_NAME}]`);
 console.log('   Reading:', TOKENS_PATH);
 console.log('   Validating tokens...');
 

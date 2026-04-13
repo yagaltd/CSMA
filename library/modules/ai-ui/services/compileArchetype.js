@@ -1,3 +1,6 @@
+const RENDER_CONTRACT_VERSION = '1.0.0';
+const DEFAULT_ROUTE_PATH = '/';
+
 function isObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
 }
@@ -119,15 +122,134 @@ function validateArchetypes(contentArchetype, layoutArchetype) {
   }
 }
 
-export function compileContentArchetypeView({
+function buildLayoutIntro(context) {
+  return {
+    eyebrow: context.eyebrow || '',
+    headline: context.headline || '',
+    supportingText: context.supportingText || ''
+  };
+}
+
+function buildHead({
+  pageId,
+  pageTitle,
+  description,
+  routePath,
+  canonicalUrl,
+  lang = 'en',
+  layoutArchetype,
+  contentArchetype,
+  viewId
+}) {
+  const tags = [];
+
+  if (description) {
+    tags.push({
+      tag: 'meta',
+      key: 'meta:key:description',
+      props: {
+        name: 'description',
+        content: description
+      }
+    });
+  }
+
+  const canonicalHref = canonicalUrl || routePath;
+  if (canonicalHref) {
+    tags.push({
+      tag: 'link',
+      key: 'link:canonical',
+      props: {
+        rel: 'canonical',
+        href: canonicalHref
+      }
+    });
+  }
+
+  return {
+    title: pageTitle,
+    tags,
+    htmlAttrs: {
+      attrs: {
+        lang
+      },
+      classes: [`layout-${layoutArchetype.id}`, `page-${pageId}`],
+      style: {}
+    },
+    bodyAttrs: {
+      attrs: {
+        'data-view-id': viewId,
+        'data-layout-id': layoutArchetype.id,
+        'data-content-id': contentArchetype.id
+      },
+      classes: [],
+      style: {}
+    }
+  };
+}
+
+function buildResolvedRegions(contentArchetype, context, catalog) {
+  const resolvedRegions = {};
+  Object.entries(contentArchetype.regions || {}).forEach(([regionName, nodes]) => {
+    resolvedRegions[regionName] = nodes.map((node) => resolveNode(node, context));
+    resolvedRegions[regionName].forEach((node, index) => validateNode(node, catalog, `${regionName}[${index}]`));
+  });
+  return resolvedRegions;
+}
+
+function buildRenderRegions(layoutArchetype, resolvedRegions) {
+  const declaredLayoutRegions = Object.keys(layoutArchetype.regions || {});
+  const regions = {
+    hero: Array.isArray(resolvedRegions.hero) ? resolvedRegions.hero : [],
+    main: Array.isArray(resolvedRegions.main) ? resolvedRegions.main : [],
+    aside: Array.isArray(resolvedRegions.aside) ? resolvedRegions.aside : []
+  };
+
+  declaredLayoutRegions.forEach((regionName) => {
+    if (!Array.isArray(regions[regionName])) {
+      regions[regionName] = Array.isArray(resolvedRegions[regionName]) ? resolvedRegions[regionName] : [];
+    }
+  });
+
+  Object.entries(resolvedRegions).forEach(([regionName, nodes]) => {
+    if (!Array.isArray(regions[regionName])) {
+      regions[regionName] = nodes;
+    }
+  });
+
+  return regions;
+}
+
+function classifyComponents(componentsUsed, catalog) {
+  return componentsUsed.reduce((classification, componentId) => {
+    const definition = catalog[componentId] || {};
+    const componentType = definition.componentType;
+    if (componentType === 'II') {
+      classification.typeIIComponents.push(componentId);
+      (definition.runtimeDependencies || []).forEach((dependency) => classification.runtimeDependencies.add(dependency));
+    } else {
+      classification.typeIComponents.push(componentId);
+    }
+    return classification;
+  }, {
+    typeIComponents: [],
+    typeIIComponents: [],
+    runtimeDependencies: new Set()
+  });
+}
+
+export function compileContentArchetypeRenderContract({
   contentArchetype,
   layoutArchetype,
   catalog,
-  target,
   viewId,
-  mode = 'replace',
   props = {},
-  state = {}
+  state = {},
+  source,
+  routePath,
+  pageId,
+  canonicalUrl,
+  lang = 'en'
 }) {
   validateArchetypes(contentArchetype, layoutArchetype);
 
@@ -138,11 +260,7 @@ export function compileContentArchetypeView({
     ...(state || {})
   };
 
-  const resolvedRegions = {};
-  Object.entries(contentArchetype.regions || {}).forEach(([regionName, nodes]) => {
-    resolvedRegions[regionName] = nodes.map((node) => resolveNode(node, context));
-    resolvedRegions[regionName].forEach((node, index) => validateNode(node, catalog, `${regionName}[${index}]`));
-  });
+  const resolvedRegions = buildResolvedRegions(contentArchetype, context, catalog);
 
   const targetRegion = contentArchetype.targetRegion || 'main';
   const targetNodes = resolvedRegions[targetRegion] || [];
@@ -151,39 +269,57 @@ export function compileContentArchetypeView({
     throw new Error(`Content archetype "${contentArchetype.id}" must currently compile to a single root node in "${targetRegion}"`);
   }
 
-  const root = targetNodes[0];
   const componentsUsed = Array.from(
     Object.values(resolvedRegions).reduce((set, nodes) => collectRegionComponents(nodes, set), new Set())
   ).sort();
+  const { typeIComponents, typeIIComponents, runtimeDependencies } = classifyComponents(componentsUsed, catalog);
+  const resolvedPageId = pageId || contentArchetype.id;
+  const resolvedRoutePath = routePath || (contentArchetype.id ? `${DEFAULT_ROUTE_PATH}${contentArchetype.id}` : DEFAULT_ROUTE_PATH);
+  const pageTitle = context.title || contentArchetype.defaults?.title || contentArchetype.description || viewId;
+  const description = context.description || contentArchetype.defaults?.description || layoutArchetype.defaults?.supportingText || '';
+  const intro = buildLayoutIntro(context);
+  const activationRequired = typeIIComponents.length > 0;
 
   return {
-    ok: true,
-    layoutId: layoutArchetype.id,
-    archetypeId: contentArchetype.id,
-    contentArchetypeId: contentArchetype.id,
-    viewId,
-    target,
-    mode,
-    state: { ...(state || {}) },
+    id: resolvedPageId,
+    kind: 'render-contract',
+    version: RENDER_CONTRACT_VERSION,
+    page: {
+      id: resolvedPageId,
+      viewId,
+      contentArchetypeId: contentArchetype.id,
+      layoutArchetypeId: layoutArchetype.id,
+      routePath: resolvedRoutePath,
+      title: pageTitle
+    },
     layout: {
       id: layoutArchetype.id,
       regions: Object.keys(layoutArchetype.regions || {}),
-      rules: { ...(layoutArchetype.layoutRules || {}) }
+      rules: { ...(layoutArchetype.layoutRules || {}) },
+      intro
     },
-    shell: {
-      id: layoutArchetype.id,
-      intro: {
-        eyebrow: context.eyebrow || '',
-        headline: context.headline || '',
-        supportingText: context.supportingText || ''
-      },
-      regions: {
-        hero: [],
-        main: resolvedRegions.main || [],
-        aside: resolvedRegions.aside || []
-      }
+    head: buildHead({
+      pageId: resolvedPageId,
+      pageTitle,
+      description,
+      routePath: resolvedRoutePath,
+      canonicalUrl,
+      lang,
+      layoutArchetype,
+      contentArchetype,
+      viewId
+    }),
+    regions: buildRenderRegions(layoutArchetype, resolvedRegions),
+    activation: {
+      bootstrap: 'full-runtime',
+      mode: 'page',
+      required: activationRequired,
+      ...(source ? { source } : {}),
+      runtimeDependencies: Array.from(runtimeDependencies).sort(),
+      ...(isObject(state) && Object.keys(state).length > 0 ? { initialState: { ...state } } : {}),
+      typeIComponents,
+      typeIIComponents
     },
-    view: root,
     componentsUsed
   };
 }

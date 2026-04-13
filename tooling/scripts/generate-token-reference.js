@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
-import { readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { appDesignTokensPath, toolingGeneratedPath } from './generated-paths.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
-const TOKENS_PATH = path.join(ROOT, 'design-tokens.json');
-const OUTPUT_PATH = path.join(ROOT, 'generated', 'token-reference.json');
+const DEFAULT_APP = 'template';
+const OUTPUT_PATH = toolingGeneratedPath('token-reference.json');
 
 function isObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value);
@@ -108,8 +109,12 @@ function flattenTokens(node, pathParts = [], into = []) {
   return into;
 }
 
-export async function collectTokenReference({ generatedAt = new Date().toISOString() } = {}) {
-  const source = await readFile(TOKENS_PATH, 'utf8');
+export async function collectTokenReference({
+  appName = DEFAULT_APP,
+  generatedAt = new Date().toISOString()
+} = {}) {
+  const tokensPath = appDesignTokensPath(appName);
+  const source = await readFile(tokensPath, 'utf8');
   const tokens = JSON.parse(source);
   const entries = flattenTokens(tokens).sort((a, b) => a.path.localeCompare(b.path));
 
@@ -121,21 +126,27 @@ export async function collectTokenReference({ generatedAt = new Date().toISOStri
   return {
     version: '1.0.0',
     generatedAt,
-    source: 'design-tokens.json',
+    source: `${appName}/design-tokens.json`,
+    appName,
     totalTokens: entries.length,
     categories: byCategory,
     tokens: entries
   };
 }
 
-export async function writeTokenReference(outputPath = OUTPUT_PATH) {
-  const reference = await collectTokenReference();
+export async function writeTokenReference(outputPath = OUTPUT_PATH, options = {}) {
+  const reference = await collectTokenReference(options);
+  await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, JSON.stringify(reference, null, 2) + '\n', 'utf8');
   return reference;
 }
 
 async function main() {
-  const reference = await writeTokenReference();
+  const appIndex = process.argv.indexOf('--app');
+  const appName = appIndex >= 0 && process.argv[appIndex + 1]
+    ? process.argv[appIndex + 1]
+    : DEFAULT_APP;
+  const reference = await writeTokenReference(OUTPUT_PATH, { appName });
   console.log(`[generate-token-reference] Wrote ${reference.totalTokens} tokens to ${path.relative(ROOT, OUTPUT_PATH)}`);
 }
 

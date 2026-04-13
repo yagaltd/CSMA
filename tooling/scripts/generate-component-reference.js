@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
-import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { toolingGeneratedPath } from './generated-paths.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
 const COMPONENTS_DIR = path.join(ROOT, 'library', 'ui', 'components');
-const OUTPUT_PATH = path.join(ROOT, 'generated', 'component-reference.json');
+const OUTPUT_PATH = toolingGeneratedPath('component-reference.json');
 
 function collectMatches(source, pattern) {
   return [...source.matchAll(pattern)].map((match) => match[1]).filter(Boolean);
@@ -126,6 +127,7 @@ export async function collectComponentReference({ generatedAt = new Date().toISO
 
 export async function writeComponentReference(outputPath = OUTPUT_PATH) {
   const reference = await collectComponentReference();
+  await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, JSON.stringify(reference, null, 2) + '\n', 'utf8');
   return reference;
 }

@@ -76,6 +76,12 @@
       "fieldValue": null,
       "eventTargetSelector": ":root"
     },
+    "activation": {
+      "strategy": "client-only-fallback",
+      "placeholderTag": "div",
+      "placeholderClass": "toast-boundary",
+      "placeholderText": "Notifications activate after the page runtime starts."
+    },
     "style": {
       "surfaceAware": false,
       "supportsVariant": true,

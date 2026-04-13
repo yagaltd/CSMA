@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-04-10T10:30:24.490Z",
-  "source": "src/ui/components/*/manifest.json",
+  "generatedAt": "2026-04-11T11:29:08.442Z",
+  "source": "library/ui/components/*/manifest.json",
   "totalComponents": 7,
   "categories": [
     "CSS-Only",
@@ -21,7 +21,7 @@
       "lifecycle": "stable",
       "stability": "stable",
       "preferred": true,
-      "manifestPath": "src/ui/components/badge/manifest.json",
+      "manifestPath": "library/ui/components/badge/manifest.json",
       "description": "Inline labels for status, categories, and counts",
       "contracts": {
         "published": [],
@@ -72,6 +72,7 @@
         "fieldValue": null,
         "eventTargetSelector": ":root"
       },
+      "activation": {},
       "style": {
         "surfaceAware": true,
         "supportsVariant": true,
@@ -117,7 +118,7 @@
       "lifecycle": "stable",
       "stability": "stable",
       "preferred": true,
-      "manifestPath": "src/ui/components/button/manifest.json",
+      "manifestPath": "library/ui/components/button/manifest.json",
       "description": "Pure CSS button component with CSS custom properties for theming",
       "contracts": {
         "published": [],
@@ -169,6 +170,7 @@
         "fieldValue": null,
         "eventTargetSelector": "button, a, :root"
       },
+      "activation": {},
       "style": {
         "surfaceAware": true,
         "supportsVariant": true,
@@ -214,7 +216,7 @@
       "lifecycle": "active",
       "stability": "stable",
       "preferred": true,
-      "manifestPath": "src/ui/components/card/manifest.json",
+      "manifestPath": "library/ui/components/card/manifest.json",
       "description": "Structured surface container with header, body, and optional footer actions",
       "contracts": {
         "published": [],
@@ -271,6 +273,7 @@
         "fieldValue": null,
         "eventTargetSelector": ".card"
       },
+      "activation": {},
       "style": {
         "surfaceAware": true,
         "supportsVariant": false,
@@ -299,7 +302,7 @@
       "lifecycle": "active",
       "stability": "stable",
       "preferred": true,
-      "manifestPath": "src/ui/components/field/manifest.json",
+      "manifestPath": "library/ui/components/field/manifest.json",
       "description": "Form field wrapper that pairs a label and helper text with a single control slot",
       "contracts": {
         "published": [],
@@ -342,6 +345,7 @@
         "fieldValue": null,
         "eventTargetSelector": ".field"
       },
+      "activation": {},
       "style": {
         "surfaceAware": false,
         "supportsVariant": false,
@@ -371,7 +375,7 @@
       "lifecycle": "active",
       "stability": "stable",
       "preferred": true,
-      "manifestPath": "src/ui/components/input/manifest.json",
+      "manifestPath": "library/ui/components/input/manifest.json",
       "description": "Single-line form input with semantic states and token-driven focus treatment",
       "contracts": {
         "published": [],
@@ -415,6 +419,7 @@
         "fieldValue": null,
         "eventTargetSelector": ".input"
       },
+      "activation": {},
       "style": {
         "surfaceAware": true,
         "supportsVariant": false,
@@ -441,7 +446,7 @@
       "lifecycle": "stable",
       "stability": "stable",
       "preferred": false,
-      "manifestPath": "src/ui/components/theme-toggle/manifest.json",
+      "manifestPath": "library/ui/components/theme-toggle/manifest.json",
       "description": "Theme toggle control styled as a reusable surface button",
       "contracts": {
         "published": [],
@@ -478,6 +483,7 @@
         "fieldValue": null,
         "eventTargetSelector": "[data-theme-toggle], .theme-toggle"
       },
+      "activation": {},
       "style": {
         "surfaceAware": true,
         "supportsVariant": false,
@@ -502,7 +508,7 @@
       "lifecycle": "active",
       "stability": "stable",
       "preferred": false,
-      "manifestPath": "src/ui/components/toast/manifest.json",
+      "manifestPath": "library/ui/components/toast/manifest.json",
       "description": "Notification messages that auto-dismiss",
       "contracts": {
         "published": [
@@ -558,6 +564,12 @@
         "intentMap": {},
         "fieldValue": null,
         "eventTargetSelector": ":root"
+      },
+      "activation": {
+        "strategy": "client-only-fallback",
+        "placeholderTag": "div",
+        "placeholderClass": "toast-boundary",
+        "placeholderText": "Notifications activate after the page runtime starts."
       },
       "style": {
         "surfaceAware": false,

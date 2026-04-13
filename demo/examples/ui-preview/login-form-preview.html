@@ -4,7 +4,25 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>CSMA Auth Shell Preview</title>
-    <link rel="stylesheet" href="../../src/app.css" />
+    <link rel="stylesheet" href="../../generated/tokens.css" />
+    <link rel="stylesheet" href="../../../library/style/base.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/layout.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/motion.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/text-overflow.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/states.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/accessibility.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/i18n.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/loading.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/error.css" />
+    <link rel="stylesheet" href="../../../library/style/foundation/print.css" />
+    <link rel="stylesheet" href="../../../library/style/touch.css" />
+    <link rel="stylesheet" href="../../../library/ui/components/button/button.css" />
+    <link rel="stylesheet" href="../../../library/ui/components/badge/badge.css" />
+    <link rel="stylesheet" href="../../../library/ui/components/card/card.css" />
+    <link rel="stylesheet" href="../../../library/ui/components/field/field.css" />
+    <link rel="stylesheet" href="../../../library/ui/components/input/input.css" />
+    <link rel="stylesheet" href="../../../library/ui/components/toast/toast.css" />
+    <link rel="stylesheet" href="../../../library/ui/components/theme-toggle/theme-toggle.css" />
   </head>
   <body>
     <main class="stack" data-gap="xl" style="max-width: 72rem; margin: 0 auto; padding: 2rem 1rem 4rem;">
@@ -144,6 +162,11 @@
       };
       const authShellLayout = window.CSMA_ARCHETYPE_PREVIEW.layout;
       const contentArchetypes = window.CSMA_ARCHETYPE_PREVIEW.contentArchetypes;
+      const legacyViews = window.CSMA_ARCHETYPE_PREVIEW.legacyViews || {};
+
+      function cloneResultModel(model) {
+        return model ? JSON.parse(JSON.stringify(model)) : null;
+      }
 
       function resolveValue(value, context) {
         if (typeof value !== 'string') {
@@ -387,11 +410,21 @@
       const views = new ViewRegistry(eventBus);
       views.register({
         id: 'ai-ui.login-form',
-        render: (payload) => compileArchetypeView('login-form', payload.props || {})
+        render: (payload) => {
+          if (!payload.props || Object.keys(payload.props).length === 0) {
+            return cloneResultModel(legacyViews['login-form']);
+          }
+          return compileArchetypeView('login-form', payload.props || {});
+        }
       });
       views.register({
         id: 'ai-ui.contact-form',
-        render: (payload) => compileArchetypeView('contact-form', payload.props || {})
+        render: (payload) => {
+          if (!payload.props || Object.keys(payload.props).length === 0) {
+            return cloneResultModel(legacyViews['contact-form']);
+          }
+          return compileArchetypeView('contact-form', payload.props || {});
+        }
       });
 
       const mount = document.querySelector('#auth-shell-preview');

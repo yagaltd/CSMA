@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { collectComponentReference } from '../tooling/scripts/generate-component-reference.js';
+import { toolingGeneratedPath } from '../tooling/scripts/generated-paths.js';
 
 describe('generate-component-reference', () => {
   it('builds a machine-readable component reference from manifests and css', async () => {
@@ -21,5 +22,9 @@ describe('generate-component-reference', () => {
     const card = reference.components.find((component) => component.id === 'card');
     expect(card.tones).toContain('subtle');
     expect(card.visualRole).toBe('container');
+  });
+
+  it('uses tooling/generated for shared component references', () => {
+    expect(toolingGeneratedPath('component-reference.json').replaceAll('\\', '/')).toMatch(/tooling\/generated\/component-reference\.json$/);
   });
 });

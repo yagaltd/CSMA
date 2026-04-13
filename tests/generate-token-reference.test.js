@@ -1,13 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
 import { collectTokenReference } from '../tooling/scripts/generate-token-reference.js';
+import { toolingGeneratedPath } from '../tooling/scripts/generated-paths.js';
 
 describe('generate-token-reference', () => {
   it('flattens design tokens into an AI-friendly reference', async () => {
     const reference = await collectTokenReference({
+      appName: 'template',
       generatedAt: '2026-04-10T00:00:00.000Z'
     });
 
+    expect(reference.appName).toBe('template');
+    expect(reference.source).toBe('template/design-tokens.json');
     expect(reference.generatedAt).toBe('2026-04-10T00:00:00.000Z');
     expect(reference.totalTokens).toBeGreaterThan(20);
     expect(reference.categories.primitives).toBeGreaterThan(0);
@@ -21,5 +25,9 @@ describe('generate-token-reference', () => {
 
     const lightBackground = reference.tokens.find((token) => token.path === 'themes.light.colors.background');
     expect(lightBackground.cssVar).toBe('--background');
+  });
+
+  it('uses tooling/generated for shared token references', () => {
+    expect(toolingGeneratedPath('token-reference.json').replaceAll('\\', '/')).toMatch(/tooling\/generated\/token-reference\.json$/);
   });
 });
