@@ -1,16 +1,16 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { ServiceManager } from '../src/runtime/ServiceManager.js';
-import { ModuleManager } from '../src/runtime/ModuleManager.js';
-import { CommandRegistry } from '../src/runtime/CommandRegistry.js';
-import { RouteRegistry } from '../src/runtime/RouteRegistry.js';
-import { NavigationRegistry } from '../src/runtime/NavigationRegistry.js';
-import { PanelRegistry } from '../src/runtime/PanelRegistry.js';
-import { AdapterRegistry } from '../src/runtime/AdapterRegistry.js';
-import { ViewRegistry } from '../src/runtime/ViewRegistry.js';
-import { validateModuleDefinition } from '../src/runtime/ModuleManifest.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { ServiceManager } from '../library/runtime/ServiceManager.js';
+import { ModuleManager } from '../library/runtime/ModuleManager.js';
+import { CommandRegistry } from '../library/runtime/CommandRegistry.js';
+import { RouteRegistry } from '../library/runtime/RouteRegistry.js';
+import { NavigationRegistry } from '../library/runtime/NavigationRegistry.js';
+import { PanelRegistry } from '../library/runtime/PanelRegistry.js';
+import { AdapterRegistry } from '../library/runtime/AdapterRegistry.js';
+import { ViewRegistry } from '../library/runtime/ViewRegistry.js';
+import { validateModuleDefinition } from '../library/runtime/ModuleManifest.js';
 
 function createRuntime() {
     const eventBus = new EventBus();
@@ -31,7 +31,7 @@ function createRuntime() {
 
 describe('Module manifest validation', () => {
     it('accepts the canonical example-module shape', async () => {
-        const moduleDefinition = await import('../src/modules/example-module/index.js');
+        const moduleDefinition = await import('../library/modules/example-module/index.js');
         const validated = validateModuleDefinition('example-module', moduleDefinition);
 
         expect(validated.manifest.id).toBe('example-module');

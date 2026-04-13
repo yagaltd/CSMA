@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' http://localhost:5050;">
+  <title>CSMA Todo App Example</title>
+  <link rel="stylesheet" href="../../src/app.css">
+  <link rel="stylesheet" href="./todo.css">
+</head>
+
+<body>
+  <div class="page-shell">
+    <header class="page-header">
+      <div class="page-header__copy">
+        <p class="feature-badge example-feature-badge">Reference · Type II + Type III flow</p>
+        <h1>Todo App (CSMA Reference)</h1>
+        <p>Shows a compact CSMA task flow with event-driven updates, local persistence, and responsive theming.</p>
+      </div>
+      <button type="button" class="theme-toggle theme-toggle--icon-only example-theme-toggle button" data-variant="outline" data-theme-toggle data-theme-active="light" aria-label="Switch to dark theme">
+        <span class="theme-toggle__icons" aria-hidden="true">
+          <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+          </svg>
+          <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg class="theme-icon theme-icon--contrast" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="8"/>
+            <path d="M12 4a8 8 0 0 1 0 16"/>
+          </svg>
+        </span>
+        <span class="theme-toggle__label visually-hidden" data-theme-label>Light</span>
+      </button>
+    </header>
+
+    <main class="todo-app" data-todo-app data-view="list">
+      <section class="todo-panel">
+        <header class="todo-panel__header">
+          <div>
+            <p class="todo-panel__eyebrow">Tasks</p>
+            <h2>Plan the next release</h2>
+          </div>
+        </header>
+
+        <form class="todo-form" data-todo-form>
+          <div class="todo-form__field">
+            <label class="visually-hidden" for="todo-input">Add a todo</label>
+            <input id="todo-input" name="title" type="text" placeholder="Add a new todo…" maxlength="120"
+              autocomplete="off" inputmode="text" autocapitalize="sentences" required>
+          </div>
+          <button type="submit" class="button" data-variant="primary">Add task</button>
+        </form>
+
+        <div class="todo-toolbar" role="toolbar" aria-label="Task controls">
+          <div class="todo-toggles" role="group" aria-label="View mode">
+            <button type="button" class="button" data-variant="ghost" data-view-toggle="list"
+              aria-pressed="true">List view</button>
+            <button type="button" class="button" data-variant="ghost" data-view-toggle="board"
+              aria-pressed="false">Board view</button>
+          </div>
+          <div class="todo-filters">
+            <div class="todo-filter-group" role="group" aria-label="Todo filters">
+              <button type="button" class="button" data-variant="text" data-filter="all"
+                aria-pressed="true">All tasks</button>
+              <button type="button" class="button" data-variant="text" data-filter="active"
+                aria-pressed="false">Open</button>
+              <button type="button" class="button" data-variant="text" data-filter="completed"
+                aria-pressed="false">Completed</button>
+            </div>
+            <button type="button" class="button" data-variant="text" data-action="clear-completed">Clear done</button>
+          </div>
+        </div>
+
+        <ul class="todo-list" data-todo-list aria-live="polite"></ul>
+      </section>
+
+      <section class="todo-activity">
+        <header class="todo-panel__header todo-panel__header--stacked">
+          <div>
+            <p class="todo-panel__eyebrow">Insights</p>
+            <h2>Activity summary</h2>
+          </div>
+          <p class="todo-panel__summary">Current totals and the latest task changes from the event stream.</p>
+        </header>
+        <div class="todo-insights-grid" data-todo-insights>
+          <div class="todo-stat" data-stat="total">
+            <p>Total</p>
+            <strong>0</strong>
+          </div>
+          <div class="todo-stat" data-stat="active">
+            <p>Open</p>
+            <strong>0</strong>
+          </div>
+          <div class="todo-stat" data-stat="completed">
+            <p>Completed</p>
+            <strong>0</strong>
+          </div>
+        </div>
+        <div class="todo-activity__log">
+          <h3>Recent Activity</h3>
+          <ul data-todo-log></ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <template id="todo-item-template">
+    <li class="todo-item" data-id="">
+      <label class="todo-item__checkbox">
+        <input type="checkbox" data-action="toggle">
+        <span class="checkbox-indicator" aria-hidden="true"></span>
+      </label>
+      <div class="todo-item__body">
+        <p class="todo-item__title"></p>
+        <p class="todo-item__meta"></p>
+      </div>
+      <div class="todo-item__actions">
+        <button type="button" class="button" data-variant="text" data-action="edit">Edit</button>
+        <button type="button" class="button" data-variant="text" data-action="delete">Delete</button>
+      </div>
+    </li>
+  </template>
+
+  <template id="todo-board-template">
+    <li class="todo-board-card" data-id="">
+      <button type="button" class="todo-board-card__button" data-action="open">
+        <p class="todo-board-card__title"></p>
+        <p class="todo-board-card__preview"></p>
+      </button>
+    </li>
+  </template>
+
+  <dialog class="todo-dialog dialog-content" data-edit-dialog data-size="md" aria-labelledby="todo-dialog-title"
+    aria-describedby="todo-dialog-description">
+    <form class="todo-dialog__form" data-dialog-form>
+      <div class="dialog-header">
+        <h2 id="todo-dialog-title" class="dialog-title">Edit todo</h2>
+        <button type="button" class="dialog-close" data-dialog-close aria-label="Close">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 4l8 8M12 4l-8 8"/>
+          </svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <p id="todo-dialog-description" class="todo-dialog__description">Update the task title or mark it complete.</p>
+        <label class="todo-dialog-checkbox">
+          <input type="checkbox" data-dialog-toggle>
+          <span>Mark as completed</span>
+        </label>
+        <label class="todo-dialog-field" for="todo-dialog-input">
+          <span class="todo-dialog-field__label">Task details</span>
+        </label>
+        <textarea id="todo-dialog-input" data-dialog-input rows="5" maxlength="180" placeholder="Update note"
+          required></textarea>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" class="button" data-variant="outline" data-dialog-delete>Delete</button>
+        <button type="button" class="button" data-variant="ghost" data-dialog-cancel>Cancel</button>
+        <button type="submit" class="button" data-variant="primary">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="/library/style/theme/theme-entry.js"></script>
+  <script type="module" src="./todo-app.js"></script>
+</body>
+
+</html>

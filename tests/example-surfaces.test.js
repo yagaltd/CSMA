@@ -2,9 +2,9 @@ import fs from 'node:fs';
 
 import { describe, expect, it } from 'vitest';
 
-const todoHtml = fs.readFileSync('examples/todo-app/index.html', 'utf8');
-const todoCss = fs.readFileSync('examples/todo-app/todo.css', 'utf8');
-const todoJs = fs.readFileSync('examples/todo-app/todo-app.js', 'utf8');
+const todoHtml = fs.readFileSync('demo/examples/todo-app/index.html', 'utf8');
+const todoCss = fs.readFileSync('demo/examples/todo-app/todo.css', 'utf8');
+const todoJs = fs.readFileSync('demo/examples/todo-app/todo-app.js', 'utf8');
 
 describe('example surface quality', () => {
     it('keeps example controls accessible and aligned with shared semantics', () => {

@@ -1,0 +1,80 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "input",
+    "type": "I",
+    "owner": "ui-service",
+    "lifecycle": "active",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": [],
+    "components": []
+  },
+  "metadata": {
+    "description": "Single-line form input with semantic states and token-driven focus treatment"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "input",
+    "title": "Input",
+    "category": "Forms",
+    "preferred": true,
+    "summary": "Single-line text input for email, password, and similar fields",
+    "template": "<input class=\"input\" type=\"email\" name=\"email\" placeholder=\"name@company.com\" autocomplete=\"email\" />",
+    "propsSchema": {
+      "id": "string",
+      "type": "string",
+      "name": "string",
+      "value": "string",
+      "placeholder": "string",
+      "autocomplete": "string",
+      "state": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "render": {
+      "kind": "element",
+      "template": "<input class=\"input\" type=\"email\" name=\"email\" placeholder=\"name@company.com\" autocomplete=\"email\" />"
+    },
+    "behavior": {
+      "role": "field",
+      "events": [
+        "focus",
+        "blur",
+        "input",
+        "change"
+      ],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".input"
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": true
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": [
+        ".input"
+      ]
+    }
+  }
+}

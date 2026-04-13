@@ -1,26 +1,9 @@
 ---
 name: csma-security
-version: "1.0.0"
-description: >-
-  Expert guidance on the CSMA 6-layer security model. Covers CSP headers,
-  contract validation, input sanitization, rate limiting, honeypot fields,
-  schema spoofing protection, and security testing patterns. Use when building
-  or auditing security-critical code in CSMA modules and services.
-tags:
-  - security
-  - validation
-  - contracts
-  - csp
-  - rate-limiting
-  - sanitization
-  - xss-prevention
-related_files:
-  - src/runtime/Contracts.js
-  - src/runtime/EventBus.js
-  - src/runtime/RateLimiter.js
-  - src/runtime/validation/
-  - src/config.js
+description: CSMA 6-layer security model covering CSP, contract validation, input sanitization, rate limiting, honeypot fields, and schema spoofing protection. Use when building or auditing security-critical code.
 ---
+
+<!-- version: 1.0.0 | tags: security, validation, contracts, csp, rate-limiting, sanitization -->
 
 # CSMA Security Skill
 Guidance for understanding and implementing the 6-layer zero-trust security
@@ -59,8 +42,8 @@ CSMA CSP rules:
 Every EventBus payload is validated against a schema before processing.
 
 ```javascript
-import { contract } from '../../src/runtime/Contracts.js';
-import { object, string, number, enums, optional, size } from '../../src/runtime/validation/index.js';
+import { contract } from '../../library/runtime/Contracts.js';
+import { object, string, number, enums, optional, size } from '../../library/runtime/validation/index.js';
 
 const MY_CONTRACT = contract({
   version: 1,

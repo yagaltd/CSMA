@@ -1,0 +1,302 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://csma.local/src/ui/schemas/component-manifest.schema.json",
+  "title": "CSMA Component Manifest",
+  "description": "Schema for library/ui/components/*/manifest.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eccac",
+    "component",
+    "contracts",
+    "dependencies",
+    "metadata",
+    "aiUi"
+  ],
+  "properties": {
+    "eccac": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["version", "spec"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "spec": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "owner", "lifecycle", "stability"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["I", "II"]
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lifecycle": {
+          "type": "string",
+          "enum": ["draft", "active", "stable", "deprecated", "retired"]
+        },
+        "stability": {
+          "type": "string",
+          "enum": ["experimental", "stable"]
+        }
+      }
+    },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["published", "subscribed"],
+      "properties": {
+        "published": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "subscribed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime", "components"],
+      "properties": {
+        "runtime": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["description"],
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 10
+        }
+      }
+    },
+    "aiUi": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "alias",
+        "title",
+        "category",
+        "preferred",
+        "summary",
+        "template",
+        "propsSchema",
+        "defaultSlot",
+        "slots",
+        "allowedChildren",
+        "render",
+        "behavior",
+        "style",
+        "textTargets"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "alias": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1
+        },
+        "preferred": {
+          "type": "boolean"
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 10
+        },
+        "template": {
+          "type": "string",
+          "minLength": 1
+        },
+        "propsSchema": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "defaultSlot": {
+          "type": "string",
+          "minLength": 1
+        },
+        "slots": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["selector", "allowedChildren"],
+            "properties": {
+              "selector": {
+                "type": "string",
+                "minLength": 1
+              },
+              "allowedChildren": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "allowedChildren": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "render": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "template"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["inline", "button", "template", "element", "custom"]
+            },
+            "template": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "behavior": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["role", "events", "targetActions", "intentMap", "eventTargetSelector"],
+          "properties": {
+            "role": {
+              "type": "string",
+              "enum": ["node", "container", "trigger", "field", "system"]
+            },
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "targetActions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "intentMap": {
+              "type": "object"
+            },
+            "fieldValue": {},
+            "eventTargetSelector": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "style": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["surfaceAware", "supportsVariant", "supportsSize", "supportsTone"],
+          "properties": {
+            "surfaceAware": {
+              "type": "boolean"
+            },
+            "supportsVariant": {
+              "type": "boolean"
+            },
+            "supportsSize": {
+              "type": "boolean"
+            },
+            "supportsTone": {
+              "type": "boolean"
+            }
+          }
+        },
+        "textTargets": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "component": {
+            "properties": {
+              "type": {
+                "const": "II"
+              }
+            },
+            "required": ["type"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "dependencies": {
+            "properties": {
+              "runtime": {
+                "contains": {
+                  "const": "EventBus"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

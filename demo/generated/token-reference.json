@@ -1,0 +1,2997 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-04-10T10:30:24.490Z",
+  "source": "design-tokens.json",
+  "totalTokens": 196,
+  "categories": {
+    "components": 17,
+    "primitives": 86,
+    "semantic": 5,
+    "themes": 88
+  },
+  "tokens": [
+    {
+      "path": "components.button.fontSize",
+      "category": "components",
+      "token": "fontSize",
+      "cssVar": "--button-font-size",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.typography.fontSize.sm}",
+      "value": "{primitives.typography.fontSize.sm}",
+      "extensions": {}
+    },
+    {
+      "path": "components.button.height",
+      "category": "components",
+      "token": "height",
+      "cssVar": "--button-height",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "2.5rem",
+      "value": "2.5rem",
+      "extensions": {
+        "com.csma.px": 40
+      }
+    },
+    {
+      "path": "components.button.heightLg",
+      "category": "components",
+      "token": "heightLg",
+      "cssVar": "--button-height-lg",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "2.75rem",
+      "value": "2.75rem",
+      "extensions": {
+        "com.csma.px": 44
+      }
+    },
+    {
+      "path": "components.button.heightSm",
+      "category": "components",
+      "token": "heightSm",
+      "cssVar": "--button-height-sm",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "2rem",
+      "value": "2rem",
+      "extensions": {
+        "com.csma.px": 32
+      }
+    },
+    {
+      "path": "components.button.paddingBlock",
+      "category": "components",
+      "token": "paddingBlock",
+      "cssVar": "--button-padding-block",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.spacing.sm}",
+      "value": "{primitives.spacing.sm}",
+      "extensions": {}
+    },
+    {
+      "path": "components.button.paddingInline",
+      "category": "components",
+      "token": "paddingInline",
+      "cssVar": "--button-padding-inline",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.spacing.lg}",
+      "value": "{primitives.spacing.lg}",
+      "extensions": {}
+    },
+    {
+      "path": "components.button.radius",
+      "category": "components",
+      "token": "radius",
+      "cssVar": "--button-radius",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.radius.md}",
+      "value": "{primitives.radius.md}",
+      "extensions": {}
+    },
+    {
+      "path": "components.card.padding",
+      "category": "components",
+      "token": "padding",
+      "cssVar": "--card-padding",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.spacing.xl}",
+      "value": "{primitives.spacing.xl}",
+      "extensions": {}
+    },
+    {
+      "path": "components.card.radius",
+      "category": "components",
+      "token": "radius",
+      "cssVar": "--card-radius",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.radius.lg}",
+      "value": "{primitives.radius.lg}",
+      "extensions": {}
+    },
+    {
+      "path": "components.card.shadow",
+      "category": "components",
+      "token": "shadow",
+      "cssVar": "--card-shadow",
+      "type": "shadow",
+      "description": null,
+      "rawValue": "{primitives.shadow.sm}",
+      "value": "{primitives.shadow.sm}",
+      "extensions": {}
+    },
+    {
+      "path": "components.dialog.radius",
+      "category": "components",
+      "token": "radius",
+      "cssVar": "--dialog-radius",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.radius.md}",
+      "value": "{primitives.radius.md}",
+      "extensions": {}
+    },
+    {
+      "path": "components.dialog.shadow",
+      "category": "components",
+      "token": "shadow",
+      "cssVar": "--dialog-shadow",
+      "type": "shadow",
+      "description": null,
+      "rawValue": "{primitives.shadow.lg}",
+      "value": "{primitives.shadow.lg}",
+      "extensions": {}
+    },
+    {
+      "path": "components.input.height",
+      "category": "components",
+      "token": "height",
+      "cssVar": "--input-height",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "2.5rem",
+      "value": "2.5rem",
+      "extensions": {
+        "com.csma.px": 40
+      }
+    },
+    {
+      "path": "components.input.paddingBlock",
+      "category": "components",
+      "token": "paddingBlock",
+      "cssVar": "--input-padding-block",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.spacing.sm}",
+      "value": "{primitives.spacing.sm}",
+      "extensions": {}
+    },
+    {
+      "path": "components.input.paddingInline",
+      "category": "components",
+      "token": "paddingInline",
+      "cssVar": "--input-padding-inline",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.spacing.md}",
+      "value": "{primitives.spacing.md}",
+      "extensions": {}
+    },
+    {
+      "path": "components.input.radius",
+      "category": "components",
+      "token": "radius",
+      "cssVar": "--input-radius",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "{primitives.radius.md}",
+      "value": "{primitives.radius.md}",
+      "extensions": {}
+    },
+    {
+      "path": "components.navbar.height",
+      "category": "components",
+      "token": "height",
+      "cssVar": "--navbar-height",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "4rem",
+      "value": "4rem",
+      "extensions": {
+        "com.csma.px": 64
+      }
+    },
+    {
+      "path": "primitives.borderWidth.accent",
+      "category": "primitives",
+      "token": "accent",
+      "cssVar": "--border-width-accent",
+      "type": "dimension",
+      "description": "Severity accents, strong borders",
+      "rawValue": "4px",
+      "value": "4px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.borderWidth.default",
+      "category": "primitives",
+      "token": "default",
+      "cssVar": "--border-width-default",
+      "type": "dimension",
+      "description": "Standard borders, dividers",
+      "rawValue": "1px",
+      "value": "1px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.borderWidth.emphasis",
+      "category": "primitives",
+      "token": "emphasis",
+      "cssVar": "--border-width-emphasis",
+      "type": "dimension",
+      "description": "Emphasis borders, selected items",
+      "rawValue": "3px",
+      "value": "3px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.borderWidth.focus",
+      "category": "primitives",
+      "token": "focus",
+      "cssVar": "--border-width-focus",
+      "type": "dimension",
+      "description": "Focus indicator rings",
+      "rawValue": "2px",
+      "value": "2px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.breakpoint.lg",
+      "category": "primitives",
+      "token": "lg",
+      "cssVar": "--breakpoint-lg",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "1024px",
+      "value": "1024px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.breakpoint.md",
+      "category": "primitives",
+      "token": "md",
+      "cssVar": "--breakpoint-md",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "768px",
+      "value": "768px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.breakpoint.sm",
+      "category": "primitives",
+      "token": "sm",
+      "cssVar": "--breakpoint-sm",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "480px",
+      "value": "480px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.breakpoint.xl",
+      "category": "primitives",
+      "token": "xl",
+      "cssVar": "--breakpoint-xl",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "1280px",
+      "value": "1280px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.focusRing.offsetWidth",
+      "category": "primitives",
+      "token": "offsetWidth",
+      "cssVar": "--ring-offset-width",
+      "type": "dimension",
+      "description": "Gap between element and ring",
+      "rawValue": "2px",
+      "value": "2px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.focusRing.shadow",
+      "category": "primitives",
+      "token": "shadow",
+      "cssVar": "--ring-shadow",
+      "type": "shadow",
+      "description": "Composed focus ring shadow",
+      "rawValue": [
+        {
+          "offsetX": "0",
+          "offsetY": "0",
+          "blur": "0",
+          "spread": "2px",
+          "color": "0"
+        },
+        {
+          "offsetX": "0",
+          "offsetY": "0",
+          "blur": "0",
+          "spread": "4px",
+          "color": "0"
+        }
+      ],
+      "value": "[{\"offsetX\":\"0\",\"offsetY\":\"0\",\"blur\":\"0\",\"spread\":\"2px\",\"color\":\"0\"},{\"offsetX\":\"0\",\"offsetY\":\"0\",\"blur\":\"0\",\"spread\":\"4px\",\"color\":\"0\"}]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.focusRing.width",
+      "category": "primitives",
+      "token": "width",
+      "cssVar": "--ring-width",
+      "type": "dimension",
+      "description": "Ring stroke width",
+      "rawValue": "4px",
+      "value": "4px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.layout.container",
+      "category": "primitives",
+      "token": "container",
+      "cssVar": "--layout-container",
+      "type": "dimension",
+      "description": "Default content width",
+      "rawValue": "900px",
+      "value": "900px",
+      "extensions": {
+        "com.csma.px": 900
+      }
+    },
+    {
+      "path": "primitives.layout.containerNarrow",
+      "category": "primitives",
+      "token": "containerNarrow",
+      "cssVar": "--layout-container-narrow",
+      "type": "dimension",
+      "description": "Narrow content width",
+      "rawValue": "600px",
+      "value": "600px",
+      "extensions": {
+        "com.csma.px": 600
+      }
+    },
+    {
+      "path": "primitives.layout.containerWide",
+      "category": "primitives",
+      "token": "containerWide",
+      "cssVar": "--layout-container-wide",
+      "type": "dimension",
+      "description": "Wide/full-width content",
+      "rawValue": "1200px",
+      "value": "1200px",
+      "extensions": {
+        "com.csma.px": 1200
+      }
+    },
+    {
+      "path": "primitives.layout.gridMinLg",
+      "category": "primitives",
+      "token": "gridMinLg",
+      "cssVar": "--layout-grid-min-lg",
+      "type": "dimension",
+      "description": "Large grid column minimum",
+      "rawValue": "320px",
+      "value": "320px",
+      "extensions": {
+        "com.csma.px": 320
+      }
+    },
+    {
+      "path": "primitives.layout.gridMinMd",
+      "category": "primitives",
+      "token": "gridMinMd",
+      "cssVar": "--layout-grid-min-md",
+      "type": "dimension",
+      "description": "Medium grid column minimum",
+      "rawValue": "280px",
+      "value": "280px",
+      "extensions": {
+        "com.csma.px": 280
+      }
+    },
+    {
+      "path": "primitives.layout.gridMinSm",
+      "category": "primitives",
+      "token": "gridMinSm",
+      "cssVar": "--layout-grid-min-sm",
+      "type": "dimension",
+      "description": "Small grid column minimum",
+      "rawValue": "240px",
+      "value": "240px",
+      "extensions": {
+        "com.csma.px": 240
+      }
+    },
+    {
+      "path": "primitives.layout.sidebar",
+      "category": "primitives",
+      "token": "sidebar",
+      "cssVar": "--layout-sidebar",
+      "type": "dimension",
+      "description": "Sidebar navigation width",
+      "rawValue": "240px",
+      "value": "240px",
+      "extensions": {
+        "com.csma.px": 240
+      }
+    },
+    {
+      "path": "primitives.layout.touchTarget",
+      "category": "primitives",
+      "token": "touchTarget",
+      "cssVar": "--layout-touch-target",
+      "type": "dimension",
+      "description": "Minimum touch target size",
+      "rawValue": "44px",
+      "value": "44px",
+      "extensions": {
+        "com.csma.px": 44
+      }
+    },
+    {
+      "path": "primitives.letterSpacing.display",
+      "category": "primitives",
+      "token": "display",
+      "cssVar": "--tracking-display",
+      "type": "dimension",
+      "description": "Hero/display headings (h1)",
+      "rawValue": "-0.32px",
+      "value": "-0.32px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.letterSpacing.heading",
+      "category": "primitives",
+      "token": "heading",
+      "cssVar": "--tracking-heading",
+      "type": "dimension",
+      "description": "Section headings (h2)",
+      "rawValue": "-0.24px",
+      "value": "-0.24px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.letterSpacing.label",
+      "category": "primitives",
+      "token": "label",
+      "cssVar": "--tracking-label",
+      "type": "dimension",
+      "description": "Small labels, eyebrow text",
+      "rawValue": "0.64px",
+      "value": "0.64px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.letterSpacing.normal",
+      "category": "primitives",
+      "token": "normal",
+      "cssVar": "--tracking-normal",
+      "type": "dimension",
+      "description": "Body text, default tracking",
+      "rawValue": "0px",
+      "value": "0px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.letterSpacing.uppercase",
+      "category": "primitives",
+      "token": "uppercase",
+      "cssVar": "--tracking-uppercase",
+      "type": "dimension",
+      "description": "Uppercase labels, small caps",
+      "rawValue": "0.8px",
+      "value": "0.8px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.letterSpacing.wide",
+      "category": "primitives",
+      "token": "wide",
+      "cssVar": "--tracking-wide",
+      "type": "dimension",
+      "description": "Wide tracking for OTP/display codes",
+      "rawValue": "2.24px",
+      "value": "2.24px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.duration.enter",
+      "category": "primitives",
+      "token": "enter",
+      "cssVar": "--motion-duration-enter",
+      "type": "duration",
+      "description": "Page enters",
+      "rawValue": {
+        "value": 560,
+        "unit": "ms"
+      },
+      "value": "560ms",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.duration.fast",
+      "category": "primitives",
+      "token": "fast",
+      "cssVar": "--motion-duration-fast",
+      "type": "duration",
+      "description": "Hover, focus states",
+      "rawValue": {
+        "value": 180,
+        "unit": "ms"
+      },
+      "value": "180ms",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.duration.instant",
+      "category": "primitives",
+      "token": "instant",
+      "cssVar": "--motion-duration-instant",
+      "type": "duration",
+      "description": "Immediate feedback",
+      "rawValue": {
+        "value": 120,
+        "unit": "ms"
+      },
+      "value": "120ms",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.duration.normal",
+      "category": "primitives",
+      "token": "normal",
+      "cssVar": "--motion-duration-normal",
+      "type": "duration",
+      "description": "Transitions",
+      "rawValue": {
+        "value": 260,
+        "unit": "ms"
+      },
+      "value": "260ms",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.duration.slow",
+      "category": "primitives",
+      "token": "slow",
+      "cssVar": "--motion-duration-slow",
+      "type": "duration",
+      "description": "Animations",
+      "rawValue": {
+        "value": 420,
+        "unit": "ms"
+      },
+      "value": "420ms",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.easing.inOutSoft",
+      "category": "primitives",
+      "token": "inOutSoft",
+      "cssVar": "--ease-in-out-soft",
+      "type": "cubicBezier",
+      "description": null,
+      "rawValue": [
+        0.45,
+        0,
+        0.2,
+        1
+      ],
+      "value": "[0.45,0,0.2,1]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.easing.outExpo",
+      "category": "primitives",
+      "token": "outExpo",
+      "cssVar": "--ease-out-expo",
+      "type": "cubicBezier",
+      "description": null,
+      "rawValue": [
+        0.16,
+        1,
+        0.3,
+        1
+      ],
+      "value": "[0.16,1,0.3,1]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.easing.outQuart",
+      "category": "primitives",
+      "token": "outQuart",
+      "cssVar": "--ease-out-quart",
+      "type": "cubicBezier",
+      "description": null,
+      "rawValue": [
+        0.25,
+        1,
+        0.5,
+        1
+      ],
+      "value": "[0.25,1,0.5,1]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.motion.easing.outQuint",
+      "category": "primitives",
+      "token": "outQuint",
+      "cssVar": "--ease-out-quint",
+      "type": "cubicBezier",
+      "description": null,
+      "rawValue": [
+        0.22,
+        1,
+        0.36,
+        1
+      ],
+      "value": "[0.22,1,0.36,1]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.opacity.disabled",
+      "category": "primitives",
+      "token": "disabled",
+      "cssVar": "--opacity-disabled",
+      "type": "number",
+      "description": "Disabled controls and inactive states",
+      "rawValue": 0.5,
+      "value": "0.5",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.opacity.faded",
+      "category": "primitives",
+      "token": "faded",
+      "cssVar": "--opacity-faded",
+      "type": "number",
+      "description": "Slightly faded elements",
+      "rawValue": 0.8,
+      "value": "0.8",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.opacity.hover",
+      "category": "primitives",
+      "token": "hover",
+      "cssVar": "--opacity-hover",
+      "type": "number",
+      "description": "Hover state dimming",
+      "rawValue": 0.9,
+      "value": "0.9",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.opacity.muted",
+      "category": "primitives",
+      "token": "muted",
+      "cssVar": "--opacity-muted",
+      "type": "number",
+      "description": "De-emphasized content",
+      "rawValue": 0.7,
+      "value": "0.7",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.opacity.overlay",
+      "category": "primitives",
+      "token": "overlay",
+      "cssVar": "--opacity-overlay",
+      "type": "number",
+      "description": "Backdrop overlay base",
+      "rawValue": 0.55,
+      "value": "0.55",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.radius.2xl",
+      "category": "primitives",
+      "token": "2xl",
+      "cssVar": "--radius-2xl",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "1.5rem",
+      "value": "1.5rem",
+      "extensions": {
+        "com.csma.px": 24
+      }
+    },
+    {
+      "path": "primitives.radius.3xl",
+      "category": "primitives",
+      "token": "3xl",
+      "cssVar": "--radius-3xl",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "2rem",
+      "value": "2rem",
+      "extensions": {
+        "com.csma.px": 32
+      }
+    },
+    {
+      "path": "primitives.radius.full",
+      "category": "primitives",
+      "token": "full",
+      "cssVar": "--radius-full",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "999px",
+      "value": "999px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.radius.lg",
+      "category": "primitives",
+      "token": "lg",
+      "cssVar": "--radius-lg",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "0.75rem",
+      "value": "0.75rem",
+      "extensions": {
+        "com.csma.px": 12
+      }
+    },
+    {
+      "path": "primitives.radius.md",
+      "category": "primitives",
+      "token": "md",
+      "cssVar": "--radius-md",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "0.5rem",
+      "value": "0.5rem",
+      "extensions": {
+        "com.csma.px": 8
+      }
+    },
+    {
+      "path": "primitives.radius.none",
+      "category": "primitives",
+      "token": "none",
+      "cssVar": "--radius-none",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "0px",
+      "value": "0px",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.radius.sm",
+      "category": "primitives",
+      "token": "sm",
+      "cssVar": "--radius-sm",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "0.25rem",
+      "value": "0.25rem",
+      "extensions": {
+        "com.csma.px": 4
+      }
+    },
+    {
+      "path": "primitives.radius.xl",
+      "category": "primitives",
+      "token": "xl",
+      "cssVar": "--radius-xl",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "1rem",
+      "value": "1rem",
+      "extensions": {
+        "com.csma.px": 16
+      }
+    },
+    {
+      "path": "primitives.shadow.lg",
+      "category": "primitives",
+      "token": "lg",
+      "cssVar": "--shadow-lg",
+      "type": "shadow",
+      "description": "Modal/dialog",
+      "rawValue": [
+        {
+          "offsetX": "0",
+          "offsetY": "10px",
+          "blur": "15px",
+          "spread": "-3px",
+          "color": "rgb(0 0 0 / 0.1)"
+        },
+        {
+          "offsetX": "0",
+          "offsetY": "4px",
+          "blur": "6px",
+          "spread": "-4px",
+          "color": "rgb(0 0 0 / 0.1)"
+        }
+      ],
+      "value": "[{\"offsetX\":\"0\",\"offsetY\":\"10px\",\"blur\":\"15px\",\"spread\":\"-3px\",\"color\":\"rgb(0 0 0 / 0.1)\"},{\"offsetX\":\"0\",\"offsetY\":\"4px\",\"blur\":\"6px\",\"spread\":\"-4px\",\"color\":\"rgb(0 0 0 / 0.1)\"}]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.shadow.md",
+      "category": "primitives",
+      "token": "md",
+      "cssVar": "--shadow-md",
+      "type": "shadow",
+      "description": "Dropdown/popover",
+      "rawValue": [
+        {
+          "offsetX": "0",
+          "offsetY": "4px",
+          "blur": "6px",
+          "spread": "-1px",
+          "color": "rgb(0 0 0 / 0.1)"
+        },
+        {
+          "offsetX": "0",
+          "offsetY": "2px",
+          "blur": "4px",
+          "spread": "-2px",
+          "color": "rgb(0 0 0 / 0.1)"
+        }
+      ],
+      "value": "[{\"offsetX\":\"0\",\"offsetY\":\"4px\",\"blur\":\"6px\",\"spread\":\"-1px\",\"color\":\"rgb(0 0 0 / 0.1)\"},{\"offsetX\":\"0\",\"offsetY\":\"2px\",\"blur\":\"4px\",\"spread\":\"-2px\",\"color\":\"rgb(0 0 0 / 0.1)\"}]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.shadow.sm",
+      "category": "primitives",
+      "token": "sm",
+      "cssVar": "--shadow-sm",
+      "type": "shadow",
+      "description": "Card elevation",
+      "rawValue": [
+        {
+          "offsetX": "0",
+          "offsetY": "1px",
+          "blur": "3px",
+          "spread": "0",
+          "color": "rgb(0 0 0 / 0.1)"
+        },
+        {
+          "offsetX": "0",
+          "offsetY": "1px",
+          "blur": "2px",
+          "spread": "-1px",
+          "color": "rgb(0 0 0 / 0.1)"
+        }
+      ],
+      "value": "[{\"offsetX\":\"0\",\"offsetY\":\"1px\",\"blur\":\"3px\",\"spread\":\"0\",\"color\":\"rgb(0 0 0 / 0.1)\"},{\"offsetX\":\"0\",\"offsetY\":\"1px\",\"blur\":\"2px\",\"spread\":\"-1px\",\"color\":\"rgb(0 0 0 / 0.1)\"}]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.shadow.xl",
+      "category": "primitives",
+      "token": "xl",
+      "cssVar": "--shadow-xl",
+      "type": "shadow",
+      "description": "Large modal",
+      "rawValue": [
+        {
+          "offsetX": "0",
+          "offsetY": "20px",
+          "blur": "25px",
+          "spread": "-5px",
+          "color": "rgb(0 0 0 / 0.1)"
+        },
+        {
+          "offsetX": "0",
+          "offsetY": "8px",
+          "blur": "10px",
+          "spread": "-6px",
+          "color": "rgb(0 0 0 / 0.1)"
+        }
+      ],
+      "value": "[{\"offsetX\":\"0\",\"offsetY\":\"20px\",\"blur\":\"25px\",\"spread\":\"-5px\",\"color\":\"rgb(0 0 0 / 0.1)\"},{\"offsetX\":\"0\",\"offsetY\":\"8px\",\"blur\":\"10px\",\"spread\":\"-6px\",\"color\":\"rgb(0 0 0 / 0.1)\"}]",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.shadow.xs",
+      "category": "primitives",
+      "token": "xs",
+      "cssVar": "--shadow-xs",
+      "type": "shadow",
+      "description": "Subtle elevation",
+      "rawValue": {
+        "offsetX": "0",
+        "offsetY": "1px",
+        "blur": "2px",
+        "spread": "0",
+        "color": "rgb(0 0 0 / 0.05)"
+      },
+      "value": "{\"offsetX\":\"0\",\"offsetY\":\"1px\",\"blur\":\"2px\",\"spread\":\"0\",\"color\":\"rgb(0 0 0 / 0.05)\"}",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.spacing.2xl",
+      "category": "primitives",
+      "token": "2xl",
+      "cssVar": "--space-2xl",
+      "type": "dimension",
+      "description": "Large section gaps",
+      "rawValue": "2rem",
+      "value": "2rem",
+      "extensions": {
+        "com.csma.px": 32
+      }
+    },
+    {
+      "path": "primitives.spacing.2xs",
+      "category": "primitives",
+      "token": "2xs",
+      "cssVar": "--space-2xs",
+      "type": "dimension",
+      "description": "Hairline - not for layout spacing",
+      "rawValue": "0.125rem",
+      "value": "0.125rem",
+      "extensions": {
+        "com.csma.px": 2
+      }
+    },
+    {
+      "path": "primitives.spacing.3xl",
+      "category": "primitives",
+      "token": "3xl",
+      "cssVar": "--space-3xl",
+      "type": "dimension",
+      "description": "Page-level spacing",
+      "rawValue": "3rem",
+      "value": "3rem",
+      "extensions": {
+        "com.csma.px": 48
+      }
+    },
+    {
+      "path": "primitives.spacing.4xl",
+      "category": "primitives",
+      "token": "4xl",
+      "cssVar": "--space-4xl",
+      "type": "dimension",
+      "description": "Hero padding",
+      "rawValue": "4rem",
+      "value": "4rem",
+      "extensions": {
+        "com.csma.px": 64
+      }
+    },
+    {
+      "path": "primitives.spacing.5xl",
+      "category": "primitives",
+      "token": "5xl",
+      "cssVar": "--space-5xl",
+      "type": "dimension",
+      "description": "Maximum vertical rhythm",
+      "rawValue": "6rem",
+      "value": "6rem",
+      "extensions": {
+        "com.csma.px": 96
+      }
+    },
+    {
+      "path": "primitives.spacing.lg",
+      "category": "primitives",
+      "token": "lg",
+      "cssVar": "--space-lg",
+      "type": "dimension",
+      "description": "Standard padding",
+      "rawValue": "1rem",
+      "value": "1rem",
+      "extensions": {
+        "com.csma.px": 16
+      }
+    },
+    {
+      "path": "primitives.spacing.md",
+      "category": "primitives",
+      "token": "md",
+      "cssVar": "--space-md",
+      "type": "dimension",
+      "description": "Standard gap",
+      "rawValue": "0.75rem",
+      "value": "0.75rem",
+      "extensions": {
+        "com.csma.px": 12
+      }
+    },
+    {
+      "path": "primitives.spacing.sm",
+      "category": "primitives",
+      "token": "sm",
+      "cssVar": "--space-sm",
+      "type": "dimension",
+      "description": "Small gaps, compact padding",
+      "rawValue": "0.5rem",
+      "value": "0.5rem",
+      "extensions": {
+        "com.csma.px": 8
+      }
+    },
+    {
+      "path": "primitives.spacing.xl",
+      "category": "primitives",
+      "token": "xl",
+      "cssVar": "--space-xl",
+      "type": "dimension",
+      "description": "Section gaps",
+      "rawValue": "1.5rem",
+      "value": "1.5rem",
+      "extensions": {
+        "com.csma.px": 24
+      }
+    },
+    {
+      "path": "primitives.spacing.xs",
+      "category": "primitives",
+      "token": "xs",
+      "cssVar": "--space-xs",
+      "type": "dimension",
+      "description": "Tight internal spacing",
+      "rawValue": "0.25rem",
+      "value": "0.25rem",
+      "extensions": {
+        "com.csma.px": 4
+      }
+    },
+    {
+      "path": "primitives.typography.fontFamily.base",
+      "category": "primitives",
+      "token": "base",
+      "cssVar": "--font-family-base",
+      "type": "fontFamily",
+      "description": null,
+      "rawValue": "\"IBM Plex Sans\", \"Aptos\", \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+      "value": "\"IBM Plex Sans\", \"Aptos\", \"Segoe UI Variable Text\", \"Segoe UI\", system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.fontFamily.mono",
+      "category": "primitives",
+      "token": "mono",
+      "cssVar": "--font-family-mono",
+      "type": "fontFamily",
+      "description": null,
+      "rawValue": "\"IBM Plex Mono\", \"JetBrains Mono\", \"SFMono-Regular\", Menlo, monospace",
+      "value": "\"IBM Plex Mono\", \"JetBrains Mono\", \"SFMono-Regular\", Menlo, monospace",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.fontSize.2xl",
+      "category": "primitives",
+      "token": "2xl",
+      "cssVar": "--font-size-2xl",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "1.9375rem",
+      "value": "1.9375rem",
+      "extensions": {
+        "com.csma.px": 31,
+        "com.csma.scale": "Major Third (1.25)"
+      }
+    },
+    {
+      "path": "primitives.typography.fontSize.3xl",
+      "category": "primitives",
+      "token": "3xl",
+      "cssVar": "--font-size-3xl",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "2.4375rem",
+      "value": "2.4375rem",
+      "extensions": {
+        "com.csma.px": 39,
+        "com.csma.scale": "Major Third (1.25)"
+      }
+    },
+    {
+      "path": "primitives.typography.fontSize.base",
+      "category": "primitives",
+      "token": "base",
+      "cssVar": "--font-size-base",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "1rem",
+      "value": "1rem",
+      "extensions": {
+        "com.csma.px": 16,
+        "com.csma.scale": "Major Third (1.25)"
+      }
+    },
+    {
+      "path": "primitives.typography.fontSize.lg",
+      "category": "primitives",
+      "token": "lg",
+      "cssVar": "--font-size-lg",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "1.25rem",
+      "value": "1.25rem",
+      "extensions": {
+        "com.csma.px": 20,
+        "com.csma.scale": "Major Third (1.25)"
+      }
+    },
+    {
+      "path": "primitives.typography.fontSize.sm",
+      "category": "primitives",
+      "token": "sm",
+      "cssVar": "--font-size-sm",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "0.8125rem",
+      "value": "0.8125rem",
+      "extensions": {
+        "com.csma.px": 13,
+        "com.csma.scale": "Major Third (1.25)"
+      }
+    },
+    {
+      "path": "primitives.typography.fontSize.xl",
+      "category": "primitives",
+      "token": "xl",
+      "cssVar": "--font-size-xl",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "1.5625rem",
+      "value": "1.5625rem",
+      "extensions": {
+        "com.csma.px": 25,
+        "com.csma.scale": "Major Third (1.25)"
+      }
+    },
+    {
+      "path": "primitives.typography.fontSize.xs",
+      "category": "primitives",
+      "token": "xs",
+      "cssVar": "--font-size-xs",
+      "type": "dimension",
+      "description": null,
+      "rawValue": "0.625rem",
+      "value": "0.625rem",
+      "extensions": {
+        "com.csma.px": 10,
+        "com.csma.scale": "Major Third (1.25)"
+      }
+    },
+    {
+      "path": "primitives.typography.fontWeight.bold",
+      "category": "primitives",
+      "token": "bold",
+      "cssVar": "--font-weight-bold",
+      "type": "fontWeight",
+      "description": null,
+      "rawValue": 700,
+      "value": "700",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.fontWeight.medium",
+      "category": "primitives",
+      "token": "medium",
+      "cssVar": "--font-weight-medium",
+      "type": "fontWeight",
+      "description": null,
+      "rawValue": 500,
+      "value": "500",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.fontWeight.regular",
+      "category": "primitives",
+      "token": "regular",
+      "cssVar": "--font-weight-regular",
+      "type": "fontWeight",
+      "description": null,
+      "rawValue": 400,
+      "value": "400",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.fontWeight.semibold",
+      "category": "primitives",
+      "token": "semibold",
+      "cssVar": "--font-weight-semibold",
+      "type": "fontWeight",
+      "description": null,
+      "rawValue": 600,
+      "value": "600",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.lineHeight.base",
+      "category": "primitives",
+      "token": "base",
+      "cssVar": "--line-height-base",
+      "type": "number",
+      "description": null,
+      "rawValue": 1.6,
+      "value": "1.6",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.lineHeight.body",
+      "category": "primitives",
+      "token": "body",
+      "cssVar": "--line-height-body",
+      "type": "number",
+      "description": null,
+      "rawValue": 1.5,
+      "value": "1.5",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.lineHeight.heading",
+      "category": "primitives",
+      "token": "heading",
+      "cssVar": "--line-height-heading",
+      "type": "number",
+      "description": null,
+      "rawValue": 1.25,
+      "value": "1.25",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.lineHeight.loose",
+      "category": "primitives",
+      "token": "loose",
+      "cssVar": "--line-height-loose",
+      "type": "number",
+      "description": null,
+      "rawValue": 1.72,
+      "value": "1.72",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.typography.lineHeight.tight",
+      "category": "primitives",
+      "token": "tight",
+      "cssVar": "--line-height-tight",
+      "type": "number",
+      "description": null,
+      "rawValue": 1.15,
+      "value": "1.15",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.zIndex.base",
+      "category": "primitives",
+      "token": "base",
+      "cssVar": "--z-base",
+      "type": "number",
+      "description": null,
+      "rawValue": 1,
+      "value": "1",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.zIndex.lightbox",
+      "category": "primitives",
+      "token": "lightbox",
+      "cssVar": "--z-lightbox",
+      "type": "number",
+      "description": null,
+      "rawValue": 1400,
+      "value": "1400",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.zIndex.modal",
+      "category": "primitives",
+      "token": "modal",
+      "cssVar": "--z-modal",
+      "type": "number",
+      "description": null,
+      "rawValue": 1100,
+      "value": "1100",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.zIndex.overlay",
+      "category": "primitives",
+      "token": "overlay",
+      "cssVar": "--z-overlay",
+      "type": "number",
+      "description": null,
+      "rawValue": 1000,
+      "value": "1000",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.zIndex.popover",
+      "category": "primitives",
+      "token": "popover",
+      "cssVar": "--z-popover",
+      "type": "number",
+      "description": null,
+      "rawValue": 1200,
+      "value": "1200",
+      "extensions": {}
+    },
+    {
+      "path": "primitives.zIndex.toast",
+      "category": "primitives",
+      "token": "toast",
+      "cssVar": "--z-toast",
+      "type": "number",
+      "description": null,
+      "rawValue": 1300,
+      "value": "1300",
+      "extensions": {}
+    },
+    {
+      "path": "semantic.shadow.card",
+      "category": "semantic",
+      "token": "card",
+      "cssVar": "--shadow-card",
+      "type": "shadow",
+      "description": "Default card shadow",
+      "rawValue": "{primitives.shadow.sm}",
+      "value": "{primitives.shadow.sm}",
+      "extensions": {}
+    },
+    {
+      "path": "semantic.shadow.dialog",
+      "category": "semantic",
+      "token": "dialog",
+      "cssVar": "--shadow-dialog",
+      "type": "shadow",
+      "description": "Modal/dialog shadow",
+      "rawValue": "{primitives.shadow.lg}",
+      "value": "{primitives.shadow.lg}",
+      "extensions": {}
+    },
+    {
+      "path": "semantic.transition.fast",
+      "category": "semantic",
+      "token": "fast",
+      "cssVar": "--transition-fast",
+      "type": "transition",
+      "description": null,
+      "rawValue": {
+        "duration": "{primitives.motion.duration.fast}",
+        "delay": "0ms",
+        "timingFunction": "{primitives.motion.easing.outQuart}"
+      },
+      "value": "{\"duration\":\"{primitives.motion.duration.fast}\",\"delay\":\"0ms\",\"timingFunction\":\"{primitives.motion.easing.outQuart}\"}",
+      "extensions": {}
+    },
+    {
+      "path": "semantic.transition.normal",
+      "category": "semantic",
+      "token": "normal",
+      "cssVar": "--transition-normal",
+      "type": "transition",
+      "description": null,
+      "rawValue": {
+        "duration": "{primitives.motion.duration.normal}",
+        "delay": "0ms",
+        "timingFunction": "{primitives.motion.easing.outQuart}"
+      },
+      "value": "{\"duration\":\"{primitives.motion.duration.normal}\",\"delay\":\"0ms\",\"timingFunction\":\"{primitives.motion.easing.outQuart}\"}",
+      "extensions": {}
+    },
+    {
+      "path": "semantic.transition.slow",
+      "category": "semantic",
+      "token": "slow",
+      "cssVar": "--transition-slow",
+      "type": "transition",
+      "description": null,
+      "rawValue": {
+        "duration": "{primitives.motion.duration.slow}",
+        "delay": "0ms",
+        "timingFunction": "{primitives.motion.easing.outQuint}"
+      },
+      "value": "{\"duration\":\"{primitives.motion.duration.slow}\",\"delay\":\"0ms\",\"timingFunction\":\"{primitives.motion.easing.outQuint}\"}",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.accent",
+      "category": "themes",
+      "token": "accent",
+      "cssVar": "--accent",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.16,
+          75
+        ]
+      },
+      "value": "oklch(1, 0.16, 75)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.accentForeground",
+      "category": "themes",
+      "token": "accentForeground",
+      "cssVar": "--accent-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.05,
+          0.01,
+          0
+        ]
+      },
+      "value": "oklch(0.05, 0.01, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.background",
+      "category": "themes",
+      "token": "background",
+      "cssVar": "--background",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.05,
+          0.01,
+          0
+        ]
+      },
+      "value": "oklch(0.05, 0.01, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.backgroundMuted",
+      "category": "themes",
+      "token": "backgroundMuted",
+      "cssVar": "--background-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.08,
+          0.008,
+          0
+        ]
+      },
+      "value": "oklch(0.08, 0.008, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.border",
+      "category": "themes",
+      "token": "border",
+      "cssVar": "--border",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.3,
+          0.01,
+          0
+        ]
+      },
+      "value": "oklch(0.3, 0.01, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.destructive",
+      "category": "themes",
+      "token": "destructive",
+      "cssVar": "--destructive",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.7,
+          0.2,
+          25
+        ]
+      },
+      "value": "oklch(0.7, 0.2, 25)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.destructiveForeground",
+      "category": "themes",
+      "token": "destructiveForeground",
+      "cssVar": "--destructive-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ]
+      },
+      "value": "oklch(1, 0, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.foreground",
+      "category": "themes",
+      "token": "foreground",
+      "cssVar": "--foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ]
+      },
+      "value": "oklch(1, 0, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.foregroundMuted",
+      "category": "themes",
+      "token": "foregroundMuted",
+      "cssVar": "--foreground-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.94,
+          0.004,
+          0
+        ]
+      },
+      "value": "oklch(0.94, 0.004, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.info",
+      "category": "themes",
+      "token": "info",
+      "cssVar": "--info",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.9,
+          0.16,
+          260
+        ]
+      },
+      "value": "oklch(0.9, 0.16, 260)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.infoForeground",
+      "category": "themes",
+      "token": "infoForeground",
+      "cssVar": "--info-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.05,
+          0.01,
+          0
+        ]
+      },
+      "value": "oklch(0.05, 0.01, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.overlay",
+      "category": "themes",
+      "token": "overlay",
+      "cssVar": "--overlay",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0,
+          0,
+          0
+        ],
+        "alpha": 0.75
+      },
+      "value": "srgb(0, 0, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.primary",
+      "category": "themes",
+      "token": "primary",
+      "cssVar": "--primary",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ]
+      },
+      "value": "oklch(1, 0, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.primaryForeground",
+      "category": "themes",
+      "token": "primaryForeground",
+      "cssVar": "--primary-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.05,
+          0.01,
+          0
+        ]
+      },
+      "value": "oklch(0.05, 0.01, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.secondary",
+      "category": "themes",
+      "token": "secondary",
+      "cssVar": "--secondary",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.12,
+          0.008,
+          0
+        ]
+      },
+      "value": "oklch(0.12, 0.008, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.secondaryForeground",
+      "category": "themes",
+      "token": "secondaryForeground",
+      "cssVar": "--secondary-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ]
+      },
+      "value": "oklch(1, 0, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.success",
+      "category": "themes",
+      "token": "success",
+      "cssVar": "--success",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.9,
+          0.2,
+          155
+        ]
+      },
+      "value": "oklch(0.9, 0.2, 155)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.successForeground",
+      "category": "themes",
+      "token": "successForeground",
+      "cssVar": "--success-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.05,
+          0.01,
+          0
+        ]
+      },
+      "value": "oklch(0.05, 0.01, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.surface",
+      "category": "themes",
+      "token": "surface",
+      "cssVar": "--surface",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.07,
+          0.005,
+          0
+        ]
+      },
+      "value": "oklch(0.07, 0.005, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.surfaceMuted",
+      "category": "themes",
+      "token": "surfaceMuted",
+      "cssVar": "--surface-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.11,
+          0.008,
+          0
+        ]
+      },
+      "value": "oklch(0.11, 0.008, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.warning",
+      "category": "themes",
+      "token": "warning",
+      "cssVar": "--warning",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.16,
+          75
+        ]
+      },
+      "value": "oklch(1, 0.16, 75)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.contrast.colors.warningForeground",
+      "category": "themes",
+      "token": "warningForeground",
+      "cssVar": "--warning-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.05,
+          0.01,
+          0
+        ]
+      },
+      "value": "oklch(0.05, 0.01, 0)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.accent",
+      "category": "themes",
+      "token": "accent",
+      "cssVar": "--accent",
+      "type": "color",
+      "description": "Blue-tinted accent surface",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.176471,
+          0.247059,
+          0.462745
+        ]
+      },
+      "value": "srgb(0.176471, 0.247059, 0.462745)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.accentForeground",
+      "category": "themes",
+      "token": "accentForeground",
+      "cssVar": "--accent-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.478431,
+          0.635294,
+          0.968627
+        ]
+      },
+      "value": "srgb(0.478431, 0.635294, 0.968627)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.background",
+      "category": "themes",
+      "token": "background",
+      "cssVar": "--background",
+      "type": "color",
+      "description": "Storm base background",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.141176,
+          0.156863,
+          0.231373
+        ]
+      },
+      "value": "srgb(0.141176, 0.156863, 0.231373)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.backgroundMuted",
+      "category": "themes",
+      "token": "backgroundMuted",
+      "cssVar": "--background-muted",
+      "type": "color",
+      "description": "Sidebar, panels",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.121569,
+          0.137255,
+          0.207843
+        ]
+      },
+      "value": "srgb(0.121569, 0.137255, 0.207843)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.border",
+      "category": "themes",
+      "token": "border",
+      "cssVar": "--border",
+      "type": "color",
+      "description": "Borders and dividers",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.160784,
+          0.180392,
+          0.258824
+        ]
+      },
+      "value": "srgb(0.160784, 0.180392, 0.258824)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.destructive",
+      "category": "themes",
+      "token": "destructive",
+      "cssVar": "--destructive",
+      "type": "color",
+      "description": "Error/danger red",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.968627,
+          0.462745,
+          0.556863
+        ]
+      },
+      "value": "srgb(0.968627, 0.462745, 0.556863)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.destructiveForeground",
+      "category": "themes",
+      "token": "destructiveForeground",
+      "cssVar": "--destructive-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.121569,
+          0.137255,
+          0.207843
+        ]
+      },
+      "value": "srgb(0.121569, 0.137255, 0.207843)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.foreground",
+      "category": "themes",
+      "token": "foreground",
+      "cssVar": "--foreground",
+      "type": "color",
+      "description": "Primary text",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.752941,
+          0.792157,
+          0.960784
+        ]
+      },
+      "value": "srgb(0.752941, 0.792157, 0.960784)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.foregroundMuted",
+      "category": "themes",
+      "token": "foregroundMuted",
+      "cssVar": "--foreground-muted",
+      "type": "color",
+      "description": "Secondary/muted text",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.501961,
+          0.537255,
+          0.701961
+        ]
+      },
+      "value": "srgb(0.501961, 0.537255, 0.701961)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.info",
+      "category": "themes",
+      "token": "info",
+      "cssVar": "--info",
+      "type": "color",
+      "description": "Info cyan",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.490196,
+          0.811765,
+          1
+        ]
+      },
+      "value": "srgb(0.490196, 0.811765, 1)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.infoForeground",
+      "category": "themes",
+      "token": "infoForeground",
+      "cssVar": "--info-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.121569,
+          0.137255,
+          0.207843
+        ]
+      },
+      "value": "srgb(0.121569, 0.137255, 0.207843)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.overlay",
+      "category": "themes",
+      "token": "overlay",
+      "cssVar": "--overlay",
+      "type": "color",
+      "description": "Backdrop behind modals",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.05098,
+          0.066667,
+          0.090196
+        ],
+        "alpha": 0.75
+      },
+      "value": "srgb(0.05098, 0.066667, 0.090196)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.primary",
+      "category": "themes",
+      "token": "primary",
+      "cssVar": "--primary",
+      "type": "color",
+      "description": "Storm iconic blue",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.478431,
+          0.635294,
+          0.968627
+        ]
+      },
+      "value": "srgb(0.478431, 0.635294, 0.968627)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.primaryForeground",
+      "category": "themes",
+      "token": "primaryForeground",
+      "cssVar": "--primary-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.121569,
+          0.137255,
+          0.207843
+        ]
+      },
+      "value": "srgb(0.121569, 0.137255, 0.207843)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.secondary",
+      "category": "themes",
+      "token": "secondary",
+      "cssVar": "--secondary",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.160784,
+          0.180392,
+          0.258824
+        ]
+      },
+      "value": "srgb(0.160784, 0.180392, 0.258824)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.secondaryForeground",
+      "category": "themes",
+      "token": "secondaryForeground",
+      "cssVar": "--secondary-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.662745,
+          0.694118,
+          0.839216
+        ]
+      },
+      "value": "srgb(0.662745, 0.694118, 0.839216)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.success",
+      "category": "themes",
+      "token": "success",
+      "cssVar": "--success",
+      "type": "color",
+      "description": "Success teal",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.45098,
+          0.854902,
+          0.792157
+        ]
+      },
+      "value": "srgb(0.45098, 0.854902, 0.792157)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.successForeground",
+      "category": "themes",
+      "token": "successForeground",
+      "cssVar": "--success-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.121569,
+          0.137255,
+          0.207843
+        ]
+      },
+      "value": "srgb(0.121569, 0.137255, 0.207843)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.surface",
+      "category": "themes",
+      "token": "surface",
+      "cssVar": "--surface",
+      "type": "color",
+      "description": "Slightly elevated above background",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.117647,
+          0.12549,
+          0.188235
+        ]
+      },
+      "value": "srgb(0.117647, 0.12549, 0.188235)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.surfaceMuted",
+      "category": "themes",
+      "token": "surfaceMuted",
+      "cssVar": "--surface-muted",
+      "type": "color",
+      "description": "Hover and selection backgrounds",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.160784,
+          0.180392,
+          0.258824
+        ]
+      },
+      "value": "srgb(0.160784, 0.180392, 0.258824)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.warning",
+      "category": "themes",
+      "token": "warning",
+      "cssVar": "--warning",
+      "type": "color",
+      "description": "Warning yellow",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.878431,
+          0.686275,
+          0.407843
+        ]
+      },
+      "value": "srgb(0.878431, 0.686275, 0.407843)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark-storm.colors.warningForeground",
+      "category": "themes",
+      "token": "warningForeground",
+      "cssVar": "--warning-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.121569,
+          0.137255,
+          0.207843
+        ]
+      },
+      "value": "srgb(0.121569, 0.137255, 0.207843)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.accent",
+      "category": "themes",
+      "token": "accent",
+      "cssVar": "--accent",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.285,
+          0.015,
+          236
+        ]
+      },
+      "value": "oklch(0.285, 0.015, 236)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.accentForeground",
+      "category": "themes",
+      "token": "accentForeground",
+      "cssVar": "--accent-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.93,
+          0.004,
+          255
+        ]
+      },
+      "value": "oklch(0.93, 0.004, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.background",
+      "category": "themes",
+      "token": "background",
+      "cssVar": "--background",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.182,
+          0.01,
+          255
+        ]
+      },
+      "value": "oklch(0.182, 0.01, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.backgroundMuted",
+      "category": "themes",
+      "token": "backgroundMuted",
+      "cssVar": "--background-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.242,
+          0.012,
+          255
+        ]
+      },
+      "value": "oklch(0.242, 0.012, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.border",
+      "category": "themes",
+      "token": "border",
+      "cssVar": "--border",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.32,
+          0.012,
+          255
+        ]
+      },
+      "value": "oklch(0.32, 0.012, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.destructive",
+      "category": "themes",
+      "token": "destructive",
+      "cssVar": "--destructive",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.62,
+          0.17,
+          25
+        ]
+      },
+      "value": "oklch(0.62, 0.17, 25)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.destructiveForeground",
+      "category": "themes",
+      "token": "destructiveForeground",
+      "cssVar": "--destructive-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98,
+          0.005,
+          248
+        ]
+      },
+      "value": "oklch(0.98, 0.005, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.foreground",
+      "category": "themes",
+      "token": "foreground",
+      "cssVar": "--foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.968,
+          0.004,
+          255
+        ]
+      },
+      "value": "oklch(0.968, 0.004, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.foregroundMuted",
+      "category": "themes",
+      "token": "foregroundMuted",
+      "cssVar": "--foreground-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.74,
+          0.012,
+          252
+        ]
+      },
+      "value": "oklch(0.74, 0.012, 252)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.info",
+      "category": "themes",
+      "token": "info",
+      "cssVar": "--info",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.58,
+          0.14,
+          260
+        ]
+      },
+      "value": "oklch(0.58, 0.14, 260)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.infoForeground",
+      "category": "themes",
+      "token": "infoForeground",
+      "cssVar": "--info-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98,
+          0.005,
+          248
+        ]
+      },
+      "value": "oklch(0.98, 0.005, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.overlay",
+      "category": "themes",
+      "token": "overlay",
+      "cssVar": "--overlay",
+      "type": "color",
+      "description": "Backdrop behind modals and carousels",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.007843,
+          0.023529,
+          0.090196
+        ],
+        "alpha": 0.75
+      },
+      "value": "srgb(0.007843, 0.023529, 0.090196)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.primary",
+      "category": "themes",
+      "token": "primary",
+      "cssVar": "--primary",
+      "type": "color",
+      "description": "Light blue in dark mode",
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.93,
+          0.004,
+          255
+        ]
+      },
+      "value": "oklch(0.93, 0.004, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.primaryForeground",
+      "category": "themes",
+      "token": "primaryForeground",
+      "cssVar": "--primary-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.15,
+          0.02,
+          255
+        ]
+      },
+      "value": "oklch(0.15, 0.02, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.secondary",
+      "category": "themes",
+      "token": "secondary",
+      "cssVar": "--secondary",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.255,
+          0.012,
+          255
+        ]
+      },
+      "value": "oklch(0.255, 0.012, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.secondaryForeground",
+      "category": "themes",
+      "token": "secondaryForeground",
+      "cssVar": "--secondary-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.93,
+          0.004,
+          255
+        ]
+      },
+      "value": "oklch(0.93, 0.004, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.success",
+      "category": "themes",
+      "token": "success",
+      "cssVar": "--success",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.6,
+          0.15,
+          155
+        ]
+      },
+      "value": "oklch(0.6, 0.15, 155)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.successForeground",
+      "category": "themes",
+      "token": "successForeground",
+      "cssVar": "--success-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.25,
+          0.04,
+          155
+        ]
+      },
+      "value": "oklch(0.25, 0.04, 155)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.surface",
+      "category": "themes",
+      "token": "surface",
+      "cssVar": "--surface",
+      "type": "color",
+      "description": "Elevated above background",
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.23,
+          0.01,
+          255
+        ]
+      },
+      "value": "oklch(0.23, 0.01, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.surfaceMuted",
+      "category": "themes",
+      "token": "surfaceMuted",
+      "cssVar": "--surface-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.275,
+          0.012,
+          255
+        ]
+      },
+      "value": "oklch(0.275, 0.012, 255)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.warning",
+      "category": "themes",
+      "token": "warning",
+      "cssVar": "--warning",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.78,
+          0.14,
+          75
+        ]
+      },
+      "value": "oklch(0.78, 0.14, 75)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.dark.colors.warningForeground",
+      "category": "themes",
+      "token": "warningForeground",
+      "cssVar": "--warning-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.28,
+          0.04,
+          75
+        ]
+      },
+      "value": "oklch(0.28, 0.04, 75)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.accent",
+      "category": "themes",
+      "token": "accent",
+      "cssVar": "--accent",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.961,
+          0.01,
+          235
+        ]
+      },
+      "value": "oklch(0.961, 0.01, 235)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.accentForeground",
+      "category": "themes",
+      "token": "accentForeground",
+      "cssVar": "--accent-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.29,
+          0.04,
+          260
+        ]
+      },
+      "value": "oklch(0.29, 0.04, 260)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.background",
+      "category": "themes",
+      "token": "background",
+      "cssVar": "--background",
+      "type": "color",
+      "description": "Page background",
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.975,
+          0.004,
+          248
+        ]
+      },
+      "value": "oklch(0.975, 0.004, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.backgroundMuted",
+      "category": "themes",
+      "token": "backgroundMuted",
+      "cssVar": "--background-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.954,
+          0.008,
+          248
+        ]
+      },
+      "value": "oklch(0.954, 0.008, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.border",
+      "category": "themes",
+      "token": "border",
+      "cssVar": "--border",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.88,
+          0.008,
+          248
+        ]
+      },
+      "value": "oklch(0.88, 0.008, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.destructive",
+      "category": "themes",
+      "token": "destructive",
+      "cssVar": "--destructive",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.58,
+          0.17,
+          25
+        ]
+      },
+      "value": "oklch(0.58, 0.17, 25)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.destructiveForeground",
+      "category": "themes",
+      "token": "destructiveForeground",
+      "cssVar": "--destructive-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98,
+          0.005,
+          248
+        ]
+      },
+      "value": "oklch(0.98, 0.005, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.foreground",
+      "category": "themes",
+      "token": "foreground",
+      "cssVar": "--foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.215,
+          0.018,
+          252
+        ]
+      },
+      "value": "oklch(0.215, 0.018, 252)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.foregroundMuted",
+      "category": "themes",
+      "token": "foregroundMuted",
+      "cssVar": "--foreground-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.5,
+          0.015,
+          248
+        ]
+      },
+      "value": "oklch(0.5, 0.015, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.info",
+      "category": "themes",
+      "token": "info",
+      "cssVar": "--info",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.5,
+          0.16,
+          260
+        ]
+      },
+      "value": "oklch(0.5, 0.16, 260)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.infoForeground",
+      "category": "themes",
+      "token": "infoForeground",
+      "cssVar": "--info-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98,
+          0.005,
+          248
+        ]
+      },
+      "value": "oklch(0.98, 0.005, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.overlay",
+      "category": "themes",
+      "token": "overlay",
+      "cssVar": "--overlay",
+      "type": "color",
+      "description": "Backdrop behind modals and overlays",
+      "rawValue": {
+        "colorSpace": "srgb",
+        "components": [
+          0.058824,
+          0.090196,
+          0.164706
+        ],
+        "alpha": 0.55
+      },
+      "value": "srgb(0.058824, 0.090196, 0.164706)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.primary",
+      "category": "themes",
+      "token": "primary",
+      "cssVar": "--primary",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.29,
+          0.04,
+          260
+        ]
+      },
+      "value": "oklch(0.29, 0.04, 260)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.primaryForeground",
+      "category": "themes",
+      "token": "primaryForeground",
+      "cssVar": "--primary-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.98,
+          0.005,
+          248
+        ]
+      },
+      "value": "oklch(0.98, 0.005, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.secondary",
+      "category": "themes",
+      "token": "secondary",
+      "cssVar": "--secondary",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.969,
+          0.007,
+          248
+        ]
+      },
+      "value": "oklch(0.969, 0.007, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.secondaryForeground",
+      "category": "themes",
+      "token": "secondaryForeground",
+      "cssVar": "--secondary-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.29,
+          0.04,
+          260
+        ]
+      },
+      "value": "oklch(0.29, 0.04, 260)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.success",
+      "category": "themes",
+      "token": "success",
+      "cssVar": "--success",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.55,
+          0.17,
+          155
+        ]
+      },
+      "value": "oklch(0.55, 0.17, 155)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.successForeground",
+      "category": "themes",
+      "token": "successForeground",
+      "cssVar": "--success-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.25,
+          0.04,
+          155
+        ]
+      },
+      "value": "oklch(0.25, 0.04, 155)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.surface",
+      "category": "themes",
+      "token": "surface",
+      "cssVar": "--surface",
+      "type": "color",
+      "description": "Card/panel background",
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0.001,
+          248
+        ]
+      },
+      "value": "oklch(1, 0.001, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.surfaceMuted",
+      "category": "themes",
+      "token": "surfaceMuted",
+      "cssVar": "--surface-muted",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.974,
+          0.007,
+          248
+        ]
+      },
+      "value": "oklch(0.974, 0.007, 248)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.warning",
+      "category": "themes",
+      "token": "warning",
+      "cssVar": "--warning",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.75,
+          0.16,
+          75
+        ]
+      },
+      "value": "oklch(0.75, 0.16, 75)",
+      "extensions": {}
+    },
+    {
+      "path": "themes.light.colors.warningForeground",
+      "category": "themes",
+      "token": "warningForeground",
+      "cssVar": "--warning-foreground",
+      "type": "color",
+      "description": null,
+      "rawValue": {
+        "colorSpace": "oklch",
+        "components": [
+          0.28,
+          0.04,
+          75
+        ]
+      },
+      "value": "oklch(0.28, 0.04, 75)",
+      "extensions": {}
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { JSDOM } from 'jsdom';
-import { auditPage } from '../src/runtime/seoAudit.js';
+import { auditPage } from '../library/runtime/seoAudit.js';
 
 function assignGlobal(name, value) {
     Object.defineProperty(globalThis, name, {

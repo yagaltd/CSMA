@@ -1,0 +1,45 @@
+/* CSMA Component — Input */
+
+.input {
+  width: 100%;
+  min-height: var(--input-height);
+  padding: var(--input-padding-block) var(--input-padding-inline);
+  border: 1px solid var(--input);
+  border-radius: var(--input-radius);
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+  line-height: var(--line-height-body);
+  transition: border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background var(--transition-fast);
+}
+
+.input::placeholder {
+  color: var(--foreground-muted);
+}
+
+.input:hover:not([disabled]):not([aria-disabled="true"]) {
+  border-color: color-mix(in srgb, var(--foreground-muted) 35%, var(--border));
+}
+
+.input:focus-visible {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+.input[disabled],
+.input[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+  background: color-mix(in srgb, var(--surface-muted) 80%, var(--background));
+}
+
+.input[data-state="error"] {
+  border-color: var(--destructive);
+}
+
+.input[data-state="success"] {
+  border-color: var(--success);
+}

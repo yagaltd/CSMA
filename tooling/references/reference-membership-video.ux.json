@@ -1,0 +1,114 @@
+{
+  "id": "membership-video-app",
+  "domain": "membership video app / website",
+  "summary": "Reference UX contract for a membership video experience used until a product-specific contract replaces it.",
+  "userRoles": [
+    {
+      "id": "visitor",
+      "label": "Visitor evaluating the catalog",
+      "job": "Browse the available catalog and decide whether membership is worth starting."
+    },
+    {
+      "id": "member",
+      "label": "Signed-in member watching content",
+      "job": "Find content quickly and start playback with minimal friction."
+    },
+    {
+      "id": "returning-member",
+      "label": "Returning member resuming playback",
+      "job": "Resume previously started content without re-discovery work."
+    }
+  ],
+  "navigationGroups": [
+    "browse",
+    "continue/resume",
+    "personal-library",
+    "account/subscription"
+  ],
+  "screens": [
+    {
+      "id": "home",
+      "title": "Home",
+      "group": "browse",
+      "primaryForMvp": true
+    },
+    {
+      "id": "discover",
+      "title": "Discover",
+      "group": "browse",
+      "primaryForMvp": true
+    },
+    {
+      "id": "library",
+      "title": "Library",
+      "group": "personal-library",
+      "primaryForMvp": true
+    },
+    {
+      "id": "continue-watching",
+      "title": "Continue Watching",
+      "group": "continue/resume",
+      "primaryForMvp": true
+    },
+    {
+      "id": "account",
+      "title": "Account",
+      "group": "account/subscription",
+      "primaryForMvp": true
+    }
+  ],
+  "flows": [
+    {
+      "id": "visitor-browse-to-gate",
+      "title": "Visitor browses and hits the sign-in or membership gate",
+      "steps": [
+        "Visitor lands on Home",
+        "Visitor browses catalog content",
+        "Visitor opens content detail",
+        "Visitor encounters sign-in or membership gate"
+      ]
+    },
+    {
+      "id": "member-resume-playback",
+      "title": "Signed-in member resumes playback",
+      "steps": [
+        "Signed-in member lands on Home or Continue Watching",
+        "Member selects previously started content",
+        "Playback resumes"
+      ]
+    },
+    {
+      "id": "member-library-to-playback",
+      "title": "Member starts or resumes from Library",
+      "steps": [
+        "Member opens Library",
+        "Member finds saved content",
+        "Member starts or resumes playback"
+      ]
+    }
+  ],
+  "stateExpectations": {
+    "empty": [
+      "Library explains the benefit of saving content and offers a next action.",
+      "Continue Watching explains how progress appears once playback starts."
+    ],
+    "loading": [
+      "Content lists indicate progress clearly.",
+      "Playback entry states indicate progress clearly."
+    ],
+    "error": [
+      "Playback failures explain what happened and what to do next.",
+      "Auth failures explain recovery actions directly."
+    ],
+    "success": [
+      "Sign-in confirms outcome tersely.",
+      "Library actions confirm outcome tersely.",
+      "Profile updates confirm outcome tersely."
+    ]
+  },
+  "openQuestions": [
+    "When should the paywall appear?",
+    "How should anonymous browsing differ from member browsing?",
+    "Should Continue Watching remain a top-level destination or become a home-module only?"
+  ]
+}

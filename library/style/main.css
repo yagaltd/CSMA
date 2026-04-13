@@ -1,0 +1,38 @@
+/**
+ * CSMA Main CSS Entry Point
+ *
+ * Token Architecture:
+ * - design-tokens.json → Single source of truth
+ * - generated/tokens.css → Auto-generated from JSON (fix in Task 1)
+ */
+
+@layer tokens, base, components, motion, layout, hardening, print;
+
+/* 0. Auto-generated design tokens */
+/* tokens.css loaded by project entry before this file */
+
+/* 1. Base — reset + typography only */
+@import './base.css';
+
+/* 2. Layout primitives */
+@import './foundation/layout.css';
+
+/* 3. Motion system */
+@import './foundation/motion.css';
+
+/* 4. Hardening — split by concern */
+@import './foundation/hardening/text-overflow.css';
+@import './foundation/hardening/states.css';
+@import './foundation/hardening/accessibility.css';
+@import './foundation/hardening/i18n.css';
+@import './foundation/hardening/loading.css';
+@import './foundation/hardening/error.css';
+
+/* 5. Print */
+@import './foundation/print.css';
+
+/* 6. Touch */
+@import './touch.css';
+
+/* 7. Components (includes theme-toggle via index) */
+@import '../ui/components/index.css';

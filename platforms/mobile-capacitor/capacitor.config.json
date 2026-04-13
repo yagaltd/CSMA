@@ -1,7 +1,0 @@
-{
-  "appId": "com.csma.app",
-  "appName": "CSMA App",
-  "webDir": "www",
-  "bundledWebRuntime": false,
-  "plugins": {}
-}

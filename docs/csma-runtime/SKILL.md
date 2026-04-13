@@ -1,37 +1,13 @@
 ---
 name: csma-runtime
-version: "1.1.0"
-description: >-
-  Expert guidance on how the CSMA application starts, wires itself together,
-  and runs. Covers bootstrap lifecycle, feature flags, ServiceManager,
-  ModuleManager, registry internals, CSS layer architecture, theme system,
-  error propagation, observability seams, dev tools, module catalog, and build
-  tooling. Use this when you need to understand how to plug code into the
-  runtime, enable features, or debug the startup sequence.
-tags:
-  - bootstrap
-  - runtime
-  - service-manager
-  - module-manager
-  - registries
-  - config
-  - css-layers
-  - modules
-  - build
-related_files:
-  - src/main.js
-  - src/bootstrap/runtime.js
-  - src/bootstrap/features.js
-  - src/bootstrap/theme.js
-  - src/config.js
-  - src/runtime/ServiceManager.js
-  - src/runtime/ModuleManager.js
-  - src/runtime/ContributionRegistry.js
-  - src/runtime/ViewRegistry.js
+description: CSMA startup lifecycle, ServiceManager, ModuleManager, registry internals, CSS layers, theme system, feature flags, and build tooling. Use when plugging code into the runtime, enabling features, or debugging startup.
+---
+
+<!-- version: 1.1.0 | tags: bootstrap, runtime, service-manager, module-manager, registries, config, modules, build -->
   - src/runtime/LogAccumulator.js
   - src/runtime/diagnosticSnapshot.js
   - src/modules/analytics/services/AnalyticsService.js
-  - src/css/main.css
+  - src/style/main.css
 ---
 
 # CSMA Runtime Skill
@@ -316,16 +292,16 @@ disabled. This separation is intentional.
 
 ## CSS Layer Architecture
 
-Import order in `src/css/main.css` -- later files override earlier ones:
+Import order in `src/style/main.css` -- later files override earlier ones:
 
 ```
-1. base.css                        # Reset / normalize
-2. theme.css                       # Theme token application
-3. generated/tokens.css            # Auto-generated design tokens (never edit)
-4. foundation/utilities.css        # Layout utilities (.stack, .grid, .cluster)
-5. foundation/hardening.css        # Security hardening styles
-6. foundation/motion.css           # Animation utilities
-7. foundation/print.css            # Print styles
+1. generated/tokens.css            # Auto-generated design tokens (never edit)
+2. base.css                        # Reset / typography
+3. foundation/layout.css           # Layout utilities (.stack, .grid, .cluster)
+4. foundation/motion.css           # Animation utilities
+5. foundation/hardening/*          # Hardening split by concern
+6. foundation/print.css            # Print styles
+7. touch.css                       # Touch enhancements
 8. ../ui/components/index.css      # Component CSS aggregation
 ```
 
@@ -382,7 +358,6 @@ Event: `eventBus.publish('THEME_CHANGED', { theme })` on toggle.
 | `optimistic-sync` | Cross-tab optimistic sync | yes |
 | `router` | Hash-based SPA routing | no |
 | `search` | FlexSearch-powered search | no |
-| `static-render` | Build-time static page generation | yes |
 | `storage` | IndexedDB / localStorage abstraction | no |
 | `sync-queue` | Background sync queue | yes |
 
@@ -439,7 +414,7 @@ npm run dev              # Start dev server with HMR
 npm run build            # Production build to dist/
 npm run test             # vitest (unit / smoke / a11y)
 npm run generate-map     # Update ai-system-map.json
-npm run generate-tokens  # design-tokens.json -> src/css/generated/tokens.css
+npm run generate-tokens  # design-tokens.json -> src/style/generated/tokens.css
 ```
 
 Tree-shaking: `FEATURES` flags in `src/config.js` control dead code
@@ -452,7 +427,7 @@ them entirely from the production bundle.
 
 - Do not call `createRuntimeState()` directly -- use `init()` in `main.js`
 - Do not register services before `createRuntimeState()` completes
-- Do not edit `src/css/generated/tokens.css` -- edit `design-tokens.json`
+- Do not edit `src/style/generated/tokens.css` -- edit `design-tokens.json`
 - Do not load modules directly -- use `ModuleManager.loadModule()` or `FEATURES` flags
 - Do not bypass `ContributionRegistry` ownership -- always pass `moduleId`
 - Do not modify CSS import order -- later files override earlier ones

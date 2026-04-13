@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toast Component Demo</title>
+    <link rel="stylesheet" href="../../../style/main.css" />
+  </head>
+  <body>
+    <main class="stack" data-gap="xl" style="max-width: 56rem; margin: 2rem auto; padding: 0 1rem;">
+      <header class="stack" data-gap="sm">
+        <h1>Toast</h1>
+        <p class="text-muted">Notification messages that auto-dismiss or remain open until dismissed.</p>
+      </header>
+
+      <section class="stack" data-gap="md">
+        <h2>Variants</h2>
+        <div class="cluster">
+          <button class="button" type="button" data-toast="default">Default Toast</button>
+          <button class="button" type="button" data-variant="success" data-toast="success">Success Toast</button>
+          <button class="button" type="button" data-variant="destructive" data-toast="error">Error Toast</button>
+          <button class="button" type="button" data-variant="secondary" data-toast="warning">Warning Toast</button>
+        </div>
+      </section>
+
+      <section class="stack" data-gap="md">
+        <h2>Timing</h2>
+        <div class="cluster">
+          <button class="button" type="button" data-variant="outline" data-duration="1000">Quick</button>
+          <button class="button" type="button" data-variant="outline" data-duration="10000">Long</button>
+          <button class="button" type="button" data-variant="outline" data-duration="0">Persistent</button>
+        </div>
+      </section>
+    </main>
+
+    <script type="module">
+      import { showToast } from './toast.js';
+
+      const copyByType = {
+        default: {
+          title: 'Notification',
+          description: 'This is a default toast message.'
+        },
+        success: {
+          title: 'Success',
+          description: 'Your changes have been saved.'
+        },
+        error: {
+          title: 'Error',
+          description: 'Something went wrong. Please try again.'
+        },
+        warning: {
+          title: 'Warning',
+          description: 'Please review your input before proceeding.'
+        }
+      };
+
+      document.querySelectorAll('[data-toast]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const type = button.dataset.toast;
+          showToast({
+            type,
+            ...copyByType[type]
+          });
+        });
+      });
+
+      document.querySelectorAll('[data-duration]').forEach((button) => {
+        button.addEventListener('click', () => {
+          showToast({
+            type: 'default',
+            title: 'Toast timing',
+            description: `Duration: ${button.dataset.duration}ms`,
+            duration: Number(button.dataset.duration)
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

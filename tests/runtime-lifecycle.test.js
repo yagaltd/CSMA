@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { LifecycleScope } from '../src/runtime/LifecycleScope.js';
-import { ServiceManager } from '../src/runtime/ServiceManager.js';
-import { ModuleManager } from '../src/runtime/ModuleManager.js';
-import { MetaManager } from '../src/runtime/MetaManager.js';
-import { Router } from '../src/modules/router/services/Router.js';
-import { ChannelManager } from '../src/runtime/ChannelManager.js';
+import { LifecycleScope } from '../library/runtime/LifecycleScope.js';
+import { ServiceManager } from '../library/runtime/ServiceManager.js';
+import { ModuleManager } from '../library/runtime/ModuleManager.js';
+import { MetaManager } from '../library/runtime/MetaManager.js';
+import { Router } from '../library/modules/router/services/Router.js';
+import { ChannelManager } from '../library/runtime/ChannelManager.js';
 
 class StubEventBus {
     constructor() {

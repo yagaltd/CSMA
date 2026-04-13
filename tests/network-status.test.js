@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { NetworkStatusService } from '../src/modules/network-status/services/NetworkStatusService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { NetworkStatusService } from '../library/modules/network-status/services/NetworkStatusService.js';
 
 describe('NetworkStatusService', () => {
     it('publishes status changes when manual status updates occur', () => {

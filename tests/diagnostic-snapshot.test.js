@@ -2,10 +2,10 @@
 import './helpers/storage-polyfill.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
-import EventBus from '../src/runtime/EventBus.js';
-import { ServiceManager } from '../src/runtime/ServiceManager.js';
-import { LogAccumulator } from '../src/runtime/LogAccumulator.js';
-import { createSnapshot } from '../src/runtime/diagnosticSnapshot.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { ServiceManager } from '../library/runtime/ServiceManager.js';
+import { LogAccumulator } from '../library/runtime/LogAccumulator.js';
+import { createSnapshot } from '../library/runtime/diagnosticSnapshot.js';
 
 function assignGlobal(name, value) {
     Object.defineProperty(globalThis, name, {
@@ -99,7 +99,7 @@ describe('diagnosticSnapshot', () => {
     });
 
     it('exposes diagnose through window.csma', async () => {
-        const { syncWindowRuntime } = await import('../src/bootstrap/runtime.js');
+        const { syncWindowRuntime } = await import('../library/runtime/bootstrap.js');
         const state = {
             eventBus,
             serviceManager,

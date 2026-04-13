@@ -1,10 +1,10 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, beforeEach } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { AIClient } from '../src/modules/ai/client/AIClient.js';
-import { AIProvider } from '../src/modules/ai/providers/AIProvider.js';
-import { AIService } from '../src/modules/ai/services/AIService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { AIClient } from '../library/modules/ai/client/AIClient.js';
+import { AIProvider } from '../library/modules/ai/providers/AIProvider.js';
+import { AIService } from '../library/modules/ai/services/AIService.js';
 
 class MockProvider extends AIProvider {
     constructor(name, priority, capabilities) {

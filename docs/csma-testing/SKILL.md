@@ -1,37 +1,24 @@
 ---
 name: csma-testing
-version: "1.1.0"
-description: >-
-  Expert guidance on writing tests for the CSMA architecture. Covers test conventions,
-  contract and module testing, service lifecycle testing, observability testing,
-  accessibility testing, and E2E smoke testing. Use when writing or extending
-  tests under tests/.
-tags:
-  - testing
-  - vitest
-  - contracts
-  - modules
-  - accessibility
-  - e2e
-related_files:
-  - tests/
-  - vitest.config.js
-  - src/runtime/Contracts.js
-  - src/runtime/EventBus.js
-  - src/runtime/ModuleManager.js
-  - src/runtime/LogAccumulator.js
-  - src/modules/analytics/services/AnalyticsService.js
+description: Writing tests for CSMA using vitest, jsdom, Playwright, and fast-check. Covers contracts, lifecycle tests, property tests, observability, accessibility, and E2E smoke tests. Use when writing or extending tests under tests/.
 ---
+
+<!-- version: 1.2.0 | tags: testing, vitest, fast-check, contracts, modules, accessibility, e2e -->
 
 # CSMA Testing Skill
 
 Guidance for writing tests in the CSMA architecture using vitest, jsdom, and Playwright.
+
+If you are deciding **how much** testing rigor a module needs, start with
+`docs/csma-rigor/SKILL.md`. This skill explains **how** to implement the
+chosen testing strategy.
 
 ## Test Stack
 
 | Layer | Tool | Scope | Location |
 |-------|------|-------|----------|
 | Unit | vitest + jsdom | Contracts, services, modules | `tests/*.test.js` |
+| Property | vitest + `fast-check` | Stateful invariants, generated workflows | `tests/*.property.test.js` |
 | Smoke | vitest + jsdom | Todo-app CRUD flow | `tests/todo-app.smoke.test.js` |
 | Accessibility | vitest + jsdom + axe-core | WCAG, contrast, keyboard nav | `tests/accessibility-*.test.js` |
 | E2E | Playwright | Full browser flows | `tests/e2e/` |
@@ -47,6 +34,30 @@ npm run test:smoke       # Todo-app smoke test
 npm run test:e2e        # Full E2E (requires build first)
 ```
 
+## Choosing Test Depth
+
+- Use ordinary example-based tests for simple modules and fixed regressions.
+- Add property tests when the service has:
+  - many input combinations
+  - derived state or totals
+  - retry/queue/optimistic behavior
+  - invariants that should hold across many workflows
+- Add service-local transition tests when a service has a real lifecycle with
+  illegal edges.
+
+Good property-test candidates:
+
+- checkout
+- optimistic sync
+- sync queue
+- complex persisted form flows
+
+Poor property-test candidates:
+
+- simple UI toggles
+- presentational components
+- low-state helpers
+
 ## Test Conventions
 
 ### File Naming
@@ -60,7 +71,7 @@ npm run test:e2e        # Full E2E (requires build first)
 
 ```javascript
 import { describe, it, expect, vi } from 'vitest';
-import { EventBus } from '../../src/runtime/EventBus.js';
+import { EventBus } from '../../library/runtime/EventBus.js';
 
 describe('MyModule', () => {
   let eventBus;
@@ -88,8 +99,8 @@ describe('MyModule', () => {
 Every event contract must be tested for both valid and invalid payloads.
 
 ```javascript
-import { Contracts, contract } from '../../src/runtime/Contracts.js';
-import { object, string, number } from '../../src/runtime/validation/index.js';
+import { Contracts, contract } from '../../library/runtime/Contracts.js';
+import { object, string, number } from '../../library/runtime/validation/index.js';
 
 describe('Contracts: INTENT_TODO_CREATE', () => {
   const schema = Contracts.INTENT_TODO_CREATE;
@@ -132,7 +143,7 @@ For each contract, verify:
 Test the full module lifecycle: load -> contribute -> unload -> cleanup.
 
 ```javascript
-import { ModuleManager } from '../../src/runtime/ModuleManager.js';
+import { ModuleManager } from '../../library/runtime/ModuleManager.js';
 
 describe('ExampleModule', () => {
   let manager;
@@ -208,6 +219,52 @@ Observability lifecycle rule:
 - `LogAccumulator` cleanup must release listeners/observers without touching analytics service state
 - `AnalyticsService` cleanup must stop timers/flush loops without mutating local diagnostics
 
+## Property Testing
+
+Use `fast-check` inside Vitest for modules where invariants matter more than
+single examples.
+
+Pattern:
+
+```javascript
+import { describe, it, expect } from 'vitest';
+import * as fc from 'fast-check';
+
+describe('Checkout property tests', () => {
+  it('preserves totals across generated workflows', async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.commands(commandArbitraries, { maxCommands: 30 }),
+        async (commands) => {
+          await fc.asyncModelRun(() => createHarness(), commands);
+        }
+      ),
+      {
+        seed: 20260413,
+        numRuns: 150,
+        endOnFailure: true
+      }
+    );
+  });
+});
+```
+
+Recommended rules:
+
+- keep seeds fixed for reproducibility
+- keep run counts moderate
+- test invariants, not snapshots of incidental behavior
+- prefer a small explicit model over introspecting production state too loosely
+- start with manual arbitraries before trying metadata-driven generation
+
+### Property Test Checklist
+
+1. Generated inputs stay within meaningful business ranges
+2. Invariants are asserted after every command
+3. Failures shrink to short actionable sequences
+4. The model stays simpler than the service under test
+5. The property test replaces repetitive edge-case tests rather than duplicating them
+
 ## EventBus Testing
 
 ```javascript
@@ -229,7 +286,10 @@ describe('EventBus', () => {
 
   it('validates against contract when contracts are set', () => {
     eventBus.contracts = { TEST_EVENT: { schema: object({ id: string() }) } };
-    expect(() => eventBus.publish('TEST_EVENT', { id: 123 })).toThrow();
+    const violations = [];
+    eventBus.subscribe('CONTRACT_VIOLATION', (payload) => violations.push(payload));
+    eventBus.publish('TEST_EVENT', { id: 123 });
+    expect(violations).toHaveLength(1);
   });
 });
 ```

@@ -1,9 +1,9 @@
 import './helpers/storage-polyfill.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { AnalyticsService } from '../src/modules/analytics/services/AnalyticsService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { AnalyticsService } from '../library/modules/analytics/services/AnalyticsService.js';
 
 function assignGlobal(name, value) {
     Object.defineProperty(globalThis, name, {

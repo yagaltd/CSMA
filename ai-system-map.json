@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "generated": "2026-04-02T11:02:18.046Z",
+  "generated": "2026-04-07T08:18:05.227Z",
   "project": {
     "name": "csma",
     "version": "1.2.0",
@@ -125,23 +125,6 @@
     }
   },
   "structure": {
-    "bootstrap": {
-      "features.js": {
-        "type": "file",
-        "ext": ".js",
-        "path": "bootstrap/features.js"
-      },
-      "runtime.js": {
-        "type": "file",
-        "ext": ".js",
-        "path": "bootstrap/runtime.js"
-      },
-      "theme.js": {
-        "type": "file",
-        "ext": ".js",
-        "path": "bootstrap/theme.js"
-      }
-    },
     "config.js": {
       "type": "file",
       "ext": ".js",
@@ -151,52 +134,57 @@
       "base.css": {
         "type": "file",
         "ext": ".css",
-        "path": "css/base.css"
+        "path": "style/base.css"
       },
       "foundation": {
         "hardening.css": {
           "type": "file",
           "ext": ".css",
-          "path": "css/foundation/hardening.css"
+          "path": "style/foundation/hardening.css"
         },
         "motion.css": {
           "type": "file",
           "ext": ".css",
-          "path": "css/foundation/motion.css"
+          "path": "style/foundation/motion.css"
         },
         "print.css": {
           "type": "file",
           "ext": ".css",
-          "path": "css/foundation/print.css"
+          "path": "style/foundation/print.css"
         },
         "themes": {},
         "utilities.css": {
           "type": "file",
           "ext": ".css",
-          "path": "css/foundation/utilities.css"
+          "path": "style/foundation/utilities.css"
         }
       },
       "generated": {
         "tokens.css": {
           "type": "file",
           "ext": ".css",
-          "path": "css/generated/tokens.css"
+          "path": "style/generated/tokens.css"
         }
       },
       "main.css": {
         "type": "file",
         "ext": ".css",
-        "path": "css/main.css"
+        "path": "style/main.css"
+      },
+      "theme-toggle.css": {
+        "type": "file",
+        "ext": ".css",
+        "path": "style/theme-toggle.css"
       },
       "theme.css": {
         "type": "file",
         "ext": ".css",
-        "path": "css/theme.css"
+        "path": "style/theme.css"
       },
       "touch.css": {
         "type": "file",
         "ext": ".css",
-        "path": "css/touch.css"
+        "path": "style/touch.css"
       }
     },
     "main.js": {
@@ -740,66 +728,6 @@
           }
         }
       },
-      "static-render": {
-        "compiler": {
-          "IslandAnalyzer.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "modules/static-render/compiler/IslandAnalyzer.js"
-          }
-        },
-        "contracts": {
-          "island-contracts.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "modules/static-render/contracts/island-contracts.js"
-          }
-        },
-        "index.js": {
-          "type": "file",
-          "ext": ".js",
-          "path": "modules/static-render/index.js"
-        },
-        "runtime": {
-          "IslandRuntime.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "modules/static-render/runtime/IslandRuntime.js"
-          },
-          "Telemetry.js": {
-            "type": "file",
-            "ext": ".js",
-            "path": "modules/static-render/runtime/Telemetry.js"
-          },
-          "hydrators": {
-            "IdleHydrator.js": {
-              "type": "file",
-              "ext": ".js",
-              "path": "modules/static-render/runtime/hydrators/IdleHydrator.js"
-            },
-            "LoadHydrator.js": {
-              "type": "file",
-              "ext": ".js",
-              "path": "modules/static-render/runtime/hydrators/LoadHydrator.js"
-            },
-            "ManualHydrator.js": {
-              "type": "file",
-              "ext": ".js",
-              "path": "modules/static-render/runtime/hydrators/ManualHydrator.js"
-            },
-            "VisibleHydrator.js": {
-              "type": "file",
-              "ext": ".js",
-              "path": "modules/static-render/runtime/hydrators/VisibleHydrator.js"
-            },
-            "index.js": {
-              "type": "file",
-              "ext": ".js",
-              "path": "modules/static-render/runtime/hydrators/index.js"
-            }
-          }
-        }
-      },
       "storage": {
         "index.js": {
           "type": "file",
@@ -833,41 +761,6 @@
             "ext": ".js",
             "path": "modules/sync-queue/services/SyncQueueService.js"
           }
-        }
-      }
-    },
-    "pages": {
-      "about": {
-        "index.html": {
-          "type": "file",
-          "ext": ".html",
-          "path": "pages/about/index.html"
-        }
-      },
-      "blog": {
-        "post.html": {
-          "type": "file",
-          "ext": ".html",
-          "path": "pages/blog/post.html"
-        }
-      },
-      "products": {
-        "detail.html": {
-          "type": "file",
-          "ext": ".html",
-          "path": "pages/products/detail.html"
-        },
-        "index.html": {
-          "type": "file",
-          "ext": ".html",
-          "path": "pages/products/index.html"
-        }
-      },
-      "test": {
-        "hydration.html": {
-          "type": "file",
-          "ext": ".html",
-          "path": "pages/test/hydration.html"
         }
       }
     },
@@ -972,6 +865,11 @@
         "ext": ".js",
         "path": "runtime/ViewRegistry.js"
       },
+      "bootstrap.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/bootstrap.js"
+      },
       "dev": {
         "dtcg-reader.js": {
           "type": "file",
@@ -989,10 +887,20 @@
         "ext": ".js",
         "path": "runtime/diagnosticSnapshot.js"
       },
+      "features.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/features.js"
+      },
       "seoAudit.js": {
         "type": "file",
         "ext": ".js",
         "path": "runtime/seoAudit.js"
+      },
+      "ssma.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "runtime/ssma.js"
       },
       "validation": {
         "contract.js": {
@@ -1095,6 +1003,11 @@
         "type": "file",
         "ext": ".js",
         "path": "theme/theme-entry.js"
+      },
+      "theme-helpers.js": {
+        "type": "file",
+        "ext": ".js",
+        "path": "theme/theme-helpers.js"
       },
       "theme-manager.js": {
         "type": "file",
@@ -1510,7 +1423,7 @@
   "skills": [
     {
       "id": "csma-architecture",
-      "name": "csma-guides",
+      "name": "csma-architecture",
       "path": "docs/csma-architecture/SKILL.md",
       "description": "csma-architecture skill"
     },
@@ -1540,7 +1453,7 @@
     },
     {
       "id": "csma-service-pattern",
-      "name": "csma-services-api",
+      "name": "csma-service-pattern",
       "path": "docs/csma-service-pattern/SKILL.md",
       "description": "csma-service-pattern skill"
     },
@@ -1568,11 +1481,9 @@
       "@capacitor/local-notifications": "^6.0.0",
       "@playwright/test": "^1.57.0",
       "jsdom": "^27.3.0",
-      "mikado-compile": "^0.7.0",
       "terser": "^5.44.1",
       "vite": "^5.0.0",
-      "vitest": "^1.0.0",
-      "@aws-sdk/client-s3": "^3.685.0"
+      "vitest": "^1.0.0"
     }
   },
   "guidelines": {

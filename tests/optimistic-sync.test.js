@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ActionLogService } from '../src/modules/optimistic-sync/services/ActionLogService.js';
-import { OptimisticSyncService } from '../src/modules/optimistic-sync/services/OptimisticSyncService.js';
+import { ActionLogService } from '../library/modules/optimistic-sync/services/ActionLogService.js';
+import { OptimisticSyncService } from '../library/modules/optimistic-sync/services/OptimisticSyncService.js';
 
 class MockBroadcastChannel {
     constructor(name) {

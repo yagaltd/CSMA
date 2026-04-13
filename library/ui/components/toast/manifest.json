@@ -1,0 +1,112 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "toast",
+    "type": "II",
+    "owner": "ui-service",
+    "lifecycle": "active",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [
+      "TOAST_SHOWN"
+    ],
+    "subscribed": [
+      "INTENT_TOAST_SHOW"
+    ]
+  },
+  "dependencies": {
+    "runtime": [
+      "EventBus"
+    ],
+    "components": []
+  },
+  "metadata": {
+    "description": "Notification messages that auto-dismiss"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "toast",
+    "title": "Toast",
+    "category": "Interactive",
+    "preferred": false,
+    "summary": "Notification messages that auto-dismiss",
+    "template": "<!-- Toasts are created dynamically via EventBus -->\neventBus.publish('INTENT_TOAST_SHOW', {\n    type: 'success',\n    title: 'Deployment succeeded',\n    description: 'The runtime bootstrap completed without contract violations.',\n    duration: 2800,\n    timestamp: Date.now()\n});",
+    "propsSchema": {
+      "align": "string",
+      "alt": "string",
+      "body": "string",
+      "description": "string",
+      "helper": "string",
+      "href": "string",
+      "label": "string",
+      "name": "string",
+      "placeholder": "string",
+      "size": "string",
+      "src": "string",
+      "text": "string",
+      "theme": "string",
+      "title": "string",
+      "tone": "string",
+      "value": "string",
+      "variant": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "render": {
+      "kind": "template",
+      "template": "<!-- Toasts are created dynamically via EventBus -->\neventBus.publish('INTENT_TOAST_SHOW', {\n    type: 'success',\n    title: 'Deployment succeeded',\n    description: 'The runtime bootstrap completed without contract violations.',\n    duration: 2800,\n    timestamp: Date.now()\n});"
+    },
+    "behavior": {
+      "role": "node",
+      "events": [
+        "click"
+      ],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ":root"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": true,
+      "supportsSize": true,
+      "supportsTone": true
+    },
+    "textTargets": {
+      "title": [
+        ".card-title",
+        ".navbar-title",
+        ".accordion-header span",
+        "h1",
+        "h2",
+        "h3",
+        "label"
+      ],
+      "description": [
+        ".card-description",
+        ".card-text",
+        ".input-helper",
+        ".select-helper",
+        "p"
+      ],
+      "label": [
+        "button",
+        ".button",
+        ".badge",
+        ".accordion-trigger span",
+        ".tabs-trigger",
+        ".navbar-link"
+      ]
+    }
+  }
+}

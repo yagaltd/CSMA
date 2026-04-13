@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { SSMAGatewayProvider } from '../src/modules/ai/providers/SSMAGatewayProvider.js';
+import { SSMAGatewayProvider } from '../library/modules/ai/providers/SSMAGatewayProvider.js';
 
 function createJsonResponse(payload) {
     return {

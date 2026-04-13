@@ -1,7 +1,7 @@
 import './helpers/storage-polyfill.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
-import { ErrorBoundary } from '../src/runtime/ErrorBoundary.js';
+import { ErrorBoundary } from '../library/runtime/ErrorBoundary.js';
 
 function assignGlobal(name, value) {
     Object.defineProperty(globalThis, name, {

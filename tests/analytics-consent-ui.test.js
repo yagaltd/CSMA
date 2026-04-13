@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
-import { ConsentService } from '../src/modules/analytics/consent/ConsentService.js';
-import { initAnalyticsConsentUI } from '../src/modules/analytics/ui/analytics-consent.js';
+import { ConsentService } from '../library/modules/analytics/consent/ConsentService.js';
+import { initAnalyticsConsentUI } from '../library/modules/analytics/ui/analytics-consent.js';
 
 function assignGlobal(name, value) {
     Object.defineProperty(globalThis, name, {

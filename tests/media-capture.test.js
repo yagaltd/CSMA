@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { MediaCaptureService } from '../src/modules/media-capture/services/MediaCaptureService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { MediaCaptureService } from '../library/modules/media-capture/services/MediaCaptureService.js';
 
 class FakeRecorder {
     constructor(stream) {

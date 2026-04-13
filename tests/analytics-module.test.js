@@ -2,18 +2,18 @@
 import './helpers/storage-polyfill.js';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
-import { EventBus } from '../src/runtime/EventBus.js';
-import { ServiceManager } from '../src/runtime/ServiceManager.js';
-import { ModuleManager } from '../src/runtime/ModuleManager.js';
-import { CommandRegistry } from '../src/runtime/CommandRegistry.js';
-import { RouteRegistry } from '../src/runtime/RouteRegistry.js';
-import { NavigationRegistry } from '../src/runtime/NavigationRegistry.js';
-import { PanelRegistry } from '../src/runtime/PanelRegistry.js';
-import { AdapterRegistry } from '../src/runtime/AdapterRegistry.js';
-import { ViewRegistry } from '../src/runtime/ViewRegistry.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { LogAccumulator } from '../src/runtime/LogAccumulator.js';
-import { AnalyticsService } from '../src/modules/analytics/services/AnalyticsService.js';
+import { EventBus } from '../library/runtime/EventBus.js';
+import { ServiceManager } from '../library/runtime/ServiceManager.js';
+import { ModuleManager } from '../library/runtime/ModuleManager.js';
+import { CommandRegistry } from '../library/runtime/CommandRegistry.js';
+import { RouteRegistry } from '../library/runtime/RouteRegistry.js';
+import { NavigationRegistry } from '../library/runtime/NavigationRegistry.js';
+import { PanelRegistry } from '../library/runtime/PanelRegistry.js';
+import { AdapterRegistry } from '../library/runtime/AdapterRegistry.js';
+import { ViewRegistry } from '../library/runtime/ViewRegistry.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { LogAccumulator } from '../library/runtime/LogAccumulator.js';
+import { AnalyticsService } from '../library/modules/analytics/services/AnalyticsService.js';
 
 function createAnalyticsRuntime() {
     const eventBus = new EventBus();
@@ -81,8 +81,8 @@ describe('Analytics module', () => {
     });
 
     it('loads the analytics module and exposes the public API', async () => {
-        const { loadOptionalFeatures } = await import('../src/bootstrap/features.js');
-        const { syncWindowRuntime } = await import('../src/bootstrap/runtime.js');
+        const { loadOptionalFeatures } = await import('../library/runtime/features.js');
+        const { syncWindowRuntime } = await import('../library/runtime/bootstrap.js');
         const state = createAnalyticsRuntime();
 
         await loadOptionalFeatures(state, {
@@ -96,7 +96,7 @@ describe('Analytics module', () => {
         expect(window.csma.analytics).toBe(analytics);
         expect(window.csma.analyticsConsent).toBe(state.serviceManager.get('analyticsConsent'));
         expect(typeof window.csma.seoAudit).toBe('function');
-        expect(analytics.analyticsEndpoint).toBe('/analytics');
+        expect(analytics.analyticsEndpoint).toBe('/logs/batch');
         expect(window.csma.exportAnalytics().entries).toEqual([]);
 
         analytics.destroy();
@@ -104,7 +104,7 @@ describe('Analytics module', () => {
     });
 
     it('tracks page views from PAGE_CHANGED with sanitized URLs', async () => {
-        const { loadOptionalFeatures } = await import('../src/bootstrap/features.js');
+        const { loadOptionalFeatures } = await import('../library/runtime/features.js');
         const state = createAnalyticsRuntime();
 
         await loadOptionalFeatures(state, {

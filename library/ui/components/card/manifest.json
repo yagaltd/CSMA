@@ -1,0 +1,95 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "card",
+    "type": "I",
+    "owner": "ui-service",
+    "lifecycle": "active",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": [],
+    "components": [
+      "button",
+      "badge",
+      "field",
+      "input"
+    ]
+  },
+  "metadata": {
+    "description": "Structured surface container with header, body, and optional footer actions"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "card",
+    "title": "Card",
+    "category": "Layout",
+    "preferred": true,
+    "summary": "Structured surface container for grouped content and actions",
+    "template": "<article class=\"card\"><header class=\"card__header\"><h2 class=\"card__title\">Title</h2><p class=\"card__description\">Description</p></header><div class=\"card__body\"></div><footer class=\"card__footer\"></footer></article>",
+    "propsSchema": {
+      "title": "string",
+      "description": "string",
+      "tone": "string"
+    },
+    "defaultSlot": "body",
+    "slots": {
+      "body": {
+        "selector": ".card__body",
+        "allowedChildren": [
+          "badge",
+          "button",
+          "field",
+          "input"
+        ]
+      },
+      "footer": {
+        "selector": ".card__footer",
+        "allowedChildren": [
+          "button",
+          "badge"
+        ]
+      }
+    },
+    "allowedChildren": [
+      "badge",
+      "button",
+      "field",
+      "input"
+    ],
+    "render": {
+      "kind": "element",
+      "template": "<article class=\"card\"><header class=\"card__header\"><h2 class=\"card__title\">Title</h2><p class=\"card__description\">Description</p></header><div class=\"card__body\"></div><footer class=\"card__footer\"></footer></article>"
+    },
+    "behavior": {
+      "role": "container",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".card"
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": true
+    },
+    "textTargets": {
+      "title": [
+        ".card__title"
+      ],
+      "description": [
+        ".card__description"
+      ],
+      "label": []
+    }
+  }
+}

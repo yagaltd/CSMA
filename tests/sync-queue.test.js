@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, vi } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { SyncQueueService } from '../src/modules/sync-queue/services/SyncQueueService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { SyncQueueService } from '../library/modules/sync-queue/services/SyncQueueService.js';
 
 describe('SyncQueueService', () => {
     it('flushes queued jobs when network is online', async () => {

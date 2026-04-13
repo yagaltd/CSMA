@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, vi } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { MediaTransformService } from '../src/modules/media-transform/services/MediaTransformService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { MediaTransformService } from '../library/modules/media-transform/services/MediaTransformService.js';
 
 describe('MediaTransformService', () => {
     it('returns transformed blob metadata via custom adapter', async () => {

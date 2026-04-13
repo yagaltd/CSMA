@@ -1,0 +1,82 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "field",
+    "type": "I",
+    "owner": "ui-service",
+    "lifecycle": "active",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": [],
+    "components": [
+      "input"
+    ]
+  },
+  "metadata": {
+    "description": "Form field wrapper that pairs a label and helper text with a single control slot"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "field",
+    "title": "Field",
+    "category": "Forms",
+    "preferred": true,
+    "summary": "Accessible label and helper wrapper for a single form control",
+    "template": "<div class=\"field\"><label class=\"field__label\" for=\"email\">Email</label><div class=\"field__control\"></div><p class=\"field__helper\">Helper text</p></div>",
+    "propsSchema": {
+      "label": "string",
+      "helper": "string",
+      "error": "string",
+      "for": "string",
+      "required": "string"
+    },
+    "defaultSlot": "control",
+    "slots": {
+      "control": {
+        "selector": ".field__control",
+        "allowedChildren": [
+          "input"
+        ]
+      }
+    },
+    "allowedChildren": [
+      "input"
+    ],
+    "render": {
+      "kind": "element",
+      "template": "<div class=\"field\"><label class=\"field__label\" for=\"email\">Email</label><div class=\"field__control\"></div><p class=\"field__helper\">Helper text</p></div>"
+    },
+    "behavior": {
+      "role": "container",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".field"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": true
+    },
+    "textTargets": {
+      "title": [],
+      "description": [
+        ".field__helper",
+        ".field__error"
+      ],
+      "label": [
+        ".field__label"
+      ]
+    }
+  }
+}

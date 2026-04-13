@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { CameraService } from '../src/modules/camera/services/CameraService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { CameraService } from '../library/modules/camera/services/CameraService.js';
 
 const fakeBlob = new Blob(['binary'], { type: 'image/webp' });
 

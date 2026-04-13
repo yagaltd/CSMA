@@ -1,0 +1,179 @@
+/**
+ * CSMA Hardening — Error & Empty States
+ * Error messaging, empty states, offline indicator, and debounce feedback
+ */
+
+/* ============================================
+   EMPTY STATES
+   ============================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl) var(--space-xl);
+  text-align: center;
+  min-height: 200px;
+}
+
+.empty-state-icon {
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: var(--space-lg);
+  color: var(--foreground-muted);
+  opacity: 0.5;
+}
+
+.empty-state-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  margin-bottom: var(--space-sm);
+}
+
+.empty-state-description {
+  font-size: var(--font-size-sm);
+  color: var(--foreground-muted);
+  max-width: 400px;
+  margin-bottom: var(--space-lg);
+}
+
+.empty-state-action {
+  margin-top: var(--space-sm);
+}
+
+/* Empty state variants */
+.empty-state[data-variant="compact"] {
+  padding: var(--space-xl);
+  min-height: 120px;
+}
+
+.empty-state[data-variant="compact"] .empty-state-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: var(--space-md);
+}
+
+.empty-state[data-variant="large"] {
+  min-height: 400px;
+}
+
+.empty-state[data-variant="large"] .empty-state-icon {
+  width: 6rem;
+  height: 6rem;
+}
+
+/* ============================================
+   ERROR STATES
+   ============================================ */
+
+.error-container {
+  padding: var(--space-lg);
+  border: 1px solid var(--destructive);
+  border-radius: var(--radius-lg);
+  background: var(--destructive-soft);
+}
+
+.error-icon {
+  color: var(--destructive);
+  flex-shrink: 0;
+}
+
+.error-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--destructive);
+  margin-bottom: var(--space-xs);
+}
+
+.error-message {
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+  margin-bottom: var(--space-md);
+}
+
+.error-actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+/* Inline error */
+.error-inline {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--destructive-soft);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--destructive);
+}
+
+/* Error variants by type */
+.error-container[data-type="network"] {
+  border-color: var(--warning);
+  background: var(--warning-soft);
+}
+
+.error-container[data-type="network"] .error-icon,
+.error-container[data-type="network"] .error-title {
+  color: var(--warning);
+}
+
+.error-container[data-type="permission"] {
+  border-color: var(--info);
+  background: var(--info-soft);
+}
+
+.error-container[data-type="permission"] .error-icon,
+.error-container[data-type="permission"] .error-title {
+  color: var(--info);
+}
+
+/* ============================================
+   OFFLINE INDICATOR
+   ============================================ */
+
+.offline-indicator {
+  position: fixed;
+  bottom: var(--space-lg);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--warning);
+  color: var(--warning-foreground);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  z-index: var(--z-toast);
+  display: none;
+}
+
+.offline-indicator[data-visible="true"] {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* ============================================
+   DEBOUNCE VISUAL FEEDBACK
+   ============================================ */
+
+/* Shows visual feedback during debounce */
+.debounce-pending {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.debounce-pending::after {
+  content: '';
+  display: inline-block;
+  width: 0.75em;
+  height: 0.75em;
+  margin-left: var(--space-sm);
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+}

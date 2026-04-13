@@ -1,0 +1,12 @@
+/**
+ * CSMA Component Registry
+ * Keep imports aligned with src/ui/components/* and manifest-backed component catalog generation.
+ */
+
+@import './button/button.css';
+@import './badge/badge.css';
+@import './card/card.css';
+@import './field/field.css';
+@import './input/input.css';
+@import './toast/toast.css';
+@import './theme-toggle/theme-toggle.css';

@@ -110,7 +110,7 @@ function oklchToRgb(l, c, h) {
 }
 
 /**
- * Light theme tokens (from src/css/generated/tokens.css — generated from design-tokens.json)
+ * Light theme tokens (from src/style/generated/tokens.css — generated from design-tokens.json)
  * Semantic colors use sRGB hex for precise contrast calculations;
  * neutral/structural colors keep oklch notation.
  */
@@ -139,7 +139,7 @@ const lightTheme = {
 };
 
 /**
- * Dark theme tokens (from src/css/generated/tokens.css — generated from design-tokens.json)
+ * Dark theme tokens (from src/style/generated/tokens.css — generated from design-tokens.json)
  * Semantic colors use sRGB hex for precise contrast calculations;
  * neutral/structural colors keep oklch notation.
  */

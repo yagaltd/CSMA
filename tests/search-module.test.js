@@ -42,9 +42,9 @@ let Contracts;
 let createSearchService;
 
 beforeAll(async () => {
-    ({ EventBus } = await import('../src/runtime/EventBus.js'));
-    ({ Contracts } = await import('../src/runtime/Contracts.js'));
-    ({ createSearchService } = await import('../src/modules/search/index.js'));
+    ({ EventBus } = await import('../library/runtime/EventBus.js'));
+    ({ Contracts } = await import('../library/runtime/Contracts.js'));
+    ({ createSearchService } = await import('../library/modules/search/index.js'));
 });
 
 function createEventBus() {

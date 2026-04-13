@@ -1,0 +1,136 @@
+{
+  "id": "contact-form",
+  "kind": "content-archetype",
+  "version": "1.0.0",
+  "description": "Simple contact form content using the shared auth-style shell and core form primitives.",
+  "layout": "auth-shell",
+  "targetRegion": "main",
+  "uses": [
+    "card",
+    "field",
+    "input",
+    "button"
+  ],
+  "contentSchema": {
+    "title": "string",
+    "description": "string",
+    "nameLabel": "string",
+    "nameHelper": "string",
+    "namePlaceholder": "string",
+    "emailLabel": "string",
+    "emailHelper": "string",
+    "emailPlaceholder": "string",
+    "companyLabel": "string",
+    "companyHelper": "string",
+    "companyPlaceholder": "string",
+    "submitLabel": "string"
+  },
+  "defaults": {
+    "title": "Talk to the team",
+    "description": "Share your details and the right person will follow up.",
+    "nameLabel": "Full name",
+    "nameHelper": "Use the name your team knows you by.",
+    "namePlaceholder": "Avery Lee",
+    "emailLabel": "Work email",
+    "emailHelper": "We will use this address for the reply.",
+    "emailPlaceholder": "avery@company.com",
+    "companyLabel": "Company",
+    "companyHelper": "Optional, but helpful for routing your request.",
+    "companyPlaceholder": "Acme Labs",
+    "submitLabel": "Request contact"
+  },
+  "regions": {
+    "main": [
+      {
+        "component": "card",
+        "props": {
+          "title": "{{title}}",
+          "description": "{{description}}",
+          "tone": "subtle"
+        },
+        "slots": {
+          "body": [
+            {
+              "component": "field",
+              "props": {
+                "label": "{{nameLabel}}",
+                "helper": "{{nameHelper}}",
+                "for": "contact-name",
+                "required": "true"
+              },
+              "slots": {
+                "control": [
+                  {
+                    "component": "input",
+                    "props": {
+                      "id": "contact-name",
+                      "type": "text",
+                      "name": "name",
+                      "autocomplete": "name",
+                      "placeholder": "{{namePlaceholder}}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "component": "field",
+              "props": {
+                "label": "{{emailLabel}}",
+                "helper": "{{emailHelper}}",
+                "for": "contact-email",
+                "required": "true"
+              },
+              "slots": {
+                "control": [
+                  {
+                    "component": "input",
+                    "props": {
+                      "id": "contact-email",
+                      "type": "email",
+                      "name": "email",
+                      "autocomplete": "email",
+                      "placeholder": "{{emailPlaceholder}}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "component": "field",
+              "props": {
+                "label": "{{companyLabel}}",
+                "helper": "{{companyHelper}}",
+                "for": "contact-company",
+                "required": "false"
+              },
+              "slots": {
+                "control": [
+                  {
+                    "component": "input",
+                    "props": {
+                      "id": "contact-company",
+                      "type": "text",
+                      "name": "company",
+                      "autocomplete": "organization",
+                      "placeholder": "{{companyPlaceholder}}"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "footer": [
+            {
+              "component": "button",
+              "props": {
+                "variant": "primary",
+                "text": "{{submitLabel}}"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,33 +1,9 @@
 ---
 name: csma-observability
-version: "1.0.0"
-description: >-
-  Expert guidance on CSMA observability after the LogAccumulator refactor.
-  Covers local diagnostics, outbound analytics, diagnostic snapshots, SEO audit,
-  consent gating, and the runtime/public seams between these systems. Use this
-  when changing logging, telemetry, snapshot export, or observability tests.
-tags:
-  - observability
-  - logaccumulator
-  - analytics
-  - telemetry
-  - consent
-  - diagnostics
-related_files:
-  - src/runtime/LogAccumulator.js
-  - src/runtime/ErrorBoundary.js
-  - src/runtime/diagnosticSnapshot.js
-  - src/runtime/seoAudit.js
-  - src/modules/analytics/services/AnalyticsService.js
-  - src/modules/analytics/services/EventClassifier.js
-  - src/modules/analytics/services/EventAggregator.js
-  - src/modules/analytics/services/SecurityScanner.js
-  - src/modules/analytics/consent/ConsentService.js
-  - src/modules/analytics/ui/analytics-consent.js
-  - tests/log-accumulator.test.js
-  - tests/analytics-service.test.js
-  - tests/diagnostic-snapshot.test.js
+description: CSMA observability covering LogAccumulator, analytics, diagnostic snapshots, SEO audit, consent gating, and runtime/public seams. Use when changing logging, telemetry, snapshot export, or observability tests.
 ---
+
+<!-- version: 1.0.0 | tags: observability, logaccumulator, analytics, telemetry, consent, diagnostics -->
 
 # CSMA Observability Skill
 

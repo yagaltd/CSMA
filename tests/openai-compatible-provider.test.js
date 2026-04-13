@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { OpenAICompatibleProvider } from '../src/modules/ai/providers/OpenAICompatibleProvider.js';
+import { OpenAICompatibleProvider } from '../library/modules/ai/providers/OpenAICompatibleProvider.js';
 
 function createSSEStream(chunks) {
     return new ReadableStream({

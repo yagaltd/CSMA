@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { CheckoutService } from '../src/modules/checkout/services/CheckoutService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { CheckoutService } from '../library/modules/checkout/services/CheckoutService.js';
 
 describe('CheckoutService', () => {
     let eventBus;

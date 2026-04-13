@@ -1,0 +1,39 @@
+/* CSMA Component — Field */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.field__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--foreground);
+}
+
+.field__label[data-required="true"]::after {
+  content: " *";
+  color: var(--destructive);
+}
+
+.field__control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.field__helper,
+.field__error {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+}
+
+.field__helper {
+  color: var(--foreground-muted);
+}
+
+.field__error {
+  color: var(--destructive);
+}

@@ -1,7 +1,7 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { JSDOM } from 'jsdom';
-import { initUI } from '../src/ui/init.js';
+import { initUI } from '../library/ui/init.js';
 
 describe('initUI', () => {
     const originalWindow = globalThis.window;

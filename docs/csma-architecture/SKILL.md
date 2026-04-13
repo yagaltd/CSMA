@@ -1,30 +1,9 @@
 ---
-name: csma-guides
-version: "1.0.0"
-description: >-
-  Expert guidance on CSMA architecture, the 6 rules, EventBus patterns,
-  Contracts validation, component types, design token pipeline, and CSS
-  conventions. Use when building or restyling UI components, understanding
-  the event-driven architecture, or onboarding onto CSMA patterns.
-tags:
-  - architecture
-  - eventbus
-  - contracts
-  - css
-  - design-tokens
-  - components
-  - getting-started
-related_files:
-  - src/runtime/EventBus.js
-  - src/runtime/Contracts.js
-  - src/runtime/ModuleManager.js
-  - src/ui/init.js
-  - src/ui/components/button/button.css
-  - src/ui/components/toast/toast.js
-  - src/css/generated/tokens.css
-  - design-tokens.json
-  - src/ui/components/index.css
+name: csma-architecture
+description: CSMA architecture rules, EventBus patterns, Contracts validation, component types, design token pipeline, and CSS conventions. Use when building components, understanding event-driven patterns, or onboarding onto CSMA.
 ---
+
+<!-- version: 1.0.0 | tags: architecture, eventbus, contracts, css, design-tokens, components -->
 
 # CSMA Guides Skill
 
@@ -40,6 +19,10 @@ CSMA is **modules-first**. Prefer trusted modules under `src/modules/*`,
 `Contracts` for validation and security, contribution registries for commands,
 routes, navigation, panels, and adapters, and lifecycle-safe load/unload
 through `ModuleManager`, `ServiceManager`, and `destroyApp()`.
+
+Rigor is layered on top of this baseline. Use standard CSMA first, then add
+property tests, service-local transitions, or stronger verification only when
+the module risk justifies it. See `docs/csma-rigor/SKILL.md`.
 
 ## The 6 Rules
 
@@ -205,6 +188,10 @@ Registries do **not** replace contracts. Contracts validate data and runtime
 messages; registries track installed contributions and ownership by module id;
 modules and services implement behavior.
 
+Contracts are the production boundary. They are not a substitute for higher
+development-time rigor, and they do not imply every service needs a transition
+map. Use `docs/csma-rigor/SKILL.md` to decide when to add more.
+
 Current runtime registries: `commandRegistry`, `routeRegistry`,
 `navigationRegistry`, `panelRegistry`, `adapterRegistry`, `viewRegistry`.
 
@@ -233,7 +220,7 @@ const validated = Schema.validate(payload);
 ## Design Token Pipeline
 
 ```
-design-tokens.json  ->  bun run scripts/generate-tokens.js  ->  src/css/generated/tokens.css
+design-tokens.json  ->  bun run scripts/generate-tokens.js  ->  src/style/generated/tokens.css
 ```
 
 To customize tokens, edit `design-tokens.json` and regenerate. Never edit

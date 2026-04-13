@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, vi } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { ImageOptimizerService } from '../src/modules/image-optimizer/services/ImageOptimizerService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { ImageOptimizerService } from '../library/modules/image-optimizer/services/ImageOptimizerService.js';
 
 describe('ImageOptimizerService', () => {
     it('creates optimized variants via media transform', async () => {

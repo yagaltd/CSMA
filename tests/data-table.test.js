@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { DataTableService } from '../src/modules/data-table/services/DataTableService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { DataTableService } from '../library/modules/data-table/services/DataTableService.js';
 
 describe('DataTableService', () => {
     let eventBus;

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Theme Toggle Demo</title>
+    <link rel="stylesheet" href="../../../style/main.css" />
+  </head>
+  <body>
+    <main class="stack" data-gap="lg" style="max-width: 36rem; margin: 2rem auto; padding: 0 1rem;">
+      <h1>Theme Toggle</h1>
+      <button class="theme-toggle" type="button" data-theme-toggle data-theme-active="light">
+        <span class="theme-toggle__icons" aria-hidden="true">
+          <span class="theme-icon theme-icon--sun">☀</span>
+          <span class="theme-icon theme-icon--moon">◐</span>
+          <span class="theme-icon theme-icon--contrast">◫</span>
+        </span>
+        <span class="theme-toggle__label" data-theme-label>Theme: Light</span>
+      </button>
+      <p class="text-muted">Cycles light, dark, and contrast modes without booting the full app.</p>
+    </main>
+
+    <script type="module">
+      import { applyStoredTheme, registerThemeToggle } from '../../../style/theme/theme-manager.js';
+
+      const labels = {
+        light: 'Light',
+        dark: 'Dark',
+        contrast: 'Contrast'
+      };
+
+      const button = document.querySelector('[data-theme-toggle]');
+      const label = document.querySelector('[data-theme-label]');
+
+      applyStoredTheme();
+      registerThemeToggle(button, ({ theme, next }) => {
+        button.dataset.themeActive = theme;
+        button.setAttribute('aria-label', `Switch to ${next} theme`);
+        label.textContent = `Theme: ${labels[theme] || theme}`;
+      });
+    </script>
+  </body>
+</html>

@@ -1,32 +1,18 @@
 ---
-name: csma-services-api
-version: "1.0.0"
-description: >-
-  Expert guidance on building service-backed components and business logic
-  services in CSMA. Covers service templates, module contribution patterns,
-  EventBus integration, state management, registration, analytics, and error
-  handling. Use when writing or extending services under src/services/ or
-  src/modules/*/services/.
-tags:
-  - services
-  - eventbus
-  - state-management
-  - modules
-  - contracts
-  - error-handling
-related_files:
-  - src/runtime/EventBus.js
-  - src/runtime/Contracts.js
-  - src/runtime/ModuleManager.js
-  - src/modules/ai/services/AIService.js
-  - src/ui/init.js
-  - src/config.js
+name: csma-service-pattern
+description: Building service-backed components and business logic services in CSMA. Covers service templates, module contributions, EventBus integration, state management, and error handling. Use when writing services under src/services/ or src/modules/*/services/.
 ---
+
+<!-- version: 1.0.0 | tags: services, eventbus, state-management, modules, contracts -->
 
 # CSMA Services API Skill
 
 Guidance for building service-backed components and business logic services
 in the CSMA architecture.
+
+If you are deciding whether a service needs explicit lifecycle rigor, start
+with `docs/csma-rigor/SKILL.md`. This skill explains how to implement service
+patterns once that decision is made.
 
 ## Service Philosophy
 
@@ -38,6 +24,9 @@ For extension work, services are also the execution target behind module
 contributions. Command handlers, adapters, route-backed flows, and long-lived
 background behavior should resolve to service methods instead of putting
 behavior directly in manifests.
+
+Services should stay as simple as their risk allows. Do not add lifecycle
+machinery to every service by default.
 
 ## Service Types
 
@@ -273,6 +262,54 @@ updateUser(userId, updates) {
   this.state.set(userId, { ...current, ...updates });
 }
 ```
+
+## Service Lifecycle Rigor
+
+### Keep Simple State By Default
+
+Use ordinary mutable service state when:
+
+- the service has few states
+- illegal transitions are not a meaningful risk
+- example tests are enough to explain behavior
+
+Examples:
+
+- modal state
+- small view coordination services
+- simple caches
+
+### Add Service-Local Transitions Selectively
+
+Use a service-local transition map when:
+
+- the service has explicit statuses
+- async workflow steps matter
+- illegal edges can corrupt behavior or hide bugs
+- the lifecycle is easier to reason about as allowed transitions
+
+Examples:
+
+- checkout
+- retry/queue workflows
+- optimistic flows with pending/in-progress/error states
+
+Rules:
+
+- keep transition logic local to the service or its domain contracts
+- expose a small helper or constant for tests if needed
+- throw domain-local errors on illegal transitions
+- do not move transition enforcement into `EventBus`
+
+### When Transitions Are Overkill
+
+Do not add them just because:
+
+- a service has a `status` string
+- the module is security-sensitive but still simple
+- you want more formality without clear illegal edges
+
+In those cases, stronger tests are usually enough.
 
 ### History Tracking
 

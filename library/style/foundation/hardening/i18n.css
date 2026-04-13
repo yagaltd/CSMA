@@ -1,0 +1,41 @@
+/**
+ * CSMA Hardening — Internationalization (i18n) Utilities
+ * Text expansion budgets and RTL support
+ */
+
+/* ============================================
+   TEXT EXPANSION BUDGET
+   ============================================ */
+
+/* Add 30-40% space for translations */
+.i18n-budget {
+  padding-inline: calc(var(--space-md) * 1.4);
+}
+
+.i18n-budget-wide {
+  padding-inline: calc(var(--space-lg) * 1.4);
+}
+
+/* Container that adapts to text length */
+.i18n-flex {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* ============================================
+   RTL SUPPORT UTILITIES
+   ============================================ */
+
+/* Logical property shortcuts */
+[dir="rtl"] .flip-rtl {
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .rotate-90-rtl {
+  transform: rotate(90deg);
+}
+
+[dir="rtl"] .rotate-n90-rtl {
+  transform: rotate(-90deg);
+}

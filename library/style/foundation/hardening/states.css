@@ -1,0 +1,199 @@
+/**
+ * CSMA Hardening — State Utilities
+ * Layout protection, data states, containment, and container queries
+ */
+
+/* ============================================
+   LAYOUT PROTECTION
+   ============================================ */
+
+/* Flex item overflow protection */
+.flex-min-width-0 {
+  min-width: 0;
+}
+
+.flex-min-height-0 {
+  min-height: 0;
+}
+
+/* Grid item overflow protection */
+.grid-min-0 {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Prevent content from expanding container */
+.shrink-0 { flex-shrink: 0; }
+.shrink { flex-shrink: 1; }
+.grow-0 { flex-grow: 0; }
+.grow { flex-grow: 1; }
+
+/* Contain content within bounds */
+.contain-content {
+  contain: content;
+}
+
+.contain-layout {
+  contain: layout;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+/* ============================================
+   DATA STATES
+   ============================================ */
+
+/* Loading state */
+[data-loading="true"] {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Disabled state */
+[data-disabled="true"],
+[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Readonly state */
+[data-readonly="true"],
+[aria-readonly="true"] {
+  cursor: default;
+}
+
+/* Invalid state */
+[aria-invalid="true"] {
+  border-color: var(--destructive);
+}
+
+/* Busy state */
+[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* Expanded state (for ARIA) */
+[aria-expanded="true"] {
+  /* Component-specific styles */
+}
+
+/* Selected state */
+[aria-selected="true"],
+[data-selected="true"] {
+  /* Component-specific styles */
+}
+
+/* ============================================
+   ANIMATION SAFETY
+   ============================================ */
+
+/* Only animate transform and opacity */
+.animate-safe {
+  will-change: transform, opacity;
+}
+
+/* Remove will-change after animation */
+.animate-once {
+  animation-fill-mode: forwards;
+}
+
+.animate-once:not(:hover):not(:focus) {
+  will-change: auto;
+}
+
+/* ============================================
+   EXTREME CONTENT HANDLING
+   ============================================ */
+
+/* Very long words/URLs */
+.extreme-long-content {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+/* Very long numbers */
+.extreme-long-number {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Very small text (legibility) */
+.min-readable {
+  font-size: max(10px, 0.625rem);
+  line-height: 1.4;
+}
+
+/* ============================================
+   CONTAINER QUERY CONTEXTS
+   ============================================ */
+
+/* Named container contexts */
+.container-card {
+  container-type: inline-size;
+  container-name: card;
+}
+
+.container-table {
+  container-type: inline-size;
+  container-name: table;
+}
+
+.container-form {
+  container-type: inline-size;
+  container-name: form;
+}
+
+.container-nav {
+  container-type: inline-size;
+  container-name: nav;
+}
+
+.container-sidebar {
+  container-type: inline-size;
+  container-name: sidebar;
+}
+
+/* ============================================
+   RESPONSIVE TYPOGRAPHY
+   ============================================ */
+
+/* Fluid heading sizes */
+.text-fluid-xs {
+  font-size: clamp(0.625rem, 0.5rem + 0.25vw, 0.75rem);
+}
+
+.text-fluid-sm {
+  font-size: clamp(0.75rem, 0.625rem + 0.25vw, 0.875rem);
+}
+
+.text-fluid-base {
+  font-size: clamp(0.875rem, 0.75rem + 0.5vw, 1rem);
+}
+
+.text-fluid-lg {
+  font-size: clamp(1rem, 0.875rem + 0.5vw, 1.25rem);
+}
+
+.text-fluid-xl {
+  font-size: clamp(1.125rem, 0.875rem + 1vw, 1.5rem);
+}
+
+.text-fluid-2xl {
+  font-size: clamp(1.25rem, 1rem + 1.25vw, 2rem);
+}
+
+.text-fluid-3xl {
+  font-size: clamp(1.5rem, 1rem + 2vw, 3rem);
+}
+
+/* Minimum readable sizes */
+@media (max-width: 480px) {
+  .text-readable {
+    font-size: max(14px, 1em);
+  }
+}

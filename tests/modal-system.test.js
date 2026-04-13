@@ -1,8 +1,8 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, beforeEach } from 'vitest';
-import EventBus from '../src/runtime/EventBus.js';
-import { Contracts } from '../src/runtime/Contracts.js';
-import { ModalService } from '../src/modules/modal-system/services/ModalService.js';
+import EventBus from '../library/runtime/EventBus.js';
+import { Contracts } from '../library/runtime/Contracts.js';
+import { ModalService } from '../library/modules/modal-system/services/ModalService.js';
 
 describe('ModalService', () => {
     let eventBus;

@@ -1,0 +1,71 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "theme-toggle",
+    "type": "I",
+    "owner": "ui-service",
+    "lifecycle": "stable",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": [],
+    "components": []
+  },
+  "metadata": {
+    "description": "Theme toggle control styled as a reusable surface button"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "theme-toggle",
+    "title": "Theme Toggle",
+    "category": "CSS-Only",
+    "preferred": false,
+    "summary": "Theme switcher trigger styled as a compact surface-aware button",
+    "template": "<button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-theme-active=\"light\"><span class=\"theme-toggle__icons\" aria-hidden=\"true\"><span class=\"theme-icon theme-icon--sun\">☀</span><span class=\"theme-icon theme-icon--moon\">◐</span><span class=\"theme-icon theme-icon--contrast\">◫</span></span><span class=\"theme-toggle__label\">Theme</span></button>",
+    "propsSchema": {
+      "label": "string",
+      "theme": "string",
+      "variant": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "render": {
+      "kind": "button",
+      "template": "<button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-theme-active=\"light\"><span class=\"theme-toggle__icons\" aria-hidden=\"true\"><span class=\"theme-icon theme-icon--sun\">☀</span><span class=\"theme-icon theme-icon--moon\">◐</span><span class=\"theme-icon theme-icon--contrast\">◫</span></span><span class=\"theme-toggle__label\">Theme</span></button>"
+    },
+    "behavior": {
+      "role": "trigger",
+      "events": [
+        "click"
+      ],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": "[data-theme-toggle], .theme-toggle"
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "label": [
+        ".theme-toggle__label"
+      ]
+    }
+  }
+}

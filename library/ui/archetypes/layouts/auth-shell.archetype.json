@@ -1,0 +1,55 @@
+{
+  "id": "auth-shell",
+  "kind": "layout-archetype",
+  "version": "1.0.0",
+  "description": "Centered authentication layout with a primary auth panel and optional supporting aside content.",
+  "uses": [
+    "card",
+    "badge",
+    "button"
+  ],
+  "contentSchema": {
+    "eyebrow": "string",
+    "headline": "string",
+    "supportingText": "string"
+  },
+  "defaults": {
+    "eyebrow": "Secure access",
+    "headline": "Welcome back",
+    "supportingText": "Sign in to continue into your workspace."
+  },
+  "regions": {
+    "main": {
+      "required": true,
+      "description": "Primary authentication content."
+    },
+    "aside": {
+      "required": false,
+      "description": "Optional supporting content or trust indicators."
+    }
+  },
+  "layoutRules": {
+    "maxWidth": "layout-container",
+    "contentWidth": "layout-container-narrow",
+    "alignment": "center",
+    "density": "comfortable"
+  },
+  "structure": {
+    "type": "shell",
+    "wrapperClass": "stack",
+    "regions": [
+      {
+        "id": "hero",
+        "role": "intro"
+      },
+      {
+        "id": "main",
+        "role": "primary"
+      },
+      {
+        "id": "aside",
+        "role": "secondary"
+      }
+    ]
+  }
+}

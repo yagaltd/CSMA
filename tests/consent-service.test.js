@@ -1,6 +1,6 @@
 import './helpers/storage-polyfill.js';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { ConsentService } from '../src/modules/analytics/consent/ConsentService.js';
+import { ConsentService } from '../library/modules/analytics/consent/ConsentService.js';
 
 describe('ConsentService', () => {
     beforeEach(() => {

@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://csma.local/src/ui/schemas/archetype.schema.json",
+  "title": "CSMA Archetype",
+  "description": "Schema for library/ui/archetypes/**/*.json",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "description",
+    "uses"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "layout-archetype",
+        "content-archetype"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10
+    },
+    "uses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    },
+    "layout": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "targetRegion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contentSchema": {
+      "type": "object"
+    },
+    "defaults": {
+      "type": "object"
+    },
+    "regions": {
+      "type": "object"
+    },
+    "layoutRules": {
+      "type": "object"
+    },
+    "structure": {
+      "type": "object"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "layout-archetype"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "regions"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "content-archetype"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "layout",
+          "targetRegion",
+          "contentSchema",
+          "defaults",
+          "regions"
+        ]
+      }
+    }
+  ]
+}

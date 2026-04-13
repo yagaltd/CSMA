@@ -1,25 +1,9 @@
 ---
 name: csma-patterns
-version: "1.0.0"
-description: >-
-  Expert guidance on building composite UI sections and page layouts in CSMA.
-  Covers pattern types (CSS-only layout vs JS-backed EventBus), CSS rules,
-  layout anatomy, and the recommended approach for composing starter components
-  into reusable page sections. Use when building hero sections, settings
-  panels, checkout flows, data tables, or any composite UI surface.
-tags:
-  - patterns
-  - layout
-  - composition
-  - css
-  - eventbus
-  - advanced
-related_files:
-  - src/ui/components/index.css
-  - src/css/foundation/utilities.css
-  - src/ui/init.js
-  - src/runtime/EventBus.js
+description: Building composite UI sections and page layouts in CSMA. Covers CSS-only vs EventBus-backed patterns, layout anatomy, and composing components into reusable sections. Use for hero sections, settings panels, data tables, or any composite surface.
 ---
+
+<!-- version: 1.0.0 | tags: patterns, layout, composition, css, eventbus -->
 
 # CSMA Patterns Skill
 
@@ -66,7 +50,7 @@ Use the token contract only:
 - Colors: `--background`, `--surface`, `--foreground`, `--border`, `--primary`
 - Spacing: `--space-*` scale
 - Radius: `--radius-*` scale
-- Layout: `.stack`, `.grid`, `.cluster` from `src/css/foundation/utilities.css`
+- Layout: `.stack`, `.grid`, `.cluster` from `src/style/foundation/layout.css`
 
 Follow CSMA rendering rules:
 
