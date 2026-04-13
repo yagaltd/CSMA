@@ -4,7 +4,8 @@
     "description": "Lean, secure, reactive CSMA with ready-to-use components",
     "type": "module",
     "dependencies": {
-        "flexsearch": "^0.7.43"
+        "flexsearch": "^0.7.43",
+        "hono": "^4.12.12"
     },
     "scripts": {
         "dev": "vite",
