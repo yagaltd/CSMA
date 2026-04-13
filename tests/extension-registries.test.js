@@ -5,7 +5,6 @@ import { Contracts } from '../library/runtime/Contracts.js';
 import { ServiceManager } from '../library/runtime/ServiceManager.js';
 import { ModuleManager } from '../library/runtime/ModuleManager.js';
 import { CommandRegistry } from '../library/runtime/CommandRegistry.js';
-import { RouteRegistry } from '../library/runtime/RouteRegistry.js';
 import { NavigationRegistry } from '../library/runtime/NavigationRegistry.js';
 import { PanelRegistry } from '../library/runtime/PanelRegistry.js';
 import { AdapterRegistry } from '../library/runtime/AdapterRegistry.js';
@@ -18,7 +17,6 @@ function createRuntime() {
     const serviceManager = new ServiceManager(eventBus);
     const registries = {
         commands: new CommandRegistry({ eventBus, serviceManager }),
-        routes: new RouteRegistry({ eventBus }),
         navigation: new NavigationRegistry({ eventBus }),
         panels: new PanelRegistry({ eventBus }),
         adapters: new AdapterRegistry({ eventBus, serviceManager }),
@@ -37,6 +35,7 @@ describe('Module manifest validation', () => {
         expect(validated.manifest.id).toBe('example-module');
         expect(validated.manifest.services).toEqual(['ExampleModuleService']);
         expect(validated.manifest.contributes.commands).toHaveLength(1);
+        expect(validated.manifest.contributes.navigation).toHaveLength(1);
     });
 
     it('rejects manifests that omit documented services', () => {
@@ -55,6 +54,24 @@ describe('Module manifest validation', () => {
             }
         })).toThrow(/manifest\.services is missing declared services/i);
     });
+
+    it('rejects manifests that still declare contributed routes', () => {
+        expect(() => validateModuleDefinition('demo', {
+            manifest: {
+                id: 'demo',
+                name: 'Demo',
+                version: '1.0.0',
+                description: 'Bad manifest',
+                dependencies: [],
+                services: [],
+                contracts: [],
+                contributes: {
+                    routes: [{ id: 'demo.route', path: '/demo', page: 'demo' }]
+                }
+            },
+            services: {}
+        })).toThrow(/Unknown contribution types: routes/i);
+    });
 });
 
 describe('Contribution registries', () => {
@@ -72,7 +89,6 @@ describe('Contribution registries', () => {
 
         expect(runtime.serviceManager.get('ExampleModuleService')).toBeTruthy();
         expect(runtime.registries.commands.get('example-module.say-hello')).toBeTruthy();
-        expect(runtime.registries.routes.get('example-module.dashboard')).toBeTruthy();
         expect(runtime.registries.navigation.get('example-module.nav')).toBeTruthy();
         expect(runtime.registries.panels.get('example-module.panel')).toBeTruthy();
         expect(runtime.registries.adapters.get('example-module.adapter')).toBeTruthy();
@@ -84,7 +100,6 @@ describe('Contribution registries', () => {
 
         expect(runtime.serviceManager.get('ExampleModuleService')).toBeNull();
         expect(runtime.registries.commands.list()).toHaveLength(0);
-        expect(runtime.registries.routes.list()).toHaveLength(0);
         expect(runtime.registries.navigation.list()).toHaveLength(0);
         expect(runtime.registries.panels.list()).toHaveLength(0);
         expect(runtime.registries.adapters.list()).toHaveLength(0);
@@ -189,50 +204,17 @@ describe('Contribution registries', () => {
         expect(exampleViewEvents[0].message).toBe('Rendered from registry');
     });
 
-    it('attaches contributed routes to the router and unregisters them on unload', async () => {
-        const router = {
-            register: vi.fn(),
-            unregister: vi.fn()
-        };
-        const routeRequests = [];
-
-        runtime.registries.routes.attachRouter(router);
-        runtime.eventBus.subscribe('ROUTE_CONTRIBUTION_REQUESTED', (payload) => routeRequests.push(payload));
-
-        await runtime.moduleManager.loadModule('example-module');
-
-        expect(router.register).toHaveBeenCalledWith(
-            '/example-module',
-            expect.any(Function),
-            expect.objectContaining({
-                meta: expect.objectContaining({
-                    routeId: 'example-module.dashboard',
-                    moduleId: 'example-module'
-                })
-            })
-        );
-
-        const routeHandler = router.register.mock.calls[0][1];
-        await routeHandler();
-        expect(routeRequests).toHaveLength(1);
-        expect(routeRequests[0].routeId).toBe('example-module.dashboard');
-
-        await runtime.moduleManager.unloadModule('example-module');
-
-        expect(router.unregister).toHaveBeenCalledWith('/example-module');
-    });
-
     it('sorts navigation entries by order and label', () => {
         runtime.registries.navigation.register('module-b', {
             id: 'module-b.nav',
             label: 'Beta',
-            href: '#/beta',
+            href: '/beta',
             order: 20
         });
         runtime.registries.navigation.register('module-a', {
             id: 'module-a.nav',
             label: 'Alpha',
-            href: '#/alpha',
+            href: '/alpha',
             order: 10
         });
 

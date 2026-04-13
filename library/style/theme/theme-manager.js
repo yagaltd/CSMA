@@ -1,8 +1,16 @@
 const STORAGE_KEY = 'csma-theme';
 const THEMES = ['light', 'dark', 'contrast'];
 
+function safeGet(key) {
+    try { return localStorage.getItem(key); } catch { return null; }
+}
+
+function safeSet(key, value) {
+    try { localStorage.setItem(key, value); } catch { /* file:// or restricted */ }
+}
+
 export function getCurrentTheme() {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = safeGet(STORAGE_KEY);
     return THEMES.includes(stored) ? stored : THEMES[0];
 }
 
@@ -11,7 +19,7 @@ export function applyTheme(theme) {
         return;
     }
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem(STORAGE_KEY, theme);
+    safeSet(STORAGE_KEY, theme);
 }
 
 export function cycleTheme() {

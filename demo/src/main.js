@@ -1,14 +1,15 @@
 /**
  * CSMA Kit - Main Entry Point
  */
-import { FEATURES } from './config.js';
+import { APP_RUNTIME_CONFIG, FEATURES } from './config.js';
+import { RENDER_PAGES } from './render.pages.js';
 import { initUI } from '../../library/ui/init.js';
 import { createRuntimeState, destroyRuntimeState, syncWindowRuntime } from '../../library/runtime/bootstrap.js';
 import { loadOptionalFeatures } from '../../library/runtime/features.js';
 import { setupThemeToggle, loadTheme, resolveApiBaseUrl } from '../../library/style/theme/theme-helpers.js';
 
 let runtimeState = null;
-const apiBaseUrl = resolveApiBaseUrl();
+const apiBaseUrl = resolveApiBaseUrl(APP_RUNTIME_CONFIG);
 let initPromise = null;
 let appInitialized = false;
 let appDestroyed = false;
@@ -20,6 +21,7 @@ function ensureRuntime() {
     }
 
     runtimeState = createRuntimeState();
+    runtimeState.runtimeConfig = APP_RUNTIME_CONFIG;
     appDestroyed = false;
     syncWindowRuntime(runtimeState, { apiBaseUrl, destroyApp });
     return runtimeState;
@@ -48,7 +50,14 @@ async function init() {
         const state = ensureRuntime();
         console.log('[CSMA] Initializing application...');
 
-        await loadOptionalFeatures(state, { FEATURES, apiBaseUrl });
+        await loadOptionalFeatures(state, {
+            FEATURES,
+            apiBaseUrl,
+            runtimeConfig: APP_RUNTIME_CONFIG,
+            pages: RENDER_PAGES,
+            documentRef: document,
+            windowRef: window
+        });
         syncWindowRuntime(state, { apiBaseUrl, destroyApp });
 
         state.uiCleanup = initUI(state.eventBus) || window.csma?.componentCleanup || null;
@@ -57,24 +66,11 @@ async function init() {
         state.themeToggleCleanup = setupThemeToggle(state.eventBus);
         loadTheme();
 
-        // Analytics initializes via features.js (ANALYTICS_MODULE flag).
-        // LogAccumulator remains responsible for runtime/error logging only.
-
-        state.eventBus.publish('PAGE_CHANGED', {
-            title: 'CSMA Kit',
-            description: 'A lean, secure, reactive CSMA application kit',
-            locale: 'en'
-        });
+        if (FEATURES.CSMA_MODE === 'full') {
+            await state.pageRuntime?.renderPath?.(window.location.pathname, { source: 'csr' });
+        }
 
         console.log('[CSMA] Application ready');
-
-        state.welcomeTimer = window.setTimeout(() => {
-            state.eventBus.publish('INTENT_CREATE_ITEM', {
-                title: 'Welcome to CSMA!',
-                description: 'This is an example card demonstrating CSS-class reactivity.',
-                priority: 'high'
-            });
-        }, 500);
 
         appInitialized = true;
         syncWindowRuntime(state, { apiBaseUrl, destroyApp });

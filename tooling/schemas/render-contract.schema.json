@@ -1,0 +1,286 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://csma.local/ui/schemas/render-contract.schema.json",
+  "title": "CSMA Render Contract",
+  "description": "Canonical page-level render contract for static rendering, preview, and SSR hosts.",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "version",
+    "page",
+    "layout",
+    "head",
+    "regions",
+    "activation",
+    "componentsUsed"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "kind": {
+      "type": "string",
+      "const": "render-contract"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "page": {
+      "type": "object",
+      "required": [
+        "id",
+        "viewId",
+        "contentArchetypeId",
+        "layoutArchetypeId",
+        "routePath",
+        "title"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "viewId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contentArchetypeId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "layoutArchetypeId": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "routePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "layout": {
+      "type": "object",
+      "required": ["id", "regions", "rules", "intro"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "regions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "rules": {
+          "type": "object"
+        },
+        "intro": {
+          "$ref": "#/definitions/layoutIntro"
+        }
+      }
+    },
+    "head": {
+      "type": "object",
+      "required": ["title", "tags", "htmlAttrs", "bodyAttrs"],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["tag", "key", "props"],
+            "additionalProperties": false,
+            "properties": {
+              "tag": {
+                "type": "string",
+                "minLength": 1
+              },
+              "key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "props": {
+                "type": "object"
+              },
+              "json": {}
+            }
+          }
+        },
+        "htmlAttrs": {
+          "$ref": "#/definitions/rootAttrs"
+        },
+        "bodyAttrs": {
+          "$ref": "#/definitions/rootAttrs"
+        }
+      }
+    },
+    "regions": {
+      "type": "object",
+      "required": ["hero", "main", "aside"],
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/renderNode"
+        }
+      },
+      "properties": {
+        "hero": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/renderNode"
+          }
+        },
+        "main": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/renderNode"
+          }
+        },
+        "aside": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/renderNode"
+          }
+        }
+      }
+    },
+    "activation": {
+      "type": "object",
+      "required": [
+        "bootstrap",
+        "mode",
+        "required",
+        "runtimeDependencies",
+        "typeIComponents",
+        "typeIIComponents"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "bootstrap": {
+          "type": "string",
+          "const": "full-runtime"
+        },
+        "mode": {
+          "type": "string",
+          "const": "page"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runtimeDependencies": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "initialState": {
+          "type": "object"
+        },
+        "typeIComponents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "typeIIComponents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        }
+      }
+    },
+    "componentsUsed": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      }
+    }
+  },
+  "definitions": {
+    "rootAttrs": {
+      "type": "object",
+      "required": ["attrs", "classes", "style"],
+      "additionalProperties": false,
+      "properties": {
+        "attrs": {
+          "type": "object"
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "style": {
+          "type": "object"
+        }
+      }
+    },
+    "layoutIntro": {
+      "type": "object",
+      "required": ["eyebrow", "headline", "supportingText"],
+      "additionalProperties": false,
+      "properties": {
+        "eyebrow": {
+          "type": "string"
+        },
+        "headline": {
+          "type": "string"
+        },
+        "supportingText": {
+          "type": "string"
+        }
+      }
+    },
+    "renderNode": {
+      "type": "object",
+      "required": ["component", "props"],
+      "additionalProperties": false,
+      "properties": {
+        "component": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "props": {
+          "type": "object"
+        },
+        "slots": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/renderNode"
+            }
+          }
+        }
+      }
+    }
+  }
+}

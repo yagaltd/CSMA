@@ -3,8 +3,62 @@ import { auditPage } from './seoAudit.js';
 import { buildLogEndpoint } from '../style/theme/theme-helpers.js';
 import { resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from './ssma.js';
 
-export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
+function cloneRuntimeSection(value, fallback = {}) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+        return structuredClone(fallback);
+    }
+
+    return structuredClone(value);
+}
+
+function initializePageServices(state, {
+    pages = [],
+    runtimeConfig = {},
+    documentRef = globalThis.document,
+    windowRef = globalThis.window
+} = {}) {
+    const pageResolver = state.serviceManager.get('pageResolver');
+    const pageRuntime = state.serviceManager.get('pageRuntime');
+    const clientNavigation = state.serviceManager.get('clientNavigation');
+
+    pageResolver?.init({ pages });
+    pageRuntime?.init({
+        documentRef,
+        windowRef
+    });
+
+    return {
+        pageResolver,
+        pageRuntime,
+        clientNavigation,
+        runtimeConfig
+    };
+}
+
+export async function loadOptionalFeatures(state, {
+    FEATURES,
+    apiBaseUrl,
+    runtimeConfig = {},
+    pages = [],
+    documentRef = globalThis.document,
+    windowRef = globalThis.window
+}) {
     const { eventBus, serviceManager, moduleManager, channelManager, registries } = state;
+    const searchConfig = cloneRuntimeSection(runtimeConfig.search, {});
+    const protocolConfig = cloneRuntimeSection(runtimeConfig.protocol, {});
+    const optimisticSyncConfig = cloneRuntimeSection(runtimeConfig.optimisticSync, {});
+    const checkoutConfig = cloneRuntimeSection(runtimeConfig.checkout, {});
+    const aiConfigBase = cloneRuntimeSection(runtimeConfig.ai, {});
+    const analyticsConfigBase = cloneRuntimeSection(runtimeConfig.analytics, {});
+
+    state.runtimeConfig = cloneRuntimeSection(runtimeConfig, {});
+
+    const pageServices = initializePageServices(state, {
+        pages,
+        runtimeConfig,
+        documentRef,
+        windowRef
+    });
 
     if (FEATURES.PWA) {
         try {
@@ -14,25 +68,6 @@ export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
             }
         } catch (error) {
             console.warn('[PWA] Service worker registration failed:', error);
-        }
-    }
-
-    if (FEATURES.ROUTER) {
-        try {
-            await moduleManager.loadModule('router');
-            const routerService = serviceManager.get('Router');
-            state.routerServiceRef = routerService;
-            window.csma = window.csma || {};
-            window.csma.router = routerService;
-            registries?.routes?.attachRouter?.(routerService);
-
-            if (routerService?.register) {
-                routerService.register('/', () => {
-                    console.log('[Router] Home page');
-                });
-            }
-        } catch (error) {
-            console.warn('[Router] Failed to load module:', error);
         }
     }
 
@@ -101,10 +136,10 @@ export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
             await actionLogService?.init();
             await transportService?.init({
                 leaderService: serviceManager.get('leader'),
-                endpoint: resolveSsmaWsEndpoint('/optimistic/ws', window.csma?.config?.optimisticSync?.wsEndpoint),
-                eventsEndpoint: resolveSsmaHttpEndpoint('/optimistic/events', window.csma?.config?.optimisticSync?.eventsEndpoint),
+                endpoint: resolveSsmaWsEndpoint('/optimistic/ws', optimisticSyncConfig.wsEndpoint, runtimeConfig),
+                eventsEndpoint: resolveSsmaHttpEndpoint('/optimistic/events', optimisticSyncConfig.eventsEndpoint, runtimeConfig),
                 channelManager,
-                subprotocol: PROTOCOL.subprotocol
+                subprotocol: protocolConfig.subprotocol
             });
             await optimisticSync?.init({
                 actionLogService,
@@ -195,7 +230,7 @@ export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
                     authService,
                     hmacService,
                     optimisticSyncService,
-                    allowGuestOptimistic: Boolean(window.csma?.config?.optimisticSync?.allowGuestCheckout)
+                    allowGuestOptimistic: Boolean(checkoutConfig.allowGuestCheckout ?? optimisticSyncConfig.allowGuestCheckout)
                 });
                 window.csma = window.csma || {};
                 window.csma.checkout = checkout;
@@ -224,7 +259,7 @@ export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
         try {
             await moduleManager.loadModule('search');
             const searchService = serviceManager.get('search');
-            searchService?.init(SEARCH_CONFIG);
+            searchService?.init(searchConfig);
             window.csma = window.csma || {};
             window.csma.search = searchService;
             console.log('[Search] Tiered search module enabled');
@@ -237,10 +272,10 @@ export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
         try {
             await moduleManager.loadModule('ai');
             const aiService = serviceManager.get('ai');
-            const aiConfig = structuredClone(window.csma?.config?.ai || {});
+            const aiConfig = cloneRuntimeSection(aiConfigBase, {});
             if (aiConfig.providers?.ssma && !aiConfig.providers.ssma.endpoint) {
                 const queryName = aiConfig.providers.ssma.queryName || 'ai.generate';
-                aiConfig.providers.ssma.endpoint = resolveSsmaHttpEndpoint(`/query/${encodeURIComponent(queryName)}`);
+                aiConfig.providers.ssma.endpoint = resolveSsmaHttpEndpoint(`/query/${encodeURIComponent(queryName)}`, undefined, runtimeConfig);
             }
             await aiService?.init(aiConfig);
             window.csma = window.csma || {};
@@ -255,7 +290,7 @@ export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
         try {
             await moduleManager.loadModule('analytics');
             const consentService = serviceManager.get('analyticsConsent');
-            const analyticsConfig = window.csma?.config?.analytics || {};
+            const analyticsConfig = cloneRuntimeSection(analyticsConfigBase, {});
 
             if (FEATURES.ANALYTICS_CONSENT) {
                 window.csma = window.csma || {};
@@ -271,7 +306,7 @@ export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
                 const analyticsService = serviceManager.get('analytics');
                 await analyticsService.init({
                     ...analyticsConfig,
-                    endpoint: buildLogEndpoint(analyticsConfig.endpoint),
+                    endpoint: buildLogEndpoint(analyticsConfig.endpoint, runtimeConfig),
                     ...(FEATURES.ANALYTICS_CONSENT ? { consent: consentService } : {})
                 });
                 window.csma = window.csma || {};
@@ -332,6 +367,22 @@ export async function loadOptionalFeatures(state, { FEATURES, apiBaseUrl }) {
             console.log('[ThreadManager] Web Worker management enabled');
         } catch (error) {
             console.warn('[ThreadManager] Failed to load:', error);
+        }
+    }
+
+    if (FEATURES.CLIENT_NAVIGATION) {
+        try {
+            pageServices.clientNavigation?.init({
+                pageResolver: pageServices.pageResolver,
+                pageRuntimeService: pageServices.pageRuntime,
+                windowRef,
+                documentRef
+            });
+            window.csma = window.csma || {};
+            window.csma.clientNavigation = pageServices.clientNavigation;
+            console.log('[ClientNavigation] History API navigation enabled');
+        } catch (error) {
+            console.warn('[ClientNavigation] Failed to initialize:', error);
         }
     }
 

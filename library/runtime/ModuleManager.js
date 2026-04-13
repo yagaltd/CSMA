@@ -2,7 +2,6 @@ import { validateModuleDefinition, MODULE_CONTRIBUTION_TYPES } from './ModuleMan
 
 const REGISTRY_KEY_BY_CONTRIBUTION = {
     commands: 'commands',
-    routes: 'routes',
     navigation: 'navigation',
     panels: 'panels',
     adapters: 'adapters',

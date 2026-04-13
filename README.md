@@ -47,6 +47,31 @@ CSMA supports two practical frontend entry paths:
 
 For gateway middleware, SSMA remains an architecture choice in the CLI, not a CSMA mode. Choosing `csma-ssma` adds SSMA exactly as before.
 
+## Delivery Presets
+
+CSMA stays one template/framework with multiple delivery presets:
+
+- `starter-csr` - lightweight starter bootstrap, CSR-only by default
+- `full-csr` - full runtime CSR app
+- `ssg-ready` - full runtime plus static export
+- `ssr-ready` - `ssg-ready` plus Bun/Hono SSR with SSMA as the backend bridge
+
+Current defaults in this repo:
+
+- `template` uses `starter-csr`
+- `demo` uses `full-csr`
+
+Static export and SSR stay opt-in. A simple CDN site should use the normal CSMA template and opt into the `ssg-ready` path rather than switching to a separate framework.
+
+## Generated Artifacts
+
+Generated outputs are split by ownership:
+
+- `tooling/generated/` for shared repo-level references such as AI catalogs and token/component reference JSON
+- `<app>/generated/` for app-consumed assets such as `tokens.css`
+
+`npm run generate-tokens` now generates app-local token CSS for `demo` and `template` by default. Use `npm run generate-tokens -- --app demo` or `--app template` to target one app.
+
 ## SSMA Gateway Middleware
 
 For CSMA projects that need gateway middleware, see **SSMA**:

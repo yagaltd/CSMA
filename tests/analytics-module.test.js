@@ -6,7 +6,6 @@ import { EventBus } from '../library/runtime/EventBus.js';
 import { ServiceManager } from '../library/runtime/ServiceManager.js';
 import { ModuleManager } from '../library/runtime/ModuleManager.js';
 import { CommandRegistry } from '../library/runtime/CommandRegistry.js';
-import { RouteRegistry } from '../library/runtime/RouteRegistry.js';
 import { NavigationRegistry } from '../library/runtime/NavigationRegistry.js';
 import { PanelRegistry } from '../library/runtime/PanelRegistry.js';
 import { AdapterRegistry } from '../library/runtime/AdapterRegistry.js';
@@ -22,7 +21,6 @@ function createAnalyticsRuntime() {
     const serviceManager = new ServiceManager(eventBus);
     const registries = {
         commands: new CommandRegistry({ eventBus, serviceManager }),
-        routes: new RouteRegistry({ eventBus }),
         navigation: new NavigationRegistry({ eventBus }),
         panels: new PanelRegistry({ eventBus }),
         adapters: new AdapterRegistry({ eventBus, serviceManager }),
@@ -39,7 +37,6 @@ function createAnalyticsRuntime() {
             reevaluateAccess() {}
         },
         registries,
-        routerServiceRef: null,
         i18nServiceRef: null,
         authServiceRef: null
     };
@@ -87,7 +84,8 @@ describe('Analytics module', () => {
 
         await loadOptionalFeatures(state, {
             FEATURES: { ANALYTICS_MODULE: true, ANALYTICS_CONSENT: true },
-            apiBaseUrl: ''
+            apiBaseUrl: '',
+            runtimeConfig: { analytics: {} }
         });
         syncWindowRuntime(state, { apiBaseUrl: '', destroyApp: () => {} });
 
@@ -109,7 +107,8 @@ describe('Analytics module', () => {
 
         await loadOptionalFeatures(state, {
             FEATURES: { ANALYTICS_MODULE: true, ANALYTICS_CONSENT: false },
-            apiBaseUrl: ''
+            apiBaseUrl: '',
+            runtimeConfig: { analytics: {} }
         });
 
         const analytics = state.serviceManager.get('analytics');

@@ -26,7 +26,7 @@ Use this skill when:
 ### Token or Visual Restyling
 
 1. `docs/csma-design/DESIGN.md`
-2. `design-tokens.json`
+2. `template/design-tokens.json` or the copied project's `design-tokens.json`
 
 ### Primitive or Archetype Authoring
 
@@ -38,9 +38,9 @@ Use this skill when:
 
 | Task | Read First | Edit | Run | Validate |
 |------|------------|------|-----|----------|
-| token restyling | `docs/csma-design/DESIGN.md` | `design-tokens.json` | `npm run generate-tokens` | visual preview + token consumers |
-| new primitive | `docs/csma-design/STRUCTURE.md` | `src/ui/components/*`, component manifest, `src/ui/components/index.css`, `src/ui/init.js` for Type II, and `src/runtime/Contracts.js` when events are involved | scaffold or author component files | `npm run lint:styles` + targeted tests |
-| new archetype | `docs/csma-design/UX.md`, then `docs/csma-design/STRUCTURE.md` | `src/ui/archetypes/*` | preview-data generation if needed | preview + compiler tests |
+| token restyling | `docs/csma-design/DESIGN.md` | `template/design-tokens.json` or the copied project's `design-tokens.json` | `npm run generate-tokens` | visual preview + token consumers |
+| new primitive | `docs/csma-design/STRUCTURE.md` | `library/ui/components/*`, component manifest, `library/ui/components/index.css`, `library/ui/init.js` for Type II, and `library/runtime/Contracts.js` when events are involved | scaffold or author component files | `npm run lint:styles` + targeted tests |
+| new archetype | `docs/csma-design/UX.md`, then `docs/csma-design/STRUCTURE.md` | `library/ui/archetypes/*` | `npm run generate-archetype-preview` if preview data changed | preview + compiler tests |
 | sitemap or flow definition | `docs/csma-design/UX.md` | `docs/csma-design/UX.md` | no generator required by default | human review before archetype work |
 
 Generated artifacts should not be hand-edited when an upstream source exists.
@@ -70,8 +70,8 @@ Path assumptions:
 - visual contract: `docs/csma-design/DESIGN.md`
 - structure contract: `docs/csma-design/STRUCTURE.md`
 - UX contract: `docs/csma-design/UX.md`
-- primitives: `src/ui/components/`
-- archetypes: `src/ui/archetypes/`
+- primitives: `library/ui/components/`
+- archetypes: `library/ui/archetypes/`
 
 ## Escape Hatch Rule
 

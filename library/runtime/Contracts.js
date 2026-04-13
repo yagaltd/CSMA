@@ -619,7 +619,9 @@ const CoreContracts = {
             title: size(string(), 1, 60),  // SEO limit
             description: size(string(), 1, 160),  // SEO limit
             image: optional(string()),
-            locale: optional(enums(['en', 'es', 'fr', 'de']))
+            locale: optional(enums(['en', 'es', 'fr', 'de'])),
+            canonical: optional(string()),
+            robots: optional(string())
         })
     },
 
@@ -1478,7 +1480,6 @@ const CoreContracts = {
             serviceNames: array(string()),
             contributions: object({
                 commands: number(),
-                routes: number(),
                 navigation: number(),
                 panels: number(),
                 adapters: number(),
@@ -1512,7 +1513,6 @@ const CoreContracts = {
             serviceNames: array(string()),
             contributions: object({
                 commands: number(),
-                routes: number(),
                 navigation: number(),
                 panels: number(),
                 adapters: number(),
@@ -1531,7 +1531,7 @@ const CoreContracts = {
         description: 'Module contribution registered into a runtime registry',
 
         schema: object({
-            registry: enums(['commands', 'routes', 'navigation', 'panels', 'adapters', 'views']),
+            registry: enums(['commands', 'navigation', 'panels', 'adapters', 'views']),
             moduleId: string(),
             contributionId: string(),
             timestamp: number()
@@ -1548,27 +1548,9 @@ const CoreContracts = {
         description: 'Module contribution removed from a runtime registry',
 
         schema: object({
-            registry: enums(['commands', 'routes', 'navigation', 'panels', 'adapters', 'views']),
+            registry: enums(['commands', 'navigation', 'panels', 'adapters', 'views']),
             moduleId: string(),
             contributionId: string(),
-            timestamp: number()
-        })
-    },
-
-    ROUTE_CONTRIBUTION_REQUESTED: {
-        version: 1,
-        type: 'event',
-        owner: 'route-registry',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'public',
-        description: 'A module-contributed route was activated by the router',
-
-        schema: object({
-            routeId: string(),
-            moduleId: string(),
-            path: string(),
-            page: string(),
             timestamp: number()
         })
     },

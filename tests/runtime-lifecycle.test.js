@@ -3,8 +3,8 @@ import { LifecycleScope } from '../library/runtime/LifecycleScope.js';
 import { ServiceManager } from '../library/runtime/ServiceManager.js';
 import { ModuleManager } from '../library/runtime/ModuleManager.js';
 import { MetaManager } from '../library/runtime/MetaManager.js';
-import { Router } from '../library/modules/router/services/Router.js';
 import { ChannelManager } from '../library/runtime/ChannelManager.js';
+import { ClientNavigationService } from '../library/runtime/ClientNavigationService.js';
 
 class StubEventBus {
     constructor() {
@@ -114,30 +114,45 @@ describe('MetaManager lifecycle', () => {
     });
 });
 
-describe('Router lifecycle', () => {
+describe('ClientNavigationService lifecycle', () => {
     const originalWindow = globalThis.window;
+    const originalDocument = globalThis.document;
+    let removeEventListener;
 
     beforeEach(() => {
+        removeEventListener = vi.fn();
         globalThis.window = {
             addEventListener: vi.fn(),
-            removeEventListener: vi.fn(),
-            location: { hash: '' },
-            history: { replaceState: vi.fn(), back: vi.fn() }
+            removeEventListener,
+            location: { href: 'https://example.com/', origin: 'https://example.com', pathname: '/' },
+            history: { replaceState: vi.fn(), pushState: vi.fn() }
+        };
+        globalThis.document = {
+            addEventListener: vi.fn(),
+            removeEventListener
         };
     });
 
     afterEach(() => {
         globalThis.window = originalWindow;
+        globalThis.document = originalDocument;
     });
 
-    it('removes global routing listeners on destroy', () => {
-        const router = new Router(new StubEventBus());
+    it('removes global navigation listeners on destroy', () => {
+        const navigation = new ClientNavigationService();
+        navigation.init({
+            pageResolver: { has: () => false },
+            pageRuntimeService: { renderPath: vi.fn() },
+            windowRef: window,
+            documentRef: document
+        });
 
-        expect(window.addEventListener).toHaveBeenCalledTimes(2);
+        expect(window.addEventListener).toHaveBeenCalledTimes(1);
+        expect(document.addEventListener).toHaveBeenCalledTimes(1);
 
-        router.destroy();
+        navigation.destroy();
 
-        expect(window.removeEventListener).toHaveBeenCalledTimes(2);
+        expect(removeEventListener).toHaveBeenCalledTimes(2);
     });
 });
 

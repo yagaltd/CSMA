@@ -6,17 +6,16 @@ function trimBaseUrl(value) {
     return value.trim().replace(/\/$/, '');
 }
 
-function getRuntimeConfig() {
+function getCompatibilityBaseUrl() {
     if (typeof window === 'undefined') {
-        return {};
+        return '';
     }
 
-    return window.csma?.config || {};
+    return trimBaseUrl(window.__CSMA_API_URL);
 }
 
-export function resolveSsmaBaseUrl() {
-    const config = getRuntimeConfig();
-    const explicitBaseUrl = trimBaseUrl(config.ssma?.baseUrl);
+export function resolveSsmaBaseUrl(runtimeConfig = {}) {
+    const explicitBaseUrl = trimBaseUrl(runtimeConfig?.ssma?.baseUrl);
     if (explicitBaseUrl) {
         return explicitBaseUrl;
     }
@@ -26,8 +25,7 @@ export function resolveSsmaBaseUrl() {
         return envBaseUrl;
     }
 
-    const globalBaseUrl = typeof window !== 'undefined' ? window.__CSMA_API_URL : '';
-    const compatibilityBaseUrl = trimBaseUrl(globalBaseUrl || config.apiBaseUrl);
+    const compatibilityBaseUrl = getCompatibilityBaseUrl();
     if (compatibilityBaseUrl) {
         return compatibilityBaseUrl;
     }
@@ -35,12 +33,12 @@ export function resolveSsmaBaseUrl() {
     return '';
 }
 
-export function resolveSsmaHttpEndpoint(path, override) {
+export function resolveSsmaHttpEndpoint(path, override, runtimeConfig = {}) {
     if (override) {
         return override;
     }
 
-    const baseUrl = resolveSsmaBaseUrl();
+    const baseUrl = resolveSsmaBaseUrl(runtimeConfig);
     if (!baseUrl) {
         return path;
     }
@@ -49,12 +47,12 @@ export function resolveSsmaHttpEndpoint(path, override) {
     return `${baseUrl}${normalizedPath}`;
 }
 
-export function resolveSsmaWsEndpoint(path, override) {
+export function resolveSsmaWsEndpoint(path, override, runtimeConfig = {}) {
     if (override) {
         return override;
     }
 
-    const baseUrl = resolveSsmaBaseUrl();
+    const baseUrl = resolveSsmaBaseUrl(runtimeConfig);
     if (!baseUrl) {
         if (typeof window === 'undefined') {
             return '';
@@ -64,7 +62,7 @@ export function resolveSsmaWsEndpoint(path, override) {
         return `${protocol}//${window.location.host}${path}`;
     }
 
-    const url = new URL(resolveSsmaHttpEndpoint(path));
+    const url = new URL(resolveSsmaHttpEndpoint(path, undefined, runtimeConfig));
     url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:';
     return url.toString();
 }

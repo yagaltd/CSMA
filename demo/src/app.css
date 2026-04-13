@@ -4,7 +4,7 @@
  */
 
 /* 0. Generated tokens (project-specific) */
-@import '../../generated/tokens.css';
+@import '../generated/tokens.css';
 
 /* 1. Library styles (includes base, components, hardening, etc.) */
 @import '../../library/style/main.css';

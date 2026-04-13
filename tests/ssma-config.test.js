@@ -9,9 +9,6 @@ describe('SSMA endpoint resolution', () => {
             location: {
                 protocol: 'https:',
                 host: 'example.com'
-            },
-            csma: {
-                config: {}
             }
         };
         delete window.__CSMA_API_URL;
@@ -24,12 +21,14 @@ describe('SSMA endpoint resolution', () => {
     });
 
     it('prefers the unified ssma.baseUrl config', async () => {
-        window.csma.config.ssma = { baseUrl: 'https://gateway.example.com/' };
         const { resolveSsmaBaseUrl, resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } = await import('../library/runtime/ssma.js');
+        const runtimeConfig = {
+            ssma: { baseUrl: 'https://gateway.example.com/' }
+        };
 
-        expect(resolveSsmaBaseUrl()).toBe('https://gateway.example.com');
-        expect(resolveSsmaHttpEndpoint('/logs/batch')).toBe('https://gateway.example.com/logs/batch');
-        expect(resolveSsmaWsEndpoint('/optimistic/ws')).toBe('wss://gateway.example.com/optimistic/ws');
+        expect(resolveSsmaBaseUrl(runtimeConfig)).toBe('https://gateway.example.com');
+        expect(resolveSsmaHttpEndpoint('/logs/batch', undefined, runtimeConfig)).toBe('https://gateway.example.com/logs/batch');
+        expect(resolveSsmaWsEndpoint('/optimistic/ws', undefined, runtimeConfig)).toBe('wss://gateway.example.com/optimistic/ws');
     });
 
     it('falls back to same-origin relative endpoints when no SSMA base is configured', async () => {

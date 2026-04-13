@@ -7,11 +7,13 @@ import { LogAccumulator } from './LogAccumulator.js';
 import { CrossTabLeader } from './CrossTabLeader.js';
 import { ChannelManager } from './ChannelManager.js';
 import { CommandRegistry } from './CommandRegistry.js';
-import { RouteRegistry } from './RouteRegistry.js';
 import { NavigationRegistry } from './NavigationRegistry.js';
 import { PanelRegistry } from './PanelRegistry.js';
 import { AdapterRegistry } from './AdapterRegistry.js';
 import { ViewRegistry } from './ViewRegistry.js';
+import { PageResolver } from './PageResolver.js';
+import { PageRuntimeService } from './PageRuntimeService.js';
+import { ClientNavigationService } from './ClientNavigationService.js';
 import { ExampleService } from '../services/ExampleService.js';
 import { PlatformService } from '../services/PlatformService.js';
 import { auditPage } from './seoAudit.js';
@@ -21,8 +23,11 @@ export const CORE_SERVICE_NAMES = new Set([
     'example',
     'platform',
     'channels',
+    'metaManager',
+    'pageResolver',
+    'pageRuntime',
+    'clientNavigation',
     'commandRegistry',
-    'routeRegistry',
     'navigationRegistry',
     'panelRegistry',
     'adapterRegistry',
@@ -38,9 +43,11 @@ export function createRuntimeState() {
     const metaManager = new MetaManager(eventBus);
     const logAccumulator = new LogAccumulator(eventBus);
     const leaderService = new CrossTabLeader(eventBus);
+    const pageResolver = new PageResolver();
+    const pageRuntime = new PageRuntimeService(eventBus, { pageResolver, metaManager });
+    const clientNavigation = new ClientNavigationService();
     const registries = {
         commands: new CommandRegistry({ eventBus, serviceManager }),
-        routes: new RouteRegistry({ eventBus }),
         navigation: new NavigationRegistry({ eventBus }),
         panels: new PanelRegistry({ eventBus }),
         adapters: new AdapterRegistry({ eventBus, serviceManager }),
@@ -58,13 +65,25 @@ export function createRuntimeState() {
         version: '1.0.0',
         description: 'Channel subscription orchestration'
     });
+    serviceManager.register('metaManager', metaManager, {
+        version: '2.0.0',
+        description: 'Runtime head entry manager'
+    });
+    serviceManager.register('pageResolver', pageResolver, {
+        version: '1.0.0',
+        description: 'Render-page resolution for full-runtime delivery modes'
+    });
+    serviceManager.register('pageRuntime', pageRuntime, {
+        version: '1.0.0',
+        description: 'Contract-first page rendering for full-runtime apps'
+    });
+    serviceManager.register('clientNavigation', clientNavigation, {
+        version: '1.0.0',
+        description: 'Optional History API navigation for full-runtime apps'
+    });
     serviceManager.register('commandRegistry', registries.commands, {
         version: '1.0.0',
         description: 'Module-owned command contribution registry'
-    });
-    serviceManager.register('routeRegistry', registries.routes, {
-        version: '1.0.0',
-        description: 'Module-owned route contribution registry'
     });
     serviceManager.register('navigationRegistry', registries.navigation, {
         version: '1.0.0',
@@ -93,8 +112,10 @@ export function createRuntimeState() {
         metaManager,
         logAccumulator,
         leaderService,
+        pageResolver,
+        pageRuntime,
+        clientNavigation,
         registries,
-        routerServiceRef: null,
         i18nServiceRef: null,
         authServiceRef: null,
         uiCleanup: null,
@@ -118,11 +139,14 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp }) {
         channels: state.channelManager,
         leader: state.leaderService,
         metaManager: state.metaManager,
+        pageResolver: state.pageResolver,
+        pageRuntime: state.pageRuntime,
+        clientNavigation: state.clientNavigation,
         logAccumulator: state.logAccumulator,
         registries: state.registries,
-        router: state.routerServiceRef,
         i18n: state.i18nServiceRef,
         auth: state.authServiceRef,
+        runtimeConfig: state.runtimeConfig || null,
         analytics,
         analyticsConsent,
         apiBaseUrl,
@@ -194,11 +218,14 @@ export async function destroyRuntimeState(state, { destroyApp }) {
         channels: null,
         leader: null,
         metaManager: null,
+        pageResolver: null,
+        pageRuntime: null,
+        clientNavigation: null,
         logAccumulator: null,
         registries: null,
-        router: null,
         i18n: null,
         auth: null,
+        runtimeConfig: null,
         analytics: null,
         analyticsConsent: null,
         diagnose: () => null,

@@ -5,6 +5,7 @@ import { collectArchetypes, ARCHETYPE_SCHEMA, validateArchetypeCollection } from
 import { collectComponentCatalog } from './generate-ai-catalog.js';
 import { collectComponentReference } from './generate-component-reference.js';
 import { collectTokenReference } from './generate-token-reference.js';
+import { toolingGeneratedPath } from './generated-paths.js';
 import { collectUxContracts, UX_CONTRACT_SCHEMA, validateUxContracts } from './ux-contract-utils.js';
 import { validateInteractiveComponentCss } from '../../library/ui/validation/componentCssContracts.js';
 
@@ -13,13 +14,14 @@ const IGNORE_DIRS = new Set(['node_modules', 'dist', '.git', '.factory', 'platfo
 const WHITELIST_FILES = new Set(['scripts/check-styles.js']);
 const ALLOWED_EXTENSIONS = new Set(['.css', '.scss', '.js', '.ts', '.tsx', '.jsx', '.html', '.md', '.json']);
 const MAIN_CSS = 'library/style/main.css';
+const APP_CSS_FILES = ['demo/src/app.css', 'template/src/app.css'];
 const COMPONENTS_DIR = 'library/ui/components';
 const COMPONENT_INDEX = 'library/ui/components/index.css';
 const UI_INIT = 'library/ui/init.js';
 const COMPONENT_SCHEMA = 'tooling/schemas/component-manifest.schema.json';
-const GENERATED_AI_CATALOG = 'generated/ai-catalog.json';
-const GENERATED_COMPONENT_REFERENCE = 'generated/component-reference.json';
-const GENERATED_TOKEN_REFERENCE = 'generated/token-reference.json';
+const GENERATED_AI_CATALOG = relative(ROOT, toolingGeneratedPath('ai-catalog.json'));
+const GENERATED_COMPONENT_REFERENCE = relative(ROOT, toolingGeneratedPath('component-reference.json'));
+const GENERATED_TOKEN_REFERENCE = relative(ROOT, toolingGeneratedPath('token-reference.json'));
 const PATTERNS_DIR = 'library/ui/patterns';
 const PATTERN_INDEX = 'library/ui/patterns/index.css';
 const HARDENING_DIR = 'library/style/foundation/hardening';
@@ -141,9 +143,6 @@ function validateThemeContract() {
   }
 
   const mainCss = readFileSync(mainPath, 'utf8');
-  if (!mainCss.includes("@import './generated/tokens.css';")) {
-    addFinding(MAIN_CSS, 1, 'main.css must import generated/tokens.css.', "@import './generated/tokens.css';");
-  }
   if (!mainCss.includes("@import '../ui/components/index.css';")) {
     addFinding(MAIN_CSS, 1, 'main.css must import library/ui/components/index.css.', "@import '../ui/components/index.css';");
   }
@@ -160,6 +159,24 @@ function validateThemeContract() {
   } else {
     addFinding(HARDENING_DIR, 1, 'Missing foundation/hardening/ directory.', HARDENING_DIR);
   }
+}
+
+function validateAppStyles() {
+  APP_CSS_FILES.forEach((relPath) => {
+    const appCssPath = join(ROOT, relPath);
+    if (!existsSync(appCssPath)) {
+      addFinding(relPath, 1, 'Missing app CSS entry point.', relPath);
+      return;
+    }
+
+    const appCss = readFileSync(appCssPath, 'utf8');
+    if (!appCss.includes("@import '../generated/tokens.css';")) {
+      addFinding(relPath, 1, 'App CSS must import its local generated/tokens.css first.', "@import '../generated/tokens.css';");
+    }
+    if (!appCss.includes("@import '../../library/style/main.css';")) {
+      addFinding(relPath, 1, 'App CSS must import library/style/main.css after tokens.', "@import '../../library/style/main.css';");
+    }
+  });
 }
 
 function validateComponentIndex() {
@@ -518,6 +535,7 @@ async function validateGeneratedArtifact(relPath, collectFn, command) {
 async function main() {
   walk(ROOT);
   validateThemeContract();
+  validateAppStyles();
   validateComponentIndex();
   validatePatternIndex();
   validateComponentManifests();

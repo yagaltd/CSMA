@@ -3,10 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' ws: wss: http://127.0.0.1:5050 http://localhost:5050;">
     <title>CSMA Template</title>
-    <link rel="stylesheet" href="/src/app.css">
-    <link rel="stylesheet" href="/examples/landing/landing.css">
+    <link rel="stylesheet" href="../../generated/tokens.css">
+    <link rel="stylesheet" href="../../../library/style/base.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/layout.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/motion.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/text-overflow.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/states.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/accessibility.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/i18n.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/loading.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/hardening/error.css">
+    <link rel="stylesheet" href="../../../library/style/foundation/print.css">
+    <link rel="stylesheet" href="../../../library/style/touch.css">
+    <link rel="stylesheet" href="../../../library/ui/components/button/button.css">
+    <link rel="stylesheet" href="../../../library/ui/components/badge/badge.css">
+    <link rel="stylesheet" href="../../../library/ui/components/card/card.css">
+    <link rel="stylesheet" href="../../../library/ui/components/field/field.css">
+    <link rel="stylesheet" href="../../../library/ui/components/input/input.css">
+    <link rel="stylesheet" href="../../../library/ui/components/toast/toast.css">
+    <link rel="stylesheet" href="../../../library/ui/components/theme-toggle/theme-toggle.css">
+    <link rel="stylesheet" href="./landing.css">
 </head>
 <body class="landing-page">
     <div class="page-shell landing-shell">
@@ -40,8 +57,8 @@
                     </p>
 
                     <div class="landing-actions">
-                        <a class="button" data-variant="primary" href="/examples/todo-app/index.html">Open Todo Example</a>
-                        <a class="button" data-variant="outline" href="/docs/README.md">Read Docs</a>
+                        <a class="button" data-variant="primary" href="../todo-app/index.html">Open Todo Example</a>
+                        <a class="button" data-variant="outline" href="../../../README.md">Read Docs</a>
                     </div>
 
                     <ul class="landing-points" aria-label="Highlights">
@@ -180,6 +197,6 @@
         </main>
     </div>
 
-    <script type="module" src="/library/style/theme/theme-entry.js"></script>
+    <script src="../shared/standalone-theme.js"></script>
 </body>
 </html>

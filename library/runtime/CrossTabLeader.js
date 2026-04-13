@@ -2,6 +2,12 @@ const DEFAULT_STORAGE_KEY = 'csma_leader_state';
 const DEFAULT_LOCK_NAME = 'csma_leader_lock';
 const DEFAULT_LEASE_MS = 5000;
 
+function isStorageLike(value) {
+    return Boolean(value)
+        && typeof value.getItem === 'function'
+        && typeof value.setItem === 'function';
+}
+
 export class CrossTabLeader {
     constructor(eventBus, options = {}) {
         this.eventBus = eventBus;
@@ -11,9 +17,10 @@ export class CrossTabLeader {
         this.tabId = options.tabId || CrossTabLeader._createTabId();
 
         this.win = options.window || (typeof window !== 'undefined' ? window : null);
-        this.storage = options.storage !== undefined
+        const providedStorage = options.storage !== undefined
             ? options.storage
-            : this.win?.localStorage ?? null;
+            : this.win?.localStorage ?? globalThis.localStorage ?? null;
+        this.storage = isStorageLike(providedStorage) ? providedStorage : null;
         this.locks = options.locks !== undefined
             ? options.locks
             : this.win?.navigator?.locks ?? null;

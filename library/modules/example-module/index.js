@@ -37,18 +37,11 @@ export const manifest = {
                 order: 10
             }
         ],
-        routes: [
-            {
-                id: 'example-module.dashboard',
-                path: '/example-module',
-                page: 'example-dashboard'
-            }
-        ],
         navigation: [
             {
                 id: 'example-module.nav',
                 label: 'Example Module',
-                href: '#/example-module',
+                href: '/example-module',
                 group: 'examples',
                 order: 10
             }

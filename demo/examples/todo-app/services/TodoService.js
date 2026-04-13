@@ -1,5 +1,5 @@
-import { threadManager } from '../../../library/runtime/ThreadManager.js';
-import { LogAccumulator } from '../../../library/runtime/LogAccumulator.js';
+import { threadManager } from '../../../../library/runtime/ThreadManager.js';
+import { LogAccumulator } from '../../../../library/runtime/LogAccumulator.js';
 
 const DEFAULT_STORAGE_KEY = 'csma.todo-app';
 const FALLBACK_SEED = [

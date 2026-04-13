@@ -12,7 +12,6 @@ import { FEATURES } from './config.js';
 import { initUI as initStarterUI } from '../../library/ui/init.js';
 
 const MODULE_FEATURE_PAIRS = [
-    ['ROUTER', 'router'],
     ['I18N', 'i18n'],
     ['INDEXEDDB', 'storage'],
     ['SEARCH_MODULE', 'search'],

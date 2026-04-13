@@ -20,10 +20,10 @@ export function loadTheme() {
     applyStoredTheme();
 }
 
-export function resolveApiBaseUrl() {
-    return resolveSsmaBaseUrl();
+export function resolveApiBaseUrl(runtimeConfig = {}) {
+    return resolveSsmaBaseUrl(runtimeConfig);
 }
 
-export function buildLogEndpoint(baseUrl) {
-    return resolveSsmaHttpEndpoint('/logs/batch', baseUrl);
+export function buildLogEndpoint(baseUrl, runtimeConfig = {}) {
+    return resolveSsmaHttpEndpoint('/logs/batch', baseUrl, runtimeConfig);
 }

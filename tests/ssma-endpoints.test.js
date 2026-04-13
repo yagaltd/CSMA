@@ -8,7 +8,6 @@ describe('SSMA endpoint resolution', () => {
     beforeEach(() => {
         globalThis.window = {
             location: { protocol: 'http:' },
-            csma: { config: {} },
             __CSMA_API_URL: ''
         };
     });
@@ -23,8 +22,9 @@ describe('SSMA endpoint resolution', () => {
     });
 
     it('resolveSsmaHttpEndpoint prepends base URL from config', () => {
-        window.csma.config.ssma = { baseUrl: 'http://localhost:5050' };
-        const result = resolveSsmaHttpEndpoint('/optimistic/events');
+        const result = resolveSsmaHttpEndpoint('/optimistic/events', undefined, {
+            ssma: { baseUrl: 'http://localhost:5050' }
+        });
         expect(result).toBe('http://localhost:5050/optimistic/events');
     });
 
@@ -41,7 +41,7 @@ describe('SSMA endpoint resolution', () => {
 
     it('resolveSsmaWsEndpoint uses wss when window is https', () => {
         window.location.protocol = 'https:';
-        const result = resolveSsmaWsEndpoint('/optimistic/ws');
+        const result = resolveSsmaWsEndpoint('/optimistic/ws', undefined, {});
         expect(result).toContain('wss:');
     });
 

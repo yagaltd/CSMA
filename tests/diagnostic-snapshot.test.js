@@ -106,10 +106,12 @@ describe('diagnosticSnapshot', () => {
             moduleManager: null,
             channelManager: null,
             metaManager: null,
+            pageResolver: null,
+            pageRuntime: null,
+            clientNavigation: null,
             logAccumulator,
             leaderService: null,
             registries: null,
-            routerServiceRef: null,
             i18nServiceRef: null,
             authServiceRef: null
         };

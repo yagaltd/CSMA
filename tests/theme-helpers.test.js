@@ -6,7 +6,7 @@ import { setupThemeToggle, resolveApiBaseUrl, buildLogEndpoint } from '../librar
 describe('theme helpers', () => {
     beforeEach(() => {
         document.body.innerHTML = '';
-        window.csma = { config: {} };
+        window.csma = {};
         // Ensure localStorage works (jsdom provides it but polyfill may override)
         if (!window.localStorage.getItem) {
             window.localStorage = {
@@ -42,8 +42,9 @@ describe('theme helpers', () => {
     });
 
     it('resolveApiBaseUrl returns configured base URL', () => {
-        window.csma.config.ssma = { baseUrl: 'http://localhost:5050' };
-        const url = resolveApiBaseUrl();
+        const url = resolveApiBaseUrl({
+            ssma: { baseUrl: 'http://localhost:5050' }
+        });
         expect(url).toBe('http://localhost:5050');
     });
 

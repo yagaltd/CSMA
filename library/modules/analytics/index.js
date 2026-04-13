@@ -17,7 +17,6 @@ export const manifest = {
     ],
     contributes: {
         commands: [],
-        routes: [],
         navigation: [],
         panels: [],
         adapters: [],
