@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://csma.dev/schemas/export-manifest.schema.json",
+  "title": "ExportManifest",
+  "type": "object",
+  "required": ["preset", "generatedAt", "sources"],
+  "properties": {
+    "preset": { "enum": ["csma-csr", "csma-ssr", "csma-ssma"] },
+    "generatedAt": { "type": "string" },
+    "sources": {
+      "type": "object",
+      "required": ["csma"],
+      "properties": {
+        "csma": { "type": "object" },
+        "ssma": { "type": "object" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

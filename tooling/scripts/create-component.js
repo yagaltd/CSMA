@@ -278,7 +278,7 @@ function main() {
 
   const componentDir = path.join(COMPONENTS_DIR, name);
   if (existsSync(componentDir) && !options.force) {
-    throw new Error(`Component directory already exists: library/ui/components/${name}. Pass --force to overwrite files.`);
+    throw new Error(`Component directory already exists: src/ui/components/${name}. Pass --force to overwrite files.`);
   }
 
   mkdirSync(componentDir, { recursive: true });
@@ -302,13 +302,13 @@ function main() {
   const initRegistered = type === 'II' ? ensureInitRegistration(name) : false;
 
   console.log(`Created component scaffold for "${name}" (${type}).`);
-  console.log(`- Files: library/ui/components/${name}/`);
-  console.log(`- CSS import ${cssImported ? 'added' : 'already present'} in library/ui/components/index.css`);
+  console.log(`- Files: src/ui/components/${name}/`);
+  console.log(`- CSS import ${cssImported ? 'added' : 'already present'} in src/ui/components/index.css`);
   if (type === 'II') {
     console.log(`- JS file created: ${jsCreated ? 'yes' : 'no'}`);
-    console.log(`- initUI registration ${initRegistered ? 'added' : 'already present'} in library/ui/init.js`);
+    console.log(`- initUI registration ${initRegistered ? 'added' : 'already present'} in src/ui/init.js`);
   }
-  console.log('- Next steps: fill manifest details, implement states, add contracts if needed, add tests, then run npm run generate-ai-catalog.');
+  console.log('- Next steps: fill manifest details, implement states, add contracts if needed, add tests.');
 }
 
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : null;

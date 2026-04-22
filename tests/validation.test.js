@@ -15,7 +15,7 @@ import {
     llmInput,
     sanitizedHTML,
     sanitizedURL
-} from '../library/runtime/validation/index.js';
+} from '../src/runtime/validation/index.js';
 
 describe('Contract Helper', () => {
     it('should create contract with ECCA metadata', () => {

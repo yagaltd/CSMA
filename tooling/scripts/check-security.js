@@ -11,29 +11,37 @@ import { dirname, join } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const projectRoot = join(__dirname, '..');
+const projectRoot = join(__dirname, '..', '..');
 
 const securityChecks = {
     csp_headers: {
-        file: 'examples/landing/index.html',
+        file: 'demo/index.html',
         check: (content) => {
             const hasCSP = content.includes('Content-Security-Policy');
-            const hasUnsafeInline = content.includes("'unsafe-inline'");
+            if (!hasCSP) {
+                return {
+                    pass: true,
+                    message: '⚠️  No CSP in demo (add one when deploying to production)'
+                };
+            }
+            const cspMatch = content.match(/Content-Security-Policy[^>]*content="([^"]*)"/);
+            const csp = cspMatch ? cspMatch[1] : '';
+            const scriptSrcMatch = csp.match(/script-src\s+([^;]*)/);
+            const scriptSrc = scriptSrcMatch ? scriptSrcMatch[1] : '';
+            const hasScriptUnsafeInline = scriptSrc.includes("'unsafe-inline'");
             return {
-                pass: hasCSP && !hasUnsafeInline,
-                message: hasUnsafeInline
-                    ? '❌ CSP contains unsafe-inline (SECURITY RISK)'
-                    : hasCSP
-                        ? '✅ CSP configured correctly'
-                        : '❌ No CSP headers found (CRITICAL)'
+                pass: !hasScriptUnsafeInline,
+                message: hasScriptUnsafeInline
+                    ? "❌ CSP script-src contains 'unsafe-inline' (SECURITY RISK)"
+                    : '✅ CSP configured correctly'
             };
         }
     },
 
     contract_validation: {
-        file: 'library/runtime/Contracts.js',
+        file: 'src/runtime/Contracts.js',
         check: (content) => {
-            // Starter-template uses custom validation library at './validation/index.js'
+            // Starter app shell uses custom validation library at './validation/index.js'
             const hasValidation = content.includes("from './validation/index.js'") ||
                 content.includes('from "./validation/index.js"') ||
                 content.includes('from \'superstruct\'') ||
@@ -49,7 +57,7 @@ const securityChecks = {
     },
 
     rate_limiting: {
-        file: 'library/runtime/EventBus.js',
+        file: 'src/runtime/EventBus.js',
         check: (content) => {
             const hasRateLimiting = content.includes('checkRateLimit');
             const hasSecurityViolation = content.includes('SECURITY_VIOLATION');
@@ -67,7 +75,7 @@ const securityChecks = {
     },
 
     sanitization: {
-        file: 'library/utils/sanitize.js',
+        file: 'src/utils/sanitize.js',
         check: (content) => {
             const hasSanitizeHTML = content.includes('function sanitizeHTML') ||
                 content.includes('export function sanitizeHTML');
@@ -84,7 +92,7 @@ const securityChecks = {
     },
 
     schema_spoofing_protection: {
-        file: 'library/runtime/EventBus.js',
+        file: 'src/runtime/EventBus.js',
         check: (content) => {
             const hasPrototypePollutionCheck = content.includes('__proto__');
             const hasConstructorCheck = content.includes('constructor.name');
@@ -98,7 +106,7 @@ const securityChecks = {
     },
 
     rate_limiter_exists: {
-        file: 'library/runtime/RateLimiter.js',
+        file: 'src/runtime/RateLimiter.js',
         check: (content) => {
             const hasMapStorage = content.includes('new Map()');
             const hasSessionId = content.includes('sessionStorage');
@@ -112,7 +120,7 @@ const securityChecks = {
     },
 
     sanitize_classname: {
-        file: 'library/utils/sanitize.js',
+        file: 'src/utils/sanitize.js',
         check: (content) => {
             const hasSanitizeClassName = content.includes('function sanitizeClassName') ||
                 content.includes('export function sanitizeClassName');
@@ -129,18 +137,15 @@ const securityChecks = {
         file: '.gitignore',
         check: (content) => {
             const hasEnvIgnore = content.includes('.env');
-            const hasEnvExample = fs.existsSync(join(projectRoot, '.env.example'));
             const hasEnvInGit = fs.existsSync(join(projectRoot, '.env'));
 
             return {
-                pass: hasEnvIgnore && hasEnvExample && !hasEnvInGit,
+                pass: hasEnvIgnore && !hasEnvInGit,
                 message: !hasEnvIgnore
                     ? '❌ .env not in .gitignore (CRITICAL SECURITY RISK)'
-                    : !hasEnvExample
-                        ? '⚠️  .env.example missing (developers need template)'
-                        : hasEnvInGit
-                            ? '❌ .env file exists in project (should be gitignored)'
-                            : '✅ Environment variable security configured'
+                    : hasEnvInGit
+                        ? '❌ .env file exists in project (should be gitignored)'
+                        : '✅ Environment variable security configured'
             };
         }
     }

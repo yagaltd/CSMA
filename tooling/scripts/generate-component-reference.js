@@ -7,7 +7,7 @@ import { toolingGeneratedPath } from './generated-paths.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
-const COMPONENTS_DIR = path.join(ROOT, 'library', 'ui', 'components');
+const COMPONENTS_DIR = path.join(ROOT, 'src', 'ui', 'components');
 const OUTPUT_PATH = toolingGeneratedPath('component-reference.json');
 
 function collectMatches(source, pattern) {
@@ -68,11 +68,24 @@ export async function collectComponentReference({ generatedAt = new Date().toISO
     const cssPath = path.join(componentRoot, `${entry.name}.css`);
     const demoPath = path.join(componentRoot, `${entry.name}.demo.html`);
 
-    const [manifestSource, cssSource, demoSource] = await Promise.all([
-      readFile(manifestPath, 'utf8'),
-      readFile(cssPath, 'utf8'),
-      readFile(demoPath, 'utf8')
-    ]);
+    let manifestSource;
+    try {
+      manifestSource = await readFile(manifestPath, 'utf8');
+    } catch {
+      continue;
+    }
+    let cssSource = '';
+    try {
+      cssSource = await readFile(cssPath, 'utf8');
+    } catch {
+      // Component may be JS-only (no CSS)
+    }
+    let demoSource = '';
+    try {
+      demoSource = await readFile(demoPath, 'utf8');
+    } catch {
+      // Demo is optional
+    }
 
     const manifest = JSON.parse(manifestSource);
     const aiUi = manifest.aiUi;
@@ -119,7 +132,7 @@ export async function collectComponentReference({ generatedAt = new Date().toISO
   return {
     version: '1.0.0',
     generatedAt,
-    source: 'library/ui/components/*/{manifest.json,*.css,*.demo.html}',
+    source: 'src/ui/components/*/{manifest.json,*.css,*.demo.html}',
     totalComponents: components.length,
     components
   };

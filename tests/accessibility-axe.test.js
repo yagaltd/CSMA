@@ -5,7 +5,7 @@
  * Run with: npm run test:a11y
  *
  * For full axe-core integration with real browser testing,
- * combine with Playwright: npm run test:e2e
+ * use a browser test runner or manual audit.
  */
 
 import { describe, it, expect } from 'vitest';

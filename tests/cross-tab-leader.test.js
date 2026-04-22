@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { CrossTabLeader } from '../library/runtime/CrossTabLeader.js';
+import { CrossTabLeader } from '../src/runtime/CrossTabLeader.js';
 
 const createMemoryStorage = () => {
     const store = new Map();

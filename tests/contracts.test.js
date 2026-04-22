@@ -3,25 +3,25 @@
  * Validate all event schemas
  */
 import { describe, it, expect } from 'vitest';
-import { Contracts } from '../library/runtime/Contracts.js';
+import { Contracts } from '../src/runtime/Contracts.js';
 
 const moduleLoaders = [
-    ['analytics', () => import('../library/modules/analytics/index.js')],
-    ['camera', () => import('../library/modules/camera/index.js')],
-    ['media-capture', () => import('../library/modules/media-capture/index.js')],
-    ['location', () => import('../library/modules/location/index.js')],
-    ['media-transform', () => import('../library/modules/media-transform/index.js')],
-    ['image-optimizer', () => import('../library/modules/image-optimizer/index.js')],
-    ['network-status', () => import('../library/modules/network-status/index.js')],
-    ['sync-queue', () => import('../library/modules/sync-queue/index.js')],
-    ['form-management', () => import('../library/modules/form-management/index.js')],
-    ['modal-system', () => import('../library/modules/modal-system/index.js')],
-    ['data-table', () => import('../library/modules/data-table/index.js')],
-    ['checkout', () => import('../library/modules/checkout/index.js')],
-    ['search', () => import('../library/modules/search/index.js')],
-    ['ai', () => import('../library/modules/ai/index.js')],
-    ['file-system', () => import('../library/modules/file-system/index.js')],
-    ['example-module', () => import('../library/modules/example-module/index.js')]
+    ['analytics', () => import('../src/modules/analytics/index.js')],
+    ['camera', () => import('../src/modules/camera/index.js')],
+    ['media-capture', () => import('../src/modules/media-capture/index.js')],
+    ['location', () => import('../src/modules/location/index.js')],
+    ['media-transform', () => import('../src/modules/media-transform/index.js')],
+    ['image-optimizer', () => import('../src/modules/image-optimizer/index.js')],
+    ['network-status', () => import('../src/modules/network-status/index.js')],
+    ['sync-queue', () => import('../src/modules/sync-queue/index.js')],
+    ['form-management', () => import('../src/modules/form-management/index.js')],
+    ['modal-system', () => import('../src/modules/modal-system/index.js')],
+    ['data-table', () => import('../src/modules/data-table/index.js')],
+    ['checkout', () => import('../src/modules/checkout/index.js')],
+    ['search', () => import('../src/modules/search/index.js')],
+    ['ai', () => import('../src/modules/ai/index.js')],
+    ['file-system', () => import('../src/modules/file-system/index.js')],
+    ['example-module', () => import('../src/modules/example-module/index.js')]
 ];
 
 const loadedManifests = await Promise.all(

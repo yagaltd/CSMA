@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createRuntimeState, destroyRuntimeState, syncWindowRuntime } from '../library/runtime/bootstrap.js';
-import { loadOptionalFeatures } from '../library/runtime/features.js';
+import { createRuntimeState, destroyRuntimeState, syncWindowRuntime } from '../src/runtime/bootstrap.js';
+import { loadOptionalFeatures } from '../src/runtime/features.js';
 
 describe('runtime bootstrap', () => {
     beforeEach(() => {
@@ -22,7 +22,6 @@ describe('runtime bootstrap', () => {
         expect(state.registries).toHaveProperty('adapters');
         expect(state.registries).toHaveProperty('views');
         expect(state.pageResolver).toBeTruthy();
-        expect(state.pageRuntime).toBeTruthy();
         expect(state.clientNavigation).toBeTruthy();
     });
 

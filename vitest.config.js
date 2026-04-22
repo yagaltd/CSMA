@@ -5,10 +5,5 @@ export default defineConfig({
         environment: 'jsdom',
         globals: true,
         setupFiles: ['./tests/helpers/storage-polyfill.js']
-    },
-    resolve: {
-        alias: {
-            'library': '/library'
-        }
     }
 });

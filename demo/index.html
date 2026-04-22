@@ -1,3 +1,136 @@
 <!DOCTYPE html>
-<meta http-equiv="refresh" content="0;url=examples/landing/">
-<a href="examples/landing/">Go to CSMA Landing Page</a>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSMA Todo App</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="page-header">
+      <div class="page-header__copy">
+        <span class="badge" data-variant="soft-primary" data-size="md">CSMA Demo</span>
+        <h1 class="page-header__title">Todo App</h1>
+        <p class="page-header__description">
+          A minimal app built with the CSMA template. Real EventBus, token-driven CSS, and vanilla JS.
+        </p>
+      </div>
+      <button class="button" data-variant="ghost" data-size="sm" data-theme-toggle aria-label="Switch theme">
+        <span data-theme-label>Theme</span>
+      </button>
+    </header>
+
+    <div data-todo-app data-view="list">
+      <!-- Stats -->
+      <section class="stats-bar">
+        <div class="stat" data-stat="total">
+          <span class="stat__label">Total</span>
+          <strong class="stat__value">0</strong>
+        </div>
+        <div class="stat" data-stat="active">
+          <span class="stat__label">Active</span>
+          <strong class="stat__value">0</strong>
+        </div>
+        <div class="stat" data-stat="completed">
+          <span class="stat__label">Done</span>
+          <strong class="stat__value">0</strong>
+        </div>
+        <div class="stat" data-stat="completionRate">
+          <span class="stat__label">Rate</span>
+          <strong class="stat__value">0%</strong>
+        </div>
+      </section>
+
+      <div class="layout-main">
+        <div class="layout-content">
+          <!-- Create form -->
+          <form class="todo-create" data-todo-form>
+            <div class="field" data-label="New task">
+              <input
+                class="input"
+                type="text"
+                name="title"
+                placeholder="What needs doing?"
+                autocomplete="off"
+                required
+              >
+            </div>
+            <button class="button" data-variant="primary" data-size="md" type="submit">
+              Add
+            </button>
+          </form>
+
+          <!-- View toggles -->
+          <div class="todo-toggles" data-active="list">
+            <button class="button" data-variant="ghost" data-size="sm" data-view-toggle="list" aria-pressed="true">List</button>
+            <button class="button" data-variant="ghost" data-size="sm" data-view-toggle="board" aria-pressed="false">Board</button>
+          </div>
+
+          <!-- Filters -->
+          <nav class="todo-filters" aria-label="Task filters">
+            <button class="button" data-variant="ghost" data-size="sm" data-filter="all" aria-pressed="true">All</button>
+            <button class="button" data-variant="ghost" data-size="sm" data-filter="active" aria-pressed="false">Active</button>
+            <button class="button" data-variant="ghost" data-size="sm" data-filter="completed" aria-pressed="false">Done</button>
+            <button class="button" data-variant="ghost" data-size="sm" data-action="clear-completed">Clear done</button>
+          </nav>
+
+          <!-- List -->
+          <ul class="todo-list" data-todo-list aria-label="Tasks"></ul>
+        </div>
+
+        <aside class="layout-sidebar">
+          <section class="log-panel">
+            <h2 class="log-panel__title">Activity</h2>
+            <ul class="todo-log" data-todo-log></ul>
+          </section>
+        </aside>
+      </div>
+
+      <!-- Edit dialog -->
+      <dialog class="todo-dialog" data-edit-dialog>
+        <form class="todo-dialog__form" data-dialog-form method="dialog">
+          <h2 class="todo-dialog__title">Edit task</h2>
+          <div class="field" data-label="Title">
+            <input class="input" type="text" data-dialog-input required>
+          </div>
+          <label class="todo-dialog__toggle">
+            <input type="checkbox" data-dialog-toggle>
+            <span>Completed</span>
+          </label>
+          <div class="todo-dialog__actions">
+            <button class="button" data-variant="ghost" data-dialog-cancel type="button">Cancel</button>
+            <button class="button" data-variant="destructive" data-dialog-delete type="button">Delete</button>
+            <button class="button" data-variant="primary" type="submit">Save</button>
+          </div>
+        </form>
+      </dialog>
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <template id="todo-item-template">
+    <li class="todo-item">
+      <label class="todo-item__check">
+        <input type="checkbox" data-action="toggle">
+      </label>
+      <span class="todo-item__title"></span>
+      <span class="todo-item__meta"></span>
+      <div class="todo-item__actions">
+        <button class="button" data-variant="ghost" data-size="sm" data-action="edit" aria-label="Edit">Edit</button>
+        <button class="button" data-variant="ghost" data-size="sm" data-action="delete" aria-label="Delete">Delete</button>
+      </div>
+    </li>
+  </template>
+
+  <template id="todo-board-template">
+    <li class="todo-board-card">
+      <button class="todo-board-card__button" data-action="open" aria-label="Open details"></button>
+      <h3 class="todo-board-card__title"></h3>
+      <p class="todo-board-card__preview"></p>
+    </li>
+  </template>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

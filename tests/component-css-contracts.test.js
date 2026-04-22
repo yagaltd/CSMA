@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validateInteractiveComponentCss } from '../library/ui/validation/componentCssContracts.js';
+import { validateInteractiveComponentCss } from '../src/ui/validation/componentCssContracts.js';
 
 describe('validateInteractiveComponentCss', () => {
   it('fails interactive CSS that omits focus-visible state', () => {

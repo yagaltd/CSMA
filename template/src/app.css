@@ -1,7 +1,0 @@
-/**
- * Template App CSS Entry
- * Loads generated tokens first, then library styles.
- */
-
-@import '../generated/tokens.css';
-@import '../../library/style/main.css';

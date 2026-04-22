@@ -16,10 +16,5 @@ const createStorage = () => {
   };
 };
 
-if (typeof globalThis.sessionStorage === 'undefined') {
-  globalThis.sessionStorage = createStorage();
-}
-
-if (typeof globalThis.localStorage === 'undefined') {
-  globalThis.localStorage = createStorage();
-}
+globalThis.sessionStorage = createStorage();
+globalThis.localStorage = createStorage();

@@ -1,30 +1,26 @@
 #!/usr/bin/env node
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, extname, join, relative } from 'node:path';
-import { collectArchetypes, ARCHETYPE_SCHEMA, validateArchetypeCollection } from './archetype-utils.js';
-import { collectComponentCatalog } from './generate-ai-catalog.js';
 import { collectComponentReference } from './generate-component-reference.js';
 import { collectTokenReference } from './generate-token-reference.js';
 import { toolingGeneratedPath } from './generated-paths.js';
-import { collectUxContracts, UX_CONTRACT_SCHEMA, validateUxContracts } from './ux-contract-utils.js';
-import { validateInteractiveComponentCss } from '../../library/ui/validation/componentCssContracts.js';
+import { validateInteractiveComponentCss } from '../../src/ui/validation/componentCssContracts.js';
 
 const ROOT = process.cwd();
 const IGNORE_DIRS = new Set(['node_modules', 'dist', '.git', '.factory', 'platforms']);
-const WHITELIST_FILES = new Set(['scripts/check-styles.js']);
+const WHITELIST_FILES = new Set(['tooling/scripts/check-styles.js']);
 const ALLOWED_EXTENSIONS = new Set(['.css', '.scss', '.js', '.ts', '.tsx', '.jsx', '.html', '.md', '.json']);
-const MAIN_CSS = 'library/style/main.css';
-const APP_CSS_FILES = ['demo/src/app.css', 'template/src/app.css'];
-const COMPONENTS_DIR = 'library/ui/components';
-const COMPONENT_INDEX = 'library/ui/components/index.css';
-const UI_INIT = 'library/ui/init.js';
+const MAIN_CSS = 'src/style/main.css';
+const APP_CSS_FILES = ['demo/app.css'];
+const COMPONENTS_DIR = 'src/ui/components';
+const COMPONENT_INDEX = 'src/ui/components/index.css';
+const UI_INIT = 'src/ui/init.js';
 const COMPONENT_SCHEMA = 'tooling/schemas/component-manifest.schema.json';
-const GENERATED_AI_CATALOG = relative(ROOT, toolingGeneratedPath('ai-catalog.json'));
 const GENERATED_COMPONENT_REFERENCE = relative(ROOT, toolingGeneratedPath('component-reference.json'));
 const GENERATED_TOKEN_REFERENCE = relative(ROOT, toolingGeneratedPath('token-reference.json'));
-const PATTERNS_DIR = 'library/ui/patterns';
-const PATTERN_INDEX = 'library/ui/patterns/index.css';
-const HARDENING_DIR = 'library/style/foundation/hardening';
+const PATTERNS_DIR = 'src/ui/patterns';
+const PATTERN_INDEX = 'src/ui/patterns/index.css';
+const HARDENING_DIR = 'src/style/foundation/hardening';
 
 const RULES = [
   {
@@ -40,13 +36,13 @@ const RULES = [
   {
     regex: /foundation\/components\/[\w/-]+\.css|css\/foundation\/components\//,
     message: 'Reference to removed foundation component stylesheet detected.',
-    appliesTo: (filePath) => filePath.startsWith('library/') || filePath === 'demo/examples/landing/index.html'
+    appliesTo: (filePath) => filePath.startsWith('src/') || filePath === 'demo/index.html'
   },
   {
     regex: /foundation\/tokens\.css|foundation\/themes\/light\.css|foundation\/themes\/dark\.css/,
     message: 'Import tokens via generated/tokens.css rather than raw foundation theme files.',
     appliesTo: (filePath) =>
-      filePath.startsWith('library/') &&
+      filePath.startsWith('src/') &&
       !filePath.endsWith('.md') &&
       filePath !== MAIN_CSS
   },
@@ -54,23 +50,23 @@ const RULES = [
     regex: /--fx-[\w-]+|--spacing-[\w-]+|--corner-[\w-]+/,
     message: 'Legacy token family detected (use semantic, scale, or recipe tokens from generated/tokens.css).',
     appliesTo: (filePath) =>
-      filePath.startsWith('library/') &&
+      filePath.startsWith('src/') &&
       !filePath.endsWith('.md')
   },
   {
     regex: /foundation\/utilities\.css/,
     message: 'Legacy foundation/utilities.css import detected (renamed to foundation/layout.css).',
-    appliesTo: (filePath) => filePath.startsWith('library/') && filePath !== MAIN_CSS
+    appliesTo: (filePath) => filePath.startsWith('src/') && filePath !== MAIN_CSS
   },
   {
     regex: /foundation\/hardening\.css/,
     message: 'Legacy foundation/hardening.css import detected (split into foundation/hardening/ directory).',
-    appliesTo: (filePath) => filePath.startsWith('library/') && filePath !== MAIN_CSS
+    appliesTo: (filePath) => filePath.startsWith('src/') && filePath !== MAIN_CSS
   },
   {
     regex: /css\/theme\.css/,
     message: 'Legacy theme.css import detected (themes now in design-tokens.json).',
-    appliesTo: (filePath) => filePath.startsWith('library/') && filePath !== MAIN_CSS
+    appliesTo: (filePath) => filePath.startsWith('src/') && filePath !== MAIN_CSS
   }
 ];
 
@@ -144,7 +140,7 @@ function validateThemeContract() {
 
   const mainCss = readFileSync(mainPath, 'utf8');
   if (!mainCss.includes("@import '../ui/components/index.css';")) {
-    addFinding(MAIN_CSS, 1, 'main.css must import library/ui/components/index.css.', "@import '../ui/components/index.css';");
+    addFinding(MAIN_CSS, 1, 'main.css must import src/ui/components/index.css.', "@import '../ui/components/index.css';");
   }
 
   // Check hardening directory exists
@@ -170,11 +166,16 @@ function validateAppStyles() {
     }
 
     const appCss = readFileSync(appCssPath, 'utf8');
-    if (!appCss.includes("@import '../generated/tokens.css';")) {
-      addFinding(relPath, 1, 'App CSS must import its local generated/tokens.css first.', "@import '../generated/tokens.css';");
+    const hasTokens = appCss.includes("@import '../generated/tokens.css';") ||
+                      appCss.includes("@import '../src/generated/tokens.css';");
+    const hasMain = appCss.includes("@import '../../src/style/main.css';") ||
+                    appCss.includes("@import '../src/style/main.css';");
+
+    if (!hasTokens) {
+      addFinding(relPath, 1, 'App CSS must import generated/tokens.css.', "@import '../src/generated/tokens.css';");
     }
-    if (!appCss.includes("@import '../../library/style/main.css';")) {
-      addFinding(relPath, 1, 'App CSS must import library/style/main.css after tokens.', "@import '../../library/style/main.css';");
+    if (!hasMain) {
+      addFinding(relPath, 1, 'App CSS must import src/style/main.css.', "@import '../src/style/main.css';");
     }
   });
 }
@@ -196,7 +197,7 @@ function validateComponentIndex() {
       return;
     }
     if (!imported.has(entry)) {
-      addFinding(COMPONENT_INDEX, 1, 'Component CSS file is missing from library/ui/components/index.css.', `${entry}/${basename(expectedCss)}`);
+      addFinding(COMPONENT_INDEX, 1, 'Component CSS file is missing from src/ui/components/index.css.', `${entry}/${basename(expectedCss)}`);
     }
   });
 }
@@ -229,7 +230,7 @@ function validatePatternIndex() {
       return;
     }
     if (!imported.has(entry)) {
-      addFinding(PATTERN_INDEX, 1, 'Pattern CSS file is missing from library/ui/patterns/index.css.', `${entry}/${basename(expectedCss)}`);
+      addFinding(PATTERN_INDEX, 1, 'Pattern CSS file is missing from src/ui/patterns/index.css.', `${entry}/${basename(expectedCss)}`);
     }
   });
 }
@@ -407,7 +408,7 @@ function validateComponentManifests() {
       addFinding(relRoot, 1, 'Component is missing its demo file.', `${entry}.demo.html`);
     }
     if (!indexSource.includes(`@import './${entry}/${entry}.css';`)) {
-      addFinding(COMPONENT_INDEX, 1, 'Component CSS file is missing from library/ui/components/index.css.', `${entry}/${entry}.css`);
+      addFinding(COMPONENT_INDEX, 1, 'Component CSS file is missing from src/ui/components/index.css.', `${entry}/${entry}.css`);
     }
 
     const relManifestPath = relative(ROOT, manifestPath);
@@ -453,7 +454,7 @@ function validateComponentManifests() {
       const importNeedle = `./components/${entry}/${entry}.js`;
       const initNeedle = `init${pascal}System(eventBus)`;
       if (!initSource.includes(importNeedle) || !initSource.includes(initNeedle)) {
-        addFinding(UI_INIT, 1, 'Type II component is not registered in library/ui/init.js.', `${entry}/${entry}.js`);
+        addFinding(UI_INIT, 1, 'Type II component is not registered in src/ui/init.js.', `${entry}/${entry}.js`);
       }
     }
   });
@@ -468,44 +469,6 @@ function getComponentAliases() {
   return readdirSync(componentsRoot)
     .filter((entry) => statSync(join(componentsRoot, entry)).isDirectory())
     .sort((a, b) => a.localeCompare(b));
-}
-
-function validateArchetypes() {
-  const schemaPath = ARCHETYPE_SCHEMA;
-  const relSchemaPath = relative(ROOT, schemaPath);
-  if (!existsSync(schemaPath)) {
-    addFinding(relSchemaPath, 1, 'Missing archetype schema.', relSchemaPath);
-    return;
-  }
-
-  try {
-    JSON.parse(readFileSync(schemaPath, 'utf8'));
-  } catch (error) {
-    addFinding(relSchemaPath, 1, 'Archetype schema must be valid JSON.', error.message);
-  }
-
-  const collection = collectArchetypes();
-  const findingsForArchetypes = validateArchetypeCollection(collection, {
-    knownComponents: getComponentAliases()
-  });
-  findingsForArchetypes.forEach((finding) => addFinding(finding.file, finding.line, finding.message, finding.sample));
-}
-
-function validateUxContractsShape() {
-  const relSchemaPath = relative(ROOT, UX_CONTRACT_SCHEMA);
-  if (!existsSync(UX_CONTRACT_SCHEMA)) {
-    addFinding(relSchemaPath, 1, 'Missing UX contract schema.', relSchemaPath);
-    return;
-  }
-
-  try {
-    JSON.parse(readFileSync(UX_CONTRACT_SCHEMA, 'utf8'));
-  } catch (error) {
-    addFinding(relSchemaPath, 1, 'UX contract schema must be valid JSON.', error.message);
-  }
-
-  const findingsForUx = validateUxContracts(collectUxContracts());
-  findingsForUx.forEach((finding) => addFinding(finding.file, finding.line, finding.message, finding.sample));
 }
 
 async function validateGeneratedArtifact(relPath, collectFn, command) {
@@ -539,9 +502,6 @@ async function main() {
   validateComponentIndex();
   validatePatternIndex();
   validateComponentManifests();
-  validateArchetypes();
-  validateUxContractsShape();
-  await validateGeneratedArtifact(GENERATED_AI_CATALOG, collectComponentCatalog, 'npm run generate-ai-catalog');
   await validateGeneratedArtifact(GENERATED_COMPONENT_REFERENCE, collectComponentReference, 'npm run generate-component-reference');
   await validateGeneratedArtifact(GENERATED_TOKEN_REFERENCE, collectTokenReference, 'npm run generate-token-reference');
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ChannelManager } from '../library/runtime/ChannelManager.js';
+import { ChannelManager } from '../src/runtime/ChannelManager.js';
 
 class StubEventBus {
     constructor() {

@@ -1,26 +1,30 @@
 import fs from 'node:fs';
-
 import { describe, expect, it } from 'vitest';
 
-const todoHtml = fs.readFileSync('demo/examples/todo-app/index.html', 'utf8');
-const todoCss = fs.readFileSync('demo/examples/todo-app/todo.css', 'utf8');
-const todoJs = fs.readFileSync('demo/examples/todo-app/todo-app.js', 'utf8');
+const todoHtml = fs.readFileSync('demo/index.html', 'utf8');
+const todoCss = fs.readFileSync('demo/app.css', 'utf8');
+const todoJs = fs.readFileSync('demo/todo-app.js', 'utf8');
 
-describe('example surface quality', () => {
-    it('keeps example controls accessible and aligned with shared semantics', () => {
-        expect(todoHtml).not.toContain('role="button"');
-        expect(todoHtml).toContain('todo-filter-group');
-        expect(todoHtml).not.toContain('role="tablist"');
-        expect(todoHtml).not.toContain('role="tab"');
-    });
+describe('demo surface quality', () => {
+  it('uses semantic controls without ARIA misuse', () => {
+    expect(todoHtml).not.toContain('role="button"');
+    expect(todoHtml).not.toContain('role="tablist"');
+    expect(todoHtml).not.toContain('role="tab"');
+  });
 
-    it('normalizes example tone and shared chrome hooks', () => {
-        expect(todoCss).toContain('.example-feature-badge');
-    });
+  it('uses token-driven CSS', () => {
+    expect(todoCss).toContain('var(--');
+    expect(todoCss).not.toContain('#fff');
+    expect(todoCss).not.toContain('#000');
+  });
 
-    it('avoids full todo list rebuilds during render updates', () => {
-        expect(todoJs).toContain('syncTodoList(');
-        expect(todoJs).not.toContain("list.innerHTML = '';");
-        expect(todoJs).not.toContain('renderBoardList(');
-    });
+  it('avoids full list rebuilds during render updates', () => {
+    expect(todoJs).toContain('syncTodoList(');
+    expect(todoJs).not.toContain("list.innerHTML = '';");
+  });
+
+  it('uses textContent for user data', () => {
+    expect(todoJs).toContain('.textContent');
+    expect(todoJs).not.toContain('.innerHTML');
+  });
 });

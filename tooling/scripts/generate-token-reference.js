@@ -3,11 +3,11 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { appDesignTokensPath, toolingGeneratedPath } from './generated-paths.js';
+import { srcDesignTokensPath, toolingGeneratedPath } from './generated-paths.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
-const DEFAULT_APP = 'template';
+const DEFAULT_SOURCE = 'library';
 const OUTPUT_PATH = toolingGeneratedPath('token-reference.json');
 
 function isObject(value) {
@@ -110,10 +110,10 @@ function flattenTokens(node, pathParts = [], into = []) {
 }
 
 export async function collectTokenReference({
-  appName = DEFAULT_APP,
+  sourceName = DEFAULT_SOURCE,
   generatedAt = new Date().toISOString()
 } = {}) {
-  const tokensPath = appDesignTokensPath(appName);
+  const tokensPath = srcDesignTokensPath();
   const source = await readFile(tokensPath, 'utf8');
   const tokens = JSON.parse(source);
   const entries = flattenTokens(tokens).sort((a, b) => a.path.localeCompare(b.path));
@@ -126,8 +126,8 @@ export async function collectTokenReference({
   return {
     version: '1.0.0',
     generatedAt,
-    source: `${appName}/design-tokens.json`,
-    appName,
+    source: 'src/style/design-tokens.json',
+    sourceName,
     totalTokens: entries.length,
     categories: byCategory,
     tokens: entries
@@ -143,10 +143,10 @@ export async function writeTokenReference(outputPath = OUTPUT_PATH, options = {}
 
 async function main() {
   const appIndex = process.argv.indexOf('--app');
-  const appName = appIndex >= 0 && process.argv[appIndex + 1]
+  const sourceName = appIndex >= 0 && process.argv[appIndex + 1]
     ? process.argv[appIndex + 1]
-    : DEFAULT_APP;
-  const reference = await writeTokenReference(OUTPUT_PATH, { appName });
+    : DEFAULT_SOURCE;
+  const reference = await writeTokenReference(OUTPUT_PATH, { sourceName });
   console.log(`[generate-token-reference] Wrote ${reference.totalTokens} tokens to ${path.relative(ROOT, OUTPUT_PATH)}`);
 }
 

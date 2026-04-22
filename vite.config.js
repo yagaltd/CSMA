@@ -4,11 +4,11 @@ export default defineConfig({
     root: 'demo',
     server: {
         port: 5173,
-        open: '/examples/landing/'
+        open: '/'
     },
     resolve: {
         alias: {
-            'library': '/library'
+            'src': '/src'
         }
     },
     build: {
