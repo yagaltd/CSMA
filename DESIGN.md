@@ -1,12 +1,11 @@
 ---
-name: CSMA
-version: "2.0.0"
-description: Design-token-first vanilla JS template with modular runtime
+name: <your-app-name>
+version: "1.0.0"
+description: <brief description of your app>
 colors:
+  # Semantic colors — customize these, keep the names
   background: "#FAFAFA"
-  backgroundMuted: "#F4F4F5"
   surface: "#FFFFFF"
-  surfaceMuted: "#F9FAFB"
   foreground: "#18181B"
   foregroundMuted: "#71717A"
   border: "#E4E4E7"
@@ -15,358 +14,171 @@ colors:
   secondary: "#F4F4F5"
   secondaryForeground: "#27272A"
   accent: "#F4F4F5"
-  accentForeground: "#27272A"
   destructive: "#EF4444"
-  destructiveForeground: "#FAFAFA"
   success: "#22C55E"
   warning: "#EAB308"
   info: "#3B82F6"
 typography:
+  # Customize fonts and scale for your brand
   h1:
-    fontFamily: "IBM Plex Sans, system-ui, sans-serif"
+    fontFamily: "Inter, system-ui, sans-serif"
     fontSize: 2.4375rem
     fontWeight: 700
     lineHeight: 1.15
-  h2:
-    fontFamily: "IBM Plex Sans, system-ui, sans-serif"
-    fontSize: 1.9375rem
-    fontWeight: 700
-    lineHeight: 1.25
   body:
-    fontFamily: "IBM Plex Sans, system-ui, sans-serif"
+    fontFamily: "Inter, system-ui, sans-serif"
     fontSize: 1rem
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: "IBM Plex Sans, system-ui, sans-serif"
+    fontFamily: "Inter, system-ui, sans-serif"
     fontSize: 0.8125rem
     fontWeight: 500
     lineHeight: 1.5
-  mono:
-    fontFamily: "IBM Plex Mono, monospace"
-    fontSize: 0.8125rem
-    fontWeight: 400
-    lineHeight: 1.6
 rounded:
-  none: 0px
   sm: 4px
   md: 8px
   lg: 12px
   xl: 16px
   full: 999px
 spacing:
-  2xs: 2px
   xs: 4px
   sm: 8px
-  md: 12px
-  lg: 16px
-  xl: 24px
-  2xl: 32px
-  3xl: 48px
-  4xl: 64px
-  5xl: 96px
+  md: 16px
+  lg: 24px
+  xl: 32px
 components:
-  button:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.primaryForeground}"
-    rounded: "{rounded.md}"
-    padding: "12px 16px"
-    height: "40px"
-  button-ghost:
-    backgroundColor: "transparent"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.md}"
-    padding: "12px 16px"
-    height: "40px"
-  button-destructive:
-    backgroundColor: "{colors.destructive}"
-    textColor: "{colors.destructiveForeground}"
-    rounded: "{rounded.md}"
-    padding: "12px 16px"
-    height: "40px"
-  badge:
-    backgroundColor: "{colors.secondary}"
-    textColor: "{colors.secondaryForeground}"
-    rounded: "{rounded.full}"
-    padding: "4px 12px"
-    height: "24px"
-  card:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.lg}"
-    padding: "24px"
-  input:
-    backgroundColor: "{colors.background}"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.md}"
-    padding: "8px 12px"
-    height: "40px"
+  # Define your app's specific components here
+  # Example:
+  # card-primary:
+  #   backgroundColor: "{colors.surface}"
+  #   textColor: "{colors.foreground}"
+  #   rounded: "{rounded.lg}"
+  #   padding: "{spacing.md}"
 ---
 
 ## Overview
 
-CSMA is a framework-free frontend architecture. JavaScript manages state via
-events, CSS handles rendering via `data-*` attributes. No virtual DOM, no
-build-step dependency, no framework lock-in.
+<!-- Agent: Fill this section with the user through conversation. -->
 
-The design system is token-driven. Every color, spacing value, radius, shadow,
-and motion duration lives in `src/style/design-tokens.json` (DTCG format). Run
-`npm run tokens` to regenerate `src/generated/tokens.css`. Never edit generated
-CSS directly.
+Describe the app's visual identity, brand personality, target audience, and the
+emotional response the UI should evoke. Examples:
 
-Visual identity: calm, intentional, hierarchy-first. Surfaces stay quiet. One
-dominant action per major section. Accessibility is default — WCAG contrast,
-focus rings, reduced motion support.
+- "Professional SaaS dashboard — clean, dense, data-first"
+- "Playful fitness app — energetic, bold, gamified"
+- "Premium e-commerce — luxurious whitespace, editorial photography"
 
 ## Colors
 
-### Light theme
+<!-- Agent: Discuss palette choices with the user. -->
 
-| Token | Value | Usage |
-|:------|:------|:------|
-| **background** | `#FAFAFA` | Page background |
-| **surface** | `#FFFFFF` | Card, panel, elevated surfaces |
-| **foreground** | `#18181B` | Headlines, body text |
-| **foregroundMuted** | `#71717A` | Captions, metadata, placeholders |
-| **border** | `#E4E4E7` | Dividers, input borders |
-| **primary** | `#27272A` | Primary actions, focus rings |
-| **secondary** | `#F4F4F5` | Secondary actions, tags |
-| **destructive** | `#EF4444` | Delete, error, danger |
-| **success** | `#22C55E` | Completion, confirmation |
-| **warning** | `#EAB308` | Caution, pending |
-| **info** | `#3B82F6` | Information, links |
+Describe the color strategy. Which colors drive action? Which provide calm?
+How do semantic colors map to your app's concepts?
 
-### Dark theme
-
-Dark theme inverts luminance: `background` becomes `#09090B`, `surface`
-becomes `#18181B`, `foreground` becomes `#FAFAFA`. All other tokens shift
-proportionally. Toggle via `document.documentElement.dataset.theme = 'dark'`.
+The CSMA token system supports light/dark/contrast themes via
+`document.documentElement.dataset.theme`. All color values must reference the
+tokens above or the full token system in `src/style/design-tokens.json`.
 
 ## Typography
 
-| Token | Family | Size | Weight | Line Height |
-|:------|:-------|:-----|:-------|:------------|
-| **h1** | IBM Plex Sans | 39px / 2.4375rem | 700 | 1.15 |
-| **h2** | IBM Plex Sans | 31px / 1.9375rem | 700 | 1.25 |
-| **body** | IBM Plex Sans | 16px / 1rem | 400 | 1.6 |
-| **label** | IBM Plex Sans | 13px / 0.8125rem | 500 | 1.5 |
-| **mono** | IBM Plex Mono | 13px / 0.8125rem | 400 | 1.6 |
+<!-- Agent: Choose fonts and scale with the user. -->
 
-Hierarchy before decoration. Headlines use tight line-height; body uses base
-for readability. Labels use medium weight for scanability.
+Describe the type hierarchy. What font expresses your brand? How do sizes
+scale? Any special treatments (all-caps labels, tight headlines, etc.)?
 
 ## Layout & Spacing
 
-### Spacing scale
+<!-- Agent: Define layout philosophy with the user. -->
 
-| Token | Value | Usage |
-|:------|:------|:------|
-| **2xs** | 2px | Hairline dividers |
-| **xs** | 4px | Tight internal gaps |
-| **sm** | 8px | Compact padding, icon gaps |
-| **md** | 12px | Standard component gaps |
-| **lg** | 16px | Standard padding |
-| **xl** | 24px | Section gaps |
-| **2xl** | 32px | Large section gaps |
-| **3xl** | 48px | Page-level spacing |
-| **4xl** | 64px | Hero padding |
-| **5xl** | 96px | Maximum vertical rhythm |
+Describe the layout approach. Grid-based or fluid? Dense or airy? Mobile-first
+or desktop-first?
 
-### Breakpoints
-
-| Token | Value | Usage |
-|:------|:------|:------|
-| **sm** | 480px | Small phones |
-| **md** | 768px | Tablets, large phones |
-| **lg** | 1024px | Laptops |
-| **xl** | 1280px | Desktops |
-
-### Container widths
-
-| Token | Value | Usage |
-|:------|:------|:------|
-| **containerNarrow** | 600px | Narrow content (forms, articles) |
-| **container** | 900px | Default content |
-| **containerWide** | 1200px | Full-width pages |
-| **sidebar** | 240px | Fixed sidebar |
+CSMA provides layout tokens:
+- `--layout-container-narrow` (600px)
+- `--layout-container` (900px)
+- `--layout-container-wide` (1200px)
+- `--layout-sidebar` (240px)
 
 ## Elevation & Depth
 
-| Token | Value |
-|:------|:------|
-| **shadow-sm** | `0 1px 2px 0 rgba(0,0,0,0.05)` |
-| **shadow-md** | `0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)` |
-| **shadow-lg** | `0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)` |
-| **shadow-xl** | `0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)` |
+<!-- Agent: Define shadow/depth strategy. -->
 
-Elevation is reserved for modals, toasts, and hover states. Do not add shadow
-to every card by default.
+How does the UI express depth? Shadows, borders, tonal shifts? When does
+something lift?
 
 ## Shapes
 
-| Token | Value | Usage |
-|:------|:------|:------|
-| **none** | 0px | Tables, data grids |
-| **sm** | 4px | Buttons, inputs, small chips |
-| **md** | 8px | Cards, panels |
-| **lg** | 12px | Modals, dialogs |
-| **xl** | 16px | Large containers |
-| **full** | 999px | Badges, pills, avatars |
+<!-- Agent: Define corner radius philosophy. -->
+
+Sharp, soft, or pill-shaped? Consistent across all elements or varied by
+component type?
 
 ## Components
 
-### Type I — Pure CSS
+<!-- Agent: Define domain-specific components with the user. -->
 
-No JavaScript required. Variants and states controlled by `data-*` attributes.
-CSS handles all rendering.
+This is where you name the UI vocabulary specific to YOUR app. Not generic
+"Button" — name the button variants your app actually uses.
 
-**Badge**
-```
-badge/
-  badge.css
-```
-- Props: `data-variant` (soft-primary, soft-success, soft-warning, soft-danger, soft-info), `data-size` (sm, md)
-- No JS initialization
-- Reference: `src/ui/components/badge/badge.css`
+Examples from other apps:
+- `glass-card-standard` — frosted card for weather metrics
+- `card-walk-stat` — high-contrast data card for dog walking stats
+- `list-item-walker` — walker profile row with hover state
 
-**Button**
-```
-button/
-  button.css
-```
-- Props: `data-variant` (default, primary, secondary, ghost, destructive), `data-tone` (neutral, brand, danger), `data-size` (sm, md, lg), `data-shape` (default, pill, icon)
-- No JS initialization
-- Reference: `src/ui/components/button/button.css`
-
-**Card**
-```
-card/
-  card.css
-```
-- Props: `data-tone` (neutral, brand, danger)
-- Slots: body, footer
-- No JS initialization
-- Reference: `src/ui/components/card/card.css`
-
-**Field**
-```
-field/
-  field.css
-```
-- Props: `data-label`, `data-helper`, `data-error`, `data-required`
-- Slots: control (input, select, textarea)
-- No JS initialization
-- Reference: `src/ui/components/field/field.css`
-
-**Input**
-```
-input/
-  input.css
-```
-- Props: `data-type` (text, password, email, number, search, tel, url), `data-state` (default, hover, focus, active, disabled, error, loading), `data-autocomplete`
-- No JS initialization
-- Reference: `src/ui/components/input/input.css`
-
-### Type II — EventBus-Driven
-
-CSS + JS. JS exports `init[Name]System(eventBus)` returning a cleanup function.
-The component subscribes to its own intents and publishes completion events.
-
-**Toast**
-```
-toast/
-  toast.css
-  toast.js
-```
-- Props: `data-type` (default, success, error, warning), title, description, duration
-- Init: `initToastSystem(eventBus)` — returns `() => unsubscribe()`
-- Subscribes: `INTENT_TOAST_SHOW`
-- Publishes: `TOAST_SHOWN`
-- Runtime dependency: EventBus
-- Reference: `src/ui/components/toast/toast.js`
-
-**Theme Toggle**
-```
-theme-toggle/
-  theme-toggle.css
-```
-- Props: `data-theme` (light, dark, contrast)
-- No JS initialization (standalone script handles toggle)
-- Reference: `src/ui/components/theme-toggle/theme-toggle.css`
+For each component, specify:
+- `backgroundColor`, `textColor`, `rounded`, `padding`
+- Hover/active variants (e.g., `button-primary-hover`)
+- CSMA type: Type I (Pure CSS) or Type II (EventBus-driven)
 
 ## Layout Patterns
 
-### Auth Split-Screen
+<!-- Agent: Define recurring page layouts with the user. -->
 
-```
-+----------------------------------+
-|  Brand / Illustration  |  Form   |
-|        (50%)           |  (50%)  |
-+----------------------------------+
-```
+Describe the spatial recipes your app uses repeatedly.
 
-- Grid: `grid-template-columns: 1fr 1fr`, gap `var(--space-xl)`
-- Below `--breakpoint-md` (768px): stack to single column
-- Left: brand background, large headline, supporting copy
-- Right: form with `.stack` gap `var(--space-lg)`, field + input + button
-- Uses `--layout-container-wide` (1200px) max-width
+Examples:
+- **Auth Split-Screen** — Brand left, form right, stacks on mobile
+- **Dashboard Grid** — Fixed sidebar, main content grid
+- **Settings Form** — Narrow centered container, stacked fields
 
-### Dashboard Grid
+## CSMA Requirements
 
-```
-+----------------------------------+
-|  Sidebar  |  Header               |
-|  240px    +-----------------------+
-|  (fixed)  |  Cards / Tables       |
-|           |  grid 3-col on lg     |
-+----------------------------------+
-```
+The following rules are non-negotiable. The agent must enforce them when
+building components and pages.
 
-- Layout: `grid-template-columns: var(--layout-sidebar) 1fr`
-- Sidebar: sticky, top `var(--space-lg)`, `.stack` navigation links
-- Main: `.stack` with header + `.grid` content area
-- Cards: `--shadow-sm`, `--radius-lg`, gap `var(--space-md)`
-- Below `--breakpoint-lg` (1024px): hide sidebar behind toggle
+### State Changes = CSS Classes Only
 
-### Settings Form
+```javascript
+// CORRECT
+element.className = 'card completed';
+element.dataset.state = 'loading';
 
-```
-+----------------------------------+
-|  Section Title                    |
-|  .stack gap=lg                    |
-|    field > input                  |
-|    field > input                  |
-|    cluster (buttons)              |
-+----------------------------------+
+// WRONG — never use inline styles
+element.style.opacity = '1';
 ```
 
-- Container: `--layout-container-narrow` (600px) max-width, centered
-- Section groups separated by `var(--space-2xl)`
-- Fields in `.stack` with gap `var(--space-lg)`
-- Action buttons in `.cluster`, right-aligned
-- Uses `--layout-container-narrow` for readable line length
+### Type I Components (Pure CSS)
 
-### Hero Section
+No JavaScript. Variants controlled by `data-*` attributes. CSS handles all
+rendering.
 
-```
-+----------------------------------+
-|  badge (eyebrow)                  |
-|  h1 (headline)                    |
-|  p (supporting text)              |
-|  .cluster (CTA buttons)           |
-+----------------------------------+
+```html
+<button class="button" data-variant="primary" data-size="md">Save</button>
 ```
 
-- Centered `.stack` on large screens, left-aligned on mobile
-- Background: `--surface` or subtle `--backgroundMuted`
-- CTA pair: primary + secondary button variants
-- Max-width: `--layout-container` (900px)
+### Type II Components (EventBus-Driven)
 
-## Runtime Contracts
+CSS + JS. Export `init[Name]System(eventBus)` returning cleanup.
 
-Type II components use the EventBus for all interaction. The DOM layer publishes
-`INTENT_*` events; the service layer validates and publishes `*_CHANGED` or
-`*_COMPLETED` state updates.
+```javascript
+export function initToastSystem(eventBus) {
+  const unsubscribe = eventBus.subscribe('INTENT_TOAST_SHOW', (payload) => {
+    showToast(payload);
+    eventBus.publish('TOAST_SHOWN', { toastId: payload.id });
+  });
+  return () => unsubscribe();
+}
+```
 
 ### Event Naming Convention
 
@@ -376,79 +188,16 @@ Type II components use the EventBus for all interaction. The DOM layer publishes
 | `*_COMPLETED`, `*_UPDATED` | State change confirmed | `TODO_CREATED` |
 | `SECURITY_*` | Security event | `SECURITY_VIOLATION` |
 
-### Toast Contract
+### Security Rules
 
-```yaml
-INTENT_TOAST_SHOW:
-  schema:
-    id: string
-    type: enum("default", "success", "error", "warning")
-    title: string
-    description: optional(string)
-    duration: optional(number)  # ms, default 5000
-  security:
-    rateLimits:
-      perSecond: 5
-      perMinute: 30
-TOAST_SHOWN:
-  schema:
-    toastId: string
-    timestamp: number
-```
-
-### Pattern for Type II Components
-
-```javascript
-// DOM layer publishes intent
-eventBus.publish('INTENT_TOAST_SHOW', {
-  id: 'welcome-toast',
-  type: 'success',
-  title: 'Welcome',
-  duration: 5000
-});
-
-// Service validates and publishes state change
-// UI layer subscribes and updates CSS classes
-eventBus.subscribe('TODO_STATE_CHANGED', (state) => {
-  document.getElementById('todo-count').textContent = state.stats.total;
-});
-```
-
-All payloads validated by Contracts. Invalid payloads are silently dropped and
-logged as `SECURITY_VIOLATION`.
-
-## Do's and Don'ts
-
-### Do
-
-- Use `var(--token)` for every visual value
-- Use `data-*` attributes for component state and variants
-- Use `className` or `dataset` for state changes
-- Use `textContent` for user-generated text
+- Use `textContent`, never `innerHTML`, for user data
 - Validate all EventBus payloads with Contracts
-- Clean up subscriptions on unmount (`return () => unsubscribe()`)
+- Clean up subscriptions on unmount
 - Support `prefers-reduced-motion: reduce`
-- Reference tokens, never hardcode pixels or hex colors
 
-### Don't
+### Token Workflow
 
-- Use `element.style.opacity = '1'` or any inline styles for UI state
-- Use `element.innerHTML` for user data (XSS risk)
-- Use BEM modifier classes — `data-*` only
-- Skip contract validation on EventBus events
-- Leave subscriptions hanging without cleanup
-- Edit `src/generated/tokens.css` directly
-- Use `!important` in component CSS
-
-## Interoperability
-
-This DESIGN.md references the canonical token source at
-`src/style/design-tokens.json` (DTCG format). Run `npm run tokens` to regenerate
-custom properties.
-
-To use this design in another project:
-
-1. Copy `src/style/design-tokens.json` and adapt values
-2. Run `npm run tokens` to generate CSS
-3. Import `src/generated/tokens.css` in your app entry
-4. Use component class names and `data-*` attributes as documented above
+1. Edit `src/style/design-tokens.json` for token values
+2. Run `npm run tokens` to regenerate CSS
+3. Reference tokens in CSS: `var(--primary)`, `var(--space-lg)`
+4. Never edit `src/generated/tokens.css` directly
