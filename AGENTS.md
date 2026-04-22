@@ -47,6 +47,7 @@ Never edit generated artifacts directly.
 | Task | Skill |
 |------|-------|
 | Design tokens, visual rules, layout | `docs/design/SKILL.md` |
+| Import or translate an external DESIGN.md | `docs/design-import/SKILL.md` |
 | EventBus, Contracts, component types | `docs/architecture/SKILL.md` |
 | Security, CSP, sanitization | `docs/security/SKILL.md` |
 | Testing strategy | `docs/testing/SKILL.md` |

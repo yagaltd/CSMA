@@ -10,22 +10,27 @@ description: How to create and use DESIGN.md for a CSMA project. Guides the agen
 ## Purpose
 
 This skill guides collaborative design discovery between you (the agent) and the
-user. The output is a filled `DESIGN.md` at the project root — the single source
-of truth for the app's visual identity.
+user. The output is a filled `DESIGN.md` at the project root plus concrete token
+edits in `src/style/design-tokens.json`.
+
+`DESIGN.md` is the app brief and composition guide. The canonical visual
+seed/reference for runtime tokens is `src/style/design-tokens.json`, regenerated
+into `src/generated/tokens.css` with `npm run tokens`.
 
 ## Starting Point
 
-The repo includes `DESIGN.md` as a **template** with placeholder sections. Your
-job is to fill it through conversation with the user. Do not write the entire
-file at once. Iterate section by section.
+The repo includes `DESIGN.md` as a **template** with placeholder sections and
+decision tables. Your job is to fill it through conversation with the user, then
+apply the chosen visual direction to `src/style/design-tokens.json`. Do not
+write the entire file at once. Iterate section by section.
 
 ## Workflow
 
 ### Step 1: Read the Template
 
 Open `DESIGN.md` at repo root. It has:
-- YAML front matter with placeholder tokens
-- Markdown sections with `<!-- Agent: ... -->` comments telling you what to do
+- YAML front matter for identity and simple visual direction
+- Markdown sections with compact tables and `<!-- Agent: ... -->` comments
 - A "CSMA Requirements" section at the bottom (hardcoded, do not change)
 
 ### Step 2: Interview the User
@@ -61,22 +66,12 @@ surfaces with clear hierarchy. No decorative chrome.
 - Light mode, dark mode, or both?
 - Any accent color for CTAs?
 
-**Write into DESIGN.md front matter:**
-```yaml
-colors:
-  primary: "#2563EB"
-  secondary: "#64748B"
-  accent: "#F59E0B"
-```
+**Write into DESIGN.md token usage table:**
 
-**Write into prose:**
-```markdown
-## Colors
-
-Blue primary for actions and focus. Slate secondary for borders and metadata.
-Amber accent for warnings and highlights. All backgrounds are warm gray to
-reduce eye strain during long sessions.
-```
+| Area | CSMA tokens | App decision | Notes |
+|:-----|:------------|:-------------|:------|
+| Brand/action | `--primary`, `--primary-foreground`, `--accent` | Blue primary for actions and focus. Amber accent for warnings. | Apply values in `src/style/design-tokens.json`. |
+| Backgrounds | `--background`, `--surface`, `--background-muted` | Warm gray backgrounds to reduce eye strain. | Preserve contrast in dark and contrast themes. |
 
 #### Section: Typography
 
@@ -96,6 +91,28 @@ reduce eye strain during long sessions.
 - Dense or airy?
 - Mobile-first or desktop-first?
 
+#### Section: Visual Distinctiveness
+
+**Goal:** Encode app-specific taste constraints before component work starts.
+
+Ask these after the overview and before writing CSS:
+- What is the one primary visual moment on a typical screen?
+- What are the three hierarchy layers: primary, secondary, tertiary?
+- Is the app compact, balanced, or spacious?
+- What visual motif should repeat across screens, if any?
+- Which visual moves should the app never use?
+
+**Write into DESIGN.md:**
+
+| Decision | Rule |
+|:---------|:-----|
+| Primary moment | Workflow board with active lane first. |
+| Hierarchy layers | Primary: active work; secondary: supporting metrics; tertiary: timestamps and metadata. |
+| Signature motif | Thin status strip on high-priority records. |
+| Density rule | Compact rows, balanced page sections. |
+| Container rule | Use spacing first, borders second, cards only for repeated records. |
+| Interaction feel | Fast utility with restrained transitions. |
+
 #### Section: Elevation & Depth + Shapes
 
 **Goal:** Define visual texture.
@@ -112,39 +129,29 @@ reduce eye strain during long sessions.
 **This is the most important section.** Name components specific to the user's
 app, not generic primitives.
 
-**Bad:**
-```yaml
-components:
-  button: ...
-  card: ...
-```
+Write component decisions into the `Component Recipes` table in root
+`DESIGN.md`. Use domain names and compose from CSMA primitives where possible:
 
-**Good:**
-```yaml
-components:
-  task-card:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.foreground}"
-    rounded: "{rounded.md}"
-    padding: "{spacing.md}"
-  task-card-hover:
-    backgroundColor: "{colors.backgroundMuted}"
-  project-header:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.primaryForeground}"
-    rounded: "{rounded.lg}"
-    padding: "{spacing.lg}"
-  status-badge-done:
-    backgroundColor: "{colors.success}"
-    textColor: "#FFFFFF"
-    rounded: "{rounded.full}"
-    padding: "{spacing.xs} {spacing.sm}"
-```
+| Component recipe | Compose from | Visual tokens | States | Type | Event/contract notes |
+|:-----------------|:-------------|:--------------|:-------|:-----|:---------------------|
+| `task-card` | `.card`, `.badge`, actions | surface, card padding, status color | hover, selected, loading | Type I or II | Publish `INTENT_TASK_SELECT` only if it changes app state. |
+| `project-header` | semantic header, `.cluster`, `.button` | background, foreground, spacing | sticky, collapsed | Type I | No EventBus unless controls change state. |
 
 For each component, ask:
 - What does this component do?
 - What states does it have? (default, hover, active, disabled, loading)
 - Is it Type I (pure CSS) or Type II (needs EventBus)?
+
+#### Section: App Anti-Patterns
+
+**Goal:** Prevent visual drift by naming the moves this app must avoid.
+
+Ask:
+- Which common UI treatments would feel wrong for this product?
+- Should cards, shadows, gradients, illustrations, icons, or animations be limited?
+- Are there domain-specific mistakes that would harm trust or usability?
+
+Write the answer into the `App Anti-Patterns` table in `DESIGN.md`.
 
 #### Section: Layout Patterns
 
@@ -166,14 +173,54 @@ avatar, and priority badge.
 
 ### Step 3: Generate Tokens
 
-Once DESIGN.md front matter is filled, update `src/style/design-tokens.json`
-with the token values. Then run:
+Once `DESIGN.md` records the decisions, update `src/style/design-tokens.json`
+with the token values. `DESIGN.md` front matter is not a token source. Then run:
 
 ```bash
 npm run tokens
 ```
 
 This generates `src/generated/tokens.css` with CSS custom properties.
+
+### How To Edit The Large Token File
+
+`src/style/design-tokens.json` is intentionally broad. Do not rewrite it. Patch
+only the focused branches needed by the design decision.
+
+| Design decision | Edit this branch |
+|:----------------|:-----------------|
+| Brand palette, backgrounds, text, status colors | `themes.light`, `themes.dark`, `themes.contrast` |
+| Font family, size scale, weights, line heights | `primitives.typography` |
+| Compact, balanced, or spacious density | `primitives.spacing`; component padding only when needed |
+| Round, sharp, or mixed shape language | `primitives.radius`; `components.button`, `components.card`, `components.input` |
+| Flat, bordered, or elevated surfaces | `primitives.shadow`; `components.card`; `components.dialog` |
+| Button height, input height, card padding | `components.button`, `components.input`, `components.card` |
+| Page width, sidebar width, grid minimums | `primitives.layout` |
+| Breakpoint changes | `primitives.breakpoint` |
+| Motion timing or easing | `primitives.motion`; `semantic.transition` |
+
+Patch rules:
+
+- Inspect the relevant branch before editing it.
+- Preserve DTCG shape: `$value`, `$type`, `$description`, and `$extensions`
+  where they already exist.
+- Keep semantic theme names stable unless the user explicitly asks for new
+  themes.
+- Keep component tokens as references to primitives when possible.
+- Do not edit `src/generated/tokens.css`; run `npm run tokens`.
+- Do not bulk-format or reorder the full JSON file.
+- After token edits, run `npm run tokens` and `npm run lint:styles`.
+
+### Craft Rules Before CSS
+
+Before writing component or page CSS:
+
+1. Choose one primary visual moment for the screen.
+2. Define three hierarchy layers: primary, secondary, tertiary.
+3. Choose density: compact, balanced, or spacious.
+4. Use spacing before adding dividers, borders, cards, or shadows.
+5. Use cards only for repeated items, framed tools, and modals.
+6. Record forbidden visual moves in `DESIGN.md` before composing.
 
 ### Step 4: Build Components
 
@@ -208,14 +255,14 @@ User: DevOps engineers. It should feel like a mission control center — dense
 
 Agent: [Writes Overview section in DESIGN.md]
 
-Agent: For Colors — mission control makes me think of dark backgrounds with
+Agent: For Colors - mission control makes me think of dark backgrounds with
       red/green status indicators. Do you have brand colors, or should I
       propose a palette?
 
 User: No brand colors. Dark blue background, green for healthy, amber for
       warning, red for critical.
 
-Agent: [Updates front matter colors + writes Colors prose section]
+Agent: [Updates DESIGN.md token usage table, then edits src/style/design-tokens.json]
 
 [... continues section by section ...]
 ```

@@ -41,7 +41,8 @@ npm run dev       # start dev server with the demo app
 ```
 
 Open `http://localhost:5173` to see the todo app running on the real CSMA
-runtime.
+runtime. Treat this as a smoke test and reference implementation, not the final
+shape of your app.
 
 ## What You Get
 
@@ -51,14 +52,14 @@ runtime.
 | `src/modules/` | 20 feature modules — auth, storage, sync, camera, form-management, search... |
 | `src/ui/components/` | Token-driven CSS primitives — Badge, Button, Toast, Card, Input, Field |
 | `src/style/design-tokens.json` | Single source of truth for every visual value (DTCG format) |
-| `demo/` | Working todo app using real EventBus and token-driven CSS |
+| `demo/` | Simple todo app explaining CSMA components, current token design, theme switching, and runtime events |
 | `docs/` | Agent skills — design, architecture, security, testing, patterns |
 
 ## Design-First Workflow
 
-All visual work is driven by tokens. Your coding agent reads
-`docs/design/SKILL.md`, chats with you about the look and feel, updates
-`src/style/design-tokens.json`, and regenerates CSS.
+All visual work is driven by tokens. Your coding agent records design intent in
+root `DESIGN.md`, updates focused branches of `src/style/design-tokens.json`,
+and regenerates CSS.
 
 ```bash
 # 1. Edit tokens
@@ -74,6 +75,40 @@ var(--radius-md)
 ```
 
 Never edit generated CSS directly. Always change the JSON source.
+
+## After The Demo: Build Your App
+
+The todo app under `demo/` exists to show how CSMA works: primitive components,
+generated tokens, theme switching, EventBus state flow, and DOM rendering without
+a framework. Use it as a reference while building your actual application.
+
+Start with one of two design paths:
+
+| Starting point | Agent skill |
+|----------------|-------------|
+| You do not have a design brief yet | `docs/design/SKILL.md` |
+| You have an external or uploaded `DESIGN.md` | `docs/design-import/SKILL.md` |
+
+Recommended flow:
+
+1. Run the todo demo as a smoke test.
+2. Fill or import root `DESIGN.md`.
+3. Patch only the needed branches in `src/style/design-tokens.json`.
+4. Run `npm run tokens`.
+5. Compose screens from `src/ui/components/`, layout utilities, and app-specific
+   CSS that uses generated variables.
+6. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
+7. Run `npm run lint:styles` and relevant tests.
+
+`demo/` is not a required scaffold for your production app. You can either:
+
+- keep `demo/` as reference and create your own app entry, then update
+  `vite.config.js` to point at it; or
+- replace the todo files in `demo/` if you want the fastest single-entry
+  starter path.
+
+In both cases, keep `src/style/design-tokens.json` as the visual source of truth
+and keep generated CSS out of manual edits.
 
 ## Architecture
 
