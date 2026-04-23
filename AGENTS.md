@@ -50,6 +50,9 @@ Never edit generated artifacts directly.
 |------|-------|
 | Design tokens, visual rules, layout | `docs/design/SKILL.md` |
 | Import or translate an external DESIGN.md | `docs/design-import/SKILL.md` |
+| Website, app, page, route, flow, motion, or video planning | `docs/product-planning/SKILL.md` |
+| Runtime animation implementation | `docs/animation/SKILL.md` |
+| Video production or website-to-video workflow | `docs/video/SKILL.md` |
 | EventBus, Contracts, component types | `docs/architecture/SKILL.md` |
 | Security, CSP, sanitization | `docs/security/SKILL.md` |
 | Testing strategy | `docs/testing/SKILL.md` |
@@ -69,3 +72,11 @@ Consult `docs/patterns/SKILL.md` for common spatial recipes.
 
 Use `showcase/token-showcase.html` after token edits to inspect the generated
 token seed before building app-specific pages.
+
+For new websites, apps, landing pages, navigation, or critical flows, read
+`docs/product-planning/SKILL.md` before deciding whether to create `SITE.md`,
+`APP.md`, `pages/*.md`, `flows/*.md`, `animations/*.md`, `VIDEO.md`, or
+`storyboards/*.md`.
+
+For implementation after planning, read `docs/animation/SKILL.md` for runtime
+motion and `docs/video/SKILL.md` for production-media or website-to-video work.

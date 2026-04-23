@@ -94,17 +94,42 @@ Start with one of two design paths:
 | You do not have a design brief yet | `docs/design/SKILL.md` |
 | You have an external or uploaded `DESIGN.md` | `docs/design-import/SKILL.md` |
 
+Then use product planning when the request is bigger than token/style work:
+
+| User goal | Agent skill |
+|-----------|-------------|
+| Landing page, website, app, navigation, routes, pages, or critical flows | `docs/product-planning/SKILL.md` |
+| Runtime animation, splash screen, route transition, or scroll motion | `docs/animation/SKILL.md` after product planning |
+| Generated video, product promo, explainer, or website-to-video output | `docs/video/SKILL.md` after product planning |
+
 Recommended flow:
 
 1. Run the todo demo as a smoke test.
-2. Fill or import root `DESIGN.md`.
-3. Patch only the needed branches in `src/style/design-tokens.json`.
-4. Run `npm run tokens`.
-5. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
-6. Compose screens from `src/ui/components/`, layout utilities, and app-specific
+2. Choose design path: from scratch or import.
+3. Choose product planning path: landing page, website, app, page, flow,
+   animation, or video.
+4. Create only the needed artifacts: `DESIGN.md`, `SITE.md`, `APP.md`,
+   `pages/*.md`, `flows/*.md`, `animations/*.md`, `VIDEO.md`, or
+   `storyboards/*.md`.
+5. Patch only the needed branches in `src/style/design-tokens.json`.
+6. Run `npm run tokens`.
+7. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
+8. Compose screens from `src/ui/components/`, layout utilities, and app-specific
    CSS that uses generated variables.
-7. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
-8. Run `npm run lint:styles` and relevant tests.
+9. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
+10. Run `npm run lint:styles` and relevant tests.
+
+Product planning keeps concerns separate:
+
+| Artifact | Owns |
+|----------|------|
+| `DESIGN.md` | Visual system, token intent, component recipes, anti-patterns |
+| `SITE.md` | Website navigation, pages, shell, SEO, legal, consent |
+| `APP.md` | App screens, roles, navigation, modules, state model |
+| `pages/*.md` | Page sections, content, layout, CTAs, motion |
+| `flows/*.md` | Multi-step behavior, validation, events, persistence, failures |
+| `animations/*.md` | Runtime motion plans: splash, route transition, reusable sequence |
+| `VIDEO.md` / `storyboards/*.md` | Optional production-media planning |
 
 `demo/` is not a required scaffold for your production app. You can either:
 
