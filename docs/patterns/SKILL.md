@@ -18,6 +18,10 @@ Module    = Feature/service layer with contracts, registries, and behavior
 Build with existing primitives first. Compose pages freely using layout tokens
 and CSS utilities. There is no rigid page scaffold and no pattern compiler.
 
+After layout or breakpoint token edits, inspect
+`/showcase/token-showcase.html` and its Layout Primitives section before
+composing page recipes.
+
 ## Token And Utility Reference
 
 | Need | Use | Notes |

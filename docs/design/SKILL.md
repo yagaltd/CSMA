@@ -210,6 +210,10 @@ Patch rules:
 - Do not edit `src/generated/tokens.css`; run `npm run tokens`.
 - Do not bulk-format or reorder the full JSON file.
 - After token edits, run `npm run tokens` and `npm run lint:styles`.
+- Then inspect `/showcase/token-showcase.html` in light, dark, and contrast
+  themes. Use the showcase to catch palette, typography, spacing, layout,
+  radius, shadow, component, field, badge, status, and motion-token issues
+  before composing app screens.
 
 ### Craft Rules Before CSS
 

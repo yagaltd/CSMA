@@ -15,6 +15,7 @@ the architectural boundaries below.
 | `src/ui/components/` | Primitive UI building blocks — copy and extend |
 | `src/style/` | Canonical token input and base styles |
 | `demo/` | Reference demos and committed snapshots |
+| `showcase/` | Standalone token and design inspection pages |
 | `tooling/` | Token generator and JSON schemas |
 | `docs/` | Agent skills — design, architecture, security, testing, patterns |
 
@@ -24,7 +25,8 @@ the architectural boundaries below.
 2. Chat with the user to understand desired changes.
 3. Update `src/style/design-tokens.json` (DTCG format).
 4. Run `npm run tokens` to regenerate `src/generated/tokens.css`.
-5. Compose layouts and pages using generated tokens. Never edit CSS output directly.
+5. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
+6. Compose layouts and pages using generated tokens. Never edit CSS output directly.
 
 ## Tokens
 
@@ -64,3 +66,6 @@ There is no rigid page scaffold. Agents compose pages freely using:
 - Reference examples in `demo/examples/`
 
 Consult `docs/patterns/SKILL.md` for common spatial recipes.
+
+Use `showcase/token-showcase.html` after token edits to inspect the generated
+token seed before building app-specific pages.

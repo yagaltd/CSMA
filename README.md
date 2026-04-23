@@ -40,9 +40,13 @@ npm run tokens    # generate CSS from design-tokens.json
 npm run dev       # start dev server with the demo app
 ```
 
-Open `http://localhost:5173` to see the todo app running on the real CSMA
+Open `http://localhost:5173/demo/` to see the todo app running on the real CSMA
 runtime. Treat this as a smoke test and reference implementation, not the final
 shape of your app.
+
+Open `http://localhost:5173/showcase/token-showcase.html` after token edits to
+inspect the current palette, typography, spacing, layout primitives, shape,
+elevation, components, motion, and light/dark/contrast themes.
 
 ## What You Get
 
@@ -52,7 +56,8 @@ shape of your app.
 | `src/modules/` | 20 feature modules — auth, storage, sync, camera, form-management, search... |
 | `src/ui/components/` | Token-driven CSS primitives — Badge, Button, Toast, Card, Input, Field |
 | `src/style/design-tokens.json` | Single source of truth for every visual value (DTCG format) |
-| `demo/` | Simple todo app explaining CSMA components, current token design, theme switching, and runtime events |
+| `demo/` | Simple todo app explaining CSMA components, theme switching, and runtime events |
+| `showcase/` | Standalone visual inspection pages for generated tokens |
 | `docs/` | Agent skills — design, architecture, security, testing, patterns |
 
 ## Design-First Workflow
@@ -95,10 +100,11 @@ Recommended flow:
 2. Fill or import root `DESIGN.md`.
 3. Patch only the needed branches in `src/style/design-tokens.json`.
 4. Run `npm run tokens`.
-5. Compose screens from `src/ui/components/`, layout utilities, and app-specific
+5. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
+6. Compose screens from `src/ui/components/`, layout utilities, and app-specific
    CSS that uses generated variables.
-6. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
-7. Run `npm run lint:styles` and relevant tests.
+7. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
+8. Run `npm run lint:styles` and relevant tests.
 
 `demo/` is not a required scaffold for your production app. You can either:
 

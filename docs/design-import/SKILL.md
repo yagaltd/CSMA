@@ -201,6 +201,10 @@ npm run tokens
 npm run lint:styles
 ```
 
+Then inspect `/showcase/token-showcase.html` in light, dark, and contrast
+themes. The showcase should reflect the imported token decisions without copying
+the external `DESIGN.md` or treating front matter as runtime tokens.
+
 Run additional checks based on blast radius:
 
 | Change | Verification |
@@ -209,6 +213,7 @@ Run additional checks based on blast radius:
 | Component CSS | `npm run lint:styles`; inspect component demos if present |
 | EventBus behavior | Contract tests or focused `vitest` tests |
 | Page/demo changes | Start `npm run dev`; inspect responsive and theme behavior |
+| Imported visual system | Inspect `/showcase/token-showcase.html` across light, dark, and contrast |
 | Security-sensitive input | `npm run security-check` plus validation tests |
 
 ## Import Report

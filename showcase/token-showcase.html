@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSMA Token Showcase</title>
+  <link rel="stylesheet" href="token-showcase.css">
+</head>
+<body>
+  <div class="showcase-shell">
+    <header class="showcase-header">
+      <div class="showcase-header__copy">
+        <p class="showcase-kicker">CSMA Token Architecture</p>
+        <h1><span data-token-set-name>CSMA</span> Token Showcase</h1>
+        <p data-token-set-description>
+          Inspect the current generated token seed across color, typography,
+          spacing, shape, elevation, components, motion, and themes.
+        </p>
+      </div>
+      <div class="theme-switcher" role="group" aria-label="Theme">
+        <button class="theme-switcher__button" type="button" data-theme-choice="light" aria-pressed="true">Light</button>
+        <button class="theme-switcher__button" type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+        <button class="theme-switcher__button" type="button" data-theme-choice="contrast" aria-pressed="false">Contrast</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="showcase-section" aria-labelledby="brand-colors-title">
+        <h2 class="showcase-section__title" id="brand-colors-title">Brand Colors</h2>
+        <div class="color-grid">
+          <article class="color-swatch" data-color-token="primary">
+            <div class="color-swatch__fill" data-swatch-fill="primary"></div>
+            <div class="color-swatch__info">
+              <h3 data-token-label="primary">Primary</h3>
+              <p data-token-value="primary">--primary</p>
+              <span>--primary</span>
+            </div>
+          </article>
+          <article class="color-swatch" data-color-token="secondary">
+            <div class="color-swatch__fill" data-swatch-fill="secondary"></div>
+            <div class="color-swatch__info">
+              <h3 data-token-label="secondary">Secondary</h3>
+              <p data-token-value="secondary">--secondary</p>
+              <span>--secondary</span>
+            </div>
+          </article>
+          <article class="color-swatch" data-color-token="accent">
+            <div class="color-swatch__fill" data-swatch-fill="accent"></div>
+            <div class="color-swatch__info">
+              <h3 data-token-label="accent">Accent</h3>
+              <p data-token-value="accent">--accent</p>
+              <span>--accent</span>
+            </div>
+          </article>
+          <article class="color-swatch" data-color-token="foreground">
+            <div class="color-swatch__fill" data-swatch-fill="foreground"></div>
+            <div class="color-swatch__info">
+              <h3 data-token-label="foreground">Foreground</h3>
+              <p data-token-value="foreground">--foreground</p>
+              <span>--foreground</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <hr class="showcase-divider">
+
+      <section class="showcase-section" aria-labelledby="surface-title">
+        <h2 class="showcase-section__title" id="surface-title">Surface & Text</h2>
+        <div class="color-grid">
+          <article class="color-swatch" data-color-token="background">
+            <div class="color-swatch__fill" data-swatch-fill="background"></div>
+            <div class="color-swatch__info">
+              <h3 data-token-label="background">Background</h3>
+              <p data-token-value="background">--background</p>
+              <span>--background</span>
+            </div>
+          </article>
+          <article class="color-swatch" data-color-token="surface">
+            <div class="color-swatch__fill" data-swatch-fill="surface"></div>
+            <div class="color-swatch__info">
+              <h3 data-token-label="surface">Surface</h3>
+              <p data-token-value="surface">--surface</p>
+              <span>--surface</span>
+            </div>
+          </article>
+          <article class="color-swatch" data-color-token="surface-muted">
+            <div class="color-swatch__fill" data-swatch-fill="surface-muted"></div>
+            <div class="color-swatch__info">
+              <h3 data-token-label="surface-muted">Surface Muted</h3>
+              <p data-token-value="surface-muted">--surface-muted</p>
+              <span>--surface-muted</span>
+            </div>
+          </article>
+          <article class="color-swatch" data-color-token="border">
+            <div class="color-swatch__fill" data-swatch-fill="border"></div>
+            <div class="color-swatch__info">
+              <h3 data-token-label="border">Border</h3>
+              <p data-token-value="border">--border</p>
+              <span>--border</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="pairs-title">
+        <h2 class="showcase-section__title" id="pairs-title">Color Pairs</h2>
+        <div class="pair-grid">
+          <article class="pair-swatch pair-swatch--primary">
+            <div class="pair-swatch__sample">Primary action</div>
+            <p>--primary / --primary-foreground</p>
+          </article>
+          <article class="pair-swatch pair-swatch--secondary">
+            <div class="pair-swatch__sample">Secondary surface</div>
+            <p>--secondary / --secondary-foreground</p>
+          </article>
+          <article class="pair-swatch pair-swatch--accent">
+            <div class="pair-swatch__sample">Accent signal</div>
+            <p>--accent / --accent-foreground</p>
+          </article>
+          <article class="pair-swatch pair-swatch--destructive">
+            <div class="pair-swatch__sample">Destructive</div>
+            <p>--destructive / --destructive-foreground</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="type-title">
+        <h2 class="showcase-section__title" id="type-title">Typography</h2>
+        <div class="type-list">
+          <div class="type-row">
+            <span class="type-row__label">Display / --font-size-3xl</span>
+            <strong class="type-sample type-sample--display">Token driven interface</strong>
+          </div>
+          <div class="type-row">
+            <span class="type-row__label">Heading / --font-size-2xl</span>
+            <strong class="type-sample type-sample--h1">Readable hierarchy for real products</strong>
+          </div>
+          <div class="type-row">
+            <span class="type-row__label">Section / --font-size-xl</span>
+            <strong class="type-sample type-sample--h2">Reusable sections and components</strong>
+          </div>
+          <div class="type-row">
+            <span class="type-row__label">Body large / --font-size-lg</span>
+            <span class="type-sample type-sample--body-lg">CSMA keeps style decisions in generated custom properties.</span>
+          </div>
+          <div class="type-row">
+            <span class="type-row__label">Body / --font-size-base</span>
+            <span class="type-sample type-sample--body">This specimen uses the active token seed and current theme.</span>
+          </div>
+          <div class="type-row">
+            <span class="type-row__label">Caption / --font-size-xs</span>
+            <span class="type-sample type-sample--caption">Token path, variable, and computed values stay inspectable.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="weights-title">
+        <h2 class="showcase-section__title" id="weights-title">Font Weights</h2>
+        <div class="weight-list">
+          <div class="weight-row"><span>regular</span><p class="weight-sample weight-sample--regular">The same phrase at regular weight.</p></div>
+          <div class="weight-row"><span>medium</span><p class="weight-sample weight-sample--medium">The same phrase at medium weight.</p></div>
+          <div class="weight-row"><span>semibold</span><p class="weight-sample weight-sample--semibold">The same phrase at semibold weight.</p></div>
+          <div class="weight-row"><span>bold</span><p class="weight-sample weight-sample--bold">The same phrase at bold weight.</p></div>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="spacing-title">
+        <h2 class="showcase-section__title" id="spacing-title">Spacing</h2>
+        <div class="space-list">
+          <div class="space-row" data-space="2xs"><span>2xs</span><p>--space-2xs</p><i></i></div>
+          <div class="space-row" data-space="xs"><span>xs</span><p>--space-xs</p><i></i></div>
+          <div class="space-row" data-space="sm"><span>sm</span><p>--space-sm</p><i></i></div>
+          <div class="space-row" data-space="md"><span>md</span><p>--space-md</p><i></i></div>
+          <div class="space-row" data-space="lg"><span>lg</span><p>--space-lg</p><i></i></div>
+          <div class="space-row" data-space="xl"><span>xl</span><p>--space-xl</p><i></i></div>
+          <div class="space-row" data-space="2xl"><span>2xl</span><p>--space-2xl</p><i></i></div>
+          <div class="space-row" data-space="3xl"><span>3xl</span><p>--space-3xl</p><i></i></div>
+          <div class="space-row" data-space="4xl"><span>4xl</span><p>--space-4xl</p><i></i></div>
+          <div class="space-row" data-space="5xl"><span>5xl</span><p>--space-5xl</p><i></i></div>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="layout-primitives-title">
+        <h2 class="showcase-section__title" id="layout-primitives-title">Layout Primitives</h2>
+
+        <div class="layout-showcase-grid">
+          <article class="layout-panel layout-panel--wide">
+            <div class="layout-panel__header">
+              <h3>Container Widths</h3>
+              <p>Constrained page measures for narrow content, default pages, and wide surfaces.</p>
+            </div>
+            <div class="container-ruler">
+              <div class="container-ruler__row" data-container-size="narrow">
+                <span>narrow</span>
+                <i></i>
+                <code data-token-value="layout-container-narrow">--layout-container-narrow</code>
+              </div>
+              <div class="container-ruler__row" data-container-size="default">
+                <span>default</span>
+                <i></i>
+                <code data-token-value="layout-container">--layout-container</code>
+              </div>
+              <div class="container-ruler__row" data-container-size="wide">
+                <span>wide</span>
+                <i></i>
+                <code data-token-value="layout-container-wide">--layout-container-wide</code>
+              </div>
+            </div>
+          </article>
+
+          <article class="layout-panel">
+            <div class="layout-panel__header">
+              <h3>Grid Minimums</h3>
+              <p>Readable card widths for responsive auto-fit collections.</p>
+            </div>
+            <div class="grid-min-list">
+              <div class="grid-min-card" data-grid-min="sm">
+                <strong>sm</strong>
+                <span data-token-value="layout-grid-min-sm">--layout-grid-min-sm</span>
+              </div>
+              <div class="grid-min-card" data-grid-min="md">
+                <strong>md</strong>
+                <span data-token-value="layout-grid-min-md">--layout-grid-min-md</span>
+              </div>
+              <div class="grid-min-card" data-grid-min="lg">
+                <strong>lg</strong>
+                <span data-token-value="layout-grid-min-lg">--layout-grid-min-lg</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="layout-panel">
+            <div class="layout-panel__header">
+              <h3>Sidebar Shell</h3>
+              <p>Sidebar token shown against a flexible content column.</p>
+            </div>
+            <div class="sidebar-specimen">
+              <aside>
+                <span>sidebar</span>
+                <code data-token-value="layout-sidebar">--layout-sidebar</code>
+              </aside>
+              <main>
+                <span>content</span>
+              </main>
+            </div>
+          </article>
+
+          <article class="layout-panel">
+            <div class="layout-panel__header">
+              <h3>Touch Target</h3>
+              <p>Minimum interactive control size for coarse pointers.</p>
+            </div>
+            <div class="touch-target-specimen">
+              <button type="button" aria-label="Touch target specimen"></button>
+              <code data-token-value="layout-touch-target">--layout-touch-target</code>
+            </div>
+          </article>
+
+          <article class="layout-panel layout-panel--wide">
+            <div class="layout-panel__header">
+              <h3>Breakpoints</h3>
+              <p>Viewport markers used by responsive recipes and layout utilities.</p>
+            </div>
+            <div class="breakpoint-ruler" aria-label="Breakpoint token ruler">
+              <div class="breakpoint-ruler__track"></div>
+              <div class="breakpoint-marker" data-breakpoint="sm">
+                <i></i>
+                <strong>sm</strong>
+                <code data-token-value="breakpoint-sm">--breakpoint-sm</code>
+              </div>
+              <div class="breakpoint-marker" data-breakpoint="md">
+                <i></i>
+                <strong>md</strong>
+                <code data-token-value="breakpoint-md">--breakpoint-md</code>
+              </div>
+              <div class="breakpoint-marker" data-breakpoint="lg">
+                <i></i>
+                <strong>lg</strong>
+                <code data-token-value="breakpoint-lg">--breakpoint-lg</code>
+              </div>
+              <div class="breakpoint-marker" data-breakpoint="xl">
+                <i></i>
+                <strong>xl</strong>
+                <code data-token-value="breakpoint-xl">--breakpoint-xl</code>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="radius-title">
+        <h2 class="showcase-section__title" id="radius-title">Radius</h2>
+        <div class="radius-grid">
+          <figure class="radius-item" data-radius="none"><div></div><figcaption>none</figcaption></figure>
+          <figure class="radius-item" data-radius="sm"><div></div><figcaption>sm</figcaption></figure>
+          <figure class="radius-item" data-radius="md"><div></div><figcaption>md</figcaption></figure>
+          <figure class="radius-item" data-radius="lg"><div></div><figcaption>lg</figcaption></figure>
+          <figure class="radius-item" data-radius="xl"><div></div><figcaption>xl</figcaption></figure>
+          <figure class="radius-item" data-radius="full"><div></div><figcaption>full</figcaption></figure>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="shadow-title">
+        <h2 class="showcase-section__title" id="shadow-title">Shadows</h2>
+        <div class="shadow-grid">
+          <article class="shadow-card" data-shadow="xs">--shadow-xs</article>
+          <article class="shadow-card" data-shadow="sm">--shadow-sm</article>
+          <article class="shadow-card" data-shadow="md">--shadow-md</article>
+          <article class="shadow-card" data-shadow="lg">--shadow-lg</article>
+          <article class="shadow-card" data-shadow="xl">--shadow-xl</article>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="buttons-title">
+        <h2 class="showcase-section__title" id="buttons-title">Buttons</h2>
+        <div class="component-grid">
+          <button class="button" data-variant="primary" data-size="md" type="button">Primary</button>
+          <button class="button" data-variant="secondary" data-size="md" type="button">Secondary</button>
+          <button class="button" data-variant="ghost" data-size="md" type="button">Ghost</button>
+          <button class="button" data-variant="destructive" data-size="md" type="button">Destructive</button>
+          <button class="button" data-variant="primary" data-size="sm" type="button">Small</button>
+          <button class="button" data-variant="primary" data-size="lg" type="button">Large</button>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="cards-title">
+        <h2 class="showcase-section__title" id="cards-title">Cards</h2>
+        <div class="card-grid">
+          <article class="card showcase-card">
+            <span class="badge" data-variant="soft-primary" data-size="sm">Tokenized</span>
+            <h3>Inspection Card</h3>
+            <p>Card radius, padding, surface, border, and shadow are driven by generated CSMA variables.</p>
+            <button class="button" data-variant="primary" data-size="sm" type="button">Inspect</button>
+          </article>
+          <article class="card showcase-card showcase-card--muted">
+            <span class="badge" data-variant="soft-accent" data-size="sm">Muted</span>
+            <h3>Surface Variant</h3>
+            <p>Muted surfaces show whether the active palette has enough separation across themes.</p>
+            <button class="button" data-variant="ghost" data-size="sm" type="button">Review</button>
+          </article>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="fields-title">
+        <h2 class="showcase-section__title" id="fields-title">Fields</h2>
+        <div class="field-grid">
+          <label class="field">
+            <span class="field__label">Default field</span>
+            <input class="input" type="text" value="Tokenized input">
+          </label>
+          <label class="field" data-state="error">
+            <span class="field__label">Error field</span>
+            <input class="input" type="text" value="Needs attention" aria-invalid="true">
+            <span class="field__message">Validation text uses semantic status color.</span>
+          </label>
+          <label class="field" data-disabled="true">
+            <span class="field__label">Disabled field</span>
+            <input class="input" type="text" value="Disabled value" disabled>
+          </label>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="badges-title">
+        <h2 class="showcase-section__title" id="badges-title">Badges & Status</h2>
+        <div class="component-grid">
+          <span class="badge" data-variant="soft-primary" data-size="md">Primary</span>
+          <span class="badge" data-variant="soft-accent" data-size="md">Accent</span>
+          <span class="status-pill" data-status="success">Success</span>
+          <span class="status-pill" data-status="warning">Warning</span>
+          <span class="status-pill" data-status="info">Info</span>
+          <span class="status-pill" data-status="destructive">Destructive</span>
+        </div>
+      </section>
+
+      <section class="showcase-section" aria-labelledby="motion-title">
+        <h2 class="showcase-section__title" id="motion-title">Motion</h2>
+        <div class="motion-grid">
+          <article class="motion-card">
+            <h3>Duration Ladder</h3>
+            <div class="motion-row" data-motion-duration="instant"><span>instant</span><i></i></div>
+            <div class="motion-row" data-motion-duration="fast"><span>fast</span><i></i></div>
+            <div class="motion-row" data-motion-duration="normal"><span>normal</span><i></i></div>
+            <div class="motion-row" data-motion-duration="slow"><span>slow</span><i></i></div>
+            <div class="motion-row" data-motion-duration="enter"><span>enter</span><i></i></div>
+          </article>
+          <article class="motion-card">
+            <h3>Easing Samples</h3>
+            <div class="ease-row" data-ease="out-quart"><span>out-quart</span><i></i></div>
+            <div class="ease-row" data-ease="out-quint"><span>out-quint</span><i></i></div>
+            <div class="ease-row" data-ease="out-expo"><span>out-expo</span><i></i></div>
+            <div class="ease-row" data-ease="in-out-soft"><span>in-out-soft</span><i></i></div>
+          </article>
+          <article class="motion-card">
+            <h3>Transition Tokens</h3>
+            <button class="motion-demo motion-demo--fast" type="button">Fast</button>
+            <button class="motion-demo motion-demo--base" type="button">Base</button>
+            <button class="motion-demo motion-demo--slow" type="button">Slow</button>
+            <p>Hover or focus to inspect semantic transition timing.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="showcase-footer">
+      <p>
+        Source:
+        <code>src/style/design-tokens.json</code>
+        <span data-reference-meta></span>
+      </p>
+    </footer>
+  </div>
+
+  <script src="token-showcase.js"></script>
+</body>
+</html>
