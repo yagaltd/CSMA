@@ -23,18 +23,21 @@ the architectural boundaries below.
 
 1. Read `docs/design/SKILL.md` for visual rules and token conventions.
 2. Chat with the user to understand desired changes.
-3. Update `src/style/design-tokens.json` (DTCG format).
-4. Run `npm run tokens` to regenerate `src/generated/tokens.css`.
+3. Update `src/style/token-overrides.json` with dot-notation token patches.
+4. Run `npm run tokens:patch` to merge into `src/style/design-tokens.json` and regenerate `src/generated/tokens.css`.
 5. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
 6. Compose layouts and pages using generated tokens. Never edit CSS output directly.
 
 ## Tokens
 
-- **Canonical input**: `src/style/design-tokens.json`
+- **Base seed**: `src/style/design-tokens.json`
+- **Project overrides**: `src/style/token-overrides.json`
 - **Generated CSS**: `src/generated/tokens.css`
 - **Generated reference**: `tooling/generated/token-reference.json`
 
-Never edit generated artifacts directly.
+Never edit generated artifacts directly. For app-specific token work, do not
+edit `src/style/design-tokens.json` directly; patch via
+`src/style/token-overrides.json`.
 
 ## Architecture Rules
 

@@ -220,11 +220,11 @@ const validated = Schema.validate(payload);
 ## Design Token Pipeline
 
 ```
-design-tokens.json  ->  generate-tokens.js  ->  generated/tokens.css
+token-overrides.json  ->  patch-tokens.js  ->  design-tokens.json  ->  generate-tokens.js  ->  generated/tokens.css
 ```
 
-To customize tokens, edit `src/style/design-tokens.json` and run
-`npm run tokens`. Never edit `tokens.css` directly.
+For app-specific token customization, edit `src/style/token-overrides.json` and
+run `npm run tokens:patch`. Never edit `tokens.css` directly.
 
 DTCG format basics:
 - `$type` -- token type (color, dimension, fontFamily, etc.)

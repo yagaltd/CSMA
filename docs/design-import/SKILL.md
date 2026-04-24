@@ -12,16 +12,17 @@ description: Translate an external or uploaded DESIGN.md into CSMA's token, brie
 Use this skill when a user provides an external `DESIGN.md` and wants it
 translated into CSMA.
 
-The uploaded file is an input brief, not a runtime source. CSMA keeps runtime
-visual values in `src/style/design-tokens.json`, regenerates
-`src/generated/tokens.css` with `npm run tokens`, and records agent-facing
-composition decisions in root `DESIGN.md`.
+The uploaded file is an input brief, not a runtime source. CSMA keeps the base
+token seed in `src/style/design-tokens.json`, applies project-specific changes
+through `src/style/token-overrides.json`, regenerates `src/generated/tokens.css`
+with `npm run tokens:patch`, and records agent-facing composition decisions in
+root `DESIGN.md`.
 
 ## Import Contract
 
 | External DESIGN.md content | CSMA destination |
 |:---------------------------|:-----------------|
-| YAML front matter token values | `src/style/design-tokens.json` |
+| YAML front matter token values | `src/style/token-overrides.json` |
 | Color/type/spacing rationale | Root `DESIGN.md` `Token Usage` table |
 | Visual style guidance | Root `DESIGN.md` `Visual Distinctiveness` table |
 | Do's, don'ts, constraints | Root `DESIGN.md` `App Anti-Patterns` table |
@@ -53,7 +54,7 @@ Identify what the uploaded `DESIGN.md` contains.
 |:-------------|:-------|
 | YAML tokens plus markdown sections | Extract tokens and prose separately. |
 | Markdown only | Infer token candidates from prose; mark assumptions. |
-| Tokens only | Populate `design-tokens.json`; create minimal CSMA brief tables. |
+| Tokens only | Populate `token-overrides.json`; create minimal CSMA brief tables. |
 | Style-library file with many examples | Select the relevant style only; do not import unrelated variants. |
 | Conflicting instructions | Prefer CSMA architecture and ask only if the visual intent is ambiguous. |
 
@@ -68,8 +69,8 @@ Collect candidate values for:
 - shadows/elevation: border-only, tonal surfaces, shadow scale
 - themes: light, dark, contrast, and any named theme
 
-Do not write generated CSS. All token edits go through
-`src/style/design-tokens.json`.
+Do not write generated CSS. All app-specific token edits go through
+`src/style/token-overrides.json`.
 
 ### Step 3: Map Tokens To CSMA
 
@@ -179,7 +180,7 @@ CSMA rules win over imported assumptions.
 
 | Imported instruction | CSMA resolution |
 |:---------------------|:----------------|
-| Edit CSS variables or generated CSS directly | Edit `src/style/design-tokens.json`, then run `npm run tokens`. |
+| Edit CSS variables or generated CSS directly | Edit `src/style/token-overrides.json`, then run `npm run tokens:patch`. |
 | Use inline styles for state | Convert to classes, ARIA, or `data-*`. |
 | Use `innerHTML` for content | Use `textContent` for user data. |
 | Add arbitrary framework dependency | Stay vanilla unless user explicitly approves. |
@@ -194,10 +195,10 @@ the final answer.
 
 ### Step 9: Generate Tokens And Verify
 
-After editing `src/style/design-tokens.json`:
+After editing `src/style/token-overrides.json`:
 
 ```bash
-npm run tokens
+npm run tokens:patch
 npm run lint:styles
 ```
 
@@ -209,7 +210,7 @@ Run additional checks based on blast radius:
 
 | Change | Verification |
 |:-------|:-------------|
-| Tokens only | `npm run tokens`, `npm run lint:styles` |
+| Tokens only | `npm run tokens:patch`, `npm run lint:styles` |
 | Component CSS | `npm run lint:styles`; inspect component demos if present |
 | EventBus behavior | Contract tests or focused `vitest` tests |
 | Page/demo changes | Start `npm run dev`; inspect responsive and theme behavior |

@@ -74,9 +74,9 @@ truth still lives in CSMA events, Contracts, classes, and `data-*`.
 | `primitives.motion.easing` | Standard, emphasized, entrance, and exit curves. |
 | `semantic.transition` | Shared transition aliases for components and states. |
 
-Patch `src/style/design-tokens.json` only when repeated animation work shows a
-missing duration, easing, or semantic transition. Do not create one-off timing
-tokens for a single small hover effect.
+Patch `src/style/token-overrides.json` only when repeated animation work shows a
+missing duration, easing, or semantic transition. Run `npm run tokens:patch`
+afterward. Do not create one-off timing tokens for a single small hover effect.
 
 ## GSAP Escalation
 

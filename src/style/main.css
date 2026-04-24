@@ -2,7 +2,8 @@
  * CSMA Main CSS Entry Point
  *
  * Token Architecture:
- * - design-tokens.json → Single source of truth
+ * - token-overrides.json -> App/project token patches
+ * - design-tokens.json -> CSMA base seed plus merged overrides
  * - generated/tokens.css → Auto-generated from JSON (fix in Task 1)
  */
 

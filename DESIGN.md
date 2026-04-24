@@ -15,19 +15,78 @@ built.
 
 ## Token Source
 
-`src/style/design-tokens.json` is the canonical CSMA visual seed and runtime
-token source for new apps. Agents should tune that DTCG file, run
-`npm run tokens`, and consume the regenerated `src/generated/tokens.css`.
+`src/style/design-tokens.json` is the CSMA base visual seed and runtime token
+source. Agents should patch brand and project values through
+`src/style/token-overrides.json`, run `npm run tokens:patch`, and consume the
+regenerated `src/generated/tokens.css`.
 
 Never treat this file's front matter as canonical runtime tokens and never edit
 `src/generated/tokens.css` directly.
 
 | Source | Role | Edit rule |
 |:-------|:-----|:----------|
-| `src/style/design-tokens.json` | Canonical token seed/reference | Edit this for color, type, spacing, radius, shadows, themes. |
-| `src/generated/tokens.css` | Runtime CSS variables | Generated only by `npm run tokens`. |
+| `src/style/design-tokens.json` | CSMA base token seed (DTCG) | Never edit directly. Patch via overrides. |
+| `src/style/token-overrides.json` | Brand/project patches | Agent writes this. Dot-notation DTCG paths. |
+| `src/generated/tokens.css` | Runtime CSS variables | Generated only by `npm run tokens` or `npm run tokens:patch`. |
 | `tooling/generated/token-reference.json` | Machine-readable token reference | Regenerate with token tooling when needed. |
 | `DESIGN.md` | Human and agent composition guide | Record intent, recipes, and Type I/II decisions. |
+
+## Token Patch Workflow
+
+```text
+Agent reads DESIGN.md (this file)
+         |
+         v
+Agent writes src/style/token-overrides.json
+         |
+         v
+npm run tokens:patch
+```
+
+Never read or edit `design-tokens.json` directly when making app-specific token
+changes. The patch script merges overrides and regenerates CSS.
+
+## CSMA Base Token Paths
+
+Use these DTCG paths in `src/style/token-overrides.json`.
+
+### Primitives
+
+```text
+primitives.spacing.{2xs|xs|sm|md|lg|xl|2xl|3xl|4xl|5xl}.$value
+primitives.typography.fontFamily.{base|mono}.$value
+primitives.typography.fontSize.{xs|sm|base|lg|xl|2xl|3xl}.$value
+primitives.typography.fontWeight.{regular|medium|semibold|bold}.$value
+primitives.typography.lineHeight.{tight|heading|body|base|loose}.$value
+primitives.letterSpacing.{display|heading|normal|label|uppercase|wide}.$value
+primitives.radius.{none|sm|md|lg|xl|2xl|3xl|full}.$value
+primitives.shadow.{xs|sm|md|lg|xl}.$value
+primitives.motion.duration.{instant|fast|normal|slow|enter}.$value
+primitives.motion.easing.{outQuart|outQuint|outExpo|inOutSoft}.$value
+primitives.breakpoint.{sm|md|lg|xl}.$value
+primitives.zIndex.{base|overlay|modal|popover|toast|lightbox}.$value
+primitives.opacity.{disabled|muted|faded|hover|overlay}.$value
+primitives.borderWidth.{default|focus|emphasis|accent}.$value
+primitives.focusRing.{offsetWidth|width|shadow}.$value
+primitives.layout.{containerNarrow|container|containerWide|sidebar|touchTarget|gridMinSm|gridMinMd|gridMinLg}.$value
+```
+
+### Themes
+
+```text
+themes.{light|dark|contrast|dark-storm}.colors.{background|backgroundMuted|surface|surfaceMuted|foreground|foregroundMuted|border|primary|primaryForeground|secondary|secondaryForeground|accent|accentForeground|destructive|destructiveForeground|warning|warningForeground|success|successForeground|info|infoForeground}.$value
+themes.{light|dark|contrast|dark-storm}.colors.{background|backgroundMuted|surface|surfaceMuted|foreground|foregroundMuted|border|primary|primaryForeground|secondary|secondaryForeground|accent|accentForeground|destructive|destructiveForeground|warning|warningForeground|success|successForeground|info|infoForeground}.$description
+```
+
+### Components
+
+```text
+components.button.{radius|height|heightSm|heightLg|paddingBlock|paddingInline|fontSize}.$value
+components.input.{radius|height|paddingBlock|paddingInline}.$value
+components.card.{radius|padding|shadow}.$value
+components.dialog.{radius|shadow}.$value
+components.navbar.height.$value
+```
 
 ## Overview
 
@@ -44,7 +103,7 @@ Never treat this file's front matter as canonical runtime tokens and never edit
 
 ## Token Usage
 
-<!-- Agent: Translate user choices into concrete token edits in src/style/design-tokens.json. -->
+<!-- Agent: Translate user choices into concrete token patches in src/style/token-overrides.json. -->
 
 | Area | CSMA tokens | App decision | Notes |
 |:-----|:------------|:-------------|:------|
@@ -191,7 +250,7 @@ export function initToastSystem(eventBus) {
 
 ### Token Workflow
 
-1. Edit `src/style/design-tokens.json` for token values.
-2. Run `npm run tokens` to regenerate CSS.
+1. Edit `src/style/token-overrides.json` for app-specific token changes.
+2. Run `npm run tokens:patch` to merge into `src/style/design-tokens.json` and regenerate CSS.
 3. Reference tokens in CSS: `var(--primary)`, `var(--space-lg)`.
-4. Never edit `src/generated/tokens.css` directly.
+4. Never edit `src/style/design-tokens.json` or `src/generated/tokens.css` directly for app-specific work.

@@ -11,18 +11,20 @@ description: How to create and use DESIGN.md for a CSMA project. Guides the agen
 
 This skill guides collaborative design discovery between you (the agent) and the
 user. The output is a filled `DESIGN.md` at the project root plus concrete token
-edits in `src/style/design-tokens.json`.
+patches in `src/style/token-overrides.json`.
 
-`DESIGN.md` is the app brief and composition guide. The canonical visual
-seed/reference for runtime tokens is `src/style/design-tokens.json`, regenerated
-into `src/generated/tokens.css` with `npm run tokens`.
+`DESIGN.md` is the app brief and composition guide. The CSMA base visual
+seed/reference for runtime tokens is `src/style/design-tokens.json`. App and
+brand changes should be written to `src/style/token-overrides.json`, then merged
+into the base file and regenerated into `src/generated/tokens.css` with
+`npm run tokens:patch`.
 
 ## Starting Point
 
 The repo includes `DESIGN.md` as a **template** with placeholder sections and
 decision tables. Your job is to fill it through conversation with the user, then
-apply the chosen visual direction to `src/style/design-tokens.json`. Do not
-write the entire file at once. Iterate section by section.
+apply the chosen visual direction through `src/style/token-overrides.json`. Do
+not write the entire file at once. Iterate section by section.
 
 ## Workflow
 
@@ -70,7 +72,7 @@ surfaces with clear hierarchy. No decorative chrome.
 
 | Area | CSMA tokens | App decision | Notes |
 |:-----|:------------|:-------------|:------|
-| Brand/action | `--primary`, `--primary-foreground`, `--accent` | Blue primary for actions and focus. Amber accent for warnings. | Apply values in `src/style/design-tokens.json`. |
+| Brand/action | `--primary`, `--primary-foreground`, `--accent` | Blue primary for actions and focus. Amber accent for warnings. | Apply values in `src/style/token-overrides.json`. |
 | Backgrounds | `--background`, `--surface`, `--background-muted` | Warm gray backgrounds to reduce eye strain. | Preserve contrast in dark and contrast themes. |
 
 #### Section: Typography
@@ -173,19 +175,20 @@ avatar, and priority badge.
 
 ### Step 3: Generate Tokens
 
-Once `DESIGN.md` records the decisions, update `src/style/design-tokens.json`
+Once `DESIGN.md` records the decisions, update `src/style/token-overrides.json`
 with the token values. `DESIGN.md` front matter is not a token source. Then run:
 
 ```bash
-npm run tokens
+npm run tokens:patch
 ```
 
 This generates `src/generated/tokens.css` with CSS custom properties.
 
 ### How To Edit The Large Token File
 
-`src/style/design-tokens.json` is intentionally broad. Do not rewrite it. Patch
-only the focused branches needed by the design decision.
+`src/style/design-tokens.json` is intentionally broad. Do not rewrite it or edit
+it directly for app-specific work. Patch only the focused branches needed by the
+design decision through `src/style/token-overrides.json`.
 
 | Design decision | Edit this branch |
 |:----------------|:-----------------|
@@ -201,15 +204,17 @@ only the focused branches needed by the design decision.
 
 Patch rules:
 
-- Inspect the relevant branch before editing it.
+- Inspect the relevant branch before patching it.
 - Preserve DTCG shape: `$value`, `$type`, `$description`, and `$extensions`
   where they already exist.
 - Keep semantic theme names stable unless the user explicitly asks for new
   themes.
 - Keep component tokens as references to primitives when possible.
-- Do not edit `src/generated/tokens.css`; run `npm run tokens`.
+- Use full dot-notation paths in `src/style/token-overrides.json`.
+- Do not edit `src/style/design-tokens.json` or `src/generated/tokens.css`
+  directly; run `npm run tokens:patch`.
 - Do not bulk-format or reorder the full JSON file.
-- After token edits, run `npm run tokens` and `npm run lint:styles`.
+- After token edits, run `npm run tokens:patch` and `npm run lint:styles`.
 - Then inspect `/showcase/token-showcase.html` in light, dark, and contrast
   themes. Use the showcase to catch palette, typography, spacing, layout,
   radius, shadow, component, field, badge, status, and motion-token issues
@@ -243,7 +248,7 @@ Using DESIGN.md as the spec:
 - **Use the user's vocabulary.** If they call it a "project," don't call it a "workspace."
 - **Reference tokens everywhere.** `var(--primary)`, not `#2563EB`.
 - **Enforce CSMA Requirements.** The bottom section of DESIGN.md is non-negotiable.
-- **Update tokens in JSON, not CSS.** `design-tokens.json` → `npm run tokens` → generated CSS.
+- **Update token overrides, not generated CSS.** `token-overrides.json` → `npm run tokens:patch` → generated CSS.
 
 ## Example Conversation Flow
 
@@ -266,7 +271,7 @@ Agent: For Colors - mission control makes me think of dark backgrounds with
 User: No brand colors. Dark blue background, green for healthy, amber for
       warning, red for critical.
 
-Agent: [Updates DESIGN.md token usage table, then edits src/style/design-tokens.json]
+Agent: [Updates DESIGN.md token usage table, then edits src/style/token-overrides.json]
 
 [... continues section by section ...]
 ```

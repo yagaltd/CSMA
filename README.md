@@ -36,7 +36,7 @@ backend, and a module system without a plugin marketplace.
 git clone https://github.com/yagaltd/CSMA.git my-app
 cd my-app
 npm install
-npm run tokens    # generate CSS from design-tokens.json
+npm run tokens    # regenerate CSS from the current token seed
 npm run dev       # start dev server with the demo app
 ```
 
@@ -55,7 +55,8 @@ elevation, components, motion, and light/dark/contrast themes.
 | `src/runtime/` | EventBus, Contracts, ModuleManager, ServiceManager, Router, RateLimiter |
 | `src/modules/` | 20 feature modules — auth, storage, sync, camera, form-management, search... |
 | `src/ui/components/` | Token-driven CSS primitives — Badge, Button, Toast, Card, Input, Field |
-| `src/style/design-tokens.json` | Single source of truth for every visual value (DTCG format) |
+| `src/style/design-tokens.json` | CSMA base token seed (DTCG format) |
+| `src/style/token-overrides.json` | Project and brand token patches |
 | `demo/` | Simple todo app explaining CSMA components, theme switching, and runtime events |
 | `showcase/` | Standalone visual inspection pages for generated tokens |
 | `docs/` | Agent skills — design, architecture, security, testing, patterns |
@@ -63,15 +64,15 @@ elevation, components, motion, and light/dark/contrast themes.
 ## Design-First Workflow
 
 All visual work is driven by tokens. Your coding agent records design intent in
-root `DESIGN.md`, updates focused branches of `src/style/design-tokens.json`,
-and regenerates CSS.
+root `DESIGN.md`, writes focused dot-notation patches to
+`src/style/token-overrides.json`, and regenerates CSS through the patch script.
 
 ```bash
-# 1. Edit tokens
-src/style/design-tokens.json
+# 1. Edit token overrides
+src/style/token-overrides.json
 
-# 2. Regenerate CSS
-npm run tokens
+# 2. Merge into the base seed and regenerate CSS
+npm run tokens:patch
 
 # 3. Use generated custom properties in your components
 var(--primary)
@@ -79,7 +80,8 @@ var(--space-lg)
 var(--radius-md)
 ```
 
-Never edit generated CSS directly. Always change the JSON source.
+`src/style/design-tokens.json` remains the CSMA base token seed. For app-specific
+work, do not edit it directly. Never edit generated CSS directly.
 
 ## After The Demo: Build Your App
 
@@ -111,8 +113,8 @@ Recommended flow:
 4. Create only the needed artifacts: `DESIGN.md`, `SITE.md`, `APP.md`,
    `pages/*.md`, `flows/*.md`, `animations/*.md`, `VIDEO.md`, or
    `storyboards/*.md`.
-5. Patch only the needed branches in `src/style/design-tokens.json`.
-6. Run `npm run tokens`.
+5. Patch only the needed branches in `src/style/token-overrides.json`.
+6. Run `npm run tokens:patch`.
 7. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
 8. Compose screens from `src/ui/components/`, layout utilities, and app-specific
    CSS that uses generated variables.
@@ -138,8 +140,9 @@ Product planning keeps concerns separate:
 - replace the todo files in `demo/` if you want the fastest single-entry
   starter path.
 
-In both cases, keep `src/style/design-tokens.json` as the visual source of truth
-and keep generated CSS out of manual edits.
+In both cases, keep `src/style/design-tokens.json` as the CSMA base seed, put
+project changes in `src/style/token-overrides.json`, and keep generated CSS out
+of manual edits.
 
 ## Architecture
 
