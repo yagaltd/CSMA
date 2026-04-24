@@ -48,20 +48,53 @@ sites should not put every page and section into `DESIGN.md`.
 ## Workflow
 
 1. Identify product type: `site`, `web-app`, `hybrid`, or `mobile-app`.
-2. Lock public presence early: `web.enabled`, `web.indexable`, `web.baseUrl`, and public routes.
-3. Create or update `project-manifest.json` with organization metadata, public routes, and canonical CSMA module ids.
-4. Decide required artifacts from the matrix below.
-5. Fill or import `DESIGN.md`.
-6. Create `SITE.md` or `APP.md` when needed.
-7. Create page specs under `pages/`.
-8. Create flow specs under `flows/`.
-9. Decide motion level: `none`, `micro`, `section`, `runtime sequence`,
+2. Decide surface scope before implementation: `single-page`, `multi-page site`,
+   `app shell + screens`, or `hybrid`.
+3. Lock public presence early: `web.enabled`, `web.indexable`, `web.baseUrl`, and public routes.
+4. Create or update `project-manifest.json` with organization metadata, public routes, and canonical CSMA module ids.
+5. Decide required artifacts from the matrix below.
+6. Fill or import `DESIGN.md`.
+7. Create `SITE.md` or `APP.md` when needed.
+8. For multi-page or hybrid work, define shared architecture before page-one implementation:
+   shared shell, shared CSS/JS split, route inventory, page-specific vs shared assets, and build order.
+9. Create page specs under `pages/`.
+10. Create flow specs under `flows/`.
+11. Decide motion level: `none`, `micro`, `section`, `runtime sequence`,
    `scroll`, or `video`.
-10. Create animation specs under `animations/` only when motion is reusable,
+12. Create animation specs under `animations/` only when motion is reusable,
    cross-page, or sequence-based.
-11. Define what becomes Type I vs Type II.
-12. When legal/SEO scaffolding is in scope, run `npm run generate-project-artifacts` after the manifest, `SITE.md`, and `APP.md` decisions are stable.
-13. Only then move to token edits and implementation.
+13. Define what becomes Type I vs Type II.
+14. When legal/SEO scaffolding is in scope, run `npm run generate-project-artifacts` after the manifest, `SITE.md`, and `APP.md` decisions are stable.
+15. Only then move to token edits and implementation.
+
+## Scope Lock
+
+Before code, explicitly classify the surface:
+
+| Scope | Meaning | Default implementation bias |
+|:--|:--|:--|
+| `single-page` | Landing page or one public page. | One page may be implemented directly. |
+| `multi-page site` | Multiple public routes share one site shell. | Decide shared architecture before the homepage. |
+| `app shell + screens` | Logged-in product with reusable shell and screens. | Decide shell, screen inventory, and shared state before first screen code. |
+| `hybrid` | Public site plus product/app surface. | Plan both surfaces and their shared/non-shared boundaries before code. |
+
+If the scope is unclear, do not start coding. Ask the user for the route or
+screen inventory, or create a lightweight planning brief first.
+
+## Shared Architecture Decision
+
+When the scope is `multi-page site`, `app shell + screens`, or `hybrid`, define
+these before writing implementation files:
+
+1. Shared shell elements
+2. Shared CSS and JS entrypoints
+3. Page-specific or screen-specific CSS and JS
+4. Launch route or screen inventory
+5. Build order
+6. Content readiness: provided, missing, or placeholder-safe
+
+Do not implement the homepage or first screen as a one-off prototype and
+retrofit shared structure later.
 
 ## Manifest Contract
 
@@ -192,12 +225,15 @@ request.
 Before writing code, summarize:
 
 1. Product type.
-2. `project-manifest.json` decisions: web enabled, indexable, base URL, public routes, modules.
-3. Artifacts created or updated.
-4. Critical flows and Type II behavior.
-5. Motion/video decision, including any `animations/<animation>.md` artifact.
-6. Token branches likely to change.
-7. Verification plan.
+2. Surface scope: `single-page`, `multi-page site`, `app shell + screens`, or `hybrid`.
+3. `project-manifest.json` decisions: web enabled, indexable, base URL, public routes, modules.
+4. Artifacts created or updated.
+5. Shared architecture decisions: shell, shared CSS/JS, page or screen split, build order.
+6. Content readiness: provided, missing, placeholder-safe.
+7. Critical flows and Type II behavior.
+8. Motion/video decision, including any `animations/<animation>.md` artifact.
+9. Token branches likely to change.
+10. Verification plan.
 
 Then continue with token edits and implementation unless the user asked only for
 planning.
@@ -218,4 +254,8 @@ video production or website-to-video work, continue with `docs/video/SKILL.md`.
   runtime, modules, components, and style.
 - Prefer `frontend/` for the user's final website/app entry when the demo app
   stays as reference.
+- Do not invent full page inventory, messaging hierarchy, or conversion strategy
+  from minimal input by default. Ask for missing planning inputs or create a
+  lightweight planning brief first.
+- Do not start multi-page implementation until shared architecture is decided.
 - Preserve unrelated user worktree changes.

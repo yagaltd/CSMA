@@ -83,9 +83,18 @@ For new websites, apps, landing pages, navigation, or critical flows, read
 For implementation after planning, read `docs/animation/SKILL.md` for runtime
 motion and `docs/video/SKILL.md` for production-media or website-to-video work.
 
+For multi-page sites, app shells, or hybrid products, decide shared shell and
+file structure before implementing the first page or screen.
+
 ## Source Inspection Guardrail
 
 Do not read raw token files, foundation CSS, or component CSS by default for
 routine page work. Prefer skill docs under `docs/`, generated references, and
 root planning artifacts first. Escalate to raw source only when blocked,
 extending a primitive, or debugging a documented/runtime mismatch.
+
+## Scope Guardrail
+
+Do not invent full page inventory, messaging hierarchy, or conversion strategy
+from minimal input by default. If the planning inputs are missing, ask for them
+or create a lightweight planning brief before implementation.

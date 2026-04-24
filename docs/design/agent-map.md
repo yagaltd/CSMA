@@ -54,6 +54,13 @@ If you escalate to raw source, state why.
 | `pages/*.md` | Page sections, content, CTAs, assets, responsive notes |
 | `flows/*.md` | Validation, async states, Events, Contracts, failures |
 
+Before implementation, make sure these questions are answered:
+
+1. Is this `single-page`, `multi-page site`, `app shell + screens`, or `hybrid`?
+2. What is in launch scope?
+3. What is shared across all pages or screens?
+4. What content is provided, missing, or placeholder-safe?
+
 ## Canonical Token Workflow
 
 For app-specific token work:
@@ -111,6 +118,9 @@ you are intentionally changing the repo defaults.
   reference
 - Keep `src/` for reusable runtime, modules, primitives, and base styles
 - Prefer existing primitives before inventing new ones
+- For multi-page sites and hybrid products, decide shared CSS/JS and shell
+  structure before implementing the homepage
+- Do not build page one as a dead-end prototype that must later be restructured
 
 ## Verification Expectations
 
@@ -120,6 +130,11 @@ Minimum verification for design/page work:
 2. `npm run lint:styles`
 3. inspect `showcase/token-showcase.html`
 4. run the correct dev entrypoint and inspect the page
+
+For multi-page work, also verify:
+
+5. shared CSS/JS entrypoints are used by the planned surfaces
+6. the first implemented page matches the agreed shell structure
 
 For token work, the showcase inspection is required. CSS output alone is not a
 substitute.
