@@ -1,232 +1,515 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSMA Todo App</title>
-  <link rel="stylesheet" href="app.css">
-</head>
-<body>
-  <div class="page-shell">
-    <header class="page-header">
-      <div class="page-header__copy">
-        <span class="badge" data-variant="soft-primary" data-size="md">CSMA Demo</span>
-        <h1 class="page-header__title">Todo App</h1>
-        <p class="page-header__description">
-          A minimal app built with the CSMA template. Real EventBus, token-driven CSS, and vanilla JS.
-        </p>
-      </div>
-      <button class="button" data-variant="ghost" data-size="sm" data-theme-toggle aria-label="Switch theme">
-        <span data-theme-label>Theme</span>
-      </button>
-    </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CSMA Todo App</title>
+        <link rel="stylesheet" href="app.css" />
+    </head>
+    <body>
+        <div class="page-shell">
+            <header class="page-header">
+                <div class="page-header__copy">
+                    <span
+                        class="badge"
+                        data-variant="soft-primary"
+                        data-size="md"
+                        >CSMA Demo</span
+                    >
+                    <h1 class="page-header__title">Todo App</h1>
+                    <p class="page-header__description">
+                        A minimal app built with the CSMA template. Real
+                        EventBus, token-driven CSS, and vanilla JS.
+                    </p>
+                </div>
+                <button
+                    class="button"
+                    data-variant="ghost"
+                    data-size="sm"
+                    data-theme-toggle
+                    aria-label="Switch theme"
+                >
+                    <span data-theme-label>Theme</span>
+                </button>
+            </header>
 
-    <div data-todo-app data-view="list">
-      <!-- Stats -->
-      <section class="stats-bar">
-        <div class="stat" data-stat="total">
-          <span class="stat__label">Total</span>
-          <strong class="stat__value">0</strong>
-        </div>
-        <div class="stat" data-stat="active">
-          <span class="stat__label">Active</span>
-          <strong class="stat__value">0</strong>
-        </div>
-        <div class="stat" data-stat="completed">
-          <span class="stat__label">Done</span>
-          <strong class="stat__value">0</strong>
-        </div>
-        <div class="stat" data-stat="completionRate">
-          <span class="stat__label">Rate</span>
-          <strong class="stat__value">0%</strong>
-        </div>
-      </section>
+            <div data-todo-app data-view="list">
+                <!-- Stats -->
+                <section class="stats-bar">
+                    <div class="stat" data-stat="total">
+                        <span class="stat__label">Total</span>
+                        <strong class="stat__value">0</strong>
+                    </div>
+                    <div class="stat" data-stat="active">
+                        <span class="stat__label">Active</span>
+                        <strong class="stat__value">0</strong>
+                    </div>
+                    <div class="stat" data-stat="completed">
+                        <span class="stat__label">Done</span>
+                        <strong class="stat__value">0</strong>
+                    </div>
+                    <div class="stat" data-stat="completionRate">
+                        <span class="stat__label">Rate</span>
+                        <strong class="stat__value">0%</strong>
+                    </div>
+                </section>
 
-      <div class="layout-main">
-        <div class="layout-content">
-          <!-- Create form -->
-          <form class="todo-create" data-todo-form>
-            <div class="field" data-label="New task">
-              <input
-                class="input"
-                type="text"
-                name="title"
-                placeholder="What needs doing?"
-                autocomplete="off"
-                required
-              >
+                <div class="layout-main">
+                    <div class="layout-content">
+                        <!-- Create form -->
+                        <form class="todo-create" data-todo-form>
+                            <div class="field" data-label="New task">
+                                <input
+                                    class="input"
+                                    type="text"
+                                    name="title"
+                                    placeholder="What needs doing?"
+                                    autocomplete="off"
+                                    required
+                                />
+                            </div>
+                            <button
+                                class="button"
+                                data-variant="primary"
+                                data-size="md"
+                                type="submit"
+                            >
+                                Add
+                            </button>
+                        </form>
+
+                        <!-- View toggles -->
+                        <div class="todo-toggles" data-active="list">
+                            <button
+                                class="button"
+                                data-variant="ghost"
+                                data-size="sm"
+                                data-view-toggle="list"
+                                aria-pressed="true"
+                            >
+                                List
+                            </button>
+                            <button
+                                class="button"
+                                data-variant="ghost"
+                                data-size="sm"
+                                data-view-toggle="board"
+                                aria-pressed="false"
+                            >
+                                Board
+                            </button>
+                        </div>
+
+                        <!-- Filters -->
+                        <nav class="todo-filters" aria-label="Task filters">
+                            <button
+                                class="button"
+                                data-variant="ghost"
+                                data-size="sm"
+                                data-filter="all"
+                                aria-pressed="true"
+                            >
+                                All
+                            </button>
+                            <button
+                                class="button"
+                                data-variant="ghost"
+                                data-size="sm"
+                                data-filter="active"
+                                aria-pressed="false"
+                            >
+                                Active
+                            </button>
+                            <button
+                                class="button"
+                                data-variant="ghost"
+                                data-size="sm"
+                                data-filter="completed"
+                                aria-pressed="false"
+                            >
+                                Done
+                            </button>
+                            <button
+                                class="button"
+                                data-variant="ghost"
+                                data-size="sm"
+                                data-action="clear-completed"
+                            >
+                                Clear done
+                            </button>
+                        </nav>
+
+                        <!-- List -->
+                        <ul
+                            class="todo-list"
+                            data-todo-list
+                            aria-label="Tasks"
+                        ></ul>
+                    </div>
+
+                    <aside class="layout-sidebar">
+                        <section class="log-panel">
+                            <h2 class="log-panel__title">Activity</h2>
+                            <ul class="todo-log" data-todo-log></ul>
+                        </section>
+                    </aside>
+                </div>
+
+                <!-- Edit dialog -->
+                <dialog class="todo-dialog" data-edit-dialog>
+                    <form
+                        class="todo-dialog__form"
+                        data-dialog-form
+                        method="dialog"
+                    >
+                        <h2 class="todo-dialog__title">Edit task</h2>
+                        <div class="field" data-label="Title">
+                            <input
+                                class="input"
+                                type="text"
+                                data-dialog-input
+                                required
+                            />
+                        </div>
+                        <label class="todo-dialog__toggle">
+                            <input type="checkbox" data-dialog-toggle />
+                            <span>Completed</span>
+                        </label>
+                        <div class="todo-dialog__actions">
+                            <button
+                                class="button"
+                                data-variant="ghost"
+                                data-dialog-cancel
+                                type="button"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                class="button"
+                                data-variant="destructive"
+                                data-dialog-delete
+                                type="button"
+                            >
+                                Delete
+                            </button>
+                            <button
+                                class="button"
+                                data-variant="primary"
+                                type="submit"
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </dialog>
             </div>
-            <button class="button" data-variant="primary" data-size="md" type="submit">
-              Add
-            </button>
-          </form>
 
-          <!-- View toggles -->
-          <div class="todo-toggles" data-active="list">
-            <button class="button" data-variant="ghost" data-size="sm" data-view-toggle="list" aria-pressed="true">List</button>
-            <button class="button" data-variant="ghost" data-size="sm" data-view-toggle="board" aria-pressed="false">Board</button>
-          </div>
+            <section
+                class="module-examples"
+                aria-labelledby="module-examples-title"
+            >
+                <div class="module-examples__header">
+                    <div>
+                        <span
+                            class="badge"
+                            data-variant="soft-accent"
+                            data-size="md"
+                            >Modules</span
+                        >
+                        <h2
+                            id="module-examples-title"
+                            class="module-examples__title"
+                        >
+                            Interactive module examples
+                        </h2>
+                        <p class="module-examples__description">
+                            Real CSMA services wired into a local demo flow:
+                            auth, notifications, share, and resumable upload.
+                        </p>
+                    </div>
+                </div>
 
-          <!-- Filters -->
-          <nav class="todo-filters" aria-label="Task filters">
-            <button class="button" data-variant="ghost" data-size="sm" data-filter="all" aria-pressed="true">All</button>
-            <button class="button" data-variant="ghost" data-size="sm" data-filter="active" aria-pressed="false">Active</button>
-            <button class="button" data-variant="ghost" data-size="sm" data-filter="completed" aria-pressed="false">Done</button>
-            <button class="button" data-variant="ghost" data-size="sm" data-action="clear-completed">Clear done</button>
-          </nav>
+                <div class="module-examples__grid">
+                    <section
+                        class="module-panel"
+                        aria-labelledby="auth-demo-title"
+                    >
+                        <div class="module-panel__header">
+                            <h3
+                                id="auth-demo-title"
+                                class="module-panel__title"
+                            >
+                                Auth Login Form
+                            </h3>
+                            <span
+                                class="badge"
+                                data-variant="soft-primary"
+                                data-size="sm"
+                                >Hybrid</span
+                            >
+                        </div>
+                        <p class="module-panel__description">
+                            Password login, backend-mediated OAuth simulation,
+                            and logout using the real auth module API.
+                        </p>
+                        <form class="module-form" data-auth-demo-form>
+                            <div class="field">
+                                <label
+                                    class="field__label"
+                                    for="demo-auth-email"
+                                    >Email</label
+                                >
+                                <div class="field__control">
+                                    <input
+                                        id="demo-auth-email"
+                                        class="input"
+                                        type="email"
+                                        name="email"
+                                        autocomplete="email"
+                                        value="demo@csma.dev"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label
+                                    class="field__label"
+                                    for="demo-auth-password"
+                                    >Password</label
+                                >
+                                <div class="field__control">
+                                    <input
+                                        id="demo-auth-password"
+                                        class="input"
+                                        type="password"
+                                        name="password"
+                                        autocomplete="current-password"
+                                        value="demo-pass"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div class="module-actions">
+                                <button
+                                    class="button"
+                                    data-variant="primary"
+                                    type="submit"
+                                >
+                                    Login Demo User
+                                </button>
+                                <button
+                                    class="button"
+                                    data-variant="outline"
+                                    type="button"
+                                    data-auth-oauth
+                                >
+                                    OAuth Demo
+                                </button>
+                                <button
+                                    class="button"
+                                    data-variant="ghost"
+                                    type="button"
+                                    data-auth-logout
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        </form>
+                        <div class="module-status" data-auth-status>
+                            <strong>Guest session</strong>
+                            <span>No active user.</span>
+                        </div>
+                    </section>
 
-          <!-- List -->
-          <ul class="todo-list" data-todo-list aria-label="Tasks"></ul>
+                    <section
+                        class="module-panel"
+                        aria-labelledby="notifications-demo-title"
+                    >
+                        <div class="module-panel__header">
+                            <h3
+                                id="notifications-demo-title"
+                                class="module-panel__title"
+                            >
+                                Notifications Center
+                            </h3>
+                            <span
+                                class="badge"
+                                data-variant="soft-accent"
+                                data-size="sm"
+                                >Consent-aware</span
+                            >
+                        </div>
+                        <p class="module-panel__description">
+                            Permission requests stay explicit. New items land in
+                            the in-app center and can trigger browser delivery
+                            when allowed.
+                        </p>
+                        <div class="module-actions">
+                            <button
+                                class="button"
+                                data-variant="primary"
+                                type="button"
+                                data-notifications-request
+                            >
+                                Request Permission
+                            </button>
+                            <button
+                                class="button"
+                                data-variant="outline"
+                                type="button"
+                                data-notifications-enqueue
+                            >
+                                Enqueue Alert
+                            </button>
+                            <button
+                                class="button"
+                                data-variant="ghost"
+                                type="button"
+                                data-notifications-warning
+                            >
+                                Enqueue Warning
+                            </button>
+                        </div>
+                        <div class="module-status" data-notifications-status>
+                            <strong>Center idle</strong>
+                            <span>0 unread notifications.</span>
+                        </div>
+                        <div
+                            class="module-notifications-shell"
+                            data-notifications-center-shell
+                        ></div>
+                    </section>
+
+                    <section
+                        class="module-panel"
+                        aria-labelledby="share-demo-title"
+                    >
+                        <div class="module-panel__header">
+                            <h3
+                                id="share-demo-title"
+                                class="module-panel__title"
+                            >
+                                Share Action
+                            </h3>
+                            <span
+                                class="badge"
+                                data-variant="soft-primary"
+                                data-size="sm"
+                                >Native + Clipboard</span
+                            >
+                        </div>
+                        <p class="module-panel__description">
+                            Uses the share module directly. Native share runs
+                            first; desktop browsers fall back to clipboard
+                            safely.
+                        </p>
+                        <div class="field">
+                            <label class="field__label" for="demo-share-text"
+                                >Share text</label
+                            >
+                            <div class="field__control">
+                                <input
+                                    id="demo-share-text"
+                                    class="input"
+                                    type="text"
+                                    data-share-text
+                                    value="CSMA module showcase with tokens, themes, and runtime modules."
+                                />
+                            </div>
+                        </div>
+                        <div class="module-actions">
+                            <button
+                                class="button"
+                                data-variant="primary"
+                                type="button"
+                                data-share-trigger
+                            >
+                                Share This Demo
+                            </button>
+                        </div>
+                        <div class="module-status" data-share-status>
+                            <strong>Ready</strong>
+                            <span>No share request yet.</span>
+                        </div>
+                    </section>
+
+                    <section
+                        class="module-panel"
+                        aria-labelledby="upload-demo-title"
+                    >
+                        <div class="module-panel__header">
+                            <h3
+                                id="upload-demo-title"
+                                class="module-panel__title"
+                            >
+                                Upload Drop Zone
+                            </h3>
+                            <span
+                                class="badge"
+                                data-variant="soft-accent"
+                                data-size="sm"
+                                >Resumable</span
+                            >
+                        </div>
+                        <p class="module-panel__description">
+                            Drop files or browse. Upload state is driven by the
+                            real file-upload module with a local mock transport.
+                        </p>
+                        <div class="module-upload" data-upload-demo>
+                            <div data-upload-dropzone></div>
+                            <div
+                                class="module-upload__list"
+                                data-upload-list
+                            ></div>
+                        </div>
+                    </section>
+                </div>
+            </section>
         </div>
 
-        <aside class="layout-sidebar">
-          <section class="log-panel">
-            <h2 class="log-panel__title">Activity</h2>
-            <ul class="todo-log" data-todo-log></ul>
-          </section>
-        </aside>
-      </div>
+        <!-- Templates -->
+        <template id="todo-item-template">
+            <li class="todo-item">
+                <label class="todo-item__check">
+                    <input type="checkbox" data-action="toggle" />
+                </label>
+                <span class="todo-item__title"></span>
+                <span class="todo-item__meta"></span>
+                <div class="todo-item__actions">
+                    <button
+                        class="button"
+                        data-variant="ghost"
+                        data-size="sm"
+                        data-action="edit"
+                        aria-label="Edit"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        class="button"
+                        data-variant="ghost"
+                        data-size="sm"
+                        data-action="delete"
+                        aria-label="Delete"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </li>
+        </template>
 
-      <!-- Edit dialog -->
-      <dialog class="todo-dialog" data-edit-dialog>
-        <form class="todo-dialog__form" data-dialog-form method="dialog">
-          <h2 class="todo-dialog__title">Edit task</h2>
-          <div class="field" data-label="Title">
-            <input class="input" type="text" data-dialog-input required>
-          </div>
-          <label class="todo-dialog__toggle">
-            <input type="checkbox" data-dialog-toggle>
-            <span>Completed</span>
-          </label>
-          <div class="todo-dialog__actions">
-            <button class="button" data-variant="ghost" data-dialog-cancel type="button">Cancel</button>
-            <button class="button" data-variant="destructive" data-dialog-delete type="button">Delete</button>
-            <button class="button" data-variant="primary" type="submit">Save</button>
-          </div>
-        </form>
-      </dialog>
-    </div>
+        <template id="todo-board-template">
+            <li class="todo-board-card">
+                <button
+                    class="todo-board-card__button"
+                    data-action="open"
+                    aria-label="Open details"
+                ></button>
+                <h3 class="todo-board-card__title"></h3>
+                <p class="todo-board-card__preview"></p>
+            </li>
+        </template>
 
-    <section class="module-examples" aria-labelledby="module-examples-title">
-      <div class="module-examples__header">
-        <div>
-          <span class="badge" data-variant="soft-accent" data-size="md">Phase 1 Modules</span>
-          <h2 id="module-examples-title" class="module-examples__title">Interactive module examples</h2>
-          <p class="module-examples__description">
-            Real CSMA services wired into a local demo flow: auth, notifications, share, and resumable upload.
-          </p>
-        </div>
-      </div>
-
-      <div class="module-examples__grid">
-        <section class="module-panel" aria-labelledby="auth-demo-title">
-          <div class="module-panel__header">
-            <h3 id="auth-demo-title" class="module-panel__title">Auth Login Form</h3>
-            <span class="badge" data-variant="soft-primary" data-size="sm">Hybrid</span>
-          </div>
-          <p class="module-panel__description">Password login, backend-mediated OAuth simulation, and logout using the real auth module API.</p>
-          <form class="module-form" data-auth-demo-form>
-            <div class="field">
-              <label class="field__label" for="demo-auth-email">Email</label>
-              <div class="field__control">
-                <input id="demo-auth-email" class="input" type="email" name="email" autocomplete="email" value="demo@csma.dev" required>
-              </div>
-            </div>
-            <div class="field">
-              <label class="field__label" for="demo-auth-password">Password</label>
-              <div class="field__control">
-                <input id="demo-auth-password" class="input" type="password" name="password" autocomplete="current-password" value="demo-pass" required>
-              </div>
-            </div>
-            <div class="module-actions">
-              <button class="button" data-variant="primary" type="submit">Login Demo User</button>
-              <button class="button" data-variant="outline" type="button" data-auth-oauth>OAuth Demo</button>
-              <button class="button" data-variant="ghost" type="button" data-auth-logout>Logout</button>
-            </div>
-          </form>
-          <div class="module-status" data-auth-status>
-            <strong>Guest session</strong>
-            <span>No active user.</span>
-          </div>
-        </section>
-
-        <section class="module-panel" aria-labelledby="notifications-demo-title">
-          <div class="module-panel__header">
-            <h3 id="notifications-demo-title" class="module-panel__title">Notifications Center</h3>
-            <span class="badge" data-variant="soft-accent" data-size="sm">Consent-aware</span>
-          </div>
-          <p class="module-panel__description">Permission requests stay explicit. New items land in the in-app center and can trigger browser delivery when allowed.</p>
-          <div class="module-actions">
-            <button class="button" data-variant="primary" type="button" data-notifications-request>Request Permission</button>
-            <button class="button" data-variant="outline" type="button" data-notifications-enqueue>Enqueue Alert</button>
-            <button class="button" data-variant="ghost" type="button" data-notifications-warning>Enqueue Warning</button>
-          </div>
-          <div class="module-status" data-notifications-status>
-            <strong>Center idle</strong>
-            <span>0 unread notifications.</span>
-          </div>
-          <div class="module-notifications-shell" data-notifications-center-shell></div>
-        </section>
-
-        <section class="module-panel" aria-labelledby="share-demo-title">
-          <div class="module-panel__header">
-            <h3 id="share-demo-title" class="module-panel__title">Share Action</h3>
-            <span class="badge" data-variant="soft-primary" data-size="sm">Native + Clipboard</span>
-          </div>
-          <p class="module-panel__description">Uses the share module directly. Native share runs first; desktop browsers fall back to clipboard safely.</p>
-          <div class="field">
-            <label class="field__label" for="demo-share-text">Share text</label>
-            <div class="field__control">
-              <input id="demo-share-text" class="input" type="text" data-share-text value="CSMA module showcase with tokens, themes, and runtime modules.">
-            </div>
-          </div>
-          <div class="module-actions">
-            <button class="button" data-variant="primary" type="button" data-share-trigger>Share This Demo</button>
-          </div>
-          <div class="module-status" data-share-status>
-            <strong>Ready</strong>
-            <span>No share request yet.</span>
-          </div>
-        </section>
-
-        <section class="module-panel" aria-labelledby="upload-demo-title">
-          <div class="module-panel__header">
-            <h3 id="upload-demo-title" class="module-panel__title">Upload Drop Zone</h3>
-            <span class="badge" data-variant="soft-accent" data-size="sm">Resumable</span>
-          </div>
-          <p class="module-panel__description">Drop files or browse. Upload state is driven by the real file-upload module with a local mock transport.</p>
-          <div class="module-upload" data-upload-demo>
-            <div data-upload-dropzone></div>
-            <div class="module-upload__list" data-upload-list></div>
-          </div>
-        </section>
-      </div>
-    </section>
-  </div>
-
-  <!-- Templates -->
-  <template id="todo-item-template">
-    <li class="todo-item">
-      <label class="todo-item__check">
-        <input type="checkbox" data-action="toggle">
-      </label>
-      <span class="todo-item__title"></span>
-      <span class="todo-item__meta"></span>
-      <div class="todo-item__actions">
-        <button class="button" data-variant="ghost" data-size="sm" data-action="edit" aria-label="Edit">Edit</button>
-        <button class="button" data-variant="ghost" data-size="sm" data-action="delete" aria-label="Delete">Delete</button>
-      </div>
-    </li>
-  </template>
-
-  <template id="todo-board-template">
-    <li class="todo-board-card">
-      <button class="todo-board-card__button" data-action="open" aria-label="Open details"></button>
-      <h3 class="todo-board-card__title"></h3>
-      <p class="todo-board-card__preview"></p>
-    </li>
-  </template>
-
-  <script type="module" src="app.js"></script>
-</body>
+        <script type="module" src="app.js"></script>
+    </body>
 </html>
