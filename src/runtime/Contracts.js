@@ -20,6 +20,7 @@ import { SearchContracts } from '../modules/search/contracts/search-contracts.js
 import { AIContracts } from '../modules/ai/contracts/ai-contracts.js';
 import { ExampleModuleContracts } from '../modules/example-module/contracts/example-contracts.js';
 import { AnalyticsContracts } from '../modules/analytics/contracts/analytics-contracts.js';
+import { ConsentContracts } from '../modules/consent/contracts/consent-contracts.js';
 
 /**
  * Helper function for creating contracts with full ECCA metadata
@@ -1574,6 +1575,7 @@ export const Contracts = {
     ...AIContracts,
 
     ...ExampleModuleContracts,
+    ...ConsentContracts,
     ...AnalyticsContracts,
 
     // Developer Logs

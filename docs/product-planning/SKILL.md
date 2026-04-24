@@ -69,7 +69,7 @@ sites should not put every page and section into `DESIGN.md`.
 | Use this uploaded `DESIGN.md` | `docs/design-import/SKILL.md`, then product planning artifacts |
 | Add checkout/payment | `flows/checkout.md`, Contracts/EventBus plan, payment integration notes |
 | Add contact form | `pages/contact.md`, `flows/contact-submit.md`, validation/submission contract |
-| Add cookie consent | `SITE.md` consent section, `flows/consent.md`, future Consent module plan |
+| Add cookie consent | `SITE.md` consent section, `flows/consent.md`, Consent module configuration notes |
 | Add legal pages | `SITE.md` legal map, `pages/privacy.md`, `pages/terms.md`, `pages/cookies.md` |
 | Animate a page | Page motion section; add `animations/<animation>.md` only for reusable or sequenced runtime motion, then use `docs/animation/SKILL.md` for implementation |
 | Add splash screen or route transition | `animations/splash.md` or `animations/route-transition.md`, plus related page/app/flow notes, then use `docs/animation/SKILL.md` |

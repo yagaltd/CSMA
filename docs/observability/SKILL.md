@@ -58,7 +58,7 @@ Owns:
 
 - `diagnosticSnapshot` reads local diagnostics and analytics session summaries
 - `seoAudit` is reusable by analytics and runtime inspection
-- `window.csma` exposes `logAccumulator`, `analytics`, `analyticsConsent`, `diagnose()`, and `seoAudit()`
+- `window.csma` exposes `logAccumulator`, `analytics`, `consent`, `analyticsConsent`, `diagnose()`, and `seoAudit()`
 
 ## Pipeline Expectations
 
@@ -102,7 +102,7 @@ When changing snapshot shape:
 ## Editing Rules
 
 - do not add outbound analytics methods back onto `LogAccumulator`
-- keep consent logic in the analytics subsystem, not in runtime logging
+- keep consent logic in the consent module, not in runtime logging
 - keep `ErrorBoundary` isolated from batching/transport concerns
 - prefer extending `AnalyticsService` pipeline helpers over embedding classification logic in UI code
 
@@ -114,5 +114,5 @@ When observability changes, verify the right subsystem:
 - boundary behavior: `tests/error-boundary.test.js`
 - outbound analytics: `tests/analytics-service.test.js`
 - snapshot shape: `tests/diagnostic-snapshot.test.js`
-- consent persistence/UI: `tests/consent-service.test.js`, `tests/analytics-consent-ui.test.js`
+- consent persistence/UI: `tests/consent-service.test.js`, `tests/consent-ui.test.js`
 - SEO enrichment: `tests/seo-audit.test.js`

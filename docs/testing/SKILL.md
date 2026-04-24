@@ -319,7 +319,7 @@ Use:
 - `tests/analytics-module.test.js`
 - `tests/seo-audit.test.js`
 - `tests/consent-service.test.js`
-- `tests/analytics-consent-ui.test.js`
+- `tests/consent-ui.test.js`
 
 Verify:
 1. page views and custom events are handled by `AnalyticsService`, not `LogAccumulator`

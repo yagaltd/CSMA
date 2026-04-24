@@ -423,14 +423,15 @@ export class AnalyticsService {
     }
 
     setupNavigationTracking() {
-        let lastUrl = location.href;
+        const locationRef = window.location;
+        let lastUrl = locationRef.href;
         const checkUrl = () => {
-            if (location.href !== lastUrl) {
+            if (locationRef.href !== lastUrl) {
                 this.track('navigation', {
                     from: this.stripUrl(lastUrl),
-                    to: this.stripUrl(location.href)
+                    to: this.stripUrl(locationRef.href)
                 });
-                lastUrl = location.href;
+                lastUrl = locationRef.href;
             }
         };
 

@@ -112,6 +112,7 @@ export function createRuntimeState() {
         i18nServiceRef: null,
         authServiceRef: null,
         uiCleanup: null,
+        consentCleanup: null,
         analyticsConsentCleanup: null,
         themeToggleCleanup: null,
         authAccessSubscription: null,
@@ -121,7 +122,12 @@ export function createRuntimeState() {
 
 export function syncWindowRuntime(state, { apiBaseUrl, destroyApp }) {
     const analytics = state.serviceManager?.get?.('analytics') || null;
-    const analyticsConsent = state.serviceManager?.get?.('analyticsConsent') || null;
+    const consent = state.serviceManager?.get?.('consent') || null;
+    const analyticsConsent = consent || state.serviceManager?.get?.('analyticsConsent') || null;
+    const notifications = state.serviceManager?.get?.('notifications') || null;
+    const share = state.serviceManager?.get?.('share') || null;
+    const fileUpload = state.serviceManager?.get?.('fileUpload') || null;
+    const cacheManager = state.serviceManager?.get?.('cacheManager') || null;
 
     window.serviceManager = state.serviceManager;
     window.csma = {
@@ -140,7 +146,12 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp }) {
         auth: state.authServiceRef,
         runtimeConfig: state.runtimeConfig || null,
         analytics,
+        consent,
         analyticsConsent,
+        notifications,
+        share,
+        fileUpload,
+        cacheManager,
         apiBaseUrl,
         destroyApp,
         diagnose: (options = {}) => state.logAccumulator?.diagnosticSnapshot?.(options) || null,
@@ -170,6 +181,8 @@ export async function destroyRuntimeState(state, { destroyApp }) {
     state.authAccessSubscription = null;
     state.themeToggleCleanup?.();
     state.themeToggleCleanup = null;
+    state.consentCleanup?.();
+    state.consentCleanup = null;
     state.analyticsConsentCleanup?.();
     state.analyticsConsentCleanup = null;
     state.uiCleanup?.();

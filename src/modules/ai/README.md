@@ -1,66 +1,24 @@
-# CSMA AI Module
+# AI Module
 
-## Overview
+## Purpose
 
-Frontend AI orchestration for CSMA.
+Multi-provider AI orchestration for generation, chat sessions, provider fallback, streaming, and frontend tool calls.
 
-This module owns:
-- frontend chat/session orchestration
-- generation and streaming lifecycle
-- provider/backend transport abstraction
-- tool registration and execution telemetry
+## Public Surface
 
-This module does **not** own CSMA-specific UI capability validation. That belongs to `library/modules/ai-ui/`.
+| Surface | Details |
+|---------|---------|
+| Service(s) | `ai` via `AIService` |
+| Contracts | AI provider, generation, chat, tool, and security events from `contracts/ai-contracts.js`. |
 
-## Architecture
+## Runtime Integration
 
-```
-ai/
-├── index.js
-├── client/
-│   ├── AIClient.js
-│   ├── ChatSession.js
-│   └── ToolRegistry.js
-├── providers/
-│   ├── AIProvider.js
-│   ├── SSMAGatewayProvider.js
-│   ├── GeminiProvider.js
-│   └── TransformersProvider.js
-└── README.md
-```
+Loaded with `FEATURES.AI_MODULE`; runtime config lives under `runtimeConfig.ai` and can resolve SSMA query endpoints.
 
-## Recommended Role
+## Storage / Side Effects
 
-Default deployment split:
-- frontend chat/UI calls `ai`
-- `ai` sends normalized requests to SSMA
-- SSMA talks to cloud or local models
-- SSMA returns or streams results back to `ai`
-- `ai-ui` validates model output into CSMA command/view operations
+May call configured AI providers or SSMA endpoints; keeps chat/session state in memory.
 
-`ai` can still support direct providers where needed, but the primary CSMA + SSMA integration path is the SSMA-backed provider.
+## Tests
 
-## Current Pieces
-
-- `AIClient` coordinates providers and tool execution
-- `ChatSession` manages multi-turn history
-- `SSMAGatewayProvider` connects the frontend to SSMA's public query boundary
-- `ToolRegistry` handles frontend tool registration/execution
-
-## Related Module
-
-- `library/modules/ai-ui/` exports CSMA command/view capabilities and validates AI UI actions before execution
-
-## Example Configuration
-
-```js
-window.csma.config = {
-  ai: {
-    providers: {
-      ssma: {
-        queryName: 'ai.generate'
-      }
-    }
-  }
-};
-```
+Covered through contract/runtime tests; add dedicated AI service tests when provider behavior changes.

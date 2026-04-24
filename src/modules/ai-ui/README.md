@@ -1,12 +1,24 @@
 # AI UI Module
 
-A lightweight component catalog and UI composition helper for CSMA.
-
 ## Purpose
 
-- Exposes a discoverable catalog of available UI primitives and patterns.
-- Provides utilities for composing components into pages and sections.
+Component catalog and UI composition helpers for agents and runtime tooling.
 
-This module does **not** compile archetypes or drive a generation engine. It is a
-runtime helper that agents and developers can query to understand what UI building
-blocks are available.
+## Public Surface
+
+| Surface | Details |
+|---------|---------|
+| Service(s) | `AIUIComposerService` |
+| Contracts | None. |
+
+## Runtime Integration
+
+Imported as a helper module when agents or runtime tooling need CSMA component catalog information.
+
+## Storage / Side Effects
+
+No browser storage or network side effects.
+
+## Tests
+
+Add dedicated tests when catalog validation or composition behavior changes.

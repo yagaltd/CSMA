@@ -1,4 +1,4 @@
-import { initAnalyticsConsentUI } from '../modules/analytics/ui/analytics-consent.js';
+import { initConsentUI } from '../modules/consent/ui/consent-ui.js';
 import { auditPage } from './seoAudit.js';
 import { buildLogEndpoint } from '../style/theme/theme-helpers.js';
 import { resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from './ssma.js';
@@ -44,6 +44,18 @@ export async function loadOptionalFeatures(state, {
     const checkoutConfig = cloneRuntimeSection(runtimeConfig.checkout, {});
     const aiConfigBase = cloneRuntimeSection(runtimeConfig.ai, {});
     const analyticsConfigBase = cloneRuntimeSection(runtimeConfig.analytics, {});
+    const consentConfig = cloneRuntimeSection(runtimeConfig.consent, {});
+    const authConfig = cloneRuntimeSection(runtimeConfig.auth, {});
+    const notificationsConfig = cloneRuntimeSection(runtimeConfig.notifications, {});
+    const offlineCacheConfig = cloneRuntimeSection(runtimeConfig.offlineCache, {});
+    const shareConfig = cloneRuntimeSection(runtimeConfig.share, {});
+    const fileUploadConfig = cloneRuntimeSection(runtimeConfig.fileUpload, {});
+    const authEnabled = Boolean(FEATURES.AUTH_MODULE || FEATURES.AUTH_SERVICE);
+    const offlineCacheEnabled = Boolean(FEATURES.OFFLINE_CACHE);
+    const pwaEnabled = Boolean(FEATURES.PWA || offlineCacheEnabled);
+    const networkStatusEnabled = Boolean(FEATURES.NETWORK_STATUS_MODULE || offlineCacheEnabled);
+    const syncQueueEnabled = Boolean(FEATURES.SYNC_QUEUE || offlineCacheEnabled);
+    const cacheManagerEnabled = Boolean(FEATURES.CACHE_MANAGER || offlineCacheEnabled);
 
     state.runtimeConfig = cloneRuntimeSection(runtimeConfig, {});
 
@@ -54,10 +66,13 @@ export async function loadOptionalFeatures(state, {
         windowRef
     });
 
-    if (FEATURES.PWA) {
+    if (pwaEnabled) {
         try {
             if (!window.Capacitor && !window.Neutralino && 'serviceWorker' in navigator) {
-                await navigator.serviceWorker.register('/sw.js');
+                await navigator.serviceWorker.register(offlineCacheConfig.swUrl || '/sw.js', {
+                    scope: offlineCacheConfig.scope,
+                    type: 'module'
+                });
                 console.log('[PWA] Service worker registered');
             }
         } catch (error) {
@@ -65,10 +80,19 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    if (FEATURES.NETWORK_STATUS_MODULE) {
+    if (networkStatusEnabled) {
         try {
             await moduleManager.loadModule('network-status');
             const networkStatus = serviceManager.get('networkStatus');
+            if (networkStatus) {
+                networkStatus.options = {
+                    ...(networkStatus.options || {}),
+                    ...(offlineCacheConfig.pingUrl ? { pingUrl: offlineCacheConfig.pingUrl } : {}),
+                    ...(typeof offlineCacheConfig.sampleInterval === 'number'
+                        ? { sampleInterval: offlineCacheConfig.sampleInterval }
+                        : {})
+                };
+            }
             networkStatus?.init();
             window.csma = window.csma || {};
             window.csma.networkStatus = networkStatus;
@@ -78,15 +102,14 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    if (FEATURES.AUTH_SERVICE) {
+    if (authEnabled) {
         try {
-            const { createAuthService } = await import('../services/core/AuthService.js');
-            const authService = createAuthService(eventBus, { baseUrl: apiBaseUrl });
-            serviceManager.register('auth', authService, {
-                version: '1.0.0',
-                description: 'HTTP cookie-based authentication client'
+            await moduleManager.loadModule('auth');
+            const authService = serviceManager.get('auth');
+            await authService?.init({
+                baseUrl: authConfig.baseUrl || apiBaseUrl,
+                ...authConfig
             });
-            await authService.init();
             state.authServiceRef = authService;
             channelManager.setContextResolver(() => state.authServiceRef?.getUser?.());
             state.authAccessSubscription?.();
@@ -99,8 +122,8 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    if (FEATURES.SYNC_QUEUE) {
-        if (!FEATURES.NETWORK_STATUS_MODULE) {
+    if (syncQueueEnabled) {
+        if (!networkStatusEnabled) {
             console.warn('[SyncQueue] Requires NETWORK_STATUS_MODULE feature. Skipping load.');
         } else {
             try {
@@ -187,7 +210,7 @@ export async function loadOptionalFeatures(state, {
     }
 
     if (FEATURES.AUTH_UI_MODULE) {
-        if (!FEATURES.FORM_MANAGEMENT || !FEATURES.AUTH_SERVICE) {
+        if (!FEATURES.FORM_MANAGEMENT || !authEnabled) {
             console.warn('[AuthUI] Requires FORM_MANAGEMENT and AUTH_SERVICE. Skipping load.');
         } else {
             try {
@@ -280,39 +303,75 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    if (FEATURES.ANALYTICS_MODULE || FEATURES.ANALYTICS_CONSENT) {
+    const consentEnabled = Boolean(FEATURES.CONSENT_MODULE || FEATURES.ANALYTICS_CONSENT);
+    let consentService = null;
+
+    if (consentEnabled) {
+        try {
+            await moduleManager.loadModule('consent');
+            consentService = serviceManager.get('consent');
+            consentService?.init(consentConfig);
+            window.csma = window.csma || {};
+            window.csma.consent = consentService;
+            window.csma.analyticsConsent = consentService;
+            window.csma.seoAudit = auditPage;
+            state.consentCleanup?.();
+            state.consentCleanup = initConsentUI(consentService, documentRef);
+            state.analyticsConsentCleanup = null;
+            console.log('[Consent] Consent preferences enabled');
+        } catch (error) {
+            console.warn('[Consent] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.NOTIFICATIONS_MODULE) {
+        try {
+            await moduleManager.loadModule('notifications');
+            const notifications = serviceManager.get('notifications');
+            notifications?.init({
+                consent: consentService,
+                ...notificationsConfig
+            });
+            window.csma = window.csma || {};
+            window.csma.notifications = notifications;
+            console.log('[Notifications] Notification center and browser delivery enabled');
+        } catch (error) {
+            console.warn('[Notifications] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.ANALYTICS_MODULE) {
         try {
             await moduleManager.loadModule('analytics');
-            const consentService = serviceManager.get('analyticsConsent');
             const analyticsConfig = cloneRuntimeSection(analyticsConfigBase, {});
-
-            if (FEATURES.ANALYTICS_CONSENT) {
-                window.csma = window.csma || {};
+            const analyticsService = serviceManager.get('analytics');
+            await analyticsService.init({
+                ...analyticsConfig,
+                endpoint: buildLogEndpoint(analyticsConfig.endpoint, runtimeConfig),
+                ...(consentService ? { consent: consentService } : {})
+            });
+            window.csma = window.csma || {};
+            window.csma.analytics = analyticsService;
+            if (consentService) {
                 window.csma.analyticsConsent = consentService;
-                window.csma.seoAudit = auditPage;
-                state.analyticsConsentCleanup?.();
-                state.analyticsConsentCleanup = initAnalyticsConsentUI(consentService);
             }
-
-            if (!FEATURES.ANALYTICS_MODULE) {
-                console.log('[Analytics] Consent service enabled');
-            } else {
-                const analyticsService = serviceManager.get('analytics');
-                await analyticsService.init({
-                    ...analyticsConfig,
-                    endpoint: buildLogEndpoint(analyticsConfig.endpoint, runtimeConfig),
-                    ...(FEATURES.ANALYTICS_CONSENT ? { consent: consentService } : {})
-                });
-                window.csma = window.csma || {};
-                window.csma.analytics = analyticsService;
-                if (FEATURES.ANALYTICS_CONSENT) {
-                    window.csma.analyticsConsent = consentService;
-                }
-                window.csma.seoAudit = auditPage;
-                console.log('[Analytics] Web analytics module enabled');
-            }
+            window.csma.seoAudit = auditPage;
+            console.log('[Analytics] Web analytics module enabled');
         } catch (error) {
             console.warn('[Analytics] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.SHARE_MODULE) {
+        try {
+            await moduleManager.loadModule('share');
+            const share = serviceManager.get('share');
+            share?.init(shareConfig);
+            window.csma = window.csma || {};
+            window.csma.share = share;
+            console.log('[Share] Web Share and clipboard fallback enabled');
+        } catch (error) {
+            console.warn('[Share] Failed to load module:', error);
         }
     }
 
@@ -395,6 +454,33 @@ export async function loadOptionalFeatures(state, {
             console.log('[FileSystem] Hybrid storage enabled');
         } catch (error) {
             console.warn('[FileSystem] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.FILE_UPLOAD) {
+        try {
+            await moduleManager.loadModule('file-upload');
+            const fileUpload = serviceManager.get('fileUpload');
+            const fileSystemService = serviceManager.get('fileSystem');
+            const syncQueue = serviceManager.get('syncQueue');
+            const networkStatus = serviceManager.get('networkStatus');
+            const storageAdapter = window.localStorage && {
+                getItem: (key) => localStorage.getItem(key),
+                setItem: (key, value) => localStorage.setItem(key, value),
+                removeItem: (key) => localStorage.removeItem(key)
+            };
+            await fileUpload?.init({
+                storage: storageAdapter,
+                fileSystem: fileSystemService,
+                syncQueue,
+                networkStatus,
+                ...fileUploadConfig
+            });
+            window.csma = window.csma || {};
+            window.csma.fileUpload = fileUpload;
+            console.log('[FileUpload] Resumable upload utilities enabled');
+        } catch (error) {
+            console.warn('[FileUpload] Failed to load module:', error);
         }
     }
 
@@ -481,16 +567,20 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    if (FEATURES.CACHE_MANAGER) {
+    if (cacheManagerEnabled) {
         try {
             const { createCacheManager } = await import('../services/core/CacheManager.js');
+            const cacheConfig = cloneRuntimeSection(runtimeConfig.cache, {});
             const cacheManager = createCacheManager(eventBus, {
-                backend: FEATURES.INDEXEDDB ? 'indexeddb' : 'localStorage',
-                defaultTTL: 5 * 60 * 1000,
-                maxSize: 10 * 1024 * 1024,
+                backend: cacheConfig.backend || offlineCacheConfig.backend || (FEATURES.INDEXEDDB ? 'indexeddb' : 'localStorage'),
+                defaultTTL: cacheConfig.defaultTTL || offlineCacheConfig.defaultTTL || 5 * 60 * 1000,
+                maxSize: cacheConfig.maxSize || offlineCacheConfig.maxSize || 10 * 1024 * 1024,
                 debug: import.meta.env.DEV
             });
             serviceManager.register('cacheManager', cacheManager);
+            await cacheManager.init?.();
+            window.csma = window.csma || {};
+            window.csma.cacheManager = cacheManager;
             console.log('[CacheManager] Initialized');
         } catch (error) {
             console.warn('[CacheManager] Failed to load:', error);

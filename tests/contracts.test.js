@@ -6,7 +6,10 @@ import { describe, it, expect } from 'vitest';
 import { Contracts } from '../src/runtime/Contracts.js';
 
 const moduleLoaders = [
+    ['auth', () => import('../src/modules/auth/index.js')],
     ['analytics', () => import('../src/modules/analytics/index.js')],
+    ['consent', () => import('../src/modules/consent/index.js')],
+    ['notifications', () => import('../src/modules/notifications/index.js')],
     ['camera', () => import('../src/modules/camera/index.js')],
     ['media-capture', () => import('../src/modules/media-capture/index.js')],
     ['location', () => import('../src/modules/location/index.js')],
@@ -21,6 +24,8 @@ const moduleLoaders = [
     ['search', () => import('../src/modules/search/index.js')],
     ['ai', () => import('../src/modules/ai/index.js')],
     ['file-system', () => import('../src/modules/file-system/index.js')],
+    ['file-upload', () => import('../src/modules/file-upload/index.js')],
+    ['share', () => import('../src/modules/share/index.js')],
     ['example-module', () => import('../src/modules/example-module/index.js')]
 ];
 

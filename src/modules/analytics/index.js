@@ -1,6 +1,5 @@
 import { AnalyticsService } from './services/AnalyticsService.js';
 import { AnalyticsContracts } from './contracts/analytics-contracts.js';
-import { ConsentService } from './consent/ConsentService.js';
 
 export const manifest = {
     id: 'analytics',
@@ -8,7 +7,7 @@ export const manifest = {
     version: '1.0.0',
     description: 'Web analytics tracking, batching, and flushing',
     dependencies: [],
-    services: ['analytics', 'analyticsConsent'],
+    services: ['analytics'],
     contracts: [
         'ANALYTICS_PAGE_VIEW',
         'ANALYTICS_EVENT',
@@ -25,8 +24,7 @@ export const manifest = {
 };
 
 export const services = {
-    analytics: AnalyticsService,
-    analyticsConsent: ConsentService
+    analytics: AnalyticsService
 };
 
 export const contracts = AnalyticsContracts;

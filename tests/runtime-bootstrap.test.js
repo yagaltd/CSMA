@@ -55,8 +55,10 @@ describe('runtime bootstrap', () => {
         const state = createRuntimeState();
         const allOff = {
             PWA: false,
+            OFFLINE_CACHE: false,
             CLIENT_NAVIGATION: false,
             NETWORK_STATUS_MODULE: false,
+            AUTH_MODULE: false,
             AUTH_SERVICE: false,
             SYNC_QUEUE: false,
             OPTIMISTIC_SYNC: false,
@@ -65,11 +67,176 @@ describe('runtime bootstrap', () => {
             AUTH_UI_MODULE: false,
             CHECKOUT_MODULE: false,
             DATA_TABLE_MODULE: false,
+            NOTIFICATIONS_MODULE: false,
+            SHARE_MODULE: false,
+            FILE_UPLOAD: false,
+            CONSENT_MODULE: false,
+            ANALYTICS_CONSENT: false,
+            ANALYTICS_MODULE: false,
             ANALYTICS: false,
             SEO_AUDIT: false,
         };
         await expect(
             loadOptionalFeatures(state, { FEATURES: allOff, apiBaseUrl: '', runtimeConfig: {}, pages: [] })
         ).resolves.toBeUndefined();
+    });
+
+    it('loads the consent module with the canonical feature flag', async () => {
+        const state = createRuntimeState();
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                CONSENT_MODULE: true,
+                ANALYTICS_CONSENT: false,
+                ANALYTICS_MODULE: false
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {},
+            pages: []
+        });
+
+        expect(state.serviceManager.get('consent')).toBeTruthy();
+        expect(window.csma.consent).toBe(state.serviceManager.get('consent'));
+        expect(window.csma.analyticsConsent).toBe(window.csma.consent);
+    });
+
+    it('keeps ANALYTICS_CONSENT as a legacy flag for consent loading', async () => {
+        const state = createRuntimeState();
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                CONSENT_MODULE: false,
+                ANALYTICS_CONSENT: true,
+                ANALYTICS_MODULE: false
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {},
+            pages: []
+        });
+
+        expect(state.serviceManager.get('consent')).toBeTruthy();
+        expect(window.csma.analyticsConsent).toBe(state.serviceManager.get('consent'));
+    });
+
+    it('passes consent into analytics when both modules are enabled', async () => {
+        const state = createRuntimeState();
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                CONSENT_MODULE: true,
+                ANALYTICS_CONSENT: false,
+                ANALYTICS_MODULE: true
+            },
+            apiBaseUrl: '',
+            runtimeConfig: { analytics: { endpoint: null } },
+            pages: []
+        });
+
+        expect(window.csma.analytics.analyticsConsent).toBe(window.csma.consent);
+    });
+
+    it('loads auth with the canonical feature flag and legacy alias stays off', async () => {
+        const state = createRuntimeState();
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({})
+        });
+
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                AUTH_MODULE: true,
+                AUTH_SERVICE: false
+            },
+            apiBaseUrl: 'https://api.example.test',
+            runtimeConfig: {
+                auth: {
+                    strategy: 'hybrid'
+                }
+            },
+            pages: []
+        });
+
+        expect(state.serviceManager.get('auth')).toBeTruthy();
+        expect(window.csma.auth).toBe(state.serviceManager.get('auth'));
+        expect(typeof window.csma.auth.isAuthenticated).toBe('function');
+    });
+
+    it('loads share and notifications modules through feature flags', async () => {
+        const state = createRuntimeState();
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                NOTIFICATIONS_MODULE: true,
+                SHARE_MODULE: true,
+                CONSENT_MODULE: false,
+                ANALYTICS_CONSENT: false
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {
+                notifications: { consentCategory: 'preferences' },
+                share: { toastIntent: 'INTENT_TOAST_SHOW' }
+            },
+            pages: []
+        });
+
+        expect(state.serviceManager.get('notifications')).toBeTruthy();
+        expect(state.serviceManager.get('share')).toBeTruthy();
+        expect(window.csma.notifications).toBe(state.serviceManager.get('notifications'));
+        expect(window.csma.share).toBe(state.serviceManager.get('share'));
+    });
+
+    it('loads file upload with optional dependencies when enabled', async () => {
+        const state = createRuntimeState();
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                FILE_UPLOAD: true,
+                FILE_SYSTEM: false,
+                SYNC_QUEUE: false,
+                NETWORK_STATUS_MODULE: false
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {},
+            pages: []
+        });
+
+        expect(state.serviceManager.get('fileUpload')).toBeTruthy();
+        expect(window.csma.fileUpload).toBe(state.serviceManager.get('fileUpload'));
+    });
+
+    it('loads the composed offline/cache stack with OFFLINE_CACHE', async () => {
+        const state = createRuntimeState();
+        const originalNavigator = global.navigator;
+        Object.defineProperty(global, 'navigator', {
+            configurable: true,
+            value: {
+                onLine: true
+            }
+        });
+
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                OFFLINE_CACHE: true,
+                PWA: false,
+                NETWORK_STATUS_MODULE: false,
+                SYNC_QUEUE: false,
+                CACHE_MANAGER: false,
+                INDEXEDDB: false
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {
+                offlineCache: {
+                    sampleInterval: 0,
+                    backend: 'memory'
+                }
+            },
+            pages: []
+        });
+
+        expect(state.serviceManager.get('networkStatus')).toBeTruthy();
+        expect(state.serviceManager.get('syncQueue')).toBeTruthy();
+        expect(state.serviceManager.get('cacheManager')).toBeTruthy();
+        expect(window.csma.cacheManager).toBe(state.serviceManager.get('cacheManager'));
+
+        Object.defineProperty(global, 'navigator', {
+            configurable: true,
+            value: originalNavigator
+        });
     });
 });
