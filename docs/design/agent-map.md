@@ -20,7 +20,7 @@ Use this map to understand:
 2. `docs/design/SKILL.md`
 3. Root planning artifacts already created for the project:
    `DESIGN.md`, `project-manifest.json`, `SITE.md`, `APP.md`, `pages/*.md`,
-   `flows/*.md`, `animations/*.md`, `VIDEO.md`
+   `flows/*.md`, `animations/*.md`
 4. This file
 5. Only then read raw source files if blocked
 

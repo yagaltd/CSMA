@@ -1,6 +1,6 @@
 ---
 name: csma-product-planning
-description: Orchestrate CSMA product planning before implementation. Use when the user asks to build a website, landing page, app, page, route, navigation system, or critical flow such as checkout, contact, onboarding, auth, legal, consent, animation, or video.
+description: Orchestrate CSMA product planning before implementation. Use when the user asks to build a website, landing page, app, page, route, navigation system, or critical flow such as checkout, contact, onboarding, auth, legal, consent, or animation.
 ---
 
 <!-- version: 1.0.0 | tags: planning, website, app, pages, flows, IA, navigation -->
@@ -16,7 +16,7 @@ The goal is to choose the smallest useful planning artifacts before token edits
 and implementation begin. Do not put the whole product into `DESIGN.md`.
 
 `DESIGN.md` owns the reusable visual system. Product planning owns page, route,
-navigation, content, flow, and production-media structure.
+navigation, content, flow, and runtime motion structure.
 
 ## Required Reading
 
@@ -40,8 +40,6 @@ Read these in order:
 | `pages/404.md` | Recovery content and escape paths for not-found routes. | Public multi-page sites and hybrid public surfaces. |
 | `flows/<flow>.md` | Multi-step behavior, validation, async states, errors, EventBus/Contracts plan. | Checkout, onboarding, contact, auth, upload, payment, consent. |
 | `animations/<animation>.md` | Runtime motion plan: splash, route transition, app-shell transition, reusable reveal, or state sequence. | Reusable, cross-page, or sequenced animation beyond a page-level motion note. |
-| `VIDEO.md` | Production-media brief: format, duration, audience, source pages, message, CTA. | Promo, launch, explainer, product-demo, or social video. |
-| `storyboards/<video>.md` | Beat-by-beat video direction: timing, assets, camera, transitions, captions, validation shots. | Any video needing more than a static export. |
 
 Tiny one-page sites may use only `DESIGN.md` plus `pages/landing.md`. Larger
 sites should not put every page and section into `DESIGN.md`.
@@ -65,7 +63,7 @@ sites should not put every page and section into `DESIGN.md`.
 12. Create `pages/404.md` for public multi-page sites.
 13. Create flow specs under `flows/`.
 14. Decide motion level: `none`, `micro`, `section`, `runtime sequence`,
-   `scroll`, or `video`.
+   or `scroll`.
 15. Create animation specs under `animations/` only when motion is reusable,
    cross-page, or sequence-based.
 16. Define what becomes Type I vs Type II.
@@ -203,14 +201,12 @@ V1 rules:
 | Add or revise not-found handling | `pages/404.md`, route recovery notes in `SITE.md` or `APP.md`, and the implementation target matching the chosen delivery mode |
 | Animate a page | Page motion section; add `animations/<animation>.md` only for reusable or sequenced runtime motion, then use `docs/animation/SKILL.md` for implementation |
 | Add splash screen or route transition | `animations/splash.md` or `animations/route-transition.md`, plus related page/app/flow notes, then use `docs/animation/SKILL.md` |
-| Make a product video | `VIDEO.md`, `storyboards/product-video.md`, then use `docs/video/SKILL.md` for production |
-| Turn a website into a video | `docs/design-import/SKILL.md`, `VIDEO.md`, `storyboards/<video>.md`, then use `docs/video/SKILL.md` |
 
-## Motion And Video
+## Motion
 
 Ask one concise planning question:
 
-> Is motion or video part of the user goal?
+> Is runtime motion part of the user goal?
 
 | Decision | Use when | Artifact | Implementation bias |
 |:--|:--|:--|:--|
@@ -219,7 +215,6 @@ Ask one concise planning question:
 | `section` | Hero reveal, feature rows, metrics, page entrance. | `pages/<page>.md` motion section. | CSS first; optional GSAP only for sequencing. |
 | `runtime sequence` | Splash screen, route transition, onboarding step transition, reusable reveal system. | `animations/<animation>.md`. | CSS first; optional GSAP only when timeline control is justified. |
 | `scroll` | Scroll narrative, pinned panels, scrubbed reveal. | `pages/<page>.md` motion section or `animations/<animation>.md` when reusable. | Optional GSAP ScrollTrigger; reduced-motion fallback required. |
-| `video` | Promo, launch, product demo, social ad, explainer. | `VIDEO.md` and `storyboards/<video>.md`. | External video workflow; not CSMA runtime. |
 
 Motion rules:
 
@@ -230,8 +225,6 @@ Motion rules:
 | Use CSS for simple motion. | Avoids dependency weight and inline-style side effects. |
 | Escalate to GSAP only for sequencing, scroll, SVG, or runtime control. | Keeps advanced animation optional and justified. |
 | Respect `prefers-reduced-motion`. | Page-level motion needs an accessible alternative. |
-| Keep video outside runtime. | Video tooling has different dependencies and output. |
-
 ## Type I / Type II
 
 | Behavior | CSMA type | Rule |
@@ -257,8 +250,6 @@ Use these templates when creating artifacts:
 | `pages/cookies.md` | `docs/product-planning/templates/cookies.md` |
 | `flows/<flow>.md` | `docs/product-planning/templates/flow.md` |
 | `animations/<animation>.md` | `docs/product-planning/templates/animation.md` |
-| `VIDEO.md` | `docs/product-planning/templates/VIDEO.md` |
-| `storyboards/<video>.md` | `docs/product-planning/templates/storyboard.md` |
 
 Copy the relevant template and fill only the sections needed for the user's
 request.
@@ -275,15 +266,14 @@ Before writing code, summarize:
 6. Delivery mode decisions and route ownership.
 7. Content readiness: provided, missing, placeholder-safe.
 8. Critical flows and Type II behavior.
-9. Motion/video decision, including any `animations/<animation>.md` artifact.
+9. Motion decision, including any `animations/<animation>.md` artifact.
 10. Token branches likely to change.
 11. Verification plan, including `npm run verify:frontend-routes` for public multi-page work.
 
 Then continue with token edits and implementation unless the user asked only for
 planning.
 
-For runtime motion implementation, continue with `docs/animation/SKILL.md`. For
-video production or website-to-video work, continue with `docs/video/SKILL.md`.
+For runtime motion implementation, continue with `docs/animation/SKILL.md`.
 
 ## Guardrails
 

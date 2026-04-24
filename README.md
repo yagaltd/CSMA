@@ -114,17 +114,16 @@ Then use product planning when the request is bigger than token/style work:
 |-----------|-------------|
 | Landing page, website, app, navigation, routes, pages, or critical flows | `docs/product-planning/SKILL.md` |
 | Runtime animation, splash screen, route transition, or scroll motion | `docs/animation/SKILL.md` after product planning |
-| Generated video, product promo, explainer, or website-to-video output | `docs/video/SKILL.md` after product planning |
+| Existing video asset integration | `docs/video/SKILL.md` |
 
 Recommended flow:
 
 1. Run the demo app as a smoke test.
 2. Choose design path: from scratch or import.
 3. Choose product planning path: landing page, website, app, page, flow,
-   animation, or video.
+   or animation.
 4. Create only the needed artifacts: `DESIGN.md`, `SITE.md`, `APP.md`,
-   `pages/*.md`, `flows/*.md`, `animations/*.md`, `VIDEO.md`, or
-   `storyboards/*.md`.
+   `pages/*.md`, `flows/*.md`, or `animations/*.md`.
 5. Create or update `project-manifest.json` with the product type, public web
    presence, route inventory, organization metadata, and canonical module ids.
 6. Run `npm run generate-project-artifacts` to scaffold legal drafts and public
@@ -150,7 +149,6 @@ Product planning keeps concerns separate:
 | `pages/*.md` | Page sections, content, layout, CTAs, motion |
 | `flows/*.md` | Multi-step behavior, validation, events, persistence, failures |
 | `animations/*.md` | Runtime motion plans: splash, route transition, reusable sequence |
-| `VIDEO.md` / `storyboards/*.md` | Optional production-media planning |
 
 `demo/` is not a required scaffold for your production app. You can either:
 
@@ -168,6 +166,12 @@ Delivery contract:
 - `spa`: client-routed surfaces use the optional `router` module
 - `hybrid`: public routes stay static while app routes use the router module
 - do not mix public HTML routes with JS `export const html = ...` page modules
+
+Video boundary:
+
+- video briefs, storyboards, and new promo/explainer asset creation are not default CSMA planning artifacts
+- CSMA may integrate an existing video asset into the site/app
+- handle new video content planning upstream, then pass the finished brief or asset into implementation
 
 ## Manifest-Driven Legal And SEO Scaffolding
 
