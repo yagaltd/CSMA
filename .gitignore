@@ -14,6 +14,7 @@ dist/
 
 # Testing
 coverage/
+output/
 
 # Build artifacts
 *.tsbuildinfo

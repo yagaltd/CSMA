@@ -231,7 +231,12 @@ export async function destroyRuntimeState(state, { destroyApp }) {
         auth: null,
         runtimeConfig: null,
         analytics: null,
+        consent: null,
         analyticsConsent: null,
+        notifications: null,
+        share: null,
+        fileUpload: null,
+        cacheManager: null,
         diagnose: () => null,
         seoAudit: () => null,
         destroyApp

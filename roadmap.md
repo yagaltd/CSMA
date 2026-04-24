@@ -7,7 +7,7 @@ CSMA is a design-token-first vanilla JS template with a modular runtime.
 **Runtime (stable):**
 - EventBus, Contracts, ServiceManager, ModuleManager
 - Router, RateLimiter, ErrorBoundary, CrossTabLeader
-- 20 feature modules
+- 26 feature modules
 
 **UI (starter set):**
 - Badge, Button, Toast
@@ -28,15 +28,37 @@ SSR and SSG are out of scope. CSMA is CSR by design.
 
 Modules every web app needs.
 
-| Module | What it does | Key APIs |
-|--------|-------------|----------|
-| **Auth** | JWT login, register, refresh, logout. Social OAuth (Google, GitHub). Session persistence. | `fetch`, `localStorage`, Web Crypto |
-| **Notifications** | Web push notifications. Permission handling. In-app notification center. | Push API, Notification API |
-| **Offline / Cache** | Cache strategies (cache-first, network-first). Background sync. Offline indicator. | Service Worker, Cache API, Background Sync |
-| **Share** | Web Share API. Copy-to-clipboard fallback. | Web Share API, Clipboard API |
-| **File Upload** | Resumable uploads, progress tracking, drag-drop. Chunked upload for large files. | `fetch`, `FileReader`, `FormData` |
+| Module | Status | What it does | Key APIs |
+|--------|--------|-------------|----------|
+| **Auth** | Done: v1 module implemented | JWT login, register, refresh, logout. Backend-mediated OAuth. Session persistence. | `fetch`, Web Storage, EventBus |
+| **Notifications** | Done: v1 module implemented | Web push notifications. Permission handling. In-app notification center. | Push API, Notification API |
+| **Offline / Cache** | Done: v1 composed stack implemented | Cache strategies (cache-first, network-first). Background sync fallback. Offline indicator. | Service Worker, Cache API, Background Sync |
+| **Share** | Done: v1 module implemented | Web Share API. Copy-to-clipboard fallback. | Web Share API, Clipboard API |
+| **File Upload** | Done: v1 module implemented | Resumable uploads, progress tracking, drag-drop. Chunked upload for large files. | `fetch`, `Blob`, `FormData` |
+| **Consent** | Done: v1 implemented | Cookie, terms, privacy, analytics, and preference consent with banner/modal UI patterns. Coordinates with analytics gating without owning legal copy. | `localStorage`, EventBus, Contracts |
+
+### Phase 1 Coverage Audit
+
+| Area | Existing coverage | Gap before implementation |
+|------|-------------------|---------------------------|
+| Auth | `src/modules/auth/` now owns hybrid cookie/session, JWT access-token, and backend-mediated OAuth flows. Legacy `src/services/core/AuthService.js` delegates to the module. | Optional future work: app-specific OAuth provider examples and login form templates. |
+| Notifications | `src/modules/notifications/` now owns explicit permission requests, push subscription, in-app notification center state, and consent gating. | Optional future work: app-specific center layouts and service-worker push event examples. |
+| Offline / Cache | `network-status`, `sync-queue`, `storage`, `CacheManager`, `FEATURES.OFFLINE_CACHE`, and `public/sw.js` form the composed offline/cache stack. | Optional future work: browser-level offline smoke tests and app-specific precache recipes. |
+| Share | `src/modules/share/` now owns Web Share API calls, clipboard fallback, safe URL validation, and share contracts. | Optional future work: toolbar/menu share button examples. |
+| File Upload | `src/modules/file-upload/` now owns validation, chunked/resumable upload policy, progress events, pause/resume/cancel/retry, and thin UI helpers. Legacy upload service delegates to the module. | Optional future work: backend adapter examples for chunk commit/finalize protocols. |
+| Consent | `src/modules/consent/` now owns generic consent categories, banner/modal UI, storage migration, analytics compatibility, and tests. | Optional future work: sticky/banner variants and app-specific legal copy examples. |
+
+### Phase 1 Additional
+1. Add demo examples for login form, notification center trigger, share button, and upload
+   drop zone.
+2. Add browser-level smoke coverage for /sw.js registration and offline shell behavior.
+3. Commit this in two chunks: existing consent/module README work first, then Phase 1
+   modules.
+
 
 ## Phase 2 — Engagement (Q3)
+
+Research Airwallexjs to add another option for payments below: https://www.airwallex.com/docs/developer-tools/sdks/airwallex.js.md
 
 | Module | What it does | Key APIs |
 |--------|-------------|----------|

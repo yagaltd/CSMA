@@ -11,6 +11,9 @@ export class CacheManager {
         this.defaultTTL = options.defaultTTL || 5 * 60 * 1000; // 5 minutes
         this.maxSize = options.maxSize || 10 * 1024 * 1024; // 10MB
         this.debug = options.debug ?? false;
+        this.initialized = false;
+        this.destroyed = false;
+        this._initPromise = null;
 
         // Initialize storage backend
         this.storage = this.createBackend(this.backend, options.storageOptions);
@@ -27,6 +30,50 @@ export class CacheManager {
             deletes: 0,
             invalidations: 0
         };
+    }
+
+    async init() {
+        if (this.destroyed) {
+            this.destroyed = false;
+        }
+
+        if (this.initialized) {
+            return this;
+        }
+
+        if (!this._initPromise) {
+            this._initPromise = (async () => {
+                if (typeof this.storage.init === 'function') {
+                    await this.storage.init();
+                }
+                this.initialized = true;
+                return this;
+            })().finally(() => {
+                this._initPromise = null;
+            });
+        }
+
+        return this._initPromise;
+    }
+
+    async destroy() {
+        if (this.destroyed) {
+            return;
+        }
+
+        this.destroyed = true;
+
+        try {
+            if (typeof this.storage.destroy === 'function') {
+                await this.storage.destroy();
+            } else if (typeof this.storage.close === 'function') {
+                await this.storage.close();
+            }
+        } finally {
+            this.memoryCache.clear();
+            this.ttls.clear();
+            this.initialized = false;
+        }
     }
 
     createBackend(type, options) {
@@ -46,31 +93,25 @@ export class CacheManager {
      * Get value from cache
      */
     async get(key) {
-        // Check memory cache first
-        if (this.memoryCache.has(key)) {
-            if (!this.isExpired(key)) {
-                this.stats.hits++;
-                this.log('Cache hit (memory):', key);
-                return this.memoryCache.get(key);
-            } else {
-                // Expired in memory
-                this.memoryCache.delete(key);
-                this.ttls.delete(key);
-            }
+        await this.init();
+
+        const result = await this._read(key);
+
+        if (result.hit) {
+            this._publish('CACHE_HIT', {
+                key,
+                source: result.source,
+                ttlRemaining: result.ttlRemaining,
+                timestamp: Date.now()
+            });
+            return result.value;
         }
 
-        // Check persistent storage
-        const value = await this.storage.get(key);
+        this._publish('CACHE_MISS', {
+            key,
+            timestamp: Date.now()
+        });
 
-        if (value !== undefined && !this.isExpired(key)) {
-            this.stats.hits++;
-            this.memoryCache.set(key, value); // Promote to memory
-            this.log('Cache hit (storage):', key);
-            return value;
-        }
-
-        this.stats.misses++;
-        this.log('Cache miss:', key);
         return undefined;
     }
 
@@ -78,19 +119,24 @@ export class CacheManager {
      * Set value in cache
      */
     async set(key, value, ttl = this.defaultTTL) {
+        await this.init();
+
+        const expiresAt = this.resolveExpiry(ttl);
+
         // Store in memory
         this.memoryCache.set(key, value);
-        this.ttls.set(key, Date.now() + ttl);
+        this.ttls.set(key, expiresAt);
 
         // Store in persistent backend
         await this.storage.set(key, value);
 
         this.stats.sets++;
 
-        this.eventBus.publish('CACHE_SET', {
+        this._publish('CACHE_SET', {
             key,
             ttl,
             size: this.estimateSize(value),
+            expiresAt,
             timestamp: Date.now()
         });
 
@@ -101,6 +147,8 @@ export class CacheManager {
      * Delete value from cache
      */
     async delete(key) {
+        await this.init();
+
         this.memoryCache.delete(key);
         this.ttls.delete(key);
         await this.storage.delete(key);
@@ -113,6 +161,8 @@ export class CacheManager {
      * Fetch with caching strategy
      */
     async fetch(key, fetcher, options = {}) {
+        await this.init();
+
         const {
             ttl = this.defaultTTL,
             strategy = 'cache-first'
@@ -136,18 +186,19 @@ export class CacheManager {
      * Cache-first: Return cached, fetch if miss
      */
     async cacheFirst(key, fetcher, ttl) {
-        const cached = await this.get(key);
+        const cached = await this._read(key);
 
-        if (cached !== undefined) {
-            this.eventBus.publish('CACHE_HIT', {
+        if (cached.hit) {
+            this._publish('CACHE_HIT', {
                 key,
                 strategy: 'cache-first',
+                source: cached.source,
                 timestamp: Date.now()
             });
-            return cached;
+            return cached.value;
         }
 
-        this.eventBus.publish('CACHE_MISS', {
+        this._publish('CACHE_MISS', {
             key,
             strategy: 'cache-first',
             timestamp: Date.now()
@@ -166,7 +217,7 @@ export class CacheManager {
             const fresh = await fetcher();
             await this.set(key, fresh, ttl);
 
-            this.eventBus.publish('CACHE_MISS', {
+            this._publish('CACHE_MISS', {
                 key,
                 strategy: 'network-first',
                 timestamp: Date.now()
@@ -175,17 +226,18 @@ export class CacheManager {
             return fresh;
         } catch (error) {
             // Network failed, try cache
-            const cached = await this.get(key);
+            const cached = await this._read(key);
 
-            if (cached !== undefined) {
+            if (cached.hit) {
                 this.log('Network failed, using stale cache:', key);
-                this.eventBus.publish('CACHE_HIT', {
+                this._publish('CACHE_HIT', {
                     key,
                     strategy: 'network-first',
                     stale: true,
+                    source: cached.source,
                     timestamp: Date.now()
                 });
-                return cached;
+                return cached.value;
             }
 
             throw error;
@@ -196,28 +248,29 @@ export class CacheManager {
      * Stale-while-revalidate: Return cache, update in background
      */
     async staleWhileRevalidate(key, fetcher, ttl) {
-        const cached = await this.get(key);
+        const cached = await this._read(key);
 
         // Revalidate in background (don't await)
         fetcher()
             .then(fresh => this.set(key, fresh, ttl))
             .catch(err => this.log('Background revalidation failed:', err));
 
-        if (cached !== undefined) {
-            this.eventBus.publish('CACHE_HIT', {
+        if (cached.hit) {
+            this._publish('CACHE_HIT', {
                 key,
                 strategy: 'stale-while-revalidate',
                 revalidating: true,
+                source: cached.source,
                 timestamp: Date.now()
             });
-            return cached;
+            return cached.value;
         }
 
         // No cache, wait for fresh
         const fresh = await fetcher();
         await this.set(key, fresh, ttl);
 
-        this.eventBus.publish('CACHE_MISS', {
+        this._publish('CACHE_MISS', {
             key,
             strategy: 'stale-while-revalidate',
             timestamp: Date.now()
@@ -230,8 +283,10 @@ export class CacheManager {
      * Invalidate cache by pattern
      */
     async invalidate(pattern) {
+        await this.init();
+
         const regex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
-        const keys = await this.storage.keys();
+        const keys = await this._keys();
         let count = 0;
 
         for (const key of keys) {
@@ -243,7 +298,7 @@ export class CacheManager {
 
         this.stats.invalidations++;
 
-        this.eventBus.publish('CACHE_INVALIDATED', {
+        this._publish('CACHE_INVALIDATED', {
             pattern: pattern.toString(),
             count,
             timestamp: Date.now()
@@ -256,9 +311,20 @@ export class CacheManager {
      * Clear all cache
      */
     async clear() {
+        await this.init();
+
+        const keys = await this._keys();
         this.memoryCache.clear();
         this.ttls.clear();
         await this.storage.clear();
+
+        this.stats.invalidations++;
+        this._publish('CACHE_INVALIDATED', {
+            pattern: '*',
+            count: keys.length,
+            reason: 'clear',
+            timestamp: Date.now()
+        });
 
         this.log('Cache cleared');
     }
@@ -269,6 +335,70 @@ export class CacheManager {
     isExpired(key) {
         const expiry = this.ttls.get(key);
         return expiry ? Date.now() > expiry : false;
+    }
+
+    resolveExpiry(ttl) {
+        const duration = Number.isFinite(ttl) ? Math.max(0, ttl) : this.defaultTTL;
+        return Date.now() + duration;
+    }
+
+    async _read(key) {
+        let expired = false;
+
+        if (this.memoryCache.has(key)) {
+            if (!this.isExpired(key)) {
+                this.stats.hits++;
+                this.log('Cache hit (memory):', key);
+                return {
+                    hit: true,
+                    source: 'memory',
+                    value: this.memoryCache.get(key),
+                    ttlRemaining: this._ttlRemaining(key)
+                };
+            }
+
+            this.memoryCache.delete(key);
+            expired = true;
+        }
+
+        const value = await this.storage.get(key);
+
+        if (value !== undefined) {
+            if (!expired && !this.isExpired(key)) {
+                this.stats.hits++;
+                this.memoryCache.set(key, value);
+                this.log('Cache hit (storage):', key);
+                return {
+                    hit: true,
+                    source: 'storage',
+                    value,
+                    ttlRemaining: this._ttlRemaining(key)
+                };
+            }
+
+            await this.storage.delete(key);
+            this.memoryCache.delete(key);
+            this.ttls.delete(key);
+        }
+
+        this.stats.misses++;
+        this.log('Cache miss:', key);
+        return { hit: false, source: 'miss', value: undefined, ttlRemaining: 0 };
+    }
+
+    async _keys() {
+        const storageKeys = typeof this.storage.keys === 'function' ? await this.storage.keys() : [];
+        const keys = new Set([...storageKeys, ...this.memoryCache.keys()]);
+        return Array.from(keys);
+    }
+
+    _ttlRemaining(key) {
+        const expiry = this.ttls.get(key);
+        return expiry ? Math.max(0, expiry - Date.now()) : 0;
+    }
+
+    _publish(eventName, payload) {
+        this.eventBus?.publish?.(eventName, payload);
     }
 
     /**
@@ -339,12 +469,30 @@ class LocalStorageBackend {
     }
 
     async get(key) {
+        if (typeof localStorage === 'undefined') {
+            return undefined;
+        }
+
         const item = localStorage.getItem(this.prefix + key);
-        return item ? JSON.parse(item) : undefined;
+
+        if (item === null) {
+            return undefined;
+        }
+
+        try {
+            return JSON.parse(item);
+        } catch (error) {
+            localStorage.removeItem(this.prefix + key);
+            return undefined;
+        }
     }
 
     async set(key, value) {
         try {
+            if (typeof localStorage === 'undefined') {
+                return;
+            }
+
             localStorage.setItem(this.prefix + key, JSON.stringify(value));
         } catch (error) {
             // Quota exceeded
@@ -353,10 +501,18 @@ class LocalStorageBackend {
     }
 
     async delete(key) {
+        if (typeof localStorage === 'undefined') {
+            return;
+        }
+
         localStorage.removeItem(this.prefix + key);
     }
 
     async keys() {
+        if (typeof localStorage === 'undefined') {
+            return [];
+        }
+
         const keys = [];
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -369,7 +525,7 @@ class LocalStorageBackend {
 
     async clear() {
         const keys = await this.keys();
-        keys.forEach(key => this.delete(key));
+        await Promise.all(keys.map(key => this.delete(key)));
     }
 }
 
@@ -387,16 +543,6 @@ class IndexedDBBackend {
     async init() {
         if (this.db) return;
 
-        // Use Storage.js if available
-        if (typeof window !== 'undefined' && window.serviceManager) {
-            const storage = window.serviceManager.get('storage');
-            if (storage) {
-                this.db = storage;
-                return;
-            }
-        }
-
-        // Fallback: simple IndexedDB wrapper
         this.db = await this.openDB();
     }
 
@@ -418,29 +564,77 @@ class IndexedDBBackend {
 
     async get(key) {
         await this.init();
-        // Implementation depends on Storage.js structure
-        // Simplified for now
-        return undefined;
+
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction(this.storeName, 'readonly');
+            const store = tx.objectStore(this.storeName);
+            const request = store.get(key);
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => resolve(request.result);
+        });
     }
 
     async set(key, value) {
         await this.init();
-        // Implementation
+
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction(this.storeName, 'readwrite');
+            const store = tx.objectStore(this.storeName);
+            const request = store.put(value, key);
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => resolve();
+        });
     }
 
     async delete(key) {
         await this.init();
-        // Implementation
+
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction(this.storeName, 'readwrite');
+            const store = tx.objectStore(this.storeName);
+            const request = store.delete(key);
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => resolve();
+        });
     }
 
     async keys() {
         await this.init();
-        return [];
+
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction(this.storeName, 'readonly');
+            const store = tx.objectStore(this.storeName);
+            const request = store.openCursor();
+            const keys = [];
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) {
+                    keys.push(cursor.key);
+                    cursor.continue();
+                    return;
+                }
+
+                resolve(keys);
+            };
+        });
     }
 
     async clear() {
         await this.init();
-        // Implementation
+
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction(this.storeName, 'readwrite');
+            const store = tx.objectStore(this.storeName);
+            const request = store.clear();
+
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => resolve();
+        });
     }
 }
 

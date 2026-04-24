@@ -12,6 +12,13 @@ describe('demo surface quality', () => {
     expect(todoHtml).not.toContain('role="tab"');
   });
 
+  it('includes interactive Phase 1 module examples', () => {
+    expect(todoHtml).toContain('data-auth-demo-form');
+    expect(todoHtml).toContain('data-notifications-center-shell');
+    expect(todoHtml).toContain('data-share-trigger');
+    expect(todoHtml).toContain('data-upload-dropzone');
+  });
+
   it('uses token-driven CSS', () => {
     expect(todoCss).toContain('var(--');
     expect(todoCss).not.toContain('#fff');

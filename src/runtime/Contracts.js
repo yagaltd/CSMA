@@ -21,6 +21,10 @@ import { AIContracts } from '../modules/ai/contracts/ai-contracts.js';
 import { ExampleModuleContracts } from '../modules/example-module/contracts/example-contracts.js';
 import { AnalyticsContracts } from '../modules/analytics/contracts/analytics-contracts.js';
 import { ConsentContracts } from '../modules/consent/contracts/consent-contracts.js';
+import { AuthContracts } from '../modules/auth/contracts/auth-contracts.js';
+import { NotificationsContracts } from '../modules/notifications/contracts/notifications-contracts.js';
+import { ShareContracts } from '../modules/share/contracts/share-contracts.js';
+import { FileUploadContracts } from '../modules/file-upload/contracts/file-upload-contracts.js';
 
 /**
  * Helper function for creating contracts with full ECCA metadata
@@ -218,6 +222,76 @@ const CoreContracts = {
 
         schema: object({
             fileId: string(),
+            timestamp: number()
+        })
+    },
+
+    CACHE_SET: {
+        version: 1,
+        type: 'event',
+        owner: 'cache-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Published when a cache entry is written',
+
+        schema: object({
+            key: string(),
+            ttl: number(),
+            size: number(),
+            timestamp: number()
+        })
+    },
+
+    CACHE_HIT: {
+        version: 1,
+        type: 'event',
+        owner: 'cache-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Published when a cache strategy returns a cached entry',
+
+        schema: object({
+            key: string(),
+            strategy: optional(string()),
+            source: optional(string()),
+            ttlRemaining: optional(number()),
+            stale: optional(boolean()),
+            revalidating: optional(boolean()),
+            timestamp: number()
+        })
+    },
+
+    CACHE_MISS: {
+        version: 1,
+        type: 'event',
+        owner: 'cache-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Published when a cache strategy falls back to a fresh value',
+
+        schema: object({
+            key: string(),
+            strategy: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    CACHE_INVALIDATED: {
+        version: 1,
+        type: 'event',
+        owner: 'cache-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Published when cache entries are invalidated by pattern',
+
+        schema: object({
+            pattern: string(),
+            count: number(),
+            reason: optional(string()),
             timestamp: number()
         })
     },
@@ -1577,6 +1651,10 @@ export const Contracts = {
     ...ExampleModuleContracts,
     ...ConsentContracts,
     ...AnalyticsContracts,
+    ...AuthContracts,
+    ...NotificationsContracts,
+    ...ShareContracts,
+    ...FileUploadContracts,
 
     // Developer Logs
     LOG_ENTRY: {

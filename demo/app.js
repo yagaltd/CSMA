@@ -1,4 +1,13 @@
 import { EventBus } from '../src/runtime/EventBus.js';
+import { Contracts } from '../src/runtime/Contracts.js';
+import { createAuthService } from '../src/modules/auth/index.js';
+import { createNotificationsService } from '../src/modules/notifications/index.js';
+import { initNotificationsCenter } from '../src/modules/notifications/ui/notifications-center.js';
+import { createShareService } from '../src/modules/share/index.js';
+import { createFileUploadService } from '../src/modules/file-upload/index.js';
+import { createFileUploadDropZone } from '../src/modules/file-upload/ui/drop-zone.js';
+import { createFileUploadList } from '../src/modules/file-upload/ui/file-list.js';
+import { initToastSystem } from '../src/ui/components/toast/toast.js';
 import { initTodoApp } from './todo-app.js';
 
 const STORAGE_KEY = 'csma.todo-app';
@@ -9,11 +18,11 @@ const FALLBACK_SEED = [
   { title: 'Wireframe dashboard empty states', completed: true, priority: 'low' },
   { title: 'Prepare accessibility checklist', completed: false, priority: 'high' }
 ];
+const DEMO_AUTH_KEY = 'csma.demo.auth.session';
 
-/* ── EventBus ──────────────────────────────────────────────── */
 const eventBus = new EventBus();
+eventBus.contracts = Contracts;
 
-/* ── Theme toggle ──────────────────────────────────────────── */
 const THEMES = ['light', 'dark', 'contrast'];
 const THEME_LABELS = { light: 'Light', dark: 'Dark', contrast: 'Contrast' };
 
@@ -54,7 +63,6 @@ function bindThemeToggles() {
   });
 }
 
-/* ── Todo Service (state + persistence) ────────────────────── */
 function createTodoService(bus) {
   let filter = 'all';
   let todos = loadTodos();
@@ -153,11 +161,11 @@ function createTodoService(bus) {
 
   function persist() {
     try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(todos)); }
-    catch (e) { console.warn('[todo] persist failed', e); }
+    catch (error) { console.warn('[todo] persist failed', error); }
   }
 
-  function track(msg) {
-    activity = [{ message: msg, timestamp: Date.now() }, ...activity].slice(0, 6);
+  function track(message) {
+    activity = [{ message, timestamp: Date.now() }, ...activity].slice(0, 6);
   }
 
   return function teardown() {
@@ -165,7 +173,6 @@ function createTodoService(bus) {
   };
 }
 
-/* ── Helpers ───────────────────────────────────────────────── */
 function loadTodos() {
   for (const key of [STORAGE_KEY, ...LEGACY_KEYS]) {
     try {
@@ -174,33 +181,42 @@ function loadTodos() {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) return normalize(parsed);
       }
-    } catch { /* ignore */ }
+    } catch {}
   }
   return normalize(FALLBACK_SEED);
 }
 
 function normalize(items) {
   const now = Date.now();
-  return items.map((item, i) => ({
-    id: item.id || uid(now + '-' + i),
-    title: sanitize(item.title) || `Todo ${i + 1}`,
+  return items.map((item, index) => ({
+    id: item.id || uid(now + '-' + index),
+    title: sanitize(item.title) || `Todo ${index + 1}`,
     completed: Boolean(item.completed),
-    createdAt: item.createdAt || now - i * 3600000,
-    updatedAt: item.updatedAt || now - i * 1800000,
-    priority: item.priority || ['low', 'medium', 'high'][i % 3],
+    createdAt: item.createdAt || now - index * 3600000,
+    updatedAt: item.updatedAt || now - index * 1800000,
+    priority: item.priority || ['low', 'medium', 'high'][index % 3],
   }));
 }
 
 function buildStats(todos) {
   const total = todos.length;
   const completed = todos.filter((t) => t.completed).length;
-  return { total, completed, active: total - completed, completionRate: total ? Math.round((completed / total) * 100) : 0 };
+  return {
+    total,
+    completed,
+    active: total - completed,
+    completionRate: total ? Math.round((completed / total) * 100) : 0
+  };
 }
 
 function buildInsights(todos, stats) {
   const focus = todos.find((t) => !t.completed);
   const last = [...todos].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0))[0];
-  return { completionRate: stats.completionRate, focusTask: focus?.title || 'All caught up', lastUpdated: last?.updatedAt || null };
+  return {
+    completionRate: stats.completionRate,
+    focusTask: focus?.title || 'All caught up',
+    lastUpdated: last?.updatedAt || null
+  };
 }
 
 function sanitize(text) {
@@ -214,12 +230,423 @@ function uid(seed) {
   return 'todo-' + (seed || Date.now()) + '-' + Math.random().toString(16).slice(2);
 }
 
-/* ── Boot ──────────────────────────────────────────────────── */
+function safeJsonResponse(payload, status = 200) {
+  return new Response(JSON.stringify(payload), {
+    status,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}
+
+function safeEmptyResponse() {
+  return new Response(null, { status: 204 });
+}
+
+function readDemoSession() {
+  try {
+    const raw = window.localStorage.getItem(DEMO_AUTH_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeDemoSession(session) {
+  try {
+    if (!session) {
+      window.localStorage.removeItem(DEMO_AUTH_KEY);
+      return;
+    }
+    window.localStorage.setItem(DEMO_AUTH_KEY, JSON.stringify(session));
+  } catch {}
+}
+
+function installDemoAuthBackend() {
+  const nativeFetch = globalThis.fetch?.bind(globalThis);
+
+  globalThis.fetch = async (input, init = {}) => {
+    const requestUrl = new URL(typeof input === 'string' ? input : input.url, window.location.origin);
+
+    if (!requestUrl.pathname.startsWith('/demo-auth/')) {
+      if (!nativeFetch) {
+        throw new Error(`Unhandled fetch request for ${requestUrl.pathname}`);
+      }
+      return nativeFetch(input, init);
+    }
+
+    const method = (init.method || 'GET').toUpperCase();
+    const body = init.body ? JSON.parse(init.body) : {};
+    const session = readDemoSession();
+
+    if (requestUrl.pathname === '/demo-auth/me' && method === 'GET') {
+      return safeJsonResponse(session || {});
+    }
+
+    if (requestUrl.pathname === '/demo-auth/login' && method === 'POST') {
+      const nextSession = {
+        user: {
+          id: 'demo-user',
+          name: 'CSMA Demo User',
+          email: body.email || 'demo@csma.dev',
+          role: 'admin'
+        },
+        sessionId: `sess-${Date.now()}`,
+        accessToken: 'demo.header.payload',
+        strategy: 'hybrid'
+      };
+      writeDemoSession(nextSession);
+      return safeJsonResponse(nextSession);
+    }
+
+    if (requestUrl.pathname === '/demo-auth/register' && method === 'POST') {
+      const nextSession = {
+        user: {
+          id: 'demo-user',
+          name: body.name || 'New Demo User',
+          email: body.email || 'demo@csma.dev',
+          role: 'user'
+        },
+        sessionId: `sess-${Date.now()}`,
+        strategy: 'cookie'
+      };
+      writeDemoSession(nextSession);
+      return safeJsonResponse(nextSession);
+    }
+
+    if (requestUrl.pathname === '/demo-auth/logout' && method === 'POST') {
+      writeDemoSession(null);
+      return safeEmptyResponse();
+    }
+
+    if (requestUrl.pathname === '/demo-auth/refresh' && method === 'POST') {
+      return safeJsonResponse(session || {});
+    }
+
+    if (requestUrl.pathname === '/demo-auth/oauth/start' && method === 'POST') {
+      return safeJsonResponse({
+        authorizationUrl: `${window.location.origin}/demo/#oauth-demo`,
+        state: body.state || `oauth-${Date.now()}`
+      });
+    }
+
+    if (requestUrl.pathname === '/demo-auth/oauth/callback' && method === 'POST') {
+      const nextSession = {
+        user: {
+          id: 'oauth-user',
+          name: 'OAuth Demo User',
+          email: 'oauth@csma.dev',
+          role: 'staff'
+        },
+        sessionId: `oauth-${Date.now()}`,
+        strategy: 'oauth',
+        provider: body.provider || 'github'
+      };
+      writeDemoSession(nextSession);
+      return safeJsonResponse(nextSession);
+    }
+
+    return safeJsonResponse({ error: 'Not found' }, 404);
+  };
+
+  return () => {
+    globalThis.fetch = nativeFetch;
+  };
+}
+
+function bindAuthDemo(bus) {
+  const form = document.querySelector('[data-auth-demo-form]');
+  const oauthButton = document.querySelector('[data-auth-oauth]');
+  const logoutButton = document.querySelector('[data-auth-logout]');
+  const status = document.querySelector('[data-auth-status]');
+  const auth = createAuthService(bus, {
+    baseUrl: window.location.origin,
+    strategy: 'hybrid',
+    storage: {
+      accessToken: 'sessionStorage',
+      session: 'localStorage',
+      keyPrefix: 'csma.demo.auth'
+    },
+    endpoints: {
+      register: '/demo-auth/register',
+      login: '/demo-auth/login',
+      logout: '/demo-auth/logout',
+      session: '/demo-auth/me',
+      refresh: '/demo-auth/refresh',
+      oauthStart: '/demo-auth/oauth/start',
+      oauthCallback: '/demo-auth/oauth/callback'
+    }
+  });
+
+  const renderStatus = () => {
+    const user = auth.getUser();
+    const lines = status.querySelectorAll('strong, span');
+    if (!user) {
+      lines[0].textContent = 'Guest session';
+      lines[1].textContent = 'No active user.';
+      return;
+    }
+    lines[0].textContent = `${user.name || user.email} (${auth.getRole()})`;
+    lines[1].textContent = `Authenticated via ${auth.strategy}. hasRole("staff") = ${String(auth.hasRole('staff'))}`;
+  };
+
+  const subscriptions = [
+    bus.subscribe('AUTH_SESSION_UPDATED', renderStatus),
+    bus.subscribe('AUTH_LOGIN_FAILED', (payload) => {
+      status.querySelector('strong').textContent = 'Login failed';
+      status.querySelector('span').textContent = payload.error;
+    }),
+    bus.subscribe('AUTH_OAUTH_COMPLETED', () => renderStatus())
+  ];
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    await auth.login({
+      email: formData.get('email'),
+      password: formData.get('password')
+    }).catch(() => null);
+  });
+
+  oauthButton.addEventListener('click', async () => {
+    const started = await auth.startOAuth({ provider: 'github' });
+    await auth.handleOAuthCallback({
+      code: 'demo-code',
+      state: started.state,
+      provider: 'github'
+    }).catch(() => null);
+  });
+
+  logoutButton.addEventListener('click', () => {
+    auth.logout({ reason: 'demo' });
+  });
+
+  auth.init().then(renderStatus);
+
+  return {
+    auth,
+    destroy() {
+      subscriptions.forEach((unsubscribe) => unsubscribe?.());
+      auth.destroy();
+    }
+  };
+}
+
+function bindNotificationsDemo(bus) {
+  const status = document.querySelector('[data-notifications-status]');
+  const requestButton = document.querySelector('[data-notifications-request]');
+  const enqueueButton = document.querySelector('[data-notifications-enqueue]');
+  const warningButton = document.querySelector('[data-notifications-warning]');
+  const notifications = createNotificationsService(bus, {
+    consent: {
+      hasConsent: () => true
+    }
+  });
+
+  const renderStatus = () => {
+    const state = notifications.getState();
+    const lines = status.querySelectorAll('strong, span');
+    lines[0].textContent = state.centerOpen ? 'Center open' : 'Center idle';
+    lines[1].textContent = `${state.unreadCount} unread notifications. Permission: ${state.permission.permission}.`;
+  };
+
+  const centerCleanup = initNotificationsCenter(notifications, document);
+  const subscriptions = [
+    bus.subscribe('NOTIFICATIONS_STATE_CHANGED', renderStatus)
+  ];
+
+  requestButton.addEventListener('click', () => notifications.requestPermission('demo').catch(() => null));
+  enqueueButton.addEventListener('click', () => {
+    notifications.enqueue({
+      title: 'Deploy complete',
+      body: 'All optional Phase 1 modules are loaded in the demo.',
+      type: 'success',
+      source: 'demo',
+      timestamp: Date.now()
+    });
+  });
+  warningButton.addEventListener('click', () => {
+    notifications.enqueue({
+      title: 'Consent review',
+      body: 'Notifications stay explicit until the user requests permission.',
+      type: 'warning',
+      source: 'demo',
+      timestamp: Date.now()
+    });
+  });
+
+  renderStatus();
+
+  return {
+    notifications,
+    destroy() {
+      subscriptions.forEach((unsubscribe) => unsubscribe?.());
+      centerCleanup();
+      notifications.destroy();
+    }
+  };
+}
+
+function bindShareDemo(bus) {
+  const textInput = document.querySelector('[data-share-text]');
+  const button = document.querySelector('[data-share-trigger]');
+  const status = document.querySelector('[data-share-status]');
+  const share = createShareService(bus, {
+    toastIntent: 'INTENT_TOAST_SHOW'
+  });
+
+  const renderResult = (headline, detail) => {
+    const lines = status.querySelectorAll('strong, span');
+    lines[0].textContent = headline;
+    lines[1].textContent = detail;
+  };
+
+  button.addEventListener('click', async () => {
+    const result = await share.request({
+      title: 'CSMA Demo',
+      text: textInput.value,
+      url: window.location.href,
+      source: 'demo',
+      timestamp: Date.now()
+    });
+
+    if (result.ok) {
+      renderResult('Shared', `Completed through ${result.transport}.`);
+      return;
+    }
+    renderResult('Share failed', result.message);
+  });
+
+  return {
+    share,
+    destroy() {
+      share.destroy();
+    }
+  };
+}
+
+function createUploadStorage() {
+  return {
+    getItem(key) {
+      return window.localStorage.getItem(key);
+    },
+    setItem(key, value) {
+      window.localStorage.setItem(key, value);
+    },
+    removeItem(key) {
+      window.localStorage.removeItem(key);
+    }
+  };
+}
+
+function wait(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+function registerDemoServiceWorker() {
+  if (!('serviceWorker' in navigator)) {
+    return Promise.resolve(null);
+  }
+
+  return navigator.serviceWorker.register('/sw.js', {
+    type: 'module'
+  }).catch((error) => {
+    console.warn('[demo] service worker registration failed', error);
+    return null;
+  });
+}
+
+function bindUploadDemo(bus) {
+  const dropZoneMount = document.querySelector('[data-upload-dropzone]');
+  const listMount = document.querySelector('[data-upload-list]');
+  const upload = createFileUploadService(bus, {
+    storage: createUploadStorage(),
+    chunkSize: 24 * 1024,
+    transport: {
+      async uploadChunk(payload) {
+        await wait(80);
+        return {
+          uploaded: true,
+          chunkIndex: payload.chunkIndex,
+          totalChunks: payload.totalChunks
+        };
+      }
+    }
+  });
+
+  const renderList = () => {
+    listMount.replaceChildren(
+      createFileUploadList(upload, {
+        emptyLabel: 'No demo uploads yet'
+      })
+    );
+  };
+
+  const dropZone = createFileUploadDropZone(upload, {
+    root: document,
+    title: 'Drop files into the demo uploader',
+    description: 'Progress events and resumable checkpoints are produced by the real module service.',
+    buttonLabel: 'Browse Files',
+    uploadOptions: {
+      chunkSize: 24 * 1024
+    }
+  });
+
+  dropZoneMount.replaceChildren(dropZone);
+  renderList();
+
+  const subscriptions = [
+    bus.subscribe('FILE_UPLOAD_STARTED', renderList),
+    bus.subscribe('FILE_UPLOAD_PROGRESS', renderList),
+    bus.subscribe('FILE_UPLOAD_COMPLETED', renderList),
+    bus.subscribe('FILE_UPLOAD_FAILED', renderList),
+    bus.subscribe('FILE_UPLOAD_PAUSED', renderList),
+    bus.subscribe('FILE_UPLOAD_RESUMED', renderList),
+    bus.subscribe('FILE_UPLOAD_CANCELLED', renderList),
+    bus.subscribe('FILE_REMOVED', renderList)
+  ];
+
+  upload.init();
+
+  return {
+    fileUpload: upload,
+    destroy() {
+      subscriptions.forEach((unsubscribe) => unsubscribe?.());
+      upload.destroy();
+    }
+  };
+}
+
 bindThemeToggles();
-initTodoApp(eventBus);      // subscribe to state changes FIRST
-const teardownService = createTodoService(eventBus);  // THEN publish initial state
+const restoreFetch = installDemoAuthBackend();
+const toastCleanup = initToastSystem(eventBus);
+initTodoApp(eventBus);
+const teardownService = createTodoService(eventBus);
+const authDemo = bindAuthDemo(eventBus);
+const notificationsDemo = bindNotificationsDemo(eventBus);
+const shareDemo = bindShareDemo(eventBus);
+const uploadDemo = bindUploadDemo(eventBus);
+const serviceWorkerReady = registerDemoServiceWorker();
 
-// Expose for debugging
-window.csma = { eventBus, teardown: teardownService };
+window.csma = {
+  ...(window.csma || {}),
+  eventBus,
+  auth: authDemo.auth,
+  notifications: notificationsDemo.notifications,
+  share: shareDemo.share,
+  fileUpload: uploadDemo.fileUpload,
+  serviceWorkerReady,
+  teardown() {
+    authDemo.destroy();
+    notificationsDemo.destroy();
+    shareDemo.destroy();
+    uploadDemo.destroy();
+    toastCleanup();
+    teardownService();
+    restoreFetch();
+  }
+};
 
-window.addEventListener('beforeunload', teardownService);
+window.addEventListener('beforeunload', () => {
+  window.csma?.teardown?.();
+});

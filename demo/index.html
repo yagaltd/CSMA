@@ -106,6 +106,102 @@
         </form>
       </dialog>
     </div>
+
+    <section class="module-examples" aria-labelledby="module-examples-title">
+      <div class="module-examples__header">
+        <div>
+          <span class="badge" data-variant="soft-accent" data-size="md">Phase 1 Modules</span>
+          <h2 id="module-examples-title" class="module-examples__title">Interactive module examples</h2>
+          <p class="module-examples__description">
+            Real CSMA services wired into a local demo flow: auth, notifications, share, and resumable upload.
+          </p>
+        </div>
+      </div>
+
+      <div class="module-examples__grid">
+        <section class="module-panel" aria-labelledby="auth-demo-title">
+          <div class="module-panel__header">
+            <h3 id="auth-demo-title" class="module-panel__title">Auth Login Form</h3>
+            <span class="badge" data-variant="soft-primary" data-size="sm">Hybrid</span>
+          </div>
+          <p class="module-panel__description">Password login, backend-mediated OAuth simulation, and logout using the real auth module API.</p>
+          <form class="module-form" data-auth-demo-form>
+            <div class="field">
+              <label class="field__label" for="demo-auth-email">Email</label>
+              <div class="field__control">
+                <input id="demo-auth-email" class="input" type="email" name="email" autocomplete="email" value="demo@csma.dev" required>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field__label" for="demo-auth-password">Password</label>
+              <div class="field__control">
+                <input id="demo-auth-password" class="input" type="password" name="password" autocomplete="current-password" value="demo-pass" required>
+              </div>
+            </div>
+            <div class="module-actions">
+              <button class="button" data-variant="primary" type="submit">Login Demo User</button>
+              <button class="button" data-variant="outline" type="button" data-auth-oauth>OAuth Demo</button>
+              <button class="button" data-variant="ghost" type="button" data-auth-logout>Logout</button>
+            </div>
+          </form>
+          <div class="module-status" data-auth-status>
+            <strong>Guest session</strong>
+            <span>No active user.</span>
+          </div>
+        </section>
+
+        <section class="module-panel" aria-labelledby="notifications-demo-title">
+          <div class="module-panel__header">
+            <h3 id="notifications-demo-title" class="module-panel__title">Notifications Center</h3>
+            <span class="badge" data-variant="soft-accent" data-size="sm">Consent-aware</span>
+          </div>
+          <p class="module-panel__description">Permission requests stay explicit. New items land in the in-app center and can trigger browser delivery when allowed.</p>
+          <div class="module-actions">
+            <button class="button" data-variant="primary" type="button" data-notifications-request>Request Permission</button>
+            <button class="button" data-variant="outline" type="button" data-notifications-enqueue>Enqueue Alert</button>
+            <button class="button" data-variant="ghost" type="button" data-notifications-warning>Enqueue Warning</button>
+          </div>
+          <div class="module-status" data-notifications-status>
+            <strong>Center idle</strong>
+            <span>0 unread notifications.</span>
+          </div>
+          <div class="module-notifications-shell" data-notifications-center-shell></div>
+        </section>
+
+        <section class="module-panel" aria-labelledby="share-demo-title">
+          <div class="module-panel__header">
+            <h3 id="share-demo-title" class="module-panel__title">Share Action</h3>
+            <span class="badge" data-variant="soft-primary" data-size="sm">Native + Clipboard</span>
+          </div>
+          <p class="module-panel__description">Uses the share module directly. Native share runs first; desktop browsers fall back to clipboard safely.</p>
+          <div class="field">
+            <label class="field__label" for="demo-share-text">Share text</label>
+            <div class="field__control">
+              <input id="demo-share-text" class="input" type="text" data-share-text value="CSMA module showcase with tokens, themes, and runtime modules.">
+            </div>
+          </div>
+          <div class="module-actions">
+            <button class="button" data-variant="primary" type="button" data-share-trigger>Share This Demo</button>
+          </div>
+          <div class="module-status" data-share-status>
+            <strong>Ready</strong>
+            <span>No share request yet.</span>
+          </div>
+        </section>
+
+        <section class="module-panel" aria-labelledby="upload-demo-title">
+          <div class="module-panel__header">
+            <h3 id="upload-demo-title" class="module-panel__title">Upload Drop Zone</h3>
+            <span class="badge" data-variant="soft-accent" data-size="sm">Resumable</span>
+          </div>
+          <p class="module-panel__description">Drop files or browse. Upload state is driven by the real file-upload module with a local mock transport.</p>
+          <div class="module-upload" data-upload-demo>
+            <div data-upload-dropzone></div>
+            <div class="module-upload__list" data-upload-list></div>
+          </div>
+        </section>
+      </div>
+    </section>
   </div>
 
   <!-- Templates -->

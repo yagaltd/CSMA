@@ -10,6 +10,7 @@ A minimal, working example of a CSMA application.
 - **Service/DOM separation** — `app.js` holds state logic, `todo-app.js` handles DOM
 - **Theme toggle** — light / dark / contrast, persisted in localStorage
 - **Two-column layout** — main content + sticky sidebar using layout tokens
+- **Phase 1 module examples** — auth login form, notifications center trigger, share action, and upload drop zone
 - **Vanilla JS, no build step needed** — open with any static server
 
 ## Run
@@ -32,7 +33,7 @@ python -m http.server 8080
 demo/
   index.html       — markup, templates, no inline JS
   app.css          — todo-specific styles + token/component imports
-  app.js           — bootstraps EventBus, TodoService, theme toggle
+  app.js           — bootstraps EventBus, TodoService, theme toggle, and Phase 1 module examples
   todo-app.js      — DOM layer: subscribes to events, renders UI
 ```
 
