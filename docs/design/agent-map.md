@@ -135,6 +135,14 @@ For multi-page work, also verify:
 
 5. shared CSS/JS entrypoints are used by the planned surfaces
 6. the first implemented page matches the agreed shell structure
+7. `npm run verify:frontend-routes` passes when public routes are in scope
+
+Delivery contract:
+
+- `static-mpa`: public pages are real HTML files under `frontend/`
+- `spa`: route rendering is owned by the optional `router` module
+- `hybrid`: static public routes plus router-managed app surface
+- do not mix real public HTML pages with `frontend/pages/*.js` HTML-string modules
 
 For token work, the showcase inspection is required. CSS output alone is not a
 substitute.

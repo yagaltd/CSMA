@@ -17,9 +17,15 @@ rendering**. This achieves fast DOM updates and a minimal bundle size.
 
 CSMA is **modules-first**. Prefer trusted modules under `src/modules/*`,
 `Contracts` for validation and security, contribution registries for commands,
-routes, navigation, panels, and adapters, and lifecycle-safe load/unload
+navigation, panels, adapters, and views, and lifecycle-safe load/unload
 through `ModuleManager`, `ServiceManager`, `syncWindowRuntime()`, and
 `destroyRuntimeState()`.
+
+Routing boundary:
+
+- core runtime owns path normalization, page resolution, and optional History API interception
+- the optional `router` module owns SPA/hybrid route orchestration
+- static public MPA pages should stay real HTML outputs rather than JS HTML injection
 
 Rigor is layered on top of this baseline. Use standard CSMA first, then add
 property tests, service-local transitions, or stronger verification only when

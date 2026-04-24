@@ -8,7 +8,11 @@ function cloneRuntimeSection(value, fallback = {}) {
         return structuredClone(fallback);
     }
 
-    return structuredClone(value);
+    try {
+        return structuredClone(value);
+    } catch {
+        return { ...value };
+    }
 }
 
 function initializePageServices(state, {
@@ -19,12 +23,14 @@ function initializePageServices(state, {
 } = {}) {
     const pageResolver = state.serviceManager.get('pageResolver');
     const clientNavigation = state.serviceManager.get('clientNavigation');
+    const router = state.serviceManager.get('router');
 
     pageResolver?.init({ pages });
 
     return {
         pageResolver,
         clientNavigation,
+        router,
         runtimeConfig
     };
 }
@@ -423,10 +429,36 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
+    if (FEATURES.ROUTER_MODULE) {
+        try {
+            await moduleManager.loadModule('router');
+            const router = serviceManager.get('router');
+            router?.init({
+                ...(runtimeConfig.router || {}),
+                viewRegistry: registries.views,
+                clientNavigation: pageServices.clientNavigation
+            });
+            pageServices.router = router;
+            window.csma = window.csma || {};
+            window.csma.router = router;
+            console.log('[Router] SPA/hybrid routing enabled');
+        } catch (error) {
+            console.warn('[Router] Failed to load module:', error);
+        }
+    }
+
     if (FEATURES.CLIENT_NAVIGATION) {
         try {
+            const router = pageServices.router || serviceManager.get('router');
+            const runtimeNavigationConfig = runtimeConfig.clientNavigation || {};
             pageServices.clientNavigation?.init({
                 pageResolver: pageServices.pageResolver,
+                canHandlePath: typeof runtimeNavigationConfig.canHandlePath === 'function'
+                    ? runtimeNavigationConfig.canHandlePath
+                    : router?.canHandlePath?.bind(router),
+                handlePath: typeof runtimeNavigationConfig.handlePath === 'function'
+                    ? runtimeNavigationConfig.handlePath
+                    : router?.handlePath?.bind(router),
                 windowRef,
                 documentRef
             });

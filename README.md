@@ -9,12 +9,12 @@ reactive runtime that stays small and stays fast.
 ## Features
 
 ✅ **Zero frameworks** — Pure vanilla JavaScript, no React, no Vue, no Svelte  
-✅ **~5KB gzipped runtime** — EventBus, Contracts, ModuleManager, Router  
+✅ **~5KB gzipped runtime** — EventBus, Contracts, ModuleManager, runtime navigation primitives  
 ✅ **CSS-class reactivity** — State changes via `data-*` attributes, not inline styles  
 ✅ **Zero-trust security** — CSP, contract validation, sanitization, honeypot, rate limiting  
 ✅ **Type-safe EventBus** — Every payload validated by schema before it reaches a handler  
 ✅ **Lifecycle-safe runtime** — Explicit cleanup, unload-safe modules, leak-resistant services  
-✅ **Modules-first extension model** — Commands, routes, navigation, panels, adapters  
+✅ **Modules-first extension model** — Commands, navigation, panels, adapters, views  
 ✅ **Design-token-first** — One `design-tokens.json` drives every color, spacing, radius, shadow  
 ✅ **Dark mode** — Light / dark / contrast themes via CSS custom properties  
 ✅ **SSMA-ready** — Optimistic sync module connects to the Rust gateway out of the box  
@@ -132,10 +132,12 @@ Recommended flow:
 7. Patch only the needed branches in `src/style/token-overrides.json`.
 8. Run `npm run tokens:patch`.
 9. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
-10. Compose screens from `src/ui/components/`, layout utilities, and app-specific
+10. Choose one delivery mode per surface: `static-mpa`, `spa`, or `hybrid`.
+11. For public multi-page work, run `npm run verify:frontend-routes` so planned routes match built URLs.
+12. Compose screens from `src/ui/components/`, layout utilities, and app-specific
    CSS that uses generated variables.
-11. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
-12. Run `npm run lint:styles` and relevant tests.
+13. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
+14. Run `npm run lint:styles` and relevant tests.
 
 Product planning keeps concerns separate:
 
@@ -159,6 +161,13 @@ Product planning keeps concerns separate:
 In both cases, keep `src/style/design-tokens.json` as the CSMA base seed, put
 project changes in `src/style/token-overrides.json`, and keep generated CSS out
 of manual edits.
+
+Delivery contract:
+
+- `static-mpa`: public routes are real `frontend/**/*.html` files that build to matching root URLs
+- `spa`: client-routed surfaces use the optional `router` module
+- `hybrid`: public routes stay static while app routes use the router module
+- do not mix public HTML routes with JS `export const html = ...` page modules
 
 ## Manifest-Driven Legal And SEO Scaffolding
 
@@ -242,7 +251,7 @@ import { manifest, services } from './src/modules/search/index.js';
 Current modules: AI, Analytics, Camera, Checkout, Data-table, File-system,
 Form-management, I18n, Image-optimizer, Location, Media-capture, Media-transform,
 Meta-manager, Modal-system, Network-status, Optimistic-sync, Router, Search,
-Storage, Sync-queue.
+Share, Storage, Sync-queue.
 
 See `roadmap.md` for planned additions.
 

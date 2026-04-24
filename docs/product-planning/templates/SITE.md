@@ -17,6 +17,7 @@
 | Indexable | `<true/false>` |
 | Base URL | `<https://example.com>` |
 | Default locale | `<en>` |
+| Delivery mode | `<static-mpa/spa/hybrid>` |
 
 ## Navigation
 
@@ -34,9 +35,14 @@
 
 ## Public Route Inventory
 
-| Route | Indexable | In manifest | Notes |
+| Route | Source artifact | Built URL | Indexable | In manifest | Notes |
 |:--|:--|:--|:--|
-| `/` | `<yes/no>` | `<yes/no>` | `<sitemap/llms/legal relevance>` |
+| `/` | `<frontend/index.html>` | `</>` | `<yes/no>` | `<yes/no>` | `<sitemap/llms/legal relevance>` |
+
+Important:
+- For `static-mpa`, public routes must map to real `frontend/**/*.html` files.
+- Public built URLs must match planned routes; do not ship `/frontend/...` URLs unless they are intentionally the public routes.
+- `pages/*.md` are planning briefs only. Public implementation must not silently outgrow them.
 
 ## Global Shell
 
@@ -55,6 +61,7 @@
 | Privacy | `<pages/privacy.md or not needed>` |
 | Terms | `<pages/terms.md or not needed>` |
 | Cookies | `<pages/cookies.md or not needed>` |
+| 404 | `<pages/404.md + frontend/404.html when public multi-page>` |
 | Accessibility | `<assumptions>` |
 
 ## Generated Files

@@ -26,6 +26,7 @@ const moduleLoaders = [
     ['file-system', () => import('../src/modules/file-system/index.js')],
     ['file-upload', () => import('../src/modules/file-upload/index.js')],
     ['share', () => import('../src/modules/share/index.js')],
+    ['router', () => import('../src/modules/router/index.js')],
     ['example-module', () => import('../src/modules/example-module/index.js')]
 ];
 
@@ -197,6 +198,32 @@ describe('Contract Validation', () => {
             };
 
             const [error] = Contracts.VIEW_RENDERED.schema.validate(payload);
+            expect(error).toBeUndefined();
+        });
+    });
+
+    describe('Router contracts', () => {
+        it('validates INTENT_ROUTE_NAVIGATE', () => {
+            const [error, validated] = Contracts.INTENT_ROUTE_NAVIGATE.schema.validate({
+                path: '/products/demo',
+                source: 'ui',
+                timestamp: Date.now()
+            });
+
+            expect(error).toBeUndefined();
+            expect(validated.path).toBe('/products/demo');
+        });
+
+        it('validates ROUTE_CHANGED with params', () => {
+            const [error] = Contracts.ROUTE_CHANGED.schema.validate({
+                path: '/products/demo',
+                routeId: 'product-detail',
+                pattern: '/products/:slug',
+                params: { slug: 'demo' },
+                source: 'ui',
+                timestamp: Date.now()
+            });
+
             expect(error).toBeUndefined();
         });
     });

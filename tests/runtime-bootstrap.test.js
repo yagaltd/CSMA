@@ -57,6 +57,7 @@ describe('runtime bootstrap', () => {
             PWA: false,
             OFFLINE_CACHE: false,
             CLIENT_NAVIGATION: false,
+            ROUTER_MODULE: false,
             NETWORK_STATUS_MODULE: false,
             AUTH_MODULE: false,
             AUTH_SERVICE: false,

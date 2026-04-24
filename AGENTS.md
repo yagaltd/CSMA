@@ -86,6 +86,15 @@ motion and `docs/video/SKILL.md` for production-media or website-to-video work.
 For multi-page sites, app shells, or hybrid products, decide shared shell and
 file structure before implementing the first page or screen.
 
+Pick one delivery mode per surface before implementation:
+
+- `static-mpa`: public routes are real `frontend/**/*.html` files
+- `spa`: route rendering goes through the optional `router` module
+- `hybrid`: static public site plus router-managed app surface
+
+Do not mix public HTML routes with injected `frontend/pages/*.js` HTML modules.
+For public multi-page work, run `npm run verify:frontend-routes`.
+
 ## Source Inspection Guardrail
 
 Do not read raw token files, foundation CSS, or component CSS by default for

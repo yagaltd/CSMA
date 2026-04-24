@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { createFrontendViteInputs } from './tooling/scripts/frontend-route-utils.js';
 
 function copyTokenShowcaseScript() {
     return {
@@ -31,10 +32,7 @@ export default defineConfig({
     build: {
         target: 'es2020',
         rollupOptions: {
-            input: {
-                todoDemo: 'demo/index.html',
-                tokenShowcase: 'showcase/token-showcase.html'
-            },
+            input: createFrontendViteInputs(),
             external: [
                 '@capacitor/filesystem',
                 '@capacitor/camera',

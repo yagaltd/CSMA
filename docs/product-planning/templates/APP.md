@@ -17,7 +17,17 @@
 | Indexable | `<true/false>` |
 | Companion site | `<yes/no>` |
 | Base URL | `<https://example.com or none>` |
+| Delivery mode | `<spa/hybrid/static-mpa>` |
 | Legal page expectation | `<privacy/terms/cookies as applicable>` |
+
+## Routing Mode
+
+| Field | Decision |
+|:--|:--|
+| Router module | `<required/optional/not used>` |
+| Public routes | `<manifest-backed URLs only>` |
+| Internal routes/screens | `<not in sitemap unless public>` |
+| Not-found behavior | `<router handler / static 404 / both>` |
 
 ## Screens
 

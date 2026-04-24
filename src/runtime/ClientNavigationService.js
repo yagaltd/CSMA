@@ -5,7 +5,9 @@ function shouldIgnoreClick(event) {
 export class ClientNavigationService {
     constructor() {
         this.pageResolver = null;
-        this.pageRuntimeService = null;
+        this.canHandlePath = null;
+        this.handlePath = null;
+        this.fallbackNavigate = null;
         this.windowRef = null;
         this.documentRef = null;
         this.boundClick = null;
@@ -14,12 +16,18 @@ export class ClientNavigationService {
 
     init({
         pageResolver,
-        pageRuntimeService = null,
+        canHandlePath = null,
+        handlePath = null,
+        fallbackNavigate = null,
         windowRef = globalThis.window,
         documentRef = globalThis.document
     } = {}) {
         this.pageResolver = pageResolver;
-        this.pageRuntimeService = pageRuntimeService;
+        this.canHandlePath = typeof canHandlePath === 'function' ? canHandlePath : null;
+        this.handlePath = typeof handlePath === 'function' ? handlePath : null;
+        this.fallbackNavigate = typeof fallbackNavigate === 'function'
+            ? fallbackNavigate
+            : (href) => this.windowRef?.location?.assign?.(href);
         this.windowRef = windowRef;
         this.documentRef = documentRef;
 
@@ -55,7 +63,7 @@ export class ClientNavigationService {
             return;
         }
 
-        if (!this.pageResolver?.has?.(url.pathname)) {
+        if (!this.shouldHandlePath(url.pathname)) {
             return;
         }
 
@@ -63,27 +71,52 @@ export class ClientNavigationService {
         this.navigate(`${url.pathname}${url.search}${url.hash}`);
     }
 
-    async navigate(href) {
+    shouldHandlePath(pathname) {
+        if (typeof this.handlePath !== 'function') {
+            return false;
+        }
+
+        if (typeof this.canHandlePath === 'function') {
+            return this.canHandlePath(pathname);
+        }
+
+        return this.pageResolver?.has?.(pathname) || false;
+    }
+
+    async navigate(href, context = {}) {
         const url = new URL(href, this.windowRef.location.href);
-        if (!this.pageResolver?.has?.(url.pathname)) {
-            this.windowRef.location.assign(url.toString());
+        if (!this.shouldHandlePath(url.pathname)) {
+            this.fallbackNavigate?.(url.toString());
             return null;
         }
 
         this.windowRef.history.pushState({}, '', `${url.pathname}${url.search}${url.hash}`);
-        this.pageRuntimeService?.renderPath?.(url.pathname, { source: 'client-navigation' });
+        await this.handlePath?.(url.pathname, {
+            ...context,
+            source: context.source || 'client-navigation',
+            replace: false
+        });
         return null;
     }
 
-    async replace(href) {
+    async replace(href, context = {}) {
         const url = new URL(href, this.windowRef.location.href);
         this.windowRef.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
-        this.pageRuntimeService?.renderPath?.(url.pathname, { source: 'client-navigation' });
+        await this.handlePath?.(url.pathname, {
+            ...context,
+            source: context.source || 'client-navigation',
+            replace: true
+        });
         return null;
     }
 
     async handlePopState() {
-        this.pageRuntimeService?.renderPath?.(this.windowRef.location.pathname, { source: 'client-navigation' });
+        if (this.shouldHandlePath(this.windowRef.location.pathname)) {
+            await this.handlePath?.(this.windowRef.location.pathname, {
+                source: 'client-navigation',
+                replace: true
+            });
+        }
         return null;
     }
 

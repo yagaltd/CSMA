@@ -25,6 +25,7 @@ import { AuthContracts } from '../modules/auth/contracts/auth-contracts.js';
 import { NotificationsContracts } from '../modules/notifications/contracts/notifications-contracts.js';
 import { ShareContracts } from '../modules/share/contracts/share-contracts.js';
 import { FileUploadContracts } from '../modules/file-upload/contracts/file-upload-contracts.js';
+import { RouterContracts } from '../modules/router/contracts/router-contracts.js';
 
 /**
  * Helper function for creating contracts with full ECCA metadata
@@ -1655,6 +1656,7 @@ export const Contracts = {
     ...NotificationsContracts,
     ...ShareContracts,
     ...FileUploadContracts,
+    ...RouterContracts,
 
     // Developer Logs
     LOG_ENTRY: {
