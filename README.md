@@ -113,19 +113,24 @@ Recommended flow:
 4. Create only the needed artifacts: `DESIGN.md`, `SITE.md`, `APP.md`,
    `pages/*.md`, `flows/*.md`, `animations/*.md`, `VIDEO.md`, or
    `storyboards/*.md`.
-5. Patch only the needed branches in `src/style/token-overrides.json`.
-6. Run `npm run tokens:patch`.
-7. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
-8. Compose screens from `src/ui/components/`, layout utilities, and app-specific
+5. Create or update `project-manifest.json` with the product type, public web
+   presence, route inventory, organization metadata, and canonical module ids.
+6. Run `npm run generate-project-artifacts` to scaffold legal drafts and public
+   discovery files when they are missing.
+7. Patch only the needed branches in `src/style/token-overrides.json`.
+8. Run `npm run tokens:patch`.
+9. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
+10. Compose screens from `src/ui/components/`, layout utilities, and app-specific
    CSS that uses generated variables.
-9. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
-10. Run `npm run lint:styles` and relevant tests.
+11. Classify behavior as Type I (CSS-only) or Type II (EventBus + Contracts).
+12. Run `npm run lint:styles` and relevant tests.
 
 Product planning keeps concerns separate:
 
 | Artifact | Owns |
 |----------|------|
 | `DESIGN.md` | Visual system, token intent, component recipes, anti-patterns |
+| `project-manifest.json` | Machine-readable product metadata for legal and SEO scaffolding |
 | `SITE.md` | Website navigation, pages, shell, SEO, legal, consent |
 | `APP.md` | App screens, roles, navigation, modules, state model |
 | `pages/*.md` | Page sections, content, layout, CTAs, motion |
@@ -143,6 +148,54 @@ Product planning keeps concerns separate:
 In both cases, keep `src/style/design-tokens.json` as the CSMA base seed, put
 project changes in `src/style/token-overrides.json`, and keep generated CSS out
 of manual edits.
+
+## Manifest-Driven Legal And SEO Scaffolding
+
+CSMA now includes a first-class scaffold generator driven by one root manifest:
+`project-manifest.json`.
+
+Minimum shape:
+
+```json
+{
+  "schemaVersion": 1,
+  "productType": "site | web-app | hybrid | mobile-app",
+  "organization": {
+    "legalName": "string",
+    "productName": "string",
+    "supportEmail": "string",
+    "jurisdiction": "string",
+    "addressCountry": "string"
+  },
+  "web": {
+    "enabled": true,
+    "baseUrl": "https://example.com",
+    "indexable": true,
+    "defaultLocale": "en",
+    "routes": ["/", "/pricing", "/docs"]
+  },
+  "modules": ["consent", "analytics", "auth", "checkout"]
+}
+```
+
+Generation rules:
+
+- Always scaffold `pages/privacy.md` and `pages/terms.md`
+- When `web.enabled=true`, also scaffold `pages/cookies.md` and `public/robots.txt`
+- When `web.enabled=true` and `web.indexable=true`, also scaffold
+  `public/sitemap.xml` and `public/llms.txt`
+- Existing files are never overwritten in v1
+- `web.routes` is the only sitemap and `llms.txt` source in v1
+
+Run it with:
+
+```bash
+npm run generate-project-artifacts
+```
+
+The generator fails fast on missing required fields, missing `web.baseUrl`,
+empty route inventories for indexable web projects, and unknown module ids.
+Generated legal content is scaffold text only and must be reviewed before use.
 
 ## Architecture
 

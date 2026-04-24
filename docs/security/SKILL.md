@@ -31,7 +31,7 @@ Content Security Policy restricts what the browser can load.
 CSMA CSP rules:
 - `default-src 'self'` -- only same-origin resources
 - `script-src 'self'` -- no inline scripts, no CDN scripts
-- `style-src 'self' 'unsafe-inline'` -- theme tokens require inline style access
+- `style-src 'self' 'unsafe-inline'` -- allow only when a surface actually needs inline style behavior such as theme/meta integration
 - `img-src 'self' data:` -- data URIs for icons
 - `connect-src` -- restricted to same-origin + known API endpoints
 
@@ -153,22 +153,23 @@ if (formData.get('website')) {
 Prevent prototype pollution and schema manipulation attacks.
 
 ```javascript
-// CSMA validation uses Object.create(null) for safe object creation
-// Prevents __proto__ pollution
-const safeObject = Object.create(null);
-Object.assign(safeObject, userInput);
+// EventBus validation rejects spoofed payload prototypes/constructors
+if (payload && typeof payload === 'object') {
+  if (payload.__proto__ !== Object.prototype || payload.constructor !== Object) {
+    throw new Error('Schema spoofing attempt detected (prototype pollution)');
+  }
 
-// Validation rejects dangerous keys
-const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
-function hasDangerousKeys(obj) {
-  return DANGEROUS_KEYS.some(key => key in obj);
+  if (payload.constructor && payload.constructor !== Object) {
+    throw new Error('Schema spoofing attempt detected (constructor manipulation)');
+  }
 }
 ```
 
 Protection mechanisms:
-- Objects created with `Object.create(null)` -- no inherited prototype
-- Dangerous keys (`__proto__`, `constructor`, `prototype`) rejected in validation
-- Deep freeze on validated payloads
+- Payloads with spoofed prototypes or constructors are rejected in `EventBus`
+- Contract validation still runs after the spoofing checks
+- Security details are emitted through `SECURITY_VIOLATION`
+- Contract failures are emitted through `CONTRACT_VIOLATION`
 - No `eval()` or `Function()` constructor usage
 
 ## Security Event Monitoring
@@ -186,9 +187,9 @@ eventBus.subscribe('SECURITY_RATE_LIMITED', (payload) => {
 ```
 
 Security event types:
-- `SECURITY_VIOLATION` -- contract validation failure
+- `SECURITY_VIOLATION` -- security rejection details, including rate-limit and contract-violation cases
 - `SECURITY_RATE_LIMITED` -- rate limit exceeded
-- `SECURITY_INPUT_REJECTED` -- sanitized input rejected
+- `CONTRACT_VIOLATION` -- invalid EventBus payload rejected by schema validation
 
 ## Writing Secure Modules
 
@@ -277,4 +278,4 @@ it('rejects __proto__ in payloads', () => {
 - Do not store secrets in localStorage -- use sessionStorage or memory only
 - Do not log sensitive data (tokens, passwords, PII) -- redact before logging
 - Do not disable rate limiting in production -- only in controlled testing
-- Do not expose security events to user-facing UI -- log server-side only
+- Do not assume deep-freezing or `Object.create(null)` defenses unless you add them explicitly

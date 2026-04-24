@@ -17,6 +17,7 @@
         "test:validation": "vitest run tests/validation.test.js",
         "tokens": "node tooling/scripts/generate-tokens.js",
         "tokens:patch": "node tooling/scripts/patch-tokens.js",
+        "generate-project-artifacts": "node tooling/scripts/generate-project-artifacts.js",
         "generate-component-reference": "node tooling/scripts/generate-component-reference.js",
         "generate-token-reference": "node tooling/scripts/generate-token-reference.js",
         "create-component": "node tooling/scripts/create-component.js",

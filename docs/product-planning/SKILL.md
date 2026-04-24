@@ -33,6 +33,7 @@ Read these in order:
 | Artifact | Purpose | When needed |
 |:--|:--|:--|
 | `DESIGN.md` | Reusable visual system: tokens, brand feel, components, layout patterns, anti-patterns, Type I/II rules. | Always for visual work. |
+| `project-manifest.json` | Machine-readable generator input for legal drafts and public discovery files. | Always when product planning affects distribution, legal, SEO, or public routes. |
 | `SITE.md` | Website information architecture: nav, pages, footer, SEO, legal, consent, global shell. | Multi-page marketing/content sites. |
 | `APP.md` | App structure: screens, navigation model, auth state, roles, modules, shell layout. | Web apps and dashboards. |
 | `pages/<page>.md` | Page goal, sections, copy direction, layout, CTAs, assets, responsive behavior. | Any important page. |
@@ -46,31 +47,85 @@ sites should not put every page and section into `DESIGN.md`.
 
 ## Workflow
 
-1. Identify product type: one-page site, multi-page site, app, or hybrid.
-2. Decide required artifacts from the matrix below.
-3. Fill or import `DESIGN.md`.
-4. Create `SITE.md` or `APP.md` when needed.
-5. Create page specs under `pages/`.
-6. Create flow specs under `flows/`.
-7. Decide motion level: `none`, `micro`, `section`, `runtime sequence`,
+1. Identify product type: `site`, `web-app`, `hybrid`, or `mobile-app`.
+2. Lock public presence early: `web.enabled`, `web.indexable`, `web.baseUrl`, and public routes.
+3. Create or update `project-manifest.json` with organization metadata, public routes, and canonical CSMA module ids.
+4. Decide required artifacts from the matrix below.
+5. Fill or import `DESIGN.md`.
+6. Create `SITE.md` or `APP.md` when needed.
+7. Create page specs under `pages/`.
+8. Create flow specs under `flows/`.
+9. Decide motion level: `none`, `micro`, `section`, `runtime sequence`,
    `scroll`, or `video`.
-8. Create animation specs under `animations/` only when motion is reusable,
+10. Create animation specs under `animations/` only when motion is reusable,
    cross-page, or sequence-based.
-9. Define what becomes Type I vs Type II.
-10. Only then move to token edits and implementation.
+11. Define what becomes Type I vs Type II.
+12. When legal/SEO scaffolding is in scope, run `npm run generate-project-artifacts` after the manifest, `SITE.md`, and `APP.md` decisions are stable.
+13. Only then move to token edits and implementation.
+
+## Manifest Contract
+
+`project-manifest.json` is the only machine-readable input for v1 generation.
+Do not crawl routes from source code.
+
+```json
+{
+  "schemaVersion": 1,
+  "productType": "site | web-app | hybrid | mobile-app",
+  "organization": {
+    "legalName": "string",
+    "productName": "string",
+    "supportEmail": "string",
+    "jurisdiction": "string",
+    "addressCountry": "string"
+  },
+  "web": {
+    "enabled": true,
+    "baseUrl": "https://example.com",
+    "indexable": true,
+    "defaultLocale": "en",
+    "routes": ["/", "/pricing", "/docs"]
+  },
+  "modules": ["consent", "analytics", "auth", "checkout"]
+}
+```
+
+Rules:
+
+- `schemaVersion`, `productType`, `organization`, `web.enabled`, and `modules` are always required.
+- `web.baseUrl`, `web.indexable`, `web.defaultLocale`, and `web.routes` are required when `web.enabled=true`.
+- `web.routes` must be the full public route inventory for `sitemap.xml` and `llms.txt`.
+- If `web.enabled=true` and `web.indexable=true`, `web.routes` must be non-empty.
+- `modules` must use canonical ids from `src/modules/`.
+
+## Generated Artifact Policy
+
+`npm run generate-project-artifacts` creates draft artifacts only when missing:
+
+- Always: `pages/privacy.md`, `pages/terms.md`
+- Web-enabled: `pages/cookies.md`, `public/robots.txt`
+- Web-enabled and indexable: `public/sitemap.xml`, `public/llms.txt`
+
+V1 rules:
+
+- Existing files are never overwritten.
+- Generated legal content is scaffold text, not legal advice.
+- `SITE.md` stays the human IA/legal map.
+- `APP.md` stays the human app structure doc.
+- `project-manifest.json` stays the single machine-readable source.
 
 ## Decision Matrix
 
 | User request | Planning artifacts |
 |:--|:--|
 | Build a landing page | `DESIGN.md`, `pages/landing.md` |
-| Build a company website | `DESIGN.md`, `SITE.md`, `pages/home.md`, plus required page specs |
-| Build a SaaS app | `DESIGN.md`, `APP.md`, screen specs, flow specs |
+| Build a company website | `project-manifest.json`, `DESIGN.md`, `SITE.md`, `pages/home.md`, plus required page specs |
+| Build a SaaS app | `project-manifest.json`, `DESIGN.md`, `APP.md`, screen specs, flow specs |
 | Use this uploaded `DESIGN.md` | `docs/design-import/SKILL.md`, then product planning artifacts |
-| Add checkout/payment | `flows/checkout.md`, Contracts/EventBus plan, payment integration notes |
-| Add contact form | `pages/contact.md`, `flows/contact-submit.md`, validation/submission contract |
-| Add cookie consent | `SITE.md` consent section, `flows/consent.md`, Consent module configuration notes |
-| Add legal pages | `SITE.md` legal map, `pages/privacy.md`, `pages/terms.md`, `pages/cookies.md` |
+| Add checkout/payment | `project-manifest.json`, `flows/checkout.md`, Contracts/EventBus plan, payment integration notes |
+| Add contact form | `project-manifest.json`, `pages/contact.md`, `flows/contact-submit.md`, validation/submission contract |
+| Add cookie consent | `project-manifest.json`, `SITE.md` consent section, `flows/consent.md`, Consent module configuration notes |
+| Add legal pages | `project-manifest.json`, `SITE.md` legal map, generated `pages/privacy.md`, `pages/terms.md`, `pages/cookies.md` as applicable |
 | Animate a page | Page motion section; add `animations/<animation>.md` only for reusable or sequenced runtime motion, then use `docs/animation/SKILL.md` for implementation |
 | Add splash screen or route transition | `animations/splash.md` or `animations/route-transition.md`, plus related page/app/flow notes, then use `docs/animation/SKILL.md` |
 | Make a product video | `VIDEO.md`, `storyboards/product-video.md`, then use `docs/video/SKILL.md` for production |
@@ -121,6 +176,9 @@ Use these templates when creating artifacts:
 | `SITE.md` | `docs/product-planning/templates/SITE.md` |
 | `APP.md` | `docs/product-planning/templates/APP.md` |
 | `pages/<page>.md` | `docs/product-planning/templates/page.md` |
+| `pages/privacy.md` | `docs/product-planning/templates/privacy.md` |
+| `pages/terms.md` | `docs/product-planning/templates/terms.md` |
+| `pages/cookies.md` | `docs/product-planning/templates/cookies.md` |
 | `flows/<flow>.md` | `docs/product-planning/templates/flow.md` |
 | `animations/<animation>.md` | `docs/product-planning/templates/animation.md` |
 | `VIDEO.md` | `docs/product-planning/templates/VIDEO.md` |
@@ -134,8 +192,8 @@ request.
 Before writing code, summarize:
 
 1. Product type.
-2. Artifacts created or updated.
-3. Pages/routes/screens in scope.
+2. `project-manifest.json` decisions: web enabled, indexable, base URL, public routes, modules.
+3. Artifacts created or updated.
 4. Critical flows and Type II behavior.
 5. Motion/video decision, including any `animations/<animation>.md` artifact.
 6. Token branches likely to change.

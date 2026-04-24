@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "productType": "hybrid",
+  "organization": {
+    "legalName": "Example Organization LLC",
+    "productName": "Example Product",
+    "supportEmail": "support@example.com",
+    "jurisdiction": "Delaware, United States",
+    "addressCountry": "US"
+  },
+  "web": {
+    "enabled": true,
+    "baseUrl": "https://example.com",
+    "indexable": true,
+    "defaultLocale": "en",
+    "routes": [
+      "/",
+      "/pricing",
+      "/docs"
+    ]
+  },
+  "modules": [
+    "analytics",
+    "consent",
+    "auth"
+  ]
+}

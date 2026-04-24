@@ -8,6 +8,17 @@
 | Primary users | `<roles/personas>` |
 | Success state | `<what good looks like>` |
 
+## Public Presence / Distribution
+
+| Field | Decision |
+|:--|:--|
+| Product type | `<site/web-app/hybrid/mobile-app>` |
+| Web surface enabled | `<true/false>` |
+| Indexable | `<true/false>` |
+| Companion site | `<yes/no>` |
+| Base URL | `<https://example.com or none>` |
+| Legal page expectation | `<privacy/terms/cookies as applicable>` |
+
 ## Screens
 
 | Screen | Route | State owner | Primary action |

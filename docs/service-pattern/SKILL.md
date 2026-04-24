@@ -36,7 +36,8 @@ Standalone business logic in feature modules.
 
 ```
 src/modules/ai/services/AIService.js
-src/modules/search/services/SearchService.js
+src/modules/search/services/SearchModuleService.js
+src/modules/search/services/CoreSearchService.js
 src/modules/checkout/services/CheckoutService.js
 src/modules/modal-system/services/ModalService.js
 ```
@@ -184,16 +185,31 @@ export function initUI(eventBus) {
 ### In Module Bootstrap
 
 ```javascript
-import { ServiceManager } from '../../runtime/ServiceManager.js';
-import { AIService } from './services/AIService.js';
+// Modules are loaded through ModuleManager using the exported manifest/services pair.
+export const manifest = {
+  id: 'ai',
+  name: 'AI Module',
+  version: '1.0.0',
+  description: 'Multi-provider AI orchestration with fallback and tooling',
+  dependencies: [],
+  services: ['ai'],
+  contracts: ['AI_GENERATE_STARTED', 'AI_GENERATE_COMPLETE']
+};
 
-export function initAIModule(eventBus) {
-  const serviceManager = window.serviceManager || new ServiceManager();
-  const aiService = new AIService(eventBus);
-  serviceManager.register('ai', aiService);
-  return () => aiService.cleanup();
-}
+export const services = {
+  ai: AIService
+};
 ```
+
+At runtime, prefer:
+
+```javascript
+await runtime.moduleManager.loadModule('ai');
+const aiService = runtime.serviceManager.get('ai');
+```
+
+Do not teach new modules to register themselves through ad hoc `window.serviceManager`
+bootstraps when the repo already uses manifest-driven loading.
 
 ## EventBus Integration
 

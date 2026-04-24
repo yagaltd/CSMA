@@ -18,7 +18,8 @@ rendering**. This achieves fast DOM updates and a minimal bundle size.
 CSMA is **modules-first**. Prefer trusted modules under `src/modules/*`,
 `Contracts` for validation and security, contribution registries for commands,
 routes, navigation, panels, and adapters, and lifecycle-safe load/unload
-through `ModuleManager`, `ServiceManager`, and `destroyApp()`.
+through `ModuleManager`, `ServiceManager`, `syncWindowRuntime()`, and
+`destroyRuntimeState()`.
 
 Rigor is layered on top of this baseline. Use standard CSMA first, then add
 property tests, service-local transitions, or stronger verification only when
@@ -192,8 +193,8 @@ Contracts are the production boundary. They are not a substitute for higher
 development-time rigor, and they do not imply every service needs a transition
 map. Use `docs/rigor/SKILL.md` to decide when to add more.
 
-Current runtime registries: `commandRegistry`, `routeRegistry`,
-`navigationRegistry`, `panelRegistry`, `adapterRegistry`, `viewRegistry`.
+Current runtime registries: `commandRegistry`, `navigationRegistry`,
+`panelRegistry`, `adapterRegistry`, `viewRegistry`.
 
 ### Validation Destructuring
 

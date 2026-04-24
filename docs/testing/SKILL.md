@@ -19,10 +19,10 @@ chosen testing strategy.
 |-------|------|-------|----------|
 | Unit | vitest + jsdom | Contracts, services, modules | `tests/*.test.js` |
 | Property | vitest + `fast-check` | Stateful invariants, generated workflows | `tests/*.property.test.js` |
-| Smoke | vitest + jsdom | Todo-app CRUD flow | `tests/todo-app.smoke.test.js` |
+| Smoke | Playwright | Browser smoke flow | `tests/browser/sw-smoke.spec.js` |
 | Accessibility | vitest + jsdom + axe-core | WCAG, contrast, keyboard nav | `tests/accessibility-*.test.js` |
-| E2E | Playwright | Full browser flows | `tests/e2e/` |
-| Performance | vitest | Bundle size budget | `tests/perf-budget.test.js` |
+| Example surfaces | vitest + fs/jsdom-style assertions | Demo/reference quality checks | `tests/example-surfaces.test.js` |
+| Runtime lifecycle | vitest + jsdom | Bootstrap, unload, registry behavior | `tests/runtime-*.test.js`, `tests/extension-registries.test.js` |
 
 ## Running Tests
 
@@ -30,7 +30,7 @@ chosen testing strategy.
 npm run test              # Full suite (watch mode)
 npm run test:contracts   # Contract validation only
 npm run test:validation  # Input validation only
-npm run test:smoke       # Todo-app smoke test
+npm run test:browser-smoke  # Playwright browser smoke test
 
 ```
 
@@ -64,7 +64,7 @@ Poor property-test candidates:
 
 - One test file per module/service: `tests/[module-name].test.js`
 - Test helpers in `tests/helpers/`
-- E2E specs in `tests/e2e/`
+- Browser smoke specs in `tests/browser/`
 - Keep runtime diagnostics tests separate from outbound analytics tests
 
 ### Test Structure
@@ -302,30 +302,29 @@ analytics. Test them separately.
 ### Local diagnostics
 
 Use:
-- `tests/log-accumulator.test.js`
-- `tests/error-boundary.test.js`
-- `tests/diagnostic-snapshot.test.js`
+- `tests/error-handling.test.js`
+- `tests/runtime-bootstrap.test.js`
+- `tests/runtime-lifecycle.test.js`
 
 Verify:
 1. `LogAccumulator` keeps only local logging APIs
 2. contract violations and security events are recorded locally
-3. `ErrorBoundary` behavior is sanitized and environment-aware
+3. runtime diagnostics remain exposed through `window.csma.diagnose()`
 4. diagnostic export flows use structured snapshot/output APIs
 
 ### Outbound analytics
 
 Use:
-- `tests/analytics-service.test.js`
-- `tests/analytics-module.test.js`
-- `tests/seo-audit.test.js`
 - `tests/consent-service.test.js`
 - `tests/consent-ui.test.js`
+- `tests/runtime-bootstrap.test.js`
+- `tests/contracts.test.js`
 
 Verify:
 1. page views and custom events are handled by `AnalyticsService`, not `LogAccumulator`
 2. critical telemetry can bypass normal batch timing
 3. aggregation/classification/security-scan paths are exercised directly
-4. page-view payloads include SEO audit data when expected
+4. runtime exposes analytics, consent, and `seoAudit()` on `window.csma` when enabled
 5. consent gates outbound categories only
 6. disabling consent does not suppress local diagnostic logs
 

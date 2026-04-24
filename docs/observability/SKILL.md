@@ -110,9 +110,13 @@ When changing snapshot shape:
 
 When observability changes, verify the right subsystem:
 
-- local diagnostics: `tests/log-accumulator.test.js`
-- boundary behavior: `tests/error-boundary.test.js`
-- outbound analytics: `tests/analytics-service.test.js`
-- snapshot shape: `tests/diagnostic-snapshot.test.js`
+- local diagnostics and error surfaces: `tests/error-handling.test.js`
+- runtime/public seam exposure: `tests/runtime-bootstrap.test.js`
+- registry/runtime lifecycle interactions: `tests/runtime-lifecycle.test.js`
 - consent persistence/UI: `tests/consent-service.test.js`, `tests/consent-ui.test.js`
-- SEO enrichment: `tests/seo-audit.test.js`
+- contract and validation boundaries: `tests/contracts.test.js`, `tests/validation.test.js`
+
+There is not yet a dedicated `tests/log-accumulator.test.js` or
+`tests/analytics-service.test.js` in this repo. If you change those subsystems,
+either add focused coverage or extend the runtime/bootstrap, contracts, and
+error-handling suites explicitly.
