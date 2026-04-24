@@ -37,16 +37,27 @@ git clone https://github.com/yagaltd/CSMA.git my-app
 cd my-app
 npm install
 npm run tokens    # regenerate CSS from the current token seed
-npm run dev       # start dev server with the demo app
+npm run dev       # opens /frontend/ when present, else /demo/
 ```
 
-Open `http://localhost:5173/demo/` to see the todo app running on the real CSMA
-runtime. Treat this as a smoke test and reference implementation, not the final
-shape of your app.
+Default dev entrypoints:
+
+- `npm run dev`:
+  opens `/frontend/` when `frontend/index.html` exists, otherwise `/demo/`
+- `npm run dev:demo`:
+  always opens `/demo/`
+- `npm run dev:showcase`:
+  always opens `/showcase/token-showcase.html`
+
+Open `http://localhost:5173/demo/` to see the demo app running on the real CSMA
+runtime. It is a todo-based reference surface with a few module examples, not
+just a standalone todo tutorial. Treat it as a smoke test and reference
+implementation, not the final shape of your app.
 
 Open `http://localhost:5173/showcase/token-showcase.html` after token edits to
 inspect the current palette, typography, spacing, layout primitives, shape,
-elevation, components, motion, and light/dark/contrast themes.
+elevation, components, motion, and light/dark/contrast themes. For token work,
+this showcase inspection is required; CSS output alone is not a substitute.
 
 ## What You Get
 
@@ -57,7 +68,7 @@ elevation, components, motion, and light/dark/contrast themes.
 | `src/ui/components/` | Token-driven CSS primitives — Badge, Button, Toast, Card, Input, Field |
 | `src/style/design-tokens.json` | CSMA base token seed (DTCG format) |
 | `src/style/token-overrides.json` | Project and brand token patches |
-| `demo/` | Simple todo app explaining CSMA components, theme switching, and runtime events |
+| `demo/` | Todo-based reference app showing CSMA components, theme switching, runtime events, and a few module examples |
 | `showcase/` | Standalone visual inspection pages for generated tokens |
 | `docs/` | Agent skills — design, architecture, security, testing, patterns |
 
@@ -85,9 +96,10 @@ work, do not edit it directly. Never edit generated CSS directly.
 
 ## After The Demo: Build Your App
 
-The todo app under `demo/` exists to show how CSMA works: primitive components,
-generated tokens, theme switching, EventBus state flow, and DOM rendering without
-a framework. Use it as a reference while building your actual application.
+The app under `demo/` exists to show how CSMA works: primitive components,
+generated tokens, theme switching, EventBus state flow, DOM rendering without a
+framework, and a few module-driven behaviors in one small surface. Use it as a
+reference while building your actual application.
 
 Start with one of two design paths:
 
@@ -106,7 +118,7 @@ Then use product planning when the request is bigger than token/style work:
 
 Recommended flow:
 
-1. Run the todo demo as a smoke test.
+1. Run the demo app as a smoke test.
 2. Choose design path: from scratch or import.
 3. Choose product planning path: landing page, website, app, page, flow,
    animation, or video.
@@ -140,8 +152,7 @@ Product planning keeps concerns separate:
 
 `demo/` is not a required scaffold for your production app. You can either:
 
-- keep `demo/` as reference and create your own app entry, then update
-  `vite.config.js` to point at it; or
+- keep `demo/` as reference and create your own app entry under `frontend/`; or
 - replace the todo files in `demo/` if you want the fastest single-entry
   starter path.
 

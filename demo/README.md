@@ -1,6 +1,7 @@
-# CSMA Todo App Demo
+# CSMA Demo
 
-A minimal, working example of a CSMA application.
+A minimal, working CSMA reference app built around a todo workflow plus a few
+module examples.
 
 ## What it demonstrates
 
@@ -10,7 +11,7 @@ A minimal, working example of a CSMA application.
 - **Service/DOM separation** — `app.js` holds state logic, `todo-app.js` handles DOM
 - **Theme toggle** — light / dark / contrast, persisted in localStorage
 - **Two-column layout** — main content + sticky sidebar using layout tokens
-- **Phase 1 module examples** — auth login form, notifications center trigger, share action, and upload drop zone
+- **Module examples** — auth login form, notifications center trigger, share action, and upload drop zone
 - **Vanilla JS, no build step needed** — open with any static server
 
 ## Run
@@ -33,11 +34,15 @@ python -m http.server 8080
 demo/
   index.html       — markup, templates, no inline JS
   app.css          — todo-specific styles + token/component imports
-  app.js           — bootstraps EventBus, TodoService, theme toggle, and Phase 1 module examples
+  app.js           — bootstraps EventBus, TodoService, theme toggle, and module examples
   todo-app.js      — DOM layer: subscribes to events, renders UI
 ```
 
 `app.js` creates the **TodoService** which subscribes to `INTENT_TODO_*` events and publishes `TODO_STATE_CHANGED` state updates. `todo-app.js` subscribes to those state updates and re-renders the DOM.
+
+The demo is still todo-centered, but it is no longer only a todo app. It also
+acts as a small reference surface for module-driven behaviors layered onto the
+same runtime and token system.
 
 The layout uses CSMA layout tokens:
 - `--layout-container-wide` for page max-width

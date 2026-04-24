@@ -216,6 +216,6 @@ video production or website-to-video work, continue with `docs/video/SKILL.md`.
   it when motion has a reusable sequence, cross-page ownership, or Type II state.
 - Do not put final website/app pages into `src/`; keep `src/` for reusable CSMA
   runtime, modules, components, and style.
-- Prefer `frontend/` for the user's final website/app entry when the todo demo
+- Prefer `frontend/` for the user's final website/app entry when the demo app
   stays as reference.
 - Preserve unrelated user worktree changes.

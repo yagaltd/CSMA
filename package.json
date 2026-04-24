@@ -7,7 +7,9 @@
         "flexsearch": "^0.7.43"
     },
     "scripts": {
-        "dev": "vite",
+        "dev": "node tooling/scripts/run-dev.js",
+        "dev:demo": "node tooling/scripts/run-dev.js demo",
+        "dev:showcase": "node tooling/scripts/run-dev.js showcase",
         "build": "vite build",
         "build:prod": "vite build --mode production --minify terser --sourcemap",
         "preview": "vite preview",

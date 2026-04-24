@@ -19,6 +19,11 @@ brand changes should be written to `src/style/token-overrides.json`, then merged
 into the base file and regenerated into `src/generated/tokens.css` with
 `npm run tokens:patch`.
 
+Before reading raw source files under `src/style/` or `src/ui/components/`,
+read `docs/design/agent-map.md`. For normal design work, use the map, the
+generated token reference, and the showcase before escalating to raw source
+inspection.
+
 ## Starting Point
 
 The repo includes `DESIGN.md` as a **template** with placeholder sections and
@@ -30,7 +35,7 @@ not write the entire file at once. Iterate section by section.
 
 ### Step 1: Read the Template
 
-Open `DESIGN.md` at repo root. It has:
+Read `docs/design/agent-map.md`, then open `DESIGN.md` at repo root. It has:
 - YAML front matter for identity and simple visual direction
 - Markdown sections with compact tables and `<!-- Agent: ... -->` comments
 - A "CSMA Requirements" section at the bottom (hardcoded, do not change)
@@ -204,7 +209,9 @@ design decision through `src/style/token-overrides.json`.
 
 Patch rules:
 
-- Inspect the relevant branch before patching it.
+- Inspect `tooling/generated/token-reference.json` and
+  `docs/design/agent-map.md`
+  before reading raw token source.
 - Preserve DTCG shape: `$value`, `$type`, `$description`, and `$extensions`
   where they already exist.
 - Keep semantic theme names stable unless the user explicitly asks for new
@@ -219,6 +226,13 @@ Patch rules:
   themes. Use the showcase to catch palette, typography, spacing, layout,
   radius, shadow, component, field, badge, status, and motion-token issues
   before composing app screens.
+
+Raw-source guardrail:
+
+- Do not read `src/style/design-tokens.json`, `src/style/foundation/*.css`, or
+  `src/ui/components/**/*.css` by default during design discovery.
+- Escalate only when extending a primitive/component or debugging a mismatch the
+  showcase and token reference cannot explain.
 
 ### Craft Rules Before CSS
 

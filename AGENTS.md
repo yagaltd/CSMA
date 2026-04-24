@@ -21,7 +21,7 @@ the architectural boundaries below.
 
 ## Design Workflow
 
-1. Read `docs/design/SKILL.md` for visual rules and token conventions.
+1. Read `docs/design/SKILL.md`.
 2. Chat with the user to understand desired changes.
 3. Update `src/style/token-overrides.json` with dot-notation token patches.
 4. Run `npm run tokens:patch` to merge into `src/style/design-tokens.json` and regenerate `src/generated/tokens.css`.
@@ -67,8 +67,7 @@ edit `src/style/design-tokens.json` directly; patch via
 There is no rigid page scaffold. Agents compose pages freely using:
 
 - Layout tokens (breakpoints, container widths, grid columns)
-- CSS utilities from `src/style/foundation/layout.css`
-- Primitive components from `src/ui/components/`
+- documented layout and component guidance from `docs/design/SKILL.md`
 - Reference examples in `demo/examples/`
 
 Consult `docs/patterns/SKILL.md` for common spatial recipes.
@@ -83,3 +82,10 @@ For new websites, apps, landing pages, navigation, or critical flows, read
 
 For implementation after planning, read `docs/animation/SKILL.md` for runtime
 motion and `docs/video/SKILL.md` for production-media or website-to-video work.
+
+## Source Inspection Guardrail
+
+Do not read raw token files, foundation CSS, or component CSS by default for
+routine page work. Prefer skill docs under `docs/`, generated references, and
+root planning artifacts first. Escalate to raw source only when blocked,
+extending a primitive, or debugging a documented/runtime mismatch.
