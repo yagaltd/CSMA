@@ -1,197 +1,162 @@
 /**
- * CSMA Security Policy Checker v1.0
- * Automated security audits for CSMA projects
- * 
+ * CSMA production security checker.
+ *
  * Run: npm run security-check
  */
 
 import fs from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
+import { dirname, join, relative } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..', '..');
 
-const securityChecks = {
-    csp_headers: {
-        file: 'demo/index.html',
-        check: (content) => {
-            const hasCSP = content.includes('Content-Security-Policy');
-            if (!hasCSP) {
-                return {
-                    pass: true,
-                    message: '⚠️  No CSP in demo (add one when deploying to production)'
-                };
-            }
-            const cspMatch = content.match(/Content-Security-Policy[^>]*content="([^"]*)"/);
-            const csp = cspMatch ? cspMatch[1] : '';
-            const scriptSrcMatch = csp.match(/script-src\s+([^;]*)/);
-            const scriptSrc = scriptSrcMatch ? scriptSrcMatch[1] : '';
-            const hasScriptUnsafeInline = scriptSrc.includes("'unsafe-inline'");
-            return {
-                pass: !hasScriptUnsafeInline,
-                message: hasScriptUnsafeInline
-                    ? "❌ CSP script-src contains 'unsafe-inline' (SECURITY RISK)"
-                    : '✅ CSP configured correctly'
-            };
-        }
-    },
+function read(relativePath) {
+    return fs.readFileSync(join(projectRoot, relativePath), 'utf8');
+}
 
-    contract_validation: {
-        file: 'src/runtime/Contracts.js',
-        check: (content) => {
-            // Starter app shell uses custom validation library at './validation/index.js'
-            const hasValidation = content.includes("from './validation/index.js'") ||
-                content.includes('from "./validation/index.js"') ||
-                content.includes('from \'superstruct\'') ||
-                content.includes('from "superstruct"');
-            const hasSchemas = content.includes('.schema') || content.includes('object(');
-            return {
-                pass: hasValidation && hasSchemas,
-                message: hasValidation && hasSchemas
-                    ? '✅ Contracts use validation library (custom forked Superstruct)'
-                    : '❌ Missing validation library imports (CRITICAL)'
-            };
-        }
-    },
-
-    rate_limiting: {
-        file: 'src/runtime/EventBus.js',
-        check: (content) => {
-            const hasRateLimiting = content.includes('checkRateLimit');
-            const hasSecurityViolation = content.includes('SECURITY_VIOLATION');
-            const usesLocalStorage = content.includes('localStorage.getItem') &&
-                content.includes('checkRateLimit');
-            return {
-                pass: hasRateLimiting && hasSecurityViolation && !usesLocalStorage,
-                message: usesLocalStorage
-                    ? '⚠️  Rate limiting uses localStorage (BYPASSABLE)'
-                    : hasRateLimiting && hasSecurityViolation
-                        ? '✅ Rate limiting implemented with secure storage'
-                        : '❌ Missing rate limiting (HIGH RISK)'
-            };
-        }
-    },
-
-    sanitization: {
-        file: 'src/utils/sanitize.js',
-        check: (content) => {
-            const hasSanitizeHTML = content.includes('function sanitizeHTML') ||
-                content.includes('export function sanitizeHTML');
-            const hasSanitizeURL = content.includes('function sanitizeURL') ||
-                content.includes('export function sanitizeURL');
-            const hasSanitizeLLM = content.includes('sanitizeLLMInput');
-            return {
-                pass: hasSanitizeHTML && hasSanitizeURL,
-                message: `${hasSanitizeHTML ? '✅' : '❌'} sanitizeHTML, ` +
-                    `${hasSanitizeURL ? '✅' : '❌'} sanitizeURL, ` +
-                    `${hasSanitizeLLM ? '✅' : '⚠️ '} sanitizeLLMInput (optional)`
-            };
-        }
-    },
-
-    schema_spoofing_protection: {
-        file: 'src/runtime/EventBus.js',
-        check: (content) => {
-            const hasPrototypePollutionCheck = content.includes('__proto__');
-            const hasConstructorCheck = content.includes('constructor.name');
-            return {
-                pass: hasPrototypePollutionCheck && hasConstructorCheck,
-                message: hasPrototypePollutionCheck && hasConstructorCheck
-                    ? '✅ Schema spoofing protection implemented'
-                    : '❌ Missing schema spoofing protection (CRITICAL)'
-            };
-        }
-    },
-
-    rate_limiter_exists: {
-        file: 'src/runtime/RateLimiter.js',
-        check: (content) => {
-            const hasMapStorage = content.includes('new Map()');
-            const hasSessionId = content.includes('sessionStorage');
-            return {
-                pass: hasMapStorage && hasSessionId,
-                message: hasMapStorage && hasSessionId
-                    ? '✅ RateLimiter uses in-memory Map with session ID'
-                    : '⚠️  RateLimiter implementation incomplete'
-            };
-        }
-    },
-
-    sanitize_classname: {
-        file: 'src/utils/sanitize.js',
-        check: (content) => {
-            const hasSanitizeClassName = content.includes('function sanitizeClassName') ||
-                content.includes('export function sanitizeClassName');
-            return {
-                pass: hasSanitizeClassName,
-                message: hasSanitizeClassName
-                    ? '✅ sanitizeClassName function implemented'
-                    : '❌ Missing sanitizeClassName (CSS injection risk)'
-            };
-        }
-    },
-
-    env_file_security: {
-        file: '.gitignore',
-        check: (content) => {
-            const hasEnvIgnore = content.includes('.env');
-            const hasEnvInGit = fs.existsSync(join(projectRoot, '.env'));
-
-            return {
-                pass: hasEnvIgnore && !hasEnvInGit,
-                message: !hasEnvIgnore
-                    ? '❌ .env not in .gitignore (CRITICAL SECURITY RISK)'
-                    : hasEnvInGit
-                        ? '❌ .env file exists in project (should be gitignored)'
-                        : '✅ Environment variable security configured'
-            };
+function walk(dir, files = []) {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (['node_modules', 'dist', 'build', '.git'].includes(entry.name)) continue;
+        const full = join(dir, entry.name);
+        if (entry.isDirectory()) {
+            walk(full, files);
+        } else if (/\.(js|html|css)$/.test(entry.name)) {
+            files.push(full);
         }
     }
-};
+    return files;
+}
 
-// Run checks
+function hasAnyStruct(struct, seen = new Set()) {
+    if (!struct || typeof struct !== 'object' || seen.has(struct)) return false;
+    seen.add(struct);
+    if (struct.type === 'any') return true;
+    if (struct.schema && typeof struct.schema === 'object') {
+        return Object.values(struct.schema).some((child) => hasAnyStruct(child, seen));
+    }
+    return hasAnyStruct(struct.schema, seen);
+}
+
+function checkCsp() {
+    const html = read('demo/index.html');
+    const match = html.match(/Content-Security-Policy[^>]*content="([^"]*)"/);
+    const csp = match?.[1] || '';
+    const required = ["default-src 'self'", "script-src 'self'", "object-src 'none'", "base-uri 'self'", "frame-ancestors 'none'", "connect-src 'self'"];
+    const missing = required.filter((directive) => !csp.includes(directive));
+    return {
+        name: 'strict CSP template',
+        pass: Boolean(match) && missing.length === 0 && !/script-src[^;]*'unsafe-inline'/.test(csp),
+        message: missing.length ? `missing ${missing.join(', ')}` : 'strict CSP present'
+    };
+}
+
+function checkDomSinks() {
+    const allowed = new Set([
+        'src/utils/sanitize.js',
+        'src/ui/components/toast/toast.js'
+    ]);
+    const offenders = walk(join(projectRoot, 'src'))
+        .map((file) => [relative(projectRoot, file), fs.readFileSync(file, 'utf8')])
+        .filter(([file, content]) => !allowed.has(file) && /\.(innerHTML|outerHTML)|insertAdjacentHTML\s*\(/.test(content))
+        .map(([file]) => file);
+    return {
+        name: 'unsafe DOM sinks',
+        pass: offenders.length === 0,
+        message: offenders.length ? offenders.join(', ') : 'no unapproved HTML sinks in src'
+    };
+}
+
+function checkTokenStorage() {
+    const offenders = walk(projectRoot)
+        .map((file) => [relative(projectRoot, file), fs.readFileSync(file, 'utf8')])
+        .filter(([file]) => !file.startsWith('tests/'))
+        .filter(([, content]) => /accessToken\s*:\s*['"](localStorage|sessionStorage)['"]/.test(content) && !/securityProfile\s*:\s*['"]development['"]/.test(content))
+        .map(([file]) => file);
+    return {
+        name: 'production token storage',
+        pass: offenders.length === 0,
+        message: offenders.length ? offenders.join(', ') : 'persistent access-token storage requires development profile'
+    };
+}
+
+async function checkContracts() {
+    const { Contracts } = await import(pathToFileURL(join(projectRoot, 'src/runtime/Contracts.js')).href);
+    const missingRateLimits = [];
+    const broadPublicSchemas = [];
+    for (const [name, contract] of Object.entries(Contracts)) {
+        if (contract.type !== 'intent') continue;
+        const limits = contract.security?.rateLimits;
+        if (!limits) {
+            missingRateLimits.push(name);
+        }
+        const canonical = Number.isFinite(limits?.requests)
+            ? [limits]
+            : Object.values(limits || {});
+        if (canonical.some((limit) => !Number.isFinite(limit.requests) || !Number.isFinite(limit.windowMs) || !limit.scope)) {
+            missingRateLimits.push(`${name} (non-canonical)`);
+        }
+        if (contract.compliance === 'public' && hasAnyStruct(contract.schema) && !contract.unsafeInternal) {
+            broadPublicSchemas.push(name);
+        }
+    }
+    return {
+        name: 'contracts',
+        pass: missingRateLimits.length === 0 && broadPublicSchemas.length === 0,
+        message: [
+            missingRateLimits.length ? `missing/corrupt rate limits: ${missingRateLimits.join(', ')}` : 'all intents have canonical rate limits',
+            broadPublicSchemas.length ? `broad public schemas: ${broadPublicSchemas.join(', ')}` : 'no unmarked broad public intent schemas'
+        ].join('; ')
+    };
+}
+
+function checkCachePolicy() {
+    const sw = read('public/sw.js');
+    const required = ['/api/', '/auth/', '/forms/', '/media/', '/logs/', '/optimistic/', '/query/', '/admin/', '/internal/'];
+    const missing = required.filter((prefix) => !sw.includes(`'${prefix}'`));
+    return {
+        name: 'offline cache denylist',
+        pass: missing.length === 0,
+        message: missing.length ? `missing ${missing.join(', ')}` : 'sensitive route prefixes are denied'
+    };
+}
+
+function checkSensitiveStorage() {
+    const pattern = /(localStorage|sessionStorage)\.setItem\([^)]*(token|secret|password|credential|authorization)/i;
+    const offenders = walk(join(projectRoot, 'src'))
+        .map((file) => [relative(projectRoot, file), fs.readFileSync(file, 'utf8')])
+        .filter(([file, content]) => file !== 'modules/auth/services/AuthService.js' && pattern.test(content))
+        .map(([file]) => file);
+    return {
+        name: 'sensitive storage patterns',
+        pass: offenders.length === 0,
+        message: offenders.length ? offenders.join(', ') : 'no forbidden sensitive storage writes'
+    };
+}
+
+const checks = [
+    checkCsp,
+    checkDomSinks,
+    checkTokenStorage,
+    checkContracts,
+    checkCachePolicy,
+    checkSensitiveStorage
+];
+
+console.log('\nCSMA Production Security Check\n');
+
 let allPassed = true;
-let criticalFailures = 0;
-console.log('\n🛡️  CSMA Security Policy Checker v1.0\n');
-console.log('═'.repeat(60));
-
-for (const [name, check] of Object.entries(securityChecks)) {
-    const filePath = join(projectRoot, check.file);
-
-    try {
-        const content = fs.readFileSync(filePath, 'utf8');
-        const result = check.check(content);
-
-        console.log(`\n${result.pass ? '✅' : '❌'} ${name.replace(/_/g, ' ').toUpperCase()}`);
-        console.log(`   ${result.message}`);
-        console.log(`   File: ${check.file}`);
-
-        if (!result.pass) {
-            allPassed = false;
-            if (result.message.includes('CRITICAL')) {
-                criticalFailures++;
-            }
-        }
-    } catch (error) {
-        console.log(`\n❌ ${name.replace(/_/g, ' ').toUpperCase()}`);
-        console.log(`   ⚠️  File not found: ${check.file}`);
-        console.log(`   Error: ${error.message}`);
-        allPassed = false;
-        criticalFailures++;
-    }
+for (const check of checks) {
+    const result = await check();
+    allPassed &&= result.pass;
+    console.log(`${result.pass ? 'PASS' : 'FAIL'} ${result.name}`);
+    console.log(`  ${result.message}`);
 }
 
-console.log('\n' + '═'.repeat(60));
-
-if (allPassed) {
-    console.log('\n✅ All security checks PASSED!\n');
-    console.log('Your CSMA application meets security standards.\n');
-} else {
-    console.log(`\n❌ Security issues found!`);
-    console.log(`   Critical failures: ${criticalFailures}`);
-    console.log(`   Please fix before deploying to production.\n`);
+if (!allPassed) {
+    console.log('\nSecurity check failed. Fix these issues before production deployment.\n');
+    process.exit(1);
 }
 
-process.exit(allPassed ? 0 : 1);
+console.log('\nAll production security checks passed.\n');

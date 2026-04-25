@@ -46,19 +46,25 @@ export class RateLimiter {
      * @param {string} key - Unique key for the rate limit (e.g., 'INTENT_CREATE_ITEM-user123')
      * @param {Object} limits - Rate limit configuration
      * @param {number} limits.requests - Maximum requests allowed
-     * @param {number} limits.window - Time window in milliseconds
+     * @param {number} limits.windowMs - Time window in milliseconds
+     * @param {string} limits.scope - Scope label used by EventBus when building keys
      * @returns {boolean} True if within limits, false if exceeded
      */
     checkRateLimit(key, limits) {
         const storageKey = `${this.sessionId}-${key}`;
         const now = Date.now();
 
+        const windowMs = limits.windowMs ?? limits.window;
+        if (!Number.isFinite(limits.requests) || !Number.isFinite(windowMs)) {
+            throw new Error('Invalid rate limit. Expected { requests, windowMs, scope }.');
+        }
+
         // Get or initialize request history
         let history = this.limits.get(storageKey) || [];
 
         // Remove timestamps outside the current window
         history = history.filter(timestamp =>
-            now - timestamp < limits.window
+            now - timestamp < windowMs
         );
 
         // Check if limit exceeded

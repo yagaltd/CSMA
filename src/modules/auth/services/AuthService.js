@@ -11,6 +11,7 @@ const DEFAULT_ENDPOINTS = {
 const DEFAULT_STORAGE = {
     accessToken: 'memory',
     session: 'memory',
+    oauthState: 'memory',
     keyPrefix: 'csma.auth'
 };
 
@@ -33,7 +34,7 @@ function isPlainObject(value) {
 }
 
 function normalizeStrategy(strategy) {
-    return ['cookie', 'jwt', 'oauth', 'hybrid'].includes(strategy) ? strategy : 'hybrid';
+    return ['cookie', 'jwt', 'oauth', 'hybrid'].includes(strategy) ? strategy : 'cookie';
 }
 
 function normalizeMethod(method, fallback = 'password') {
@@ -77,6 +78,19 @@ function createStorageAdapter(mode, key, fallbackStorage) {
     };
 }
 
+function createMemoryStorageAdapter() {
+    let value = null;
+    return {
+        getItem: () => value,
+        setItem: (nextValue) => {
+            value = String(nextValue);
+        },
+        removeItem: () => {
+            value = null;
+        }
+    };
+}
+
 function mergeOptions(base, override = {}) {
     return {
         ...base,
@@ -102,6 +116,19 @@ function safeParseResponseBody(response) {
     }
 
     return response.json().catch(() => ({}));
+}
+
+function randomState() {
+    const bytes = new Uint8Array(32);
+    const cryptoRef = globalThis.crypto;
+    if (cryptoRef?.getRandomValues) {
+        cryptoRef.getRandomValues(bytes);
+        return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
+    if (cryptoRef?.randomUUID) {
+        return cryptoRef.randomUUID();
+    }
+    throw new Error('Crypto API unavailable for OAuth state generation');
 }
 
 function parseJwtClaims(token) {
@@ -213,16 +240,19 @@ export class AuthService {
 
         this.options = mergeOptions({
             baseUrl: options.baseUrl || configBase || runtimeBase,
-            strategy: 'hybrid',
+            strategy: 'cookie',
             credentials: 'include',
             endpoints: DEFAULT_ENDPOINTS,
             storage: DEFAULT_STORAGE,
+            securityPolicy: options.securityPolicy || null,
             oauth: {
                 redirect: false
             }
         }, options);
+        this.securityPolicy = this.options.securityPolicy || { profile: this.options.securityProfile || 'production', auth: {} };
 
         this.baseUrl = this.options.baseUrl || '';
+        this.#assertSecureConfig();
         this.endpoints = { ...DEFAULT_ENDPOINTS, ...(this.options.endpoints || {}) };
         this.strategy = normalizeStrategy(this.options.strategy);
         this.currentUser = null;
@@ -240,16 +270,23 @@ export class AuthService {
             this.options.storage?.session,
             `${this.options.storage?.keyPrefix || DEFAULT_STORAGE.keyPrefix}.session`
         );
-        this.oauthStorage = createStorageAdapter(
-            this.options.storage?.session,
-            `${this.options.storage?.keyPrefix || DEFAULT_STORAGE.keyPrefix}.oauth`
-        );
+        this.oauthStorage = this.options.storage?.oauthState === 'sessionStorage'
+            ? createStorageAdapter(
+                'sessionStorage',
+                `${this.options.storage?.keyPrefix || DEFAULT_STORAGE.keyPrefix}.oauth`
+            )
+            : createMemoryStorageAdapter();
+        if (this.options.storage?.oauthState && !['memory', 'sessionStorage'].includes(this.options.storage.oauthState)) {
+            throw new Error('OAuth state may only use memory or sessionStorage.');
+        }
 
         this.#restoreFromStorage();
     }
 
     init(options = {}) {
         this.options = mergeOptions(this.options, options);
+        this.securityPolicy = this.options.securityPolicy || this.securityPolicy || { profile: this.options.securityProfile || 'production', auth: {} };
+        this.#assertSecureConfig();
         this.baseUrl = this.options.baseUrl || this.baseUrl || '';
         this.endpoints = { ...DEFAULT_ENDPOINTS, ...(this.options.endpoints || {}) };
         this.strategy = normalizeStrategy(this.options.strategy);
@@ -262,10 +299,9 @@ export class AuthService {
             this.options.storage?.session,
             `${this.options.storage?.keyPrefix || DEFAULT_STORAGE.keyPrefix}.session`
         );
-        this.oauthStorage = createStorageAdapter(
-            this.options.storage?.session,
-            `${this.options.storage?.keyPrefix || DEFAULT_STORAGE.keyPrefix}.oauth`
-        );
+        this.oauthStorage = this.options.storage?.oauthState === 'sessionStorage'
+            ? createStorageAdapter('sessionStorage', `${this.options.storage?.keyPrefix || DEFAULT_STORAGE.keyPrefix}.oauth`)
+            : this.oauthStorage || createMemoryStorageAdapter();
 
         this.#restoreFromStorage();
         this.#setupIntentHandlers();
@@ -372,7 +408,8 @@ export class AuthService {
         const redirectUri = isPlainObject(options)
             ? options.redirectUri || this.options.oauth?.redirectUri || this.#defaultRedirectUri()
             : this.options.oauth?.redirectUri || this.#defaultRedirectUri();
-        const requestId = now().toString(36);
+        this.#assertAllowedRedirectUri(redirectUri);
+        const requestId = randomState();
         const payload = {
             provider,
             redirectUri,
@@ -420,11 +457,24 @@ export class AuthService {
             throw error;
         }
 
+        if (!pending?.state || !callback.state || callback.state !== pending.state) {
+            const error = new Error('Invalid OAuth state');
+            this.#publishOAuthFailure({
+                provider: callback.provider || pending?.provider || undefined,
+                error,
+                requestId: callback.state || undefined
+            });
+            throw error;
+        }
+
+        const redirectUri = callback.redirectUri || pending?.redirectUri || this.options.oauth?.redirectUri || this.#defaultRedirectUri();
+        this.#assertAllowedRedirectUri(redirectUri);
+
         const payload = {
             code: callback.code,
-            state: callback.state || pending?.state || undefined,
+            state: callback.state,
             provider: callback.provider || pending?.provider || undefined,
-            redirectUri: callback.redirectUri || pending?.redirectUri || this.options.oauth?.redirectUri || this.#defaultRedirectUri(),
+            redirectUri,
             timestamp: now()
         };
 
@@ -577,6 +627,38 @@ export class AuthService {
         const base = String(this.baseUrl || '').replace(/\/$/, '');
         const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
         return `${base}${path}`;
+    }
+
+    #assertSecureConfig() {
+        const profile = this.securityPolicy?.profile || this.options.securityProfile || 'production';
+        if (profile !== 'production') {
+            return;
+        }
+
+        const tokenMode = this.options.storage?.accessToken || DEFAULT_STORAGE.accessToken;
+        if (tokenMode !== 'memory') {
+            throw new Error('CSMA production security forbids persistent access-token storage.');
+        }
+
+        const url = this.baseUrl ? new URL(this.baseUrl, globalThis.location?.origin || 'http://localhost') : null;
+        if (url && url.origin !== globalThis.location?.origin && url.protocol !== 'https:') {
+            throw new Error('CSMA production security requires HTTPS for external auth baseUrl.');
+        }
+    }
+
+    #assertAllowedRedirectUri(redirectUri) {
+        const profile = this.securityPolicy?.profile || this.options.securityProfile || 'production';
+        if (profile !== 'production' || !redirectUri) {
+            return;
+        }
+
+        const url = new URL(redirectUri, globalThis.location?.origin || 'http://localhost');
+        const allowedOrigins = this.securityPolicy?.auth?.allowedRedirectOrigins || [];
+        const allowedUris = this.securityPolicy?.auth?.allowedRedirectUris || [];
+        const sameOrigin = globalThis.location?.origin && url.origin === globalThis.location.origin;
+        if (!sameOrigin && !allowedOrigins.includes(url.origin) && !allowedUris.includes(url.href)) {
+            throw new Error('CSMA production security rejected OAuth redirect URI outside the allowlist.');
+        }
     }
 
     #applySessionResponse(payload, { flow, method, requestId } = {}) {

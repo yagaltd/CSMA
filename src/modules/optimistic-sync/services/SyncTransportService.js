@@ -1,5 +1,7 @@
 // PROTOCOL is injected via init() config, with a safe default fallback.
 // The library does not import project-level config.js directly.
+import { TransportMessageGuard } from './TransportMessageGuard.js';
+
 const PROTOCOL = { subprotocol: '1.0.0' };
 
 const DEFAULT_ACK_TIMEOUT = 8000;
@@ -19,14 +21,21 @@ export class SyncTransportService {
         this.channelManager = null;
         this.channelEventSubs = [];
         this.eventsEndpoint = null;
+        this.guard = new TransportMessageGuard();
+        this.guardViolations = 0;
+        this.maxGuardViolations = 3;
     }
 
-    async init({ endpoint, eventsEndpoint, leaderService, channelManager, subprotocol } = {}) {
+    async init({ endpoint, eventsEndpoint, leaderService, channelManager, subprotocol, securityPolicy } = {}) {
         this.leaderService = leaderService;
         this.endpoint = endpoint || this._defaultWsUrl();
         this.eventsEndpoint = eventsEndpoint || this._defaultHttpUrl('/optimistic/events');
         this.channelManager = channelManager || window?.csma?.channels || null;
         this.subprotocol = subprotocol || PROTOCOL.subprotocol || '1.0.0';
+        this.guard = new TransportMessageGuard({
+            ...(securityPolicy?.transport || {})
+        });
+        this.maxGuardViolations = securityPolicy?.transport?.maxViolations || 3;
 
         const hasWebSocket = typeof WebSocket !== 'undefined' && !!this.endpoint;
         if (!hasWebSocket) {
@@ -97,6 +106,7 @@ export class SyncTransportService {
         this.socket?.close();
         this._setState('connecting');
         try {
+            this.guard.assertEndpointAllowed(this.endpoint, { kind: 'ws' });
             const url = new URL(this.endpoint);
             url.searchParams.set('role', 'leader');
             url.searchParams.set('site', this.leaderService?.getSite?.() || 'default');
@@ -131,9 +141,9 @@ export class SyncTransportService {
     _handleMessage(raw) {
         let message;
         try {
-            message = JSON.parse(raw);
+            message = this.guard.parse(raw);
         } catch (error) {
-            console.warn('[OptimisticTransport] Failed to parse message:', error);
+            this._handleGuardViolation(error, { source: 'websocket' });
             return;
         }
 
@@ -239,6 +249,25 @@ export class SyncTransportService {
         }
     }
 
+    _handleGuardViolation(error, { source }) {
+        this.guardViolations += 1;
+        this.eventBus?.publish('SECURITY_VIOLATION', {
+            type: 'transport-message',
+            source,
+            error: error?.message || String(error),
+            timestamp: Date.now()
+        });
+        this._failPending(new Error('TRANSPORT_GUARD_VIOLATION'));
+        if (this.guardViolations >= this.maxGuardViolations) {
+            this.socket?.close?.();
+        }
+    }
+
+    _parseSseMessage(event, type) {
+        const parsed = JSON.parse(event.data || '{}');
+        return this.guard.parse(JSON.stringify({ type, ...parsed }));
+    }
+
     _flushQueue() {
         const queue = [...this.queue];
         this.queue = [];
@@ -333,11 +362,17 @@ export class SyncTransportService {
         }
         const url = this.eventsEndpoint || this._defaultHttpUrl('/optimistic/events');
         if (!url) return;
+        try {
+            this.guard.assertEndpointAllowed(url, { kind: 'sse' });
+        } catch (error) {
+            this._handleGuardViolation(error, { source: 'sse' });
+            return;
+        }
         this.eventSource?.close?.();
         this.eventSource = new EventSource(url);
         this.eventSource.addEventListener('invalidate', (event) => {
             try {
-                const data = JSON.parse(event.data || '{}');
+                const data = this._parseSseMessage(event, 'channel.invalidate');
                 this.eventBus?.publish('OPTIMISTIC_INVALIDATION', data);
                 this.channelManager?.handleInvalidate(data);
             } catch (error) {
@@ -346,7 +381,7 @@ export class SyncTransportService {
         });
         this.eventSource.addEventListener('replay', (event) => {
             try {
-                const data = JSON.parse(event.data || '{}');
+                const data = this._parseSseMessage(event, 'replay');
                 this.eventBus?.publish('OPTIMISTIC_TRANSPORT_REPLAY', data);
                 this.channelManager?.handleReplay(data);
             } catch (error) {
@@ -356,7 +391,7 @@ export class SyncTransportService {
 
         this.eventSource.addEventListener('island.invalidate', (event) => {
             try {
-                const data = JSON.parse(event.data || '{}');
+                const data = this._parseSseMessage(event, 'island.invalidate');
                 this.eventBus?.publish('ISLAND_INVALIDATED', data);
             } catch (error) {
                 console.warn('[OptimisticTransport] Failed to parse island invalidate payload:', error);
@@ -365,7 +400,7 @@ export class SyncTransportService {
 
         this.eventSource.addEventListener('rework', (event) => {
             try {
-                const data = JSON.parse(event.data || '{}');
+                const data = this._parseSseMessage(event, 'rework');
                 this.eventBus?.publish('OPTIMISTIC_SERVER_REWORK', data);
             } catch (error) {
                 console.warn('[OptimisticTransport] Failed to parse rework payload:', error);

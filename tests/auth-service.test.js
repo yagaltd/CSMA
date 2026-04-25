@@ -95,7 +95,17 @@ describe('AuthService', () => {
         );
     });
 
-    it('keeps JWT access tokens in memory by default and avoids refresh token persistence', async () => {
+    it('rejects persistent access-token storage in production', () => {
+        expect(() => createAuthService(new MockEventBus(), {
+            baseUrl: 'https://api.example.com',
+            storage: {
+                accessToken: 'sessionStorage',
+                session: 'localStorage'
+            }
+        })).toThrow(/persistent access-token storage/);
+    });
+
+    it('allows persistent access-token storage only in development and avoids refresh token persistence', async () => {
         const eventBus = new MockEventBus();
         fetch.mockResolvedValueOnce({
             ok: true,
@@ -113,7 +123,8 @@ describe('AuthService', () => {
             storage: {
                 accessToken: 'sessionStorage',
                 session: 'localStorage'
-            }
+            },
+            securityProfile: 'development'
         });
 
         await auth.login({ email: 'admin@example.com', password: 'secret' });
@@ -151,7 +162,15 @@ describe('AuthService', () => {
                 })
             });
 
-        const auth = createAuthService(eventBus, { baseUrl: 'https://api.example.com' });
+        const auth = createAuthService(eventBus, {
+            baseUrl: 'https://api.example.com',
+            securityPolicy: {
+                profile: 'production',
+                auth: {
+                    allowedRedirectOrigins: ['https://app.example.com']
+                }
+            }
+        });
         const started = await auth.startOAuth({ provider: 'google', redirectUri: 'https://app.example.com/auth/callback' });
         const completed = await auth.handleOAuthCallback({ code: 'code-123', state: started.state, provider: 'google' });
 
@@ -166,6 +185,30 @@ describe('AuthService', () => {
             'AUTH_OAUTH_COMPLETED',
             expect.objectContaining({ provider: 'google' })
         );
+    });
+
+    it('rejects OAuth callbacks with mismatched state', async () => {
+        const eventBus = new MockEventBus();
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                authorizationUrl: 'https://oauth.example.com/authorize?state=abc',
+                state: 'abc'
+            })
+        });
+
+        const auth = createAuthService(eventBus, {
+            baseUrl: 'https://api.example.com',
+            securityPolicy: {
+                profile: 'production',
+                auth: { allowedRedirectOrigins: ['https://app.example.com'] }
+            }
+        });
+        await auth.startOAuth({ provider: 'google', redirectUri: 'https://app.example.com/auth/callback' });
+
+        await expect(auth.handleOAuthCallback({ code: 'code-123', state: 'wrong', provider: 'google' }))
+            .rejects.toThrow(/Invalid OAuth state/);
     });
 
     it('refreshes a cookie session during init and clears auth on logout', async () => {

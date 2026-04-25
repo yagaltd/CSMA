@@ -16,6 +16,7 @@ import { ClientNavigationService } from './ClientNavigationService.js';
 import { ExampleService } from '../services/ExampleService.js';
 import { PlatformService } from '../services/PlatformService.js';
 import { auditPage } from './seoAudit.js';
+import { resolveSecurityPolicy } from './SecurityPolicy.js';
 
 export const CORE_SERVICE_NAMES = new Set([
     'leader',
@@ -119,7 +120,8 @@ export function createRuntimeState() {
     };
 }
 
-export function syncWindowRuntime(state, { apiBaseUrl, destroyApp }) {
+export function syncWindowRuntime(state, { apiBaseUrl, destroyApp, securityPolicy } = {}) {
+    const policy = securityPolicy || state.securityPolicy || resolveSecurityPolicy(state.runtimeConfig || {});
     const analytics = state.serviceManager?.get?.('analytics') || null;
     const consent = state.serviceManager?.get?.('consent') || null;
     const analyticsConsent = consent || state.serviceManager?.get?.('analyticsConsent') || null;
@@ -128,24 +130,17 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp }) {
     const fileUpload = state.serviceManager?.get?.('fileUpload') || null;
     const cacheManager = state.serviceManager?.get?.('cacheManager') || null;
 
-    window.serviceManager = state.serviceManager;
-    window.csma = {
+    if (policy.globals?.exposeInternals) {
+        window.serviceManager = state.serviceManager;
+    } else if ('serviceManager' in window) {
+        window.serviceManager = null;
+    }
+
+    const publicRuntime = {
         ...(window.csma || {}),
-        eventBus: state.eventBus,
-        serviceManager: state.serviceManager,
-        moduleManager: state.moduleManager,
-        channels: state.channelManager,
-        leader: state.leaderService,
-        metaManager: state.metaManager,
-        metaManagerModule: state.serviceManager?.get?.('metaManagerModule') || null,
-        pageResolver: state.pageResolver,
-        clientNavigation: state.clientNavigation,
         router: state.serviceManager?.get?.('router') || null,
-        logAccumulator: state.logAccumulator,
-        registries: state.registries,
         i18n: state.i18nServiceRef,
         auth: state.authServiceRef,
-        runtimeConfig: state.runtimeConfig || null,
         analytics,
         consent,
         analyticsConsent,
@@ -155,7 +150,9 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp }) {
         cacheManager,
         apiBaseUrl,
         destroyApp,
-        diagnose: (options = {}) => state.logAccumulator?.diagnosticSnapshot?.(options) || null,
+        diagnose: policy.profile === 'production'
+            ? () => null
+            : (options = {}) => state.logAccumulator?.diagnosticSnapshot?.(options) || null,
         seoAudit: () => auditPage(),
         exportAnalytics: () => {
             if (analytics?.buildBatchPayload) {
@@ -171,6 +168,25 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp }) {
             };
         }
     };
+
+    window.csma = policy.globals?.exposeInternals
+        ? {
+            ...publicRuntime,
+            eventBus: state.eventBus,
+            serviceManager: state.serviceManager,
+            moduleManager: state.moduleManager,
+            channels: state.channelManager,
+            leader: state.leaderService,
+            metaManager: state.metaManager,
+            metaManagerModule: state.serviceManager?.get?.('metaManagerModule') || null,
+            pageResolver: state.pageResolver,
+            clientNavigation: state.clientNavigation,
+            logAccumulator: state.logAccumulator,
+            registries: state.registries,
+            runtimeConfig: state.runtimeConfig || null,
+            securityPolicy: policy
+        }
+        : publicRuntime;
 }
 
 export async function destroyRuntimeState(state, { destroyApp }) {

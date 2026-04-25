@@ -27,7 +27,20 @@ const SAFE_EXTENSIONS = [
     '.ttf',
     '.map'
 ];
-const BLOCKED_PREFIXES = ['/api/', '/auth/', '/login', '/logout', '/session'];
+const BLOCKED_PREFIXES = [
+    '/api/',
+    '/auth/',
+    '/forms/',
+    '/media/',
+    '/logs/',
+    '/optimistic/',
+    '/query/',
+    '/admin/',
+    '/internal/',
+    '/login',
+    '/logout',
+    '/session'
+];
 
 function resolveUrl(input, origin) {
     if (typeof input === 'string') {

@@ -4,7 +4,7 @@
 > **Client-Side Microservices Architecture** pattern.
 
 Zero frameworks. Zero virtual DOM. Vanilla JavaScript, token-driven CSS, and a
-reactive runtime that stays small and stays fast.
+reactive tree-shakable runtime that stays small and stays fast.
 
 ## Features
 
@@ -175,7 +175,7 @@ Video boundary:
 
 ## Manifest-Driven Legal And SEO Scaffolding
 
-CSMA now includes a first-class scaffold generator driven by one root manifest:
+CSMA includes a first-class scaffold generator driven by one root manifest:
 `project-manifest.json`.
 
 Minimum shape:
@@ -208,8 +208,8 @@ Generation rules:
 - When `web.enabled=true`, also scaffold `pages/cookies.md` and `public/robots.txt`
 - When `web.enabled=true` and `web.indexable=true`, also scaffold
   `public/sitemap.xml` and `public/llms.txt`
-- Existing files are never overwritten in v1
-- `web.routes` is the only sitemap and `llms.txt` source in v1
+- Existing files are never overwritten
+- `web.routes` is the sitemap and `llms.txt` source
 
 Run it with:
 
@@ -264,6 +264,34 @@ through `PAGE_CHANGED` or `metaManagerModule`.
 
 See `roadmap.md` for planned additions.
 
+## Security Model
+
+CSMA is secure-by-default. Missing security config resolves to the production
+profile; development-only runtime behavior requires
+`securityProfile: "development"`.
+
+Production behavior:
+
+- access tokens are memory-only; persistent browser token storage is rejected
+- cookie sessions are the preferred auth strategy
+- OAuth state uses cryptographic randomness and callback state is validated strictly
+- OAuth redirect URIs must be same-origin or explicitly allowlisted
+- `window.csma` exposes a small public runtime surface by default
+- EventBus contracts reject unknown keys, oversized values, unsafe URLs, prototype-pollution keys, and unmarked broad public schemas
+- public and user-triggered intents use canonical rate limits: `{ requests, windowMs, scope }`
+- form autosave is off; sensitive fields are redacted from events and drafts
+- public-network forms require backend-delegated integrity through `integrityService.prepareSubmission(...)`
+- service worker caching denies sensitive route prefixes including `/api/`, `/auth/`, `/forms/`, `/media/`, `/logs/`, `/optimistic/`, `/query/`, `/admin/`, and `/internal/`
+
+Production verification:
+
+```bash
+npm run security-check
+npm test -- --run
+npm run build
+npm run verify:frontend-routes
+```
+
 ## SSMA Gateway
 
 For backend gateway middleware — WebSocket transport, auth, optimistic intent
@@ -276,6 +304,13 @@ persistence, media, forms — use **SSMA**:
 
 CSMA = client template. SSMA = Rust gateway. Connect them via the
 `optimistic-sync` module over WebSocket.
+
+Production CSMA + SSMA deployments use HttpOnly Secure SameSite cookies,
+allowed-origin enforcement, server-side rate limits, authenticated WS/SSE
+connections, protected channels, backend anti-bot checks for form submission,
+and no bearer tokens in browser storage. CSMA enforces client-side contracts and
+backpressure; SSMA or the deployment layer remains responsible for authoritative
+abuse prevention.
 
 ## Browser Support
 

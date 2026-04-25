@@ -17,6 +17,11 @@ layers may have failed.
 
 The 6 layers work together but are independently testable and replaceable.
 
+Default runtime posture is production. Missing `securityProfile` resolves to
+`production`; relaxed demos must set `securityProfile: "development"`.
+Production rejects persistent access-token storage, unallowlisted cross-origin
+SSMA endpoints, unallowlisted OAuth redirects, and unsafe CSP/script patterns.
+
 ## The 6 Security Layers
 
 ### Layer 1: CSP Headers
@@ -94,10 +99,7 @@ The EventBus enforces rate limits per event type.
 INTENT_MODAL_OPEN: {
   schema: object({ modalId: string() }),
   security: {
-    rateLimits: {
-      perSecond: 10,
-      perMinute: 100
-    }
+    rateLimits: { requests: 60, windowMs: 60000, scope: 'session' }
   }
 }
 ```
@@ -109,6 +111,23 @@ Rate limiting behavior:
 - Rate-limited events emit a `SECURITY_RATE_LIMITED` event
 
 **Set appropriate rate limits for every user-facing event.** Background processing events can have higher limits.
+
+### Forms And Integrity
+
+Form autosave is off by default. Sensitive fields (`password`, `token`, `secret`,
+payment identifiers, and fields marked with `fieldPolicies[name].sensitive`) are
+redacted from EventBus payloads and omitted from persisted drafts. Network forms
+must declare `trustLevel: "authenticated-network"` or `"public-network"`;
+public-network submissions require backend-delegated integrity through
+`integrityService.prepareSubmission(...)`. CSMA must never hold browser-side
+HMAC/signing secrets.
+
+### SSMA Production Expectations
+
+CSMA assumes SSMA production backends enforce HttpOnly Secure SameSite cookies,
+allowed origins, server-side rate limits, authenticated WS/SSE cookies,
+protected channels, `/forms/submit` anti-bot policy, and no bearer-token storage
+in the browser. Client-side rate limits are only UX/backpressure.
 
 ### Layer 5: Honeypot Fields
 

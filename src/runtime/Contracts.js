@@ -670,7 +670,7 @@ const CoreContracts = {
 
         security: {
             rateLimits: {
-                perUser: { requests: 10, window: 60000 }  // 10 requests per minute
+                perUser: { requests: 10, windowMs: 60000, scope: 'user' }  // 10 requests per minute
             }
         },
 
@@ -1636,7 +1636,7 @@ const CoreContracts = {
     },
 };
 
-export const Contracts = {
+const mergedContracts = {
     ...CoreContracts,
     ...FileSystemContracts,
     ...MediaCaptureContracts,
@@ -1680,3 +1680,34 @@ export const Contracts = {
         })
     }
 };
+
+function normalizeRateLimits(rateLimits) {
+    if (!rateLimits) return null;
+    if (Number.isFinite(rateLimits.requests)) {
+        return {
+            requests: rateLimits.requests,
+            windowMs: rateLimits.windowMs ?? rateLimits.window,
+            scope: rateLimits.scope || 'session'
+        };
+    }
+    return Object.fromEntries(Object.entries(rateLimits).map(([name, limits]) => [
+        name,
+        {
+            requests: limits.requests,
+            windowMs: limits.windowMs ?? limits.window,
+            scope: limits.scope || name.replace(/^per/, '').toLowerCase() || 'session'
+        }
+    ]));
+}
+
+export const Contracts = Object.fromEntries(Object.entries(mergedContracts).map(([name, contractValue]) => {
+    if (contractValue?.type !== 'intent') {
+        return [name, contractValue];
+    }
+
+    const security = {
+        ...(contractValue.security || {}),
+        rateLimits: normalizeRateLimits(contractValue.security?.rateLimits) || { requests: 60, windowMs: 60000, scope: 'session' }
+    };
+    return [name, { ...contractValue, security }];
+}));

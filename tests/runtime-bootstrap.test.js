@@ -31,15 +31,25 @@ describe('runtime bootstrap', () => {
         expect(state.serviceManager.get('islandRuntime')).toBeFalsy();
     });
 
-    it('syncWindowRuntime populates window.csma', () => {
+    it('syncWindowRuntime hides internals by default in production', () => {
         const state = createRuntimeState();
         const noop = () => {};
         syncWindowRuntime(state, { apiBaseUrl: '', destroyApp: noop });
         expect(window.csma).toBeDefined();
+        expect(window.csma.serviceManager).toBeUndefined();
+        expect(window.csma.eventBus).toBeUndefined();
+        expect(window.csma.metaManager).toBeUndefined();
+        expect(state.serviceManager.get('metaManager')).toBe(state.metaManager);
+    });
+
+    it('syncWindowRuntime exposes debug internals in development', () => {
+        const state = createRuntimeState();
+        state.runtimeConfig = { securityProfile: 'development' };
+        const noop = () => {};
+        syncWindowRuntime(state, { apiBaseUrl: '', destroyApp: noop });
         expect(window.csma.serviceManager).toBe(state.serviceManager);
         expect(window.csma.eventBus).toBe(state.eventBus);
         expect(window.csma.metaManager).toBe(state.metaManager);
-        expect(state.serviceManager.get('metaManager')).toBe(state.metaManager);
         expect(window.csma.metaManagerModule).toBeNull();
     });
 
@@ -199,7 +209,7 @@ describe('runtime bootstrap', () => {
                 I18N: true
             },
             apiBaseUrl: '',
-            runtimeConfig: {},
+            runtimeConfig: { securityProfile: 'development' },
             pages: []
         });
 
@@ -274,6 +284,7 @@ describe('runtime bootstrap', () => {
             },
             apiBaseUrl: '',
             runtimeConfig: {
+                securityProfile: 'development',
                 offlineCache: {
                     sampleInterval: 0,
                     backend: 'memory'

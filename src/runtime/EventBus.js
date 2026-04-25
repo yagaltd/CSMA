@@ -1,5 +1,9 @@
 import { rateLimiter } from './RateLimiter.js';
 
+const PROTOTYPE_POLLUTION_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+const MAX_PUBLIC_STRING_LENGTH = 16000;
+const MAX_PUBLIC_ARRAY_LENGTH = 1000;
+
 export class EventBus {
   constructor() {
     this.listeners = new Map();
@@ -39,19 +43,21 @@ export class EventBus {
       const contract = this.contracts[eventName];
 
       // Check rate limits if defined
-      if (contract.security?.rateLimits) {
-        const userId = payload.userId || 'anonymous';
-        const key = `${eventName}-${userId}`;
+      const rateLimits = this._normalizeRateLimits(contract.security?.rateLimits);
+      if (rateLimits.length > 0) {
+        const userId = payload?.userId || 'anonymous';
+        for (const limits of rateLimits) {
+          const scope = limits.scope || 'session';
+          const scopeValue = scope === 'user' ? userId : scope;
+          const key = `${eventName}-${scopeValue}`;
 
-        for (const [limitType, limits] of Object.entries(contract.security.rateLimits)) {
-          if (!rateLimiter.checkRateLimit(`${key}-${limitType}`, limits)) {
-            console.warn(`[SECURITY] Rate limit exceeded for ${eventName} (${limitType})`);
+          if (!rateLimiter.checkRateLimit(key, limits)) {
+            console.warn(`[SECURITY] Rate limit exceeded for ${eventName} (${scope})`);
             this._publishSecurityViolation({
               type: 'rate-limit',
               eventName,
               userId,
-              limitType,
-              payload: limits
+              limit: { requests: limits.requests, windowMs: limits.windowMs, scope }
             });
             return []; // Silently fail
           }
@@ -99,19 +105,21 @@ export class EventBus {
       const contract = this.contracts[eventName];
 
       // Check rate limits
-      if (contract.security?.rateLimits) {
-        const userId = payload.userId || 'anonymous';
-        const key = `${eventName}-${userId}`;
+      const rateLimits = this._normalizeRateLimits(contract.security?.rateLimits);
+      if (rateLimits.length > 0) {
+        const userId = payload?.userId || 'anonymous';
+        for (const limits of rateLimits) {
+          const scope = limits.scope || 'session';
+          const scopeValue = scope === 'user' ? userId : scope;
+          const key = `${eventName}-${scopeValue}`;
 
-        for (const [limitType, limits] of Object.entries(contract.security.rateLimits)) {
-          if (!rateLimiter.checkRateLimit(`${key}-${limitType}`, limits)) {
-            console.warn(`[SECURITY] Rate limit exceeded for ${eventName} (${limitType})`);
+          if (!rateLimiter.checkRateLimit(key, limits)) {
+            console.warn(`[SECURITY] Rate limit exceeded for ${eventName} (${scope})`);
             this._publishSecurityViolation({
               type: 'rate-limit',
               eventName,
               userId,
-              limitType,
-              payload: limits
+              limit: { requests: limits.requests, windowMs: limits.windowMs, scope }
             });
             return;
           }
@@ -151,17 +159,7 @@ export class EventBus {
 
   _validatePayload(payload, schema) {
     // Schema spoofing protection
-    if (payload && typeof payload === 'object') {
-      // Prevent prototype pollution
-      if (payload.__proto__ !== Object.prototype || payload.constructor !== Object) {
-        throw new Error('Schema spoofing attempt detected (prototype pollution)');
-      }
-
-      // Prevent constructor.name spoofing
-      if (payload.constructor && payload.constructor !== Object) {
-        throw new Error('Schema spoofing attempt detected (constructor manipulation)');
-      }
-    }
+    this._scanPayloadSecurity(payload);
 
     // Apply schema validation - returns [error, value] tuple
     const [error, validatedValue] = schema.validate(payload);
@@ -171,6 +169,62 @@ export class EventBus {
     }
     
     return validatedValue;
+  }
+
+  _scanPayloadSecurity(value, path = []) {
+    if (typeof value === 'string' && value.length > MAX_PUBLIC_STRING_LENGTH) {
+      throw new Error(`Oversized string at ${path.join('.') || 'payload'}`);
+    }
+
+    if (Array.isArray(value)) {
+      if (value.length > MAX_PUBLIC_ARRAY_LENGTH) {
+        throw new Error(`Oversized array at ${path.join('.') || 'payload'}`);
+      }
+      value.forEach((item, index) => this._scanPayloadSecurity(item, [...path, index]));
+      return;
+    }
+
+    if (!value || typeof value !== 'object') {
+      return;
+    }
+
+    const proto = Object.getPrototypeOf(value);
+    if (proto !== Object.prototype && proto !== null) {
+      throw new Error('Schema spoofing attempt detected (prototype pollution)');
+    }
+
+    for (const key of Object.keys(value)) {
+      if (PROTOTYPE_POLLUTION_KEYS.has(key)) {
+        throw new Error(`Prototype pollution key rejected: ${key}`);
+      }
+      if (/url$/i.test(key) && typeof value[key] === 'string' && !this._isSafeUrl(value[key])) {
+        throw new Error(`Unsafe URL rejected at ${[...path, key].join('.')}`);
+      }
+      this._scanPayloadSecurity(value[key], [...path, key]);
+    }
+  }
+
+  _isSafeUrl(value) {
+    try {
+      const url = new URL(value, globalThis.location?.origin || 'http://localhost');
+      return ['http:', 'https:', 'mailto:', 'tel:'].includes(url.protocol);
+    } catch {
+      return false;
+    }
+  }
+
+  _normalizeRateLimits(rateLimits) {
+    if (!rateLimits) {
+      return [];
+    }
+    if (Number.isFinite(rateLimits.requests)) {
+      return [{ ...rateLimits, windowMs: rateLimits.windowMs ?? rateLimits.window, scope: rateLimits.scope || 'session' }];
+    }
+    return Object.values(rateLimits).map((limits) => ({
+      ...limits,
+      windowMs: limits.windowMs ?? limits.window,
+      scope: limits.scope || 'session'
+    }));
   }
 
   _publishSecurityViolation(details) {

@@ -148,6 +148,8 @@ describe('service worker offline cache strategy', () => {
 
         expect(shouldHandleRequest(createRequest('https://example.com/src/app.js'), options)).toBe(true);
         expect(shouldHandleRequest(createRequest('https://example.com/api/items'), options)).toBe(false);
+        expect(shouldHandleRequest(createRequest('https://example.com/forms/draft'), options)).toBe(false);
+        expect(shouldHandleRequest(createRequest('https://example.com/optimistic/events'), options)).toBe(false);
         expect(shouldHandleRequest(createRequest('https://other.example/src/app.js'), options)).toBe(false);
         expect(shouldHandleRequest(createRequest('https://example.com/src/app.js', { method: 'POST' }), options)).toBe(false);
         expect(shouldHandleRequest(createRequest('https://example.com/src/app.js', { authorization: 'Bearer token' }), options)).toBe(false);

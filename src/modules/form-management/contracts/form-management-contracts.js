@@ -1,5 +1,7 @@
 import { object, string, number, optional, enums, boolean, any } from '../../../runtime/validation/index.js';
 
+const FORM_RATE_LIMIT = { requests: 30, windowMs: 60000, scope: 'session' };
+
 export const FormManagementContracts = {
     INTENT_FORM_REGISTER: {
         version: 1,
@@ -9,12 +11,18 @@ export const FormManagementContracts = {
         stability: 'stable',
         compliance: 'public',
         description: 'Register or hydrate a form instance',
+        unsafeInternal: true,
+        security: { rateLimits: FORM_RATE_LIMIT },
 
         schema: object({
             formId: string(),
             schema: optional(any()),
             initialValues: optional(object()),
             metadata: optional(object()),
+            fieldPolicies: optional(object()),
+            sensitiveFields: optional(any()),
+            trustLevel: optional(enums(['local', 'authenticated-network', 'public-network'])),
+            persist: optional(boolean()),
             autoSave: optional(boolean()),
             autoSaveDelay: optional(number()),
             timestamp: number()
@@ -29,6 +37,8 @@ export const FormManagementContracts = {
         stability: 'stable',
         compliance: 'public',
         description: 'Update a single form field value',
+        unsafeInternal: true,
+        security: { rateLimits: FORM_RATE_LIMIT },
 
         schema: object({
             formId: string(),
@@ -47,6 +57,7 @@ export const FormManagementContracts = {
         stability: 'stable',
         compliance: 'public',
         description: 'Submit a form and emit payload downstream',
+        security: { rateLimits: { requests: 10, windowMs: 60000, scope: 'session' } },
 
         schema: object({
             formId: string(),
@@ -65,6 +76,7 @@ export const FormManagementContracts = {
         stability: 'stable',
         compliance: 'public',
         description: 'Reset form state to initial values',
+        security: { rateLimits: FORM_RATE_LIMIT },
 
         schema: object({
             formId: string(),
@@ -97,6 +109,7 @@ export const FormManagementContracts = {
         stability: 'stable',
         compliance: 'internal',
         description: 'Emitted after a single field changes',
+        unsafeInternal: true,
 
         schema: object({
             formId: string(),

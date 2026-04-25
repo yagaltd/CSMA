@@ -360,6 +360,7 @@ function bindAuthDemo(bus) {
   const logoutButton = document.querySelector('[data-auth-logout]');
   const status = document.querySelector('[data-auth-status]');
   const auth = createAuthService(bus, {
+    securityProfile: 'development',
     baseUrl: window.location.origin,
     strategy: 'hybrid',
     storage: {

@@ -2,6 +2,7 @@ import { initConsentUI } from '../modules/consent/ui/consent-ui.js';
 import { auditPage } from './seoAudit.js';
 import { buildLogEndpoint } from '../style/theme/theme-helpers.js';
 import { resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from './ssma.js';
+import { assertProductionSecurityPolicy, resolveSecurityPolicy } from './SecurityPolicy.js';
 
 function cloneRuntimeSection(value, fallback = {}) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -44,6 +45,8 @@ export async function loadOptionalFeatures(state, {
     windowRef = globalThis.window
 }) {
     const { eventBus, serviceManager, moduleManager, channelManager, registries } = state;
+    const securityPolicy = resolveSecurityPolicy(runtimeConfig);
+    assertProductionSecurityPolicy(securityPolicy, runtimeConfig);
     const searchConfig = cloneRuntimeSection(runtimeConfig.search, {});
     const protocolConfig = cloneRuntimeSection(runtimeConfig.protocol, {});
     const optimisticSyncConfig = cloneRuntimeSection(runtimeConfig.optimisticSync, {});
@@ -64,6 +67,7 @@ export async function loadOptionalFeatures(state, {
     const cacheManagerEnabled = Boolean(FEATURES.CACHE_MANAGER || offlineCacheEnabled);
 
     state.runtimeConfig = cloneRuntimeSection(runtimeConfig, {});
+    state.securityPolicy = securityPolicy;
 
     const pageServices = initializePageServices(state, {
         pages,
@@ -114,6 +118,7 @@ export async function loadOptionalFeatures(state, {
             const authService = serviceManager.get('auth');
             await authService?.init({
                 baseUrl: authConfig.baseUrl || apiBaseUrl,
+                securityPolicy,
                 ...authConfig
             });
             state.authServiceRef = authService;
@@ -162,6 +167,7 @@ export async function loadOptionalFeatures(state, {
                 endpoint: resolveSsmaWsEndpoint('/optimistic/ws', optimisticSyncConfig.wsEndpoint, runtimeConfig),
                 eventsEndpoint: resolveSsmaHttpEndpoint('/optimistic/events', optimisticSyncConfig.eventsEndpoint, runtimeConfig),
                 channelManager,
+                securityPolicy,
                 subprotocol: protocolConfig.subprotocol
             });
             await optimisticSync?.init({
@@ -205,7 +211,9 @@ export async function loadOptionalFeatures(state, {
             };
             formManager?.init({
                 storageService: storageAdapter,
-                syncQueueService: syncQueue
+                syncQueueService: syncQueue,
+                securityPolicy,
+                integrityService: serviceManager.get('integrityService') || serviceManager.get('hmac')
             });
             window.csma = window.csma || {};
             window.csma.form = formManager;
@@ -680,6 +688,30 @@ export async function loadOptionalFeatures(state, {
             console.log('[FormValidator] Initialized');
         } catch (error) {
             console.warn('[FormValidator] Failed to load:', error);
+        }
+    }
+
+    if (!securityPolicy.globals?.exposeInternals && window.csma) {
+        for (const key of [
+            'eventBus',
+            'serviceManager',
+            'moduleManager',
+            'channels',
+            'leader',
+            'metaManager',
+            'metaManagerModule',
+            'pageResolver',
+            'clientNavigation',
+            'logAccumulator',
+            'registries',
+            'runtimeConfig',
+            'optimisticTransport',
+            'actionLog',
+            'syncQueue',
+            'cacheManager',
+            'fileSystem'
+        ]) {
+            delete window.csma[key];
         }
     }
 }

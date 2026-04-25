@@ -329,10 +329,14 @@ export class FormValidator {
                 input.parentElement.appendChild(errorContainer);
             }
 
-            // Update error messages
-            errorContainer.innerHTML = errors.map(err =>
-                `<span class="error-message">${err}</span>`
-            ).join('');
+            // Update error messages without parsing validation text as HTML.
+            errorContainer.replaceChildren();
+            errors.forEach((err) => {
+                const message = document.createElement('span');
+                message.className = 'error-message';
+                message.textContent = err;
+                errorContainer.appendChild(message);
+            });
 
             // Link input to error
             errorContainer.id = `${fieldName}-errors`;
