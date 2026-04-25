@@ -131,7 +131,7 @@ Hidden form fields detect bot submissions.
 ```css
 .hp-field {
   position: absolute;
-  left: -9999px;
+  inset-inline-start: -9999px;
   width: 1px;
   height: 1px;
   overflow: hidden;

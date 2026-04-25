@@ -411,6 +411,11 @@ export async function loadOptionalFeatures(state, {
                 const locale = localStorage.getItem('locale') || 'en';
                 const translations = await fetch(`/locales/${locale}.json`).then(r => r.json());
                 await i18nService.loadLocale(locale, translations);
+
+                if (i18nService.locale !== locale && i18nService.hasLocale(locale)) {
+                    i18nService.setLocale(locale);
+                }
+
                 console.log('[i18n] Translations loaded:', locale);
             }
 

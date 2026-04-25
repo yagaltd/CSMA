@@ -4,7 +4,64 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import EventBus from '../src/runtime/EventBus.js';
 import { MetaManager } from '../src/runtime/MetaManager.js';
 import { MetaManagerModuleService } from '../src/modules/meta-manager/services/MetaManagerModuleService.js';
-import { I18n } from '../src/modules/i18n/services/I18n.js';
+import { I18n, getLocaleDirection } from '../src/modules/i18n/services/I18n.js';
+
+describe('I18n document direction', () => {
+    let eventBus;
+
+    beforeEach(() => {
+        document.documentElement.lang = '';
+        document.documentElement.dir = '';
+        localStorage.clear();
+        eventBus = new EventBus();
+    });
+
+    afterEach(() => {
+        document.documentElement.lang = '';
+        document.documentElement.dir = '';
+        localStorage.clear();
+    });
+
+    it('applies lang and dir for the default locale immediately', () => {
+        const i18n = new I18n(eventBus, 'en-US');
+
+        expect(i18n.locale).toBe('en-US');
+        expect(i18n.direction).toBe('ltr');
+        expect(document.documentElement.lang).toBe('en-US');
+        expect(document.documentElement.dir).toBe('ltr');
+    });
+
+    it('switches the document to rtl locales and publishes direction metadata', async () => {
+        const i18n = new I18n(eventBus, 'en-US');
+        await i18n.loadLocale('en-US', { common: { label: 'Hello' } });
+        await i18n.loadLocale('ar-SA', { common: { label: 'مرحبا' } });
+
+        const languageChanges = [];
+        eventBus.subscribe('LANGUAGE_CHANGED', (payload) => {
+            languageChanges.push(payload);
+        });
+
+        i18n.setLocale('ar-SA');
+
+        expect(i18n.direction).toBe('rtl');
+        expect(document.documentElement.lang).toBe('ar-SA');
+        expect(document.documentElement.dir).toBe('rtl');
+        expect(languageChanges.at(-1)).toEqual({
+            from: 'en-US',
+            to: 'ar-SA',
+            fromDirection: 'ltr',
+            toDirection: 'rtl',
+            direction: 'rtl'
+        });
+    });
+
+    it('normalizes locale subtags when resolving direction', () => {
+        expect(getLocaleDirection('he-IL')).toBe('rtl');
+        expect(getLocaleDirection('fa_IR')).toBe('rtl');
+        expect(getLocaleDirection('en-GB')).toBe('ltr');
+        expect(getLocaleDirection('')).toBe('ltr');
+    });
+});
 
 describe('MetaManager localized SEO', () => {
     let eventBus;
@@ -23,6 +80,7 @@ describe('MetaManager localized SEO', () => {
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         document.documentElement.lang = '';
+        document.documentElement.dir = '';
     });
 
     it('renders canonical, alternates, and locale Open Graph tags from PAGE_CHANGED', async () => {
@@ -101,6 +159,7 @@ describe('MetaManagerModuleService localized page binding', () => {
         document.head.innerHTML = '';
         document.body.innerHTML = '';
         document.documentElement.lang = '';
+        document.documentElement.dir = '';
         localStorage.clear();
     });
 

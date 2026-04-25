@@ -209,6 +209,32 @@ describe('runtime bootstrap', () => {
         expect(window.csma.metaManagerModule).toBe(state.serviceManager.get('metaManagerModule'));
     });
 
+    it('applies persisted locale direction when I18N boots', async () => {
+        const state = createRuntimeState();
+        window.csma = {};
+        localStorage.setItem('locale', 'ar');
+        document.documentElement.lang = '';
+        document.documentElement.dir = '';
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({ seo: { title: 'مرحبا' } })
+        });
+
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                I18N: true
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {},
+            pages: []
+        });
+
+        expect(window.csma.i18n.locale).toBe('ar');
+        expect(document.documentElement.lang).toBe('ar');
+        expect(document.documentElement.dir).toBe('rtl');
+    });
+
     it('loads file upload with optional dependencies when enabled', async () => {
         const state = createRuntimeState();
         await loadOptionalFeatures(state, {

@@ -15,7 +15,9 @@ Locale and translation management for multi-language apps.
 
 Loaded with `FEATURES.I18N`; runtime loads `/locales/{locale}.json` based on local storage.
 `i18n` owns locale state, translation lookup, and language switching. It does
-not own SEO/head-tag rendering.
+not own SEO/head-tag rendering. It updates `document.documentElement.lang` and
+`document.documentElement.dir`, using locale direction as part of the runtime
+source of truth.
 
 ## Storage / Side Effects
 

@@ -2,12 +2,32 @@
  * I18n - Internationalization system (~1.5KB)
  * Simple translation with interpolation and pluralization
  */
+const RTL_LANGUAGE_CODES = new Set(['ar', 'fa', 'he', 'ps', 'sd', 'ur', 'yi']);
+
+function normalizeLocaleTag(locale) {
+    return typeof locale === 'string'
+        ? locale.trim().replace(/_/g, '-')
+        : '';
+}
+
+export function getLocaleDirection(locale) {
+    const normalized = normalizeLocaleTag(locale).toLowerCase();
+
+    if (!normalized) {
+        return 'ltr';
+    }
+
+    const [languageCode = ''] = normalized.split('-');
+    return RTL_LANGUAGE_CODES.has(languageCode) ? 'rtl' : 'ltr';
+}
+
 export class I18n {
     constructor(eventBus, defaultLocale = 'en') {
         this.eventBus = eventBus;
         this.currentLocale = defaultLocale;
         this.translations = {};
         this.fallbackLocale = 'en';
+        this.#applyDocumentLocale(defaultLocale);
     }
 
     /**
@@ -17,6 +37,7 @@ export class I18n {
         this.translations[locale] = translations;
 
         if (locale === this.currentLocale) {
+            this.#applyDocumentLocale(locale);
             this.eventBus.publish('LOCALE_LOADED', { locale });
         }
     }
@@ -36,13 +57,16 @@ export class I18n {
         // Save to localStorage
         localStorage.setItem('locale', locale);
 
-        // Update HTML lang attribute
-        document.documentElement.lang = locale;
+        this.#applyDocumentLocale(locale);
+        const direction = this.direction;
 
         // Publish event
         this.eventBus.publish('LANGUAGE_CHANGED', {
             from: oldLocale,
-            to: locale
+            to: locale,
+            fromDirection: getLocaleDirection(oldLocale),
+            toDirection: direction,
+            direction
         });
     }
 
@@ -51,6 +75,14 @@ export class I18n {
      */
     get locale() {
         return this.currentLocale;
+    }
+
+    get direction() {
+        return getLocaleDirection(this.currentLocale);
+    }
+
+    getDirection(locale = this.currentLocale) {
+        return getLocaleDirection(locale);
     }
 
     /**
@@ -142,6 +174,15 @@ export class I18n {
      */
     hasLocale(locale) {
         return this.locales.includes(locale);
+    }
+
+    #applyDocumentLocale(locale) {
+        if (typeof document === 'undefined' || !document.documentElement) {
+            return;
+        }
+
+        document.documentElement.lang = locale;
+        document.documentElement.dir = getLocaleDirection(locale);
     }
 }
 

@@ -59,7 +59,7 @@ durable source of truth for UI state.
 ### 2. Define All States in CSS
 
 ```css
-.card[data-state="pending"] { border-left: 4px solid var(--warning); }
+.card[data-state="pending"] { border-inline-start: 4px solid var(--warning); }
 .card[data-state="completed"] { border: 4px solid var(--success); }
 .card[data-state="loading"] { opacity: 0.7; pointer-events: none; }
 ```
