@@ -123,6 +123,10 @@ recognizable repeated motif that ordinary cards, badges, and rows cannot express
 | User-provided content | Type I or II | Always write with `textContent`, never `innerHTML`. |
 | Animation-only feedback | Type I | Respect `prefers-reduced-motion`. |
 
+Before inventing new JS for responsive behavior, overlay plumbing, or purely
+visual validation feedback, consult `docs/css/SKILL.md` to check whether modern
+CSS or native HTML primitives already cover the case with a clear fallback.
+
 ## Composing Patterns
 
 Patterns are plain semantic HTML plus CSS. Use tokens from
@@ -150,5 +154,7 @@ Patterns are plain semantic HTML plus CSS. Use tokens from
 - Prefer existing component class names before creating new primitives.
 - Keep visual state in classes, ARIA attributes, or `data-*`.
 - Do not mutate inline styles for UI state.
+- Prefer `@container` for component-local adaptation and `@media` for page/shell breakpoints.
+- Prefer native HTML/CSS primitives such as `<details>`, `<dialog>`, or `popover` when they fit the interaction better than custom JS.
 - All spacing, color, radius, and shadows must use tokens.
 - Validate EventBus payloads with Contracts for Type II components.

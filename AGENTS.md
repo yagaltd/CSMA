@@ -60,6 +60,7 @@ edit `src/style/design-tokens.json` directly; patch via
 | Security, CSP, sanitization | `docs/security/SKILL.md` |
 | Testing strategy | `docs/testing/SKILL.md` |
 | Layout recipes, spatial patterns | `docs/patterns/SKILL.md` |
+| Modern CSS features, browser compat, JS→CSS migration | `docs/css/SKILL.md` |
 | Rigor selection (tests, transitions) | `docs/rigor/SKILL.md` |
 
 ## Layouts and Pages
@@ -82,6 +83,9 @@ For new websites, apps, landing pages, navigation, or critical flows, read
 For implementation after planning, read `docs/animation/SKILL.md` for runtime
 motion. Use `docs/video/SKILL.md` only when integrating an existing video asset
 or when the user explicitly wants video work handled inside this repo.
+
+When choosing between CSS-native behavior and JS-driven visual behavior, read
+`docs/css/SKILL.md` before inventing new JS styling logic.
 
 For multi-page sites, app shells, or hybrid products, decide shared shell and
 file structure before implementing the first page or screen.

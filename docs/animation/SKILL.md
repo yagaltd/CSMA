@@ -22,9 +22,10 @@ Read only what applies:
 1. `DESIGN.md`.
 2. `docs/design/SKILL.md` for token rules.
 3. `docs/patterns/SKILL.md` for Type I/II and layout patterns.
-4. `docs/architecture/SKILL.md` if animation follows shared app state.
-5. `animations/<animation>.md` if product planning created one.
-6. Page or flow specs that own the animated surface.
+4. `docs/css/SKILL.md` when deciding whether newer CSS/HTML primitives already cover the interaction.
+5. `docs/architecture/SKILL.md` if animation follows shared app state.
+6. `animations/<animation>.md` if product planning created one.
+7. Page or flow specs that own the animated surface.
 
 If no motion artifact exists and the animation is reusable, cross-page, or
 sequence-based, create one from
@@ -35,7 +36,7 @@ sequence-based, create one from
 | Need | Default implementation | Escalate when |
 |:--|:--|:--|
 | Hover, focus, pressed, disabled | CSS transitions using token variables. | Do not escalate. |
-| Modal, drawer, popover, disclosure | CSS transition/keyframe plus class or `data-*` state. | Sequence has interruption, staging, or nested timing. |
+| Modal, drawer, popover, disclosure | Prefer native HTML/CSS primitives first, then CSS transition/keyframe plus class or `data-*` state. | Native primitives do not fit, or sequence has interruption, staging, or nested timing. |
 | Toast or async feedback | CSS transition driven by Type II state. | Multiple timed exits or chained states need timeline control. |
 | Splash screen or route transition | `animations/<animation>.md`, CSS keyframes, small JS trigger/cleanup. | Timeline must pause, reverse, interrupt, or coordinate many elements. |
 | Section or hero reveal | CSS first, often with `IntersectionObserver`. | Many elements need choreography or scroll-linked control. |
@@ -50,6 +51,7 @@ sequence-based, create one from
 | Use generated variables. | Durations/easing come from `--motion-*` or `--transition-*` tokens when available. |
 | Keep authored styles in CSS. | No inline authored styles for normal UI state. |
 | Keep state explicit. | Use classes, ARIA, and `data-*` attributes. |
+| Prefer native primitives before custom motion plumbing. | Check whether `<dialog>`, `popover`, `@starting-style`, or other CSS-native behavior already covers the case. |
 | Prefer transform and opacity. | Avoid animating layout properties unless the user goal requires it. |
 | Respect reduced motion. | Add `@media (prefers-reduced-motion: reduce)` for page-level and runtime sequences. |
 

@@ -25,8 +25,9 @@ Read these in order:
 1. Root `DESIGN.md`.
 2. `docs/design/SKILL.md`.
 3. `docs/patterns/SKILL.md`.
-4. `docs/architecture/SKILL.md` if a flow changes application state.
-5. `docs/design-import/SKILL.md` if the user provides an external `DESIGN.md`.
+4. `docs/css/SKILL.md` when responsive behavior, overlays, validation styling, or CSS-native interaction choices are part of the plan.
+5. `docs/architecture/SKILL.md` if a flow changes application state.
+6. `docs/design-import/SKILL.md` if the user provides an external `DESIGN.md`.
 
 ## Artifact Model
 
@@ -225,6 +226,15 @@ Motion rules:
 | Use CSS for simple motion. | Avoids dependency weight and inline-style side effects. |
 | Escalate to GSAP only for sequencing, scroll, SVG, or runtime control. | Keeps advanced animation optional and justified. |
 | Respect `prefers-reduced-motion`. | Page-level motion needs an accessible alternative. |
+
+CSS-native planning rules:
+
+| Rule | Reason |
+|:--|:--|
+| Decide native primitive vs custom JS early for overlays and disclosure. | `<dialog>`, `popover`, and CSS-native transitions can remove unnecessary runtime plumbing. |
+| Choose responsive ownership explicitly. | Use `@media` for page/shell breakpoints and `@container` for reusable component-local adaptation. |
+| Treat modern CSS as progressive enhancement, not a state-model replacement. | Persistence, contracts, routing, and business logic remain outside CSS. |
+| Record fallback expectations when using newly available or limited CSS features. | Prevents plans that depend on unsupported behavior. |
 ## Type I / Type II
 
 | Behavior | CSMA type | Rule |

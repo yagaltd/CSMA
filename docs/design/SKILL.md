@@ -120,6 +120,28 @@ Ask these after the overview and before writing CSS:
 | Container rule | Use spacing first, borders second, cards only for repeated records. |
 | Interaction feel | Fast utility with restrained transitions. |
 
+#### Section: Visual Refinement
+
+**Goal:** Prevent generic AI-shaped UI before implementation starts.
+
+Ask these once the core direction is clear:
+- Which visual cliches would make this product feel generic or untrustworthy?
+- Should the UI feel more editorial, product-like, operational, or tool-like?
+- Where should visual emphasis come from: type, layout, color, motion, or imagery?
+- Which surfaces should stay plain even if the rest of the app is expressive?
+- Are placeholders acceptable, and if so, where must they stay explicit?
+
+Write into `DESIGN.md`:
+
+| Audit area | Rule |
+|:-----------|:-----|
+| Typography | Use one clear display/body relationship; avoid mixed random weights and over-decorated headings. |
+| Layout | Do not default to interchangeable three-card rows when hierarchy needs a stronger composition. |
+| Surfaces | Use boxes only when they clarify grouping; avoid wrapping every section in a card. |
+| Content realism | Use explicit placeholders; do not invent fake testimonials, fake metrics, or fake product proof. |
+| Motion | Keep motion purposeful and subordinate to hierarchy, not decorative noise. |
+| Anti-generic rule | Name the two or three visual moves this product must avoid. |
+
 #### Section: Elevation & Depth + Shapes
 
 **Goal:** Define visual texture.
@@ -244,6 +266,43 @@ Before writing component or page CSS:
 4. Use spacing before adding dividers, borders, cards, or shadows.
 5. Use cards only for repeated items, framed tools, and modals.
 6. Record forbidden visual moves in `DESIGN.md` before composing.
+
+### Redesign Priority Order
+
+When refining an existing UI, improve it in this order unless the user gives a
+different priority:
+
+1. Typography and hierarchy
+2. Layout composition and spacing rhythm
+3. Color, surfaces, and contrast structure
+4. Component states and interaction clarity
+5. Motion and polish
+
+Do not start by adding decorative gradients, more cards, or stronger shadows if
+the hierarchy and composition are still weak.
+
+### Visual Audit Before Build
+
+Run this mental checklist before implementing page CSS or new component skins:
+
+- Is the layout doing enough work before boxes and dividers are added?
+- Is there one clear primary focal region, or did everything become equally loud?
+- Are repeated sections visually distinct enough to scan without becoming a card farm?
+- Does typography create hierarchy without relying on color alone?
+- Are placeholders clearly marked instead of pretending to be final proof or content?
+- Is the design expressing the product's actual character instead of falling back to generic SaaS tropes?
+
+### Pre-Flight Review Before Shipping
+
+Before considering a design pass complete, review the result for:
+
+- visual hierarchy drift between screens
+- repeated generic patterns such as centered hero plus feature-card grid by default
+- unnecessary card nesting, overboxing, or shadow noise
+- weak empty, loading, hover, focus, and error states
+- content realism, placeholder clarity, and trust signals
+- responsive integrity, logical-property/RTL safety, and theme consistency
+ 
 
 ### Step 4: Build Components
 

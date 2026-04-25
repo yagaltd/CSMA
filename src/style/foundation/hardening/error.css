@@ -138,7 +138,7 @@
 .offline-indicator {
   position: fixed;
   bottom: var(--space-lg);
-  left: 50%;
+  inset-inline-start: 50%;
   transform: translateX(-50%);
   padding: var(--space-sm) var(--space-lg);
   background: var(--warning);
@@ -171,7 +171,7 @@
   display: inline-block;
   width: 0.75em;
   height: 0.75em;
-  margin-left: var(--space-sm);
+  margin-inline-start: var(--space-sm);
   border: 1.5px solid currentColor;
   border-top-color: transparent;
   border-radius: 50%;

@@ -5,8 +5,8 @@
 
 .toast-container {
     position: fixed;
-    top: var(--space-lg);
-    right: var(--space-lg);
+    inset-block-start: var(--space-lg);
+    inset-inline-end: var(--space-lg);
     z-index: var(--z-toast);
     display: flex;
     flex-direction: column;
@@ -16,6 +16,7 @@
 }
 
 .toast {
+    --toast-enter-offset: 100%;
     display: flex;
     align-items: center;
     gap: var(--space-md);
@@ -35,7 +36,7 @@
 
 @keyframes toast-slide-in {
     from {
-        transform: translateX(100%);
+        transform: translateX(var(--toast-enter-offset));
         opacity: 0;
     }
 
@@ -52,9 +53,13 @@
     }
 
     to {
-        transform: translateX(100%);
+        transform: translateX(var(--toast-enter-offset));
         opacity: 0;
     }
+}
+
+[dir="rtl"] .toast {
+    --toast-enter-offset: -100%;
 }
 
 .toast-icon {
@@ -98,25 +103,25 @@
 
 /* Toast Variants */
 .toast-default {
-    border-left: 4px solid var(--primary);
+    border-inline-start: 4px solid var(--primary);
 }
 
 .toast-success {
-    border-left: 4px solid var(--success);
+    border-inline-start: 4px solid var(--success);
 }
 
 .toast-error {
-    border-left: 4px solid var(--destructive);
+    border-inline-start: 4px solid var(--destructive);
 }
 
 .toast-warning {
-    border-left: 4px solid var(--warning);
+    border-inline-start: 4px solid var(--warning);
 }
 
 @media (min-width: 768px) {
     .toast-container {
-        top: var(--space-2xl);
-        right: var(--space-2xl);
+        inset-block-start: var(--space-2xl);
+        inset-inline-end: var(--space-2xl);
     }
 }
 
@@ -139,19 +144,19 @@
     }
 
     .toast-default {
-        border-left-width: 6px;
+        border-inline-start-width: 6px;
     }
 
     .toast-success {
-        border-left-width: 6px;
+        border-inline-start-width: 6px;
     }
 
     .toast-error {
-        border-left-width: 6px;
+        border-inline-start-width: 6px;
     }
 
     .toast-warning {
-        border-left-width: 6px;
+        border-inline-start-width: 6px;
     }
 
     .toast-close:focus-visible {

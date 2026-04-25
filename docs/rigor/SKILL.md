@@ -19,6 +19,10 @@ This is a decision skill. It routes you to more detailed guidance in:
 It is **not** a mandatory runtime subsystem and it does **not** replace
 Contracts, EventBus, or the core CSMA rules.
 
+Visual audit and refinement guidance lives in `docs/design/SKILL.md`, not here.
+Use `csma-rigor` for reliability depth and verification scope, not for taste or
+layout-polish decisions.
+
 ## What CSMA Already Guarantees
 
 Standard CSMA already gives you:

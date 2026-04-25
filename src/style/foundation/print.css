@@ -260,7 +260,7 @@
     width: 0.75em;
     height: 0.75em;
     display: inline-block;
-    margin-right: 0.25em;
+    margin-inline-end: 0.25em;
   }
 
   .checkbox-item[data-state="checked"] .checkbox-box::after,
@@ -387,9 +387,9 @@
 
   /* Blockquotes */
   blockquote {
-    border-left: 3px solid #000 !important;
-    padding-left: 1em;
-    margin-left: 0;
+    border-inline-start: 3px solid #000 !important;
+    padding-inline-start: 1em;
+    margin-inline-start: 0;
     font-style: italic;
     page-break-inside: avoid;
   }
