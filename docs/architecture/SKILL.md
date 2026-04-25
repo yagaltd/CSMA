@@ -27,6 +27,12 @@ Routing boundary:
 - the optional `router` module owns SPA/hybrid route orchestration
 - static public MPA pages should stay real HTML outputs rather than JS HTML injection
 
+Localization and SEO boundary:
+
+- `i18n` owns locale state, translation loading, and language switching
+- `meta-manager` owns `<title>`, meta tags, canonical links, hreflang alternates, and JSON-LD output
+- page/app code composes localized SEO payloads and passes them through `PAGE_CHANGED` or `metaManagerModule`
+
 Rigor is layered on top of this baseline. Use standard CSMA first, then add
 property tests, service-local transitions, or stronger verification only when
 the module risk justifies it. See `docs/rigor/SKILL.md`.
@@ -44,6 +50,11 @@ element.dataset.state = 'loading';
 element.style.opacity = '1';
 element.style.borderColor = 'green';
 ```
+
+Exception:
+Transient inline styles produced by CSS animation/keyframes or GSAP at runtime
+are acceptable as animation output. Inline styles are still not allowed as the
+durable source of truth for UI state.
 
 ### 2. Define All States in CSS
 

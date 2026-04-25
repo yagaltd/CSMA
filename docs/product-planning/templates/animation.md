@@ -35,6 +35,7 @@
 | State | Source | Implementation rule |
 |:--|:--|:--|
 | `<state>` | `<class/data-* / EventBus / Contract>` | `<how CSS or JS reads it>` |
+| `<property ownership>` | `<CSS / GSAP / split by element>` | `<which properties each owns so they do not fight>` |
 
 ## Token Use
 

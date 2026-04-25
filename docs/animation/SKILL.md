@@ -100,6 +100,27 @@ selectors, and kill/revert timelines on teardown.
 GSAP may mutate inline styles at runtime. That is acceptable only as transient
 animation output. Authored CSMA styles still live in CSS.
 
+## GSAP Guardrails
+
+Use GSAP as a motion renderer, not as the UI state model.
+
+| Guardrail | Rule |
+|:--|:--|
+| State ownership | GSAP must not own durable app state such as open/closed, selected, loading, error, auth, or route state. Those remain in classes, `data-*`, ARIA, Contracts, and EventBus flows. |
+| Trigger model | App logic changes state first. GSAP reacts to confirmed state, route changes, or explicit runtime triggers. |
+| Property ownership | If GSAP controls `transform`, `opacity`, `clip-path`, or `filter` for an interaction path, CSS transitions/keyframes must not also control that same property on that same element. One property, one owner. |
+| Layout safety | Prefer transform/opacity motion. Avoid animating `width`, `height`, `top`, `left`, or other layout-driving properties unless the motion requirement truly needs them. |
+| Inline style exception | GSAP inline styles are allowed only as transient animation output. They are not the source of truth for component state or design tokens. |
+| Cleanup | Kill or revert timelines, ScrollTriggers, observers, and listeners on teardown. Runtime motion must clean up like any other CSMA behavior. |
+| Reduced motion | Explicitly short-circuit or simplify GSAP motion under `prefers-reduced-motion: reduce`. |
+| Static validity | The final layout must work with animation disabled. GSAP can animate between states, but must not be required for the surface to render correctly. |
+
+Practical rule:
+
+- classes / `data-*` / ARIA / Contracts decide what state the UI is in
+- CSS or GSAP decides how that state is visually expressed over time
+- do not let GSAP toggle app-state classes as its primary control mechanism
+
 ## Reduced Motion
 
 | Motion type | Required fallback |

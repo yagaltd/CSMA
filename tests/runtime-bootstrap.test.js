@@ -40,6 +40,7 @@ describe('runtime bootstrap', () => {
         expect(window.csma.eventBus).toBe(state.eventBus);
         expect(window.csma.metaManager).toBe(state.metaManager);
         expect(state.serviceManager.get('metaManager')).toBe(state.metaManager);
+        expect(window.csma.metaManagerModule).toBeNull();
     });
 
     it('destroyRuntimeState nullifies window.csma references', async () => {
@@ -49,6 +50,7 @@ describe('runtime bootstrap', () => {
         await destroyRuntimeState(state, { destroyApp: noop });
         expect(window.csma.eventBus).toBeNull();
         expect(window.csma.serviceManager).toBeNull();
+        expect(window.csma.metaManagerModule).toBeNull();
     });
 
     it('loadOptionalFeatures returns without error when all FEATURES flags are false', async () => {
@@ -181,6 +183,30 @@ describe('runtime bootstrap', () => {
         expect(state.serviceManager.get('share')).toBeTruthy();
         expect(window.csma.notifications).toBe(state.serviceManager.get('notifications'));
         expect(window.csma.share).toBe(state.serviceManager.get('share'));
+    });
+
+    it('auto-loads meta-manager integration when I18N is enabled', async () => {
+        const state = createRuntimeState();
+        window.csma = {};
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({ seo: { title: 'Pricing' } })
+        });
+
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                I18N: true
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {},
+            pages: []
+        });
+
+        expect(state.serviceManager.get('I18n')).toBeTruthy();
+        expect(state.serviceManager.get('metaManagerModule')).toBeTruthy();
+        expect(window.csma.i18n).toBe(state.serviceManager.get('I18n'));
+        expect(window.csma.metaManagerModule).toBe(state.serviceManager.get('metaManagerModule'));
     });
 
     it('loads file upload with optional dependencies when enabled', async () => {

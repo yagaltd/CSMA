@@ -413,6 +413,16 @@ export async function loadOptionalFeatures(state, {
                 await i18nService.loadLocale(locale, translations);
                 console.log('[i18n] Translations loaded:', locale);
             }
+
+            await moduleManager.loadModule('meta-manager');
+            const metaManagerModule = serviceManager.get('metaManagerModule');
+            metaManagerModule?.init({
+                metaManager: state.metaManager,
+                i18nService
+            });
+            window.csma = window.csma || {};
+            window.csma.i18n = i18nService;
+            window.csma.metaManagerModule = metaManagerModule;
         } catch (error) {
             console.warn('[i18n] Failed to load module:', error);
         }

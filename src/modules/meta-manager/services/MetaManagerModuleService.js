@@ -8,8 +8,10 @@ export class MetaManagerModuleService {
     constructor(eventBus) {
         this.eventBus = eventBus;
         this.metaManager = null;
+        this.i18nService = null;
         this.schemaBuilders = new Map();
         this.activeEntries = new Set();
+        this.bindings = new Set();
         this.owner = 'meta-manager';
     }
 
@@ -17,6 +19,11 @@ export class MetaManagerModuleService {
         this.metaManager = options.metaManager
             || globalThis.window?.csma?.metaManager
             || globalThis.window?.csma?.serviceManager?.get?.('metaManager')
+            || null;
+        this.i18nService = options.i18nService
+            || globalThis.window?.csma?.i18n
+            || globalThis.window?.csma?.serviceManager?.get?.('I18n')
+            || this.i18nService
             || null;
 
         if (!this.metaManager) {
@@ -58,15 +65,30 @@ export class MetaManagerModuleService {
 
     applySeoPage(payload = {}, options = {}) {
         this.ensureReady();
+        const locale = typeof payload.locale === 'string' ? payload.locale.trim() : '';
+        const currentUrl = globalThis.window?.location?.href || '';
+        const alternateMeta = this.buildAlternateLocaleMeta(payload.alternates, locale);
         const entry = {
             title: payload.title,
-            htmlAttrs: payload.locale ? { lang: payload.locale } : {},
+            htmlAttrs: locale ? { lang: locale } : {},
             meta: [
                 { name: 'description', content: payload.description, key: 'description' },
+                { property: 'og:title', content: payload.title, key: 'og:title' },
+                { property: 'og:description', content: payload.description, key: 'og:description' },
+                { property: 'og:url', content: payload.canonical || currentUrl, key: 'og:url' },
                 payload.image ? { property: 'og:image', content: payload.image, key: 'og:image' } : null,
+                { name: 'twitter:card', content: payload.image ? 'summary_large_image' : 'summary', key: 'twitter:card' },
+                { name: 'twitter:title', content: payload.title, key: 'twitter:title' },
+                { name: 'twitter:description', content: payload.description, key: 'twitter:description' },
+                payload.image ? { name: 'twitter:image', content: payload.image, key: 'twitter:image' } : null,
+                locale ? { property: 'og:locale', content: locale, key: 'og:locale' } : null,
+                ...alternateMeta,
                 payload.robots ? { name: 'robots', content: payload.robots, key: 'robots' } : null
             ].filter(Boolean),
-            link: payload.canonical ? [{ rel: 'canonical', href: payload.canonical, key: 'canonical' }] : [],
+            link: [
+                ...(payload.canonical ? [{ rel: 'canonical', href: payload.canonical, key: 'canonical' }] : []),
+                ...this.buildAlternateLinks(payload.alternates)
+            ],
             script: []
         };
 
@@ -108,6 +130,45 @@ export class MetaManagerModuleService {
         }));
     }
 
+    bindLocalizedPage(resolvePageMeta, options = {}) {
+        this.ensureReady();
+        if (typeof resolvePageMeta !== 'function') {
+            throw new Error('[MetaManagerModule] bindLocalizedPage expects a resolver function');
+        }
+
+        let activeEntry = null;
+        const apply = () => {
+            const payload = resolvePageMeta({
+                locale: this.getCurrentLocale(),
+                i18n: this.i18nService
+            }) || {};
+
+            if (activeEntry) {
+                activeEntry.dispose?.();
+            }
+            activeEntry = this.applySeoPage(payload, options);
+            return activeEntry;
+        };
+
+        apply();
+
+        const unsubscribe = this.eventBus?.subscribe?.('LANGUAGE_CHANGED', () => {
+            apply();
+        }) || (() => {});
+
+        const binding = {
+            dispose: () => {
+                unsubscribe();
+                activeEntry?.dispose?.();
+                activeEntry = null;
+                this.bindings.delete(binding);
+            }
+        };
+
+        this.bindings.add(binding);
+        return binding;
+    }
+
     buildSchemaGraph(specs = [], context = {}) {
         const nodes = (Array.isArray(specs) ? specs : [specs])
             .flatMap((spec) => this.resolveSchemaSpec(spec, context))
@@ -140,9 +201,12 @@ export class MetaManagerModuleService {
     }
 
     destroy() {
+        this.bindings.forEach((binding) => binding.dispose?.());
+        this.bindings.clear();
         this.activeEntries.forEach((entry) => entry.dispose?.());
         this.activeEntries.clear();
         this.metaManager = null;
+        this.i18nService = null;
         this.schemaBuilders.clear();
     }
 
@@ -157,9 +221,61 @@ export class MetaManagerModuleService {
     }
 
     trackEntry(entry) {
-        if (entry) {
-            this.activeEntries.add(entry);
+        if (!entry) {
+            return entry;
         }
-        return entry;
+
+        const trackedEntry = {
+            ...entry,
+            dispose: () => {
+                this.activeEntries.delete(trackedEntry);
+                entry.dispose?.();
+            }
+        };
+        this.activeEntries.add(trackedEntry);
+        return trackedEntry;
+    }
+
+    getCurrentLocale() {
+        return this.i18nService?.locale || null;
+    }
+
+    buildAlternateLinks(alternates = []) {
+        if (!Array.isArray(alternates)) {
+            return [];
+        }
+
+        return alternates
+            .filter((entry) => entry && typeof entry === 'object')
+            .map((entry, index) => {
+                const href = typeof entry.href === 'string' ? entry.href.trim() : '';
+                const hreflang = typeof entry.locale === 'string' ? entry.locale.trim() : '';
+                if (!href || !hreflang) {
+                    return null;
+                }
+
+                return {
+                    rel: 'alternate',
+                    hreflang,
+                    href,
+                    key: `alternate:${hreflang}:${index}`
+                };
+            })
+            .filter(Boolean);
+    }
+
+    buildAlternateLocaleMeta(alternates = [], locale = '') {
+        if (!Array.isArray(alternates)) {
+            return [];
+        }
+
+        return alternates
+            .map((entry) => (typeof entry?.locale === 'string' ? entry.locale.trim() : ''))
+            .filter((entry, index, values) => entry && entry !== locale && values.indexOf(entry) === index)
+            .map((entry, index) => ({
+                property: 'og:locale:alternate',
+                content: entry,
+                key: `og:locale:alternate:${entry}:${index}`
+            }));
     }
 }

@@ -257,6 +257,11 @@ Form-management, I18n, Image-optimizer, Location, Media-capture, Media-transform
 Meta-manager, Modal-system, Network-status, Optimistic-sync, Router, Search,
 Share, Storage, Sync-queue.
 
+For multilingual apps, `i18n` remains the locale/translation source of truth
+while `meta-manager` owns head-tag output. When `FEATURES.I18N` is enabled, the
+runtime auto-loads `meta-manager` so page/app code can compose localized SEO
+through `PAGE_CHANGED` or `metaManagerModule`.
+
 See `roadmap.md` for planned additions.
 
 ## SSMA Gateway

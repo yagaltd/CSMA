@@ -104,11 +104,17 @@ describe('Contract Validation', () => {
                 title: 'Test Page',
                 description: 'Test description',
                 image: 'https://example.com/image.jpg',
-                locale: 'en'
+                locale: 'en-US',
+                alternates: [
+                    { locale: 'en-US', href: 'https://example.com/en/test' },
+                    { locale: 'fr-FR', href: 'https://example.com/fr/test' }
+                ]
             };
 
             const [error, validated] = Contracts.PAGE_CHANGED.schema.validate(payload);
             expect(error).toBeUndefined();
+            expect(validated.locale).toBe('en-US');
+            expect(validated.alternates).toHaveLength(2);
         });
 
         it('should enforce title length limit', () => {

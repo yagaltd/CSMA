@@ -344,11 +344,38 @@ export class MetaManager {
         this.setPageMeta(payload);
     }
 
-    setPageMeta({ title, description, image, locale, canonical, robots } = {}) {
+    setPageMeta({ title, description, image, locale, canonical, alternates = [], robots } = {}) {
         const currentUrl = this.document?.defaultView?.location?.href || '';
+        const alternateEntries = Array.isArray(alternates) ? alternates : [];
+        const normalizedLocale = typeof locale === 'string' ? locale.trim() : '';
+        const alternateLinks = alternateEntries
+            .filter((entry) => entry && typeof entry === 'object')
+            .map((entry, index) => {
+                const href = typeof entry.href === 'string' ? entry.href.trim() : '';
+                const hreflang = typeof entry.locale === 'string' ? entry.locale.trim() : '';
+                if (!href || !hreflang) {
+                    return null;
+                }
+
+                return {
+                    rel: 'alternate',
+                    hreflang,
+                    href,
+                    key: `alternate:${hreflang}:${index}`
+                };
+            })
+            .filter(Boolean);
+        const ogAlternateLocales = alternateEntries
+            .map((entry) => (typeof entry?.locale === 'string' ? entry.locale.trim() : ''))
+            .filter((entry) => entry && entry !== normalizedLocale)
+            .map((entry, index) => ({
+                property: 'og:locale:alternate',
+                content: entry,
+                key: `og:locale:alternate:${entry}:${index}`
+            }));
         const entry = {
             title,
-            htmlAttrs: locale ? { lang: locale } : {},
+            htmlAttrs: normalizedLocale ? { lang: normalizedLocale } : {},
             meta: [
                 { name: 'description', content: description, key: 'description' },
                 { property: 'og:title', content: title, key: 'og:title' },
@@ -359,10 +386,14 @@ export class MetaManager {
                 { name: 'twitter:title', content: title, key: 'twitter:title' },
                 { name: 'twitter:description', content: description, key: 'twitter:description' },
                 image ? { name: 'twitter:image', content: image, key: 'twitter:image' } : null,
-                locale ? { property: 'og:locale', content: locale, key: 'og:locale' } : null,
+                normalizedLocale ? { property: 'og:locale', content: normalizedLocale, key: 'og:locale' } : null,
+                ...ogAlternateLocales,
                 robots ? { name: 'robots', content: robots, key: 'robots' } : null
             ].filter(Boolean),
-            link: canonical ? [{ rel: 'canonical', href: canonical, key: 'canonical' }] : []
+            link: [
+                ...(canonical ? [{ rel: 'canonical', href: canonical, key: 'canonical' }] : []),
+                ...alternateLinks
+            ]
         };
 
         if (this.pageEntry) {

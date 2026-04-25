@@ -695,8 +695,12 @@ const CoreContracts = {
             title: size(string(), 1, 60),  // SEO limit
             description: size(string(), 1, 160),  // SEO limit
             image: optional(string()),
-            locale: optional(enums(['en', 'es', 'fr', 'de'])),
+            locale: optional(size(string(), 2, 35)),
             canonical: optional(string()),
+            alternates: optional(array(object({
+                locale: size(string(), 1, 35),
+                href: size(string(), 1, 2048)
+            }))),
             robots: optional(string())
         })
     },
