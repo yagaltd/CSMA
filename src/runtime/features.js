@@ -59,6 +59,7 @@ export async function loadOptionalFeatures(state, {
     const offlineCacheConfig = cloneRuntimeSection(runtimeConfig.offlineCache, {});
     const shareConfig = cloneRuntimeSection(runtimeConfig.share, {});
     const fileUploadConfig = cloneRuntimeSection(runtimeConfig.fileUpload, {});
+    const captchaConfig = cloneRuntimeSection(runtimeConfig.captcha, { adapter: 'captcha.cap' });
     const authEnabled = Boolean(FEATURES.AUTH_MODULE || FEATURES.AUTH_SERVICE);
     const offlineCacheEnabled = Boolean(FEATURES.OFFLINE_CACHE);
     const pwaEnabled = Boolean(FEATURES.PWA || offlineCacheEnabled);
@@ -199,11 +200,29 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
+    if (FEATURES.CAPTCHA_MODULE) {
+        try {
+            await moduleManager.loadModule('captcha');
+            const captcha = serviceManager.get('captcha');
+            captcha?.init({
+                adapter: 'captcha.cap',
+                ...captchaConfig,
+                adapterRegistry: registries.adapters
+            });
+            window.csma = window.csma || {};
+            window.csma.captcha = captcha;
+            console.log('[Captcha] CAPTCHA provider orchestration enabled');
+        } catch (error) {
+            console.warn('[Captcha] Failed to load module:', error);
+        }
+    }
+
     if (FEATURES.FORM_MANAGEMENT) {
         try {
             await moduleManager.loadModule('form-management');
             const formManager = serviceManager.get('formManager');
             const syncQueue = serviceManager.get('syncQueue');
+            const captcha = serviceManager.get('captcha');
             const storageAdapter = window.localStorage && {
                 getItem: (key) => localStorage.getItem(key),
                 setItem: (key, value) => localStorage.setItem(key, value),
@@ -213,6 +232,7 @@ export async function loadOptionalFeatures(state, {
                 storageService: storageAdapter,
                 syncQueueService: syncQueue,
                 securityPolicy,
+                captchaService: captcha,
                 integrityService: serviceManager.get('integrityService') || serviceManager.get('hmac')
             });
             window.csma = window.csma || {};
@@ -522,6 +542,7 @@ export async function loadOptionalFeatures(state, {
             const fileSystemService = serviceManager.get('fileSystem');
             const syncQueue = serviceManager.get('syncQueue');
             const networkStatus = serviceManager.get('networkStatus');
+            const captcha = serviceManager.get('captcha');
             const storageAdapter = window.localStorage && {
                 getItem: (key) => localStorage.getItem(key),
                 setItem: (key, value) => localStorage.setItem(key, value),
@@ -532,6 +553,7 @@ export async function loadOptionalFeatures(state, {
                 fileSystem: fileSystemService,
                 syncQueue,
                 networkStatus,
+                captchaService: captcha,
                 ...fileUploadConfig
             });
             window.csma = window.csma || {};

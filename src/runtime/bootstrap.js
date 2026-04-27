@@ -128,6 +128,7 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp, securityPolic
     const notifications = state.serviceManager?.get?.('notifications') || null;
     const share = state.serviceManager?.get?.('share') || null;
     const fileUpload = state.serviceManager?.get?.('fileUpload') || null;
+    const captcha = state.serviceManager?.get?.('captcha') || null;
     const cacheManager = state.serviceManager?.get?.('cacheManager') || null;
 
     if (policy.globals?.exposeInternals) {
@@ -147,6 +148,7 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp, securityPolic
         notifications,
         share,
         fileUpload,
+        captcha,
         cacheManager,
         apiBaseUrl,
         destroyApp,

@@ -76,6 +76,7 @@ describe('runtime bootstrap', () => {
             SYNC_QUEUE: false,
             OPTIMISTIC_SYNC: false,
             MODAL_SYSTEM: false,
+            CAPTCHA_MODULE: false,
             FORM_MANAGEMENT: false,
             AUTH_UI_MODULE: false,
             CHECKOUT_MODULE: false,
@@ -193,6 +194,52 @@ describe('runtime bootstrap', () => {
         expect(state.serviceManager.get('share')).toBeTruthy();
         expect(window.csma.notifications).toBe(state.serviceManager.get('notifications'));
         expect(window.csma.share).toBe(state.serviceManager.get('share'));
+    });
+
+    it('loads captcha before form management and exposes it', async () => {
+        const state = createRuntimeState();
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                CAPTCHA_MODULE: true,
+                FORM_MANAGEMENT: true
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {
+                captcha: {
+                    apiEndpoint: '/cap',
+                    hiddenFieldName: 'captchaToken'
+                }
+            },
+            pages: []
+        });
+
+        expect(state.serviceManager.get('captcha')).toBeTruthy();
+        expect(state.registries.adapters.get('captcha.cap')).toBeTruthy();
+        expect(window.csma.captcha).toBe(state.serviceManager.get('captcha'));
+        expect(window.csma.form.captchaService).toBe(window.csma.captcha);
+    });
+
+    it('passes captcha into file upload when both modules are enabled', async () => {
+        const state = createRuntimeState();
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                CAPTCHA_MODULE: true,
+                FILE_UPLOAD: true
+            },
+            apiBaseUrl: '',
+            runtimeConfig: {
+                captcha: { apiEndpoint: '/cap' },
+                fileUpload: {
+                    uploadGrant: {
+                        required: true,
+                        endpoint: '/media/upload-grants'
+                    }
+                }
+            },
+            pages: []
+        });
+
+        expect(window.csma.fileUpload.captchaService).toBe(window.csma.captcha);
     });
 
     it('auto-loads meta-manager integration when I18N is enabled', async () => {

@@ -26,6 +26,7 @@ const moduleLoaders = [
     ['file-system', () => import('../src/modules/file-system/index.js')],
     ['file-upload', () => import('../src/modules/file-upload/index.js')],
     ['share', () => import('../src/modules/share/index.js')],
+    ['captcha', () => import('../src/modules/captcha/index.js')],
     ['router', () => import('../src/modules/router/index.js')],
     ['example-module', () => import('../src/modules/example-module/index.js')]
 ];

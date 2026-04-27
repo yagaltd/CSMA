@@ -26,6 +26,7 @@ import { NotificationsContracts } from '../modules/notifications/contracts/notif
 import { ShareContracts } from '../modules/share/contracts/share-contracts.js';
 import { FileUploadContracts } from '../modules/file-upload/contracts/file-upload-contracts.js';
 import { RouterContracts } from '../modules/router/contracts/router-contracts.js';
+import { CaptchaContracts } from '../modules/captcha/contracts/captcha-contracts.js';
 
 /**
  * Helper function for creating contracts with full ECCA metadata
@@ -1663,6 +1664,7 @@ const mergedContracts = {
     ...ShareContracts,
     ...FileUploadContracts,
     ...RouterContracts,
+    ...CaptchaContracts,
 
     // Developer Logs
     LOG_ENTRY: {

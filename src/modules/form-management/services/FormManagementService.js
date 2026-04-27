@@ -17,16 +17,18 @@ export class FormManagementService {
         this.storage = options.storage || null;
         this.syncQueue = options.syncQueue || null;
         this.integrityService = options.integrityService || options.hmacService || options.hmac || null;
+        this.captchaService = options.captchaService || options.captcha || null;
         this.securityPolicy = options.securityPolicy || null;
         this.forms = new Map();
         this.autoSaveTimers = new Map();
         this.subscriptions = [];
     }
 
-    init({ storageService, syncQueueService, integrityService, hmacService, securityPolicy } = {}) {
+    init({ storageService, syncQueueService, integrityService, hmacService, captchaService, securityPolicy } = {}) {
         if (storageService) this.storage = storageService;
         if (syncQueueService) this.syncQueue = syncQueueService;
         if (integrityService || hmacService) this.integrityService = integrityService || hmacService;
+        if (captchaService) this.captchaService = captchaService;
         if (securityPolicy) {
             this.securityPolicy = securityPolicy;
             this.options = {
@@ -161,6 +163,13 @@ export class FormManagementService {
             return { success: false, errors };
         }
 
+        const captchaEnvelope = await this.#maybePrepareCaptcha({ form, metadata });
+        if (captchaEnvelope === false) {
+            const captchaError = { captcha: 'Captcha verification is required' };
+            this.#publish('FORM_ERROR', { formId, errors: captchaError, timestamp: Date.now() });
+            return { success: false, errors: captchaError };
+        }
+
         form.status = 'submitting';
         this.#publishState(form);
 
@@ -197,12 +206,17 @@ export class FormManagementService {
             values: emittedValues,
             metadata: emittedMetadata,
             integrity: integrityEnvelope || undefined,
+            captcha: captchaEnvelope || undefined,
             submittedAt: Date.now()
         });
 
         form.status = 'idle';
         this.#publishState(form);
-        return { success: true, integrity: integrityEnvelope || undefined };
+        return {
+            success: true,
+            integrity: integrityEnvelope || undefined,
+            captcha: captchaEnvelope || undefined
+        };
     }
 
     destroy() {
@@ -311,6 +325,43 @@ export class FormManagementService {
             this.#publish('PUBLIC_FORM_REJECTED', { formId: form.id, intent, reason, timestamp: Date.now() });
             return false;
         }
+    }
+
+    async #maybePrepareCaptcha({ form, metadata }) {
+        const captchaConfig = metadata?.captcha || form.metadata?.captcha || null;
+        if (!captchaConfig?.required) return null;
+
+        if (!this.captchaService) {
+            console.warn('[FormManagement] CAPTCHA requested but captchaService is unavailable');
+            return false;
+        }
+
+        const action = captchaConfig.action || 'submit';
+        let token = captchaConfig.token || '';
+
+        try {
+            if (!token && typeof this.captchaService.getToken === 'function') {
+                token = await this.captchaService.getToken({ formId: form.id });
+            }
+            if (!token && typeof this.captchaService.execute === 'function') {
+                token = await this.captchaService.execute({ formId: form.id, action });
+            }
+            if (!token && typeof this.captchaService.getToken === 'function') {
+                token = await this.captchaService.getToken({ formId: form.id });
+            }
+        } catch (error) {
+            console.warn('[FormManagement] CAPTCHA token acquisition failed', error);
+            return false;
+        }
+
+        if (!token) return false;
+
+        const info = this.captchaService.getAdapterInfo?.() || {};
+        return {
+            provider: info.provider || info.id || 'captcha',
+            adapter: info.id || info.adapter || 'captcha',
+            token
+        };
     }
 
     #loadStoredState(formId) {

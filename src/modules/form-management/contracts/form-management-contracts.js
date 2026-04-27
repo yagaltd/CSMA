@@ -141,6 +141,11 @@ export const FormManagementContracts = {
                 timestamp: number(),
                 expiresAt: number()
             })),
+            captcha: optional(object({
+                provider: string(),
+                adapter: string(),
+                token: string()
+            })),
             submittedAt: number()
         })
     },

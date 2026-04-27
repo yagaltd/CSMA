@@ -148,6 +148,67 @@ describe('FileUploadService', () => {
         capture.stop();
     });
 
+    it('requests an upload grant once and passes it to chunk transports', async () => {
+        const storage = createMemoryStorage();
+        const transport = {
+            uploadChunk: vi.fn(async ({ uploadGrantId, chunkIndex }) => ({
+                acknowledged: true,
+                chunkIndex,
+                uploadGrantId
+            }))
+        };
+        const captchaService = {
+            getToken: vi.fn(() => ''),
+            execute: vi.fn(() => 'captcha-token')
+        };
+        const grantFetch = vi.fn(async () => ({
+            ok: true,
+            json: async () => ({
+                grant: {
+                    grantId: 'grant-123',
+                    expiresAt: 123456
+                }
+            })
+        }));
+        const originalFetch = global.fetch;
+        global.fetch = grantFetch;
+        const service = createFileUploadService(eventBus, {
+            storage,
+            transport,
+            captchaService,
+            chunkSize: 3,
+            uploadGrant: {
+                required: true,
+                endpoint: '/media/upload-grants',
+                captcha: { formId: 'upload-captcha', action: 'upload' }
+            }
+        });
+        await service.ready;
+
+        try {
+            const file = new File(['abcdef'], 'grant.txt', { type: 'text/plain' });
+            const result = await service.uploadFile(file, { fileId: 'grant-upload' });
+
+            expect(result.status).toBe('completed');
+            expect(captchaService.execute).toHaveBeenCalledWith({
+                formId: 'upload-captcha',
+                action: 'upload'
+            });
+            expect(grantFetch).toHaveBeenCalledTimes(1);
+            expect(JSON.parse(grantFetch.mock.calls[0][1].body)).toEqual(expect.objectContaining({
+                fileId: 'grant-upload',
+                fileName: 'grant.txt',
+                fileSize: 6,
+                fileType: 'text/plain',
+                captchaToken: 'captcha-token'
+            }));
+            expect(transport.uploadChunk).toHaveBeenCalledTimes(2);
+            expect(transport.uploadChunk.mock.calls.map(([payload]) => payload.uploadGrantId)).toEqual(['grant-123', 'grant-123']);
+        } finally {
+            global.fetch = originalFetch;
+        }
+    });
+
     it('persists checkpoints after acknowledged chunks and resumes from the saved offset', async () => {
         const storage = createMemoryStorage();
         let callCount = 0;

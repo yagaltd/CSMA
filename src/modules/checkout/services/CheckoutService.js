@@ -94,10 +94,23 @@ export class CheckoutService {
         return checkoutId;
     }
 
-    async submit({ checkoutId, strategy = 'direct' } = {}) {
+    async submit({ checkoutId, strategy = 'direct', metadata = {} } = {}) {
         const session = this.sessions.get(checkoutId);
         if (!session) {
             throw new Error(`Checkout session ${checkoutId} not found`);
+        }
+
+        const preflight = await this.#runFormPreflight(session, metadata);
+        if (preflight && preflight.success === false) {
+            session.status = 'error';
+            this.#publishState(session);
+            const message = preflight.errors?.captcha ||
+                preflight.errors?.honeypot ||
+                preflight.errors?.integrity ||
+                preflight.errors?.form ||
+                'Checkout form submission failed';
+            this.#emitError(checkoutId, message);
+            return { success: false, errors: preflight.errors };
         }
 
         const values = this.formService?.getFormState(session.formId)?.values;
@@ -122,12 +135,18 @@ export class CheckoutService {
                     values,
                     totals: session.totals,
                     currency: session.currency,
+                    captcha: preflight?.captcha || undefined,
                     integrity: integrityEnvelope || undefined
                 }
             });
             session.status = 'queued';
             this.#publishState(session);
-            return { success: true, queued: true, integrity: integrityEnvelope || undefined };
+            return {
+                success: true,
+                queued: true,
+                captcha: preflight?.captcha || undefined,
+                integrity: integrityEnvelope || undefined
+            };
         }
 
         session.status = 'in_progress';
@@ -140,6 +159,7 @@ export class CheckoutService {
                 items: session.items,
                 currency: session.currency,
                 totals: session.totals,
+                captcha: preflight?.captcha || undefined,
                 integrity: integrityEnvelope || undefined
             });
 
@@ -152,7 +172,12 @@ export class CheckoutService {
                 totals: session.totals,
                 timestamp: Date.now()
             });
-            return { success: true, orderId: result.orderId, integrity: integrityEnvelope || undefined };
+            return {
+                success: true,
+                orderId: result.orderId,
+                captcha: preflight?.captcha || undefined,
+                integrity: integrityEnvelope || undefined
+            };
         } catch (error) {
             session.status = 'error';
             this.#publishState(session);
@@ -294,6 +319,26 @@ export class CheckoutService {
         if (!values.address) errors.address = 'Address required';
         if (!values.paymentMethod) errors.paymentMethod = 'Payment method required';
         return errors;
+    }
+
+    async #runFormPreflight(session, metadata = {}) {
+        if (!this.formService?.submitForm) {
+            return null;
+        }
+
+        const checkoutMetadata = {
+            ...(session.metadata || {}),
+            ...(metadata || {})
+        };
+        if (!checkoutMetadata.captcha?.required && !checkoutMetadata.requireIntegrity && !checkoutMetadata.integrity) {
+            return null;
+        }
+
+        return this.formService.submitForm({
+            formId: session.formId,
+            metadata: checkoutMetadata,
+            jobType: `CHECKOUT_SUBMIT_${session.id}`.toUpperCase()
+        });
     }
 
     #calculateTotals(items) {

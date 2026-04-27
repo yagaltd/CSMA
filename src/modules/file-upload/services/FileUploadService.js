@@ -36,6 +36,8 @@ export class FileUploadService {
         this.storage = options.storage || null;
         this.fileSystem = options.fileSystem || null;
         this.transport = options.transport || options.uploadTransport || options.uploader || null;
+        this.captchaService = options.captchaService || options.captcha || null;
+        this.grantProvider = options.grantProvider || options.uploadGrantProvider || null;
         this.networkStatus = options.networkStatus || null;
         this.syncQueue = options.syncQueue || null;
         this.initialized = false;
@@ -55,6 +57,8 @@ export class FileUploadService {
         this.storage = options.storage || this.storage;
         this.fileSystem = options.fileSystem || this.fileSystem;
         this.transport = options.transport || options.uploadTransport || options.uploader || this.transport;
+        this.captchaService = options.captchaService || options.captcha || this.captchaService;
+        this.grantProvider = options.grantProvider || options.uploadGrantProvider || this.grantProvider;
         this.networkStatus = options.networkStatus || this.networkStatus;
         this.syncQueue = options.syncQueue || this.syncQueue;
 
@@ -105,6 +109,7 @@ export class FileUploadService {
         }
 
         await this._prepareCheckpointArtifacts(session);
+        await this._ensureUploadGrant(session);
         this._publish('FILE_UPLOAD_STARTED', this._startedPayload(session));
 
         try {
@@ -189,6 +194,7 @@ export class FileUploadService {
         session.attempts = (session.attempts || 0) + 1;
         session.controller = this._createController();
         this._publish('FILE_UPLOAD_RESUMED', this._resumedPayload(session, options.reason));
+        await this._ensureUploadGrant(session);
         return session.resumable ? this._runChunkedUpload(session) : this._runOneShotUpload(session);
     }
 
@@ -413,6 +419,89 @@ export class FileUploadService {
             updatedAt: Date.now(),
             createdAt: Date.now()
         };
+    }
+
+    async _ensureUploadGrant(session) {
+        const grantConfig = session.options.uploadGrant || this.options.uploadGrant || {};
+        if (!grantConfig?.required && !session.options.requireUploadGrant) {
+            return null;
+        }
+        if (session.uploadGrant?.grantId || session.options.uploadGrantToken) {
+            session.uploadGrant = session.uploadGrant || { grantId: session.options.uploadGrantToken };
+            return session.uploadGrant;
+        }
+
+        const metadata = {
+            fileId: session.fileId,
+            fileName: session.fileName,
+            fileSize: session.fileSize,
+            fileType: session.fileType
+        };
+
+        let grant = null;
+        const provider = session.options.grantProvider || this.grantProvider;
+        if (typeof provider === 'function') {
+            grant = await provider({ file: session.file, ...metadata, options: session.options });
+        } else if (provider?.requestGrant) {
+            grant = await provider.requestGrant({ file: session.file, ...metadata, options: session.options });
+        } else {
+            grant = await this._requestUploadGrant({ grantConfig, metadata, session });
+        }
+
+        const grantId = typeof grant === 'string' ? grant : grant?.grantId || grant?.id || grant?.token;
+        if (!grantId) {
+            throw new Error('Upload grant is required');
+        }
+
+        session.uploadGrant = {
+            ...(typeof grant === 'object' && grant ? grant : {}),
+            grantId
+        };
+        return session.uploadGrant;
+    }
+
+    async _requestUploadGrant({ grantConfig, metadata, session }) {
+        const endpoint = grantConfig.endpoint || this.options.uploadGrantEndpoint;
+        if (!endpoint) {
+            throw new Error('Upload grant endpoint is required');
+        }
+
+        const captcha = grantConfig.captcha || {};
+        let captchaToken = grantConfig.captchaToken || session.options.captchaToken || '';
+        if (!captchaToken && this.captchaService?.getToken) {
+            captchaToken = await this.captchaService.getToken({ formId: captcha.formId || session.fileId });
+        }
+        if (!captchaToken && this.captchaService?.execute) {
+            captchaToken = await this.captchaService.execute({
+                formId: captcha.formId || session.fileId,
+                action: captcha.action || 'upload'
+            });
+        }
+        if (!captchaToken) {
+            throw new Error('Upload CAPTCHA verification is required');
+        }
+
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json',
+                ...(grantConfig.headers || {})
+            },
+            credentials: grantConfig.credentials || 'same-origin',
+            body: JSON.stringify({
+                ...metadata,
+                captchaToken,
+                meta: grantConfig.meta || {}
+            }),
+            signal: session.controller?.signal || undefined
+        });
+
+        if (!response.ok) {
+            throw new Error(`Upload grant request failed: ${response.status}`);
+        }
+
+        const body = await response.json();
+        return body.grant || body.uploadGrant || body;
     }
 
     _resolveChunkSize(value) {
@@ -693,6 +782,10 @@ export class FileUploadService {
             progress: session.progress,
             chunkSize: session.chunkSize,
             resumable: session.resumable,
+            uploadGrant: session.uploadGrant ? {
+                grantId: session.uploadGrant.grantId,
+                expiresAt: session.uploadGrant.expiresAt
+            } : null,
             sourceRef: session.sourceRef,
             checkpoint: session.checkpoint ? clone(session.checkpoint) : null,
             error: session.error ? toErrorMessage(session.error) : null,
@@ -944,6 +1037,8 @@ export class FileUploadService {
                 fileName: session.fileName,
                 fileSize: session.fileSize,
                 fileType: session.fileType,
+                uploadGrant: session.uploadGrant || null,
+                uploadGrantId: session.uploadGrant?.grantId || session.options.uploadGrantToken || undefined,
                 signal: session.controller?.signal || undefined
             };
 
@@ -987,6 +1082,8 @@ export class FileUploadService {
             fileName: session.fileName,
             fileSize: session.fileSize,
             fileType: session.fileType,
+            uploadGrant: session.uploadGrant || null,
+            uploadGrantId: session.uploadGrant?.grantId || session.options.uploadGrantToken || undefined,
             chunk: details.chunk,
             chunkIndex: details.chunkIndex,
             totalChunks: details.totalChunks,
