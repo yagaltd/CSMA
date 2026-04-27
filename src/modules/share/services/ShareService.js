@@ -360,9 +360,11 @@ export class ShareService {
 
         const toastPayload = {
             ...(template || {}),
-            title: template?.title || (kind === 'success' ? 'Share complete' : 'Share failed'),
+            title: template?.title || (kind === 'success'
+                ? (detail === 'clipboard' ? 'Copied to clipboard' : 'Share complete')
+                : 'Share failed'),
             description: template?.description || (kind === 'success'
-                ? 'The content was shared successfully.'
+                ? (detail === 'clipboard' ? 'Link copied — paste it anywhere to share.' : 'The content was shared successfully.')
                 : message || 'The content could not be shared.')
         };
 
