@@ -242,6 +242,43 @@ describe('runtime bootstrap', () => {
         expect(window.csma.fileUpload.captchaService).toBe(window.csma.captcha);
     });
 
+    it('loads auth-ui with dependencies and forwards captcha/config', async () => {
+        const state = createRuntimeState();
+        global.fetch = vi.fn().mockResolvedValue({
+            ok: true,
+            status: 200,
+            json: async () => ({})
+        });
+
+        await loadOptionalFeatures(state, {
+            FEATURES: {
+                AUTH_MODULE: true,
+                FORM_MANAGEMENT: true,
+                CAPTCHA_MODULE: true,
+                AUTH_UI_MODULE: true
+            },
+            apiBaseUrl: 'https://api.example.test',
+            runtimeConfig: {
+                securityProfile: 'development',
+                captcha: { apiEndpoint: '/cap' },
+                authUi: {
+                    captcha: {
+                        register: { required: true }
+                    }
+                }
+            },
+            pages: []
+        });
+
+        expect(state.serviceManager.get('authUI')).toBeTruthy();
+        expect(window.csma.authUI).toBe(state.serviceManager.get('authUI'));
+        expect(window.csma.authUI.authService).toBe(window.csma.auth);
+        expect(window.csma.authUI.formService).toBe(window.csma.form);
+        expect(window.csma.authUI.captchaService).toBe(window.csma.captcha);
+        expect(window.csma.authUI.config.captcha.register.required).toBe(true);
+        expect(state.moduleManager.getModuleManifest('auth-ui').aiUi.components[0].id).toBe('auth-ui.panel');
+    });
+
     it('auto-loads meta-manager integration when I18N is enabled', async () => {
         const state = createRuntimeState();
         window.csma = {};

@@ -242,6 +242,43 @@ describe('AuthService', () => {
             expect.objectContaining({ authenticated: false })
         );
     });
+
+    it('dispatches recovery and verification account lifecycle endpoints', async () => {
+        const eventBus = new MockEventBus();
+        fetch
+            .mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ requestId: 'forgot-1' }) })
+            .mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ requestId: 'reset-1' }) })
+            .mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ requestId: 'verify-1' }) })
+            .mockResolvedValueOnce({ ok: true, status: 200, json: async () => ({ requestId: 'resend-1' }) });
+
+        const auth = createAuthService(eventBus, { baseUrl: 'https://api.example.com' });
+
+        await auth.forgotPassword({ email: 'ada@example.com' });
+        await auth.resetPassword({ token: 'reset-token', password: 'new-secret' });
+        await auth.verifyEmail({ token: 'verify-token', email: 'ada@example.com' });
+        await auth.resendVerification({ email: 'ada@example.com' });
+
+        expect(fetch).toHaveBeenNthCalledWith(1, 'https://api.example.com/auth/forgot-password', expect.objectContaining({
+            method: 'POST',
+            body: JSON.stringify({ email: 'ada@example.com' })
+        }));
+        expect(fetch).toHaveBeenNthCalledWith(2, 'https://api.example.com/auth/reset-password', expect.objectContaining({
+            method: 'POST',
+            body: JSON.stringify({ token: 'reset-token', password: 'new-secret' })
+        }));
+        expect(fetch).toHaveBeenNthCalledWith(3, 'https://api.example.com/auth/verify-email', expect.objectContaining({
+            method: 'POST'
+        }));
+        expect(fetch).toHaveBeenNthCalledWith(4, 'https://api.example.com/auth/resend-verification', expect.objectContaining({
+            method: 'POST'
+        }));
+        expect(eventBus.publish).toHaveBeenCalledWith('AUTH_PASSWORD_RESET_REQUESTED', expect.objectContaining({ requestId: 'forgot-1' }));
+        expect(eventBus.publish).toHaveBeenCalledWith('AUTH_PASSWORD_RESET_COMPLETED', expect.objectContaining({ requestId: 'reset-1' }));
+        expect(eventBus.publish).toHaveBeenCalledWith('AUTH_EMAIL_VERIFIED', expect.objectContaining({ requestId: 'verify-1' }));
+        expect(eventBus.publish).toHaveBeenCalledWith('AUTH_VERIFICATION_RESENT', expect.objectContaining({ requestId: 'resend-1' }));
+        expect(JSON.stringify(globalThis.localStorage.dump())).not.toContain('new-secret');
+        expect(JSON.stringify(globalThis.sessionStorage.dump())).not.toContain('reset-token');
+    });
 });
 
 describe('AuthContracts', () => {

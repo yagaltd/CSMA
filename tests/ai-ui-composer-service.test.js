@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import EventBus from '../src/runtime/EventBus.js';
 import { AIUIComposerService } from '../src/modules/ai-ui/services/AIUIComposerService.js';
+import { manifest as authUiManifest } from '../src/modules/auth-ui/index.js';
 
 function createService() {
   return new AIUIComposerService(new EventBus());
@@ -199,5 +200,31 @@ describe('AIUIComposerService', () => {
     });
 
     expect(service.getComponent('consent.banner')).toBeNull();
+  });
+
+  it('discovers the module-scoped auth-ui panel pattern', () => {
+    const eventBus = new EventBus();
+    const service = new AIUIComposerService(eventBus);
+
+    eventBus.publishSync('MODULE_LOADED', {
+      id: 'auth-ui',
+      manifest: authUiManifest
+    });
+
+    expect(service.getComponent('auth-ui.panel')).toMatchObject({
+      id: 'auth-ui.panel',
+      owner: 'auth-ui',
+      render: {
+        kind: 'module-pattern',
+        service: 'authUI',
+        mount: 'mount'
+      }
+    });
+
+    eventBus.publishSync('MODULE_UNLOADED', {
+      id: 'auth-ui',
+      manifest: authUiManifest
+    });
+    expect(service.getComponent('auth-ui.panel')).toBeNull();
   });
 });

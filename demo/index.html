@@ -253,76 +253,10 @@
                             >
                         </div>
                         <p class="module-panel__description">
-                            Password login, backend-mediated OAuth simulation,
-                            and logout using the real auth module API.
+                            Login, registration, recovery, verification,
+                            OAuth simulation, and logout through auth-ui.
                         </p>
-                        <form class="module-form" data-auth-demo-form>
-                            <div class="field">
-                                <label
-                                    class="field__label"
-                                    for="demo-auth-email"
-                                    >Email</label
-                                >
-                                <div class="field__control">
-                                    <input
-                                        id="demo-auth-email"
-                                        class="input"
-                                        type="email"
-                                        name="email"
-                                        autocomplete="email"
-                                        value="demo@csma.dev"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div class="field">
-                                <label
-                                    class="field__label"
-                                    for="demo-auth-password"
-                                    >Password</label
-                                >
-                                <div class="field__control">
-                                    <input
-                                        id="demo-auth-password"
-                                        class="input"
-                                        type="password"
-                                        name="password"
-                                        autocomplete="current-password"
-                                        value="demo-pass"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div class="module-actions">
-                                <button
-                                    class="button"
-                                    data-variant="primary"
-                                    type="submit"
-                                >
-                                    Login Demo User
-                                </button>
-                                <button
-                                    class="button"
-                                    data-variant="outline"
-                                    type="button"
-                                    data-auth-oauth
-                                >
-                                    OAuth Demo
-                                </button>
-                                <button
-                                    class="button"
-                                    data-variant="ghost"
-                                    type="button"
-                                    data-auth-logout
-                                >
-                                    Logout
-                                </button>
-                            </div>
-                        </form>
-                        <div class="module-status" data-auth-status>
-                            <strong>Guest session</strong>
-                            <span>No active user.</span>
-                        </div>
+                        <div data-auth-ui-demo></div>
                     </section>
 
                     <section

@@ -1,6 +1,8 @@
 import { EventBus } from '../src/runtime/EventBus.js';
 import { Contracts } from '../src/runtime/Contracts.js';
 import { createAuthService } from '../src/modules/auth/index.js';
+import { createAuthUIService } from '../src/modules/auth-ui/index.js';
+import { FormManagementService } from '../src/modules/form-management/services/FormManagementService.js';
 import { createNotificationsService } from '../src/modules/notifications/index.js';
 import { initNotificationsCenter } from '../src/modules/notifications/ui/notifications-center.js';
 import { createShareService } from '../src/modules/share/index.js';
@@ -314,6 +316,37 @@ function installDemoAuthBackend() {
       return safeJsonResponse(nextSession);
     }
 
+    if (requestUrl.pathname === '/demo-auth/forgot-password' && method === 'POST') {
+      return safeJsonResponse({
+        requestId: `forgot-${Date.now()}`,
+        email: body.email,
+        message: 'Demo reset request accepted'
+      });
+    }
+
+    if (requestUrl.pathname === '/demo-auth/reset-password' && method === 'POST') {
+      return safeJsonResponse({
+        requestId: `reset-${Date.now()}`,
+        message: 'Demo password reset accepted'
+      });
+    }
+
+    if (requestUrl.pathname === '/demo-auth/verify-email' && method === 'POST') {
+      return safeJsonResponse({
+        requestId: `verify-${Date.now()}`,
+        email: body.email,
+        message: 'Demo email verified'
+      });
+    }
+
+    if (requestUrl.pathname === '/demo-auth/resend-verification' && method === 'POST') {
+      return safeJsonResponse({
+        requestId: `resend-${Date.now()}`,
+        email: body.email,
+        message: 'Demo verification resent'
+      });
+    }
+
     if (requestUrl.pathname === '/demo-auth/logout' && method === 'POST') {
       writeDemoSession(null);
       return safeEmptyResponse();
@@ -355,10 +388,7 @@ function installDemoAuthBackend() {
 }
 
 function bindAuthDemo(bus) {
-  const form = document.querySelector('[data-auth-demo-form]');
-  const oauthButton = document.querySelector('[data-auth-oauth]');
-  const logoutButton = document.querySelector('[data-auth-logout]');
-  const status = document.querySelector('[data-auth-status]');
+  const mount = document.querySelector('[data-auth-ui-demo]');
   const auth = createAuthService(bus, {
     securityProfile: 'development',
     baseUrl: window.location.origin,
@@ -374,60 +404,50 @@ function bindAuthDemo(bus) {
       logout: '/demo-auth/logout',
       session: '/demo-auth/me',
       refresh: '/demo-auth/refresh',
+      forgotPassword: '/demo-auth/forgot-password',
+      resetPassword: '/demo-auth/reset-password',
+      verifyEmail: '/demo-auth/verify-email',
+      resendVerification: '/demo-auth/resend-verification',
       oauthStart: '/demo-auth/oauth/start',
       oauthCallback: '/demo-auth/oauth/callback'
     }
   });
-
-  const renderStatus = () => {
-    const user = auth.getUser();
-    const lines = status.querySelectorAll('strong, span');
-    if (!user) {
-      lines[0].textContent = 'Guest session';
-      lines[1].textContent = 'No active user.';
-      return;
+  const form = new FormManagementService(bus);
+  form.init();
+  const authUI = createAuthUIService(bus);
+  authUI.init({
+    authService: auth,
+    formService: form,
+    documentRef: document,
+    config: {
+      oauthProvider: 'github',
+      captcha: {
+        register: { required: false },
+        forgotPassword: { required: false },
+        resendVerification: { required: false }
+      }
     }
-    lines[0].textContent = `${user.name || user.email} (${auth.getRole()})`;
-    lines[1].textContent = `Authenticated via ${auth.strategy}. hasRole("staff") = ${String(auth.hasRole('staff'))}`;
-  };
-
-  const subscriptions = [
-    bus.subscribe('AUTH_SESSION_UPDATED', renderStatus),
-    bus.subscribe('AUTH_LOGIN_FAILED', (payload) => {
-      status.querySelector('strong').textContent = 'Login failed';
-      status.querySelector('span').textContent = payload.error;
-    }),
-    bus.subscribe('AUTH_OAUTH_COMPLETED', () => renderStatus())
-  ];
-
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const formData = new FormData(form);
-    await auth.login({
-      email: formData.get('email'),
-      password: formData.get('password')
-    }).catch(() => null);
   });
 
-  oauthButton.addEventListener('click', async () => {
-    const started = await auth.startOAuth({ provider: 'github' });
+  const oauthStart = auth.startOAuth.bind(auth);
+  auth.startOAuth = async (options = {}) => {
+    const started = await oauthStart(options);
     await auth.handleOAuthCallback({
       code: 'demo-code',
       state: started.state,
-      provider: 'github'
+      provider: options.provider || 'github'
     }).catch(() => null);
-  });
+    return started;
+  };
 
-  logoutButton.addEventListener('click', () => {
-    auth.logout({ reason: 'demo' });
-  });
-
-  auth.init().then(renderStatus);
+  auth.init().then(() => authUI.mount(mount, { view: 'login' }));
 
   return {
     auth,
+    authUI,
     destroy() {
-      subscriptions.forEach((unsubscribe) => unsubscribe?.());
+      authUI.destroy();
+      form.destroy();
       auth.destroy();
     }
   };

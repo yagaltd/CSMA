@@ -7,6 +7,7 @@ import { Contracts } from '../src/runtime/Contracts.js';
 
 const moduleLoaders = [
     ['auth', () => import('../src/modules/auth/index.js')],
+    ['auth-ui', () => import('../src/modules/auth-ui/index.js')],
     ['analytics', () => import('../src/modules/analytics/index.js')],
     ['consent', () => import('../src/modules/consent/index.js')],
     ['notifications', () => import('../src/modules/notifications/index.js')],

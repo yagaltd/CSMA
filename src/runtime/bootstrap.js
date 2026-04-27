@@ -129,6 +129,7 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp, securityPolic
     const share = state.serviceManager?.get?.('share') || null;
     const fileUpload = state.serviceManager?.get?.('fileUpload') || null;
     const captcha = state.serviceManager?.get?.('captcha') || null;
+    const authUI = state.serviceManager?.get?.('authUI') || null;
     const cacheManager = state.serviceManager?.get?.('cacheManager') || null;
 
     if (policy.globals?.exposeInternals) {
@@ -142,6 +143,7 @@ export function syncWindowRuntime(state, { apiBaseUrl, destroyApp, securityPolic
         router: state.serviceManager?.get?.('router') || null,
         i18n: state.i18nServiceRef,
         auth: state.authServiceRef,
+        authUI,
         analytics,
         consent,
         analyticsConsent,
@@ -250,6 +252,7 @@ export async function destroyRuntimeState(state, { destroyApp }) {
         registries: null,
         i18n: null,
         auth: null,
+        authUI: null,
         runtimeConfig: null,
         analytics: null,
         consent: null,

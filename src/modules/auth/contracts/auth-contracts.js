@@ -51,6 +51,64 @@ export const AuthContracts = {
         })
     },
 
+    INTENT_AUTH_FORGOT_PASSWORD: {
+        version: 1,
+        type: 'intent',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Request a password reset challenge for an account',
+        schema: object({
+            email: string(),
+            timestamp: number()
+        })
+    },
+
+    INTENT_AUTH_RESET_PASSWORD: {
+        version: 1,
+        type: 'intent',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Complete password reset using a backend-issued token',
+        schema: object({
+            token: string(),
+            password: string(),
+            timestamp: number()
+        })
+    },
+
+    INTENT_AUTH_VERIFY_EMAIL: {
+        version: 1,
+        type: 'intent',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Verify an email address using a backend-issued token',
+        schema: object({
+            token: string(),
+            email: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    INTENT_AUTH_RESEND_VERIFICATION: {
+        version: 1,
+        type: 'intent',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Request another email verification challenge',
+        schema: object({
+            email: string(),
+            timestamp: number()
+        })
+    },
+
     INTENT_AUTH_REFRESH_SESSION: {
         version: 1,
         type: 'intent',
@@ -283,6 +341,88 @@ export const AuthContracts = {
         schema: object({
             provider: optional(string()),
             error: string(),
+            requestId: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    AUTH_PASSWORD_RESET_REQUESTED: {
+        version: 1,
+        type: 'event',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Password reset challenge request was accepted',
+        schema: object({
+            flow: string(),
+            email: optional(string()),
+            requestId: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    AUTH_PASSWORD_RESET_COMPLETED: {
+        version: 1,
+        type: 'event',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Password reset was completed',
+        schema: object({
+            flow: string(),
+            email: optional(string()),
+            requestId: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    AUTH_EMAIL_VERIFIED: {
+        version: 1,
+        type: 'event',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Email verification was completed',
+        schema: object({
+            flow: string(),
+            email: optional(string()),
+            requestId: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    AUTH_VERIFICATION_RESENT: {
+        version: 1,
+        type: 'event',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Email verification challenge was resent',
+        schema: object({
+            flow: string(),
+            email: optional(string()),
+            requestId: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    AUTH_ACCOUNT_ACTION_FAILED: {
+        version: 1,
+        type: 'event',
+        owner: 'auth',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Account lifecycle action failed',
+        schema: object({
+            flow: string(),
+            intent: string(),
+            error: string(),
+            code: optional(string()),
             requestId: optional(string()),
             timestamp: number()
         })

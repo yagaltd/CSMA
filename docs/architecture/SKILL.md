@@ -21,6 +21,11 @@ navigation, panels, adapters, and views, and lifecycle-safe load/unload
 through `ModuleManager`, `ServiceManager`, `syncWindowRuntime()`, and
 `destroyRuntimeState()`.
 
+Global primitives under `src/ui/components/` are only for cross-app atomic UI.
+Domain UI patterns belong inside their owning module, usually
+`src/modules/<module>/ui/`, and can advertise reusable agent-safe patterns with
+`manifest.aiUi.components`.
+
 Routing boundary:
 
 - core runtime owns path normalization, page resolution, and optional History API interception

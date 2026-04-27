@@ -63,6 +63,19 @@ composing page recipes.
 | Content card | `.card`, `.card__header`, `.card__body`, `.card__footer` | Vertical stack | Component default | `data-tone`, `data-state` | Type I | Do not nest cards inside cards; split into sibling sections. |
 | Toast/notification | Existing toast component | Fixed stack via component CSS | Component default | `data-state`, `data-variant` | Type II | Validate EventBus payloads with Contracts. |
 | Theme control | `.button` or theme-toggle component | Inline control | `--space-xs` | `data-theme`, `aria-pressed` | Type II if persisted | Keep label text updated with `textContent`. |
+| Auth panel | `auth-ui` module pattern | Module renders semantic forms | Module default | form errors, loading, session status | Type II | Use `FEATURES.AUTH_UI_MODULE`; do not create auth primitives under `src/ui/components/`. |
+
+### Auth Pattern
+
+For account flows, use the module-scoped `auth-ui` pattern (`auth-ui.panel`)
+instead of hand-wiring global auth form primitives. It composes the existing
+`.button`, `.field`, `.input`, and `.badge` primitives, delegates session work to
+`auth`, and delegates form preflight to `form-management`.
+
+Plan the full lifecycle when relevant: login, register, forgot password, reset
+password, verify email, resend verification, OAuth, logout, and session status.
+Enable `runtimeConfig.authUi.captcha` for public registration and recovery abuse
+surfaces when CAPTCHA is available.
 
 ## Craft Rules
 

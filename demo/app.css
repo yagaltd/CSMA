@@ -418,6 +418,57 @@ body {
   gap: var(--space-md);
 }
 
+.auth-ui-panel {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.auth-ui-panel__header,
+.auth-ui-panel__actions,
+.auth-ui-panel__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.auth-ui-panel__header {
+  justify-content: space-between;
+}
+
+.auth-ui-panel__title {
+  margin: 0;
+  font-size: var(--font-size-md);
+}
+
+.auth-ui-panel__form,
+.auth-ui-panel__status {
+  display: grid;
+  gap: var(--space-md);
+}
+
+.auth-ui-panel__message,
+.auth-ui-panel__error {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.auth-ui-panel__error {
+  color: var(--danger);
+}
+
+.auth-ui-panel__status {
+  padding: var(--space-md);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.auth-ui-panel__status span {
+  color: var(--foreground-muted);
+  font-size: var(--font-size-sm);
+}
+
 .module-actions {
   display: flex;
   flex-wrap: wrap;

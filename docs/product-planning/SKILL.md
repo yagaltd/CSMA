@@ -196,6 +196,7 @@ V1 rules:
 | Build a SaaS app | `project-manifest.json`, `DESIGN.md`, `APP.md`, screen specs, flow specs |
 | Use this uploaded `DESIGN.md` | `docs/design-import/SKILL.md`, then product planning artifacts |
 | Add checkout/payment | `project-manifest.json`, `flows/checkout.md`, Contracts/EventBus plan, payment integration notes |
+| Add account/auth flows | `project-manifest.json`, `APP.md` auth state/roles, `flows/auth.md`, modules `auth`, `auth-ui`, `form-management`, and optional `captcha` |
 | Add contact form | `project-manifest.json`, `pages/contact.md`, `flows/contact-submit.md`, validation/submission contract |
 | Add cookie consent | `project-manifest.json`, `SITE.md` consent section, `flows/consent.md`, Consent module configuration notes |
 | Add legal pages | `project-manifest.json`, `SITE.md` legal map, generated `pages/privacy.md`, `pages/terms.md`, `pages/cookies.md` as applicable |

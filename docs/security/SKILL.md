@@ -122,6 +122,13 @@ public-network submissions require backend-delegated integrity through
 `integrityService.prepareSubmission(...)`. CSMA must never hold browser-side
 HMAC/signing secrets.
 
+`auth-ui` registers account forms through `form-management`, marks password and
+token fields sensitive, and includes honeypot fields. Do not log passwords,
+reset tokens, verification tokens, OAuth codes, CAPTCHA tokens, or raw auth form
+payloads. CAPTCHA is opt-in through `runtimeConfig.authUi.captcha`; enable it
+for public registration, forgot-password, and resend-verification flows when the
+app is exposed to the public internet.
+
 ### SSMA Production Expectations
 
 CSMA assumes SSMA production backends enforce HttpOnly Secure SameSite cookies,

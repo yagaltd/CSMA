@@ -55,6 +55,7 @@ export async function loadOptionalFeatures(state, {
     const analyticsConfigBase = cloneRuntimeSection(runtimeConfig.analytics, {});
     const consentConfig = cloneRuntimeSection(runtimeConfig.consent, {});
     const authConfig = cloneRuntimeSection(runtimeConfig.auth, {});
+    const authUiConfig = cloneRuntimeSection(runtimeConfig.authUi, {});
     const notificationsConfig = cloneRuntimeSection(runtimeConfig.notifications, {});
     const offlineCacheConfig = cloneRuntimeSection(runtimeConfig.offlineCache, {});
     const shareConfig = cloneRuntimeSection(runtimeConfig.share, {});
@@ -253,7 +254,15 @@ export async function loadOptionalFeatures(state, {
                 const authService = serviceManager.get('auth');
                 const formManager = serviceManager.get('formManager');
                 const modalService = serviceManager.get('modal');
-                authUI?.init({ authService, formService: formManager, modalService });
+                const captchaService = serviceManager.get('captcha');
+                authUI?.init({
+                    authService,
+                    formService: formManager,
+                    captchaService,
+                    modalService,
+                    documentRef,
+                    config: authUiConfig
+                });
                 window.csma = window.csma || {};
                 window.csma.authUI = authUI;
                 console.log('[AuthUI] Authentication UI orchestration enabled');

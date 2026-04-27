@@ -4,6 +4,10 @@ const DEFAULT_ENDPOINTS = {
     logout: '/auth/logout',
     session: '/auth/me',
     refresh: '/auth/refresh',
+    forgotPassword: '/auth/forgot-password',
+    resetPassword: '/auth/reset-password',
+    verifyEmail: '/auth/verify-email',
+    resendVerification: '/auth/resend-verification',
     oauthStart: '/auth/oauth/start',
     oauthCallback: '/auth/oauth/callback'
 };
@@ -344,6 +348,38 @@ export class AuthService {
         };
     }
 
+    async forgotPassword(values = {}) {
+        return this.#accountAction('forgot-password', values, {
+            endpoint: this.endpoints.forgotPassword,
+            eventName: 'AUTH_PASSWORD_RESET_REQUESTED',
+            intentName: 'INTENT_AUTH_FORGOT_PASSWORD'
+        });
+    }
+
+    async resetPassword(values = {}) {
+        return this.#accountAction('reset-password', values, {
+            endpoint: this.endpoints.resetPassword,
+            eventName: 'AUTH_PASSWORD_RESET_COMPLETED',
+            intentName: 'INTENT_AUTH_RESET_PASSWORD'
+        });
+    }
+
+    async verifyEmail(values = {}) {
+        return this.#accountAction('verify-email', values, {
+            endpoint: this.endpoints.verifyEmail,
+            eventName: 'AUTH_EMAIL_VERIFIED',
+            intentName: 'INTENT_AUTH_VERIFY_EMAIL'
+        });
+    }
+
+    async resendVerification(values = {}) {
+        return this.#accountAction('resend-verification', values, {
+            endpoint: this.endpoints.resendVerification,
+            eventName: 'AUTH_VERIFICATION_RESENT',
+            intentName: 'INTENT_AUTH_RESEND_VERIFICATION'
+        });
+    }
+
     async refreshSession() {
         try {
             const response = await this.#request('GET', this.endpoints.session, null, {
@@ -543,10 +579,52 @@ export class AuthService {
             this.eventBus.subscribe('INTENT_AUTH_LOGIN', (payload = {}) => this.login(payload)),
             this.eventBus.subscribe('INTENT_AUTH_REGISTER', (payload = {}) => this.register(payload)),
             this.eventBus.subscribe('INTENT_AUTH_LOGOUT', (payload = {}) => this.logout(payload)),
+            this.eventBus.subscribe('INTENT_AUTH_FORGOT_PASSWORD', (payload = {}) => this.forgotPassword(payload)),
+            this.eventBus.subscribe('INTENT_AUTH_RESET_PASSWORD', (payload = {}) => this.resetPassword(payload)),
+            this.eventBus.subscribe('INTENT_AUTH_VERIFY_EMAIL', (payload = {}) => this.verifyEmail(payload)),
+            this.eventBus.subscribe('INTENT_AUTH_RESEND_VERIFICATION', (payload = {}) => this.resendVerification(payload)),
             this.eventBus.subscribe('INTENT_AUTH_REFRESH_SESSION', () => this.refreshSession()),
             this.eventBus.subscribe('INTENT_AUTH_START_OAUTH', (payload = {}) => this.startOAuth(payload)),
             this.eventBus.subscribe('INTENT_AUTH_HANDLE_OAUTH_CALLBACK', (payload = {}) => this.handleOAuthCallback(payload))
         );
+    }
+
+    async #accountAction(flow, values, { endpoint, eventName, intentName }) {
+        const requestId = values?.requestId || now().toString(36);
+        try {
+            const response = await this.#request('POST', endpoint, values, {
+                includeAuth: flow === 'verify-email'
+            });
+            const payload = {
+                flow,
+                email: values?.email || response?.email || undefined,
+                requestId: buildRequestId(response) || requestId,
+                timestamp: now()
+            };
+            this.#publishEvent(eventName, payload);
+            return {
+                success: true,
+                requestId: payload.requestId,
+                message: response?.message,
+                data: response
+            };
+        } catch (error) {
+            this.#publishEvent('AUTH_ACCOUNT_ACTION_FAILED', {
+                flow,
+                intent: intentName,
+                error: error?.message || String(error),
+                code: error?.status ? String(error.status) : undefined,
+                requestId,
+                timestamp: now()
+            });
+            this.#publishError({
+                method: 'password',
+                error,
+                code: error?.status ? String(error.status) : undefined,
+                requestId
+            });
+            throw error;
+        }
     }
 
     async #authenticate(flow, values, { endpoint }) {

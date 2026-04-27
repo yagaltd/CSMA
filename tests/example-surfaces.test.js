@@ -13,7 +13,7 @@ describe('demo surface quality', () => {
   });
 
   it('includes interactive Phase 1 module examples', () => {
-    expect(todoHtml).toContain('data-auth-demo-form');
+    expect(todoHtml).toContain('data-auth-ui-demo');
     expect(todoHtml).toContain('data-notifications-center-shell');
     expect(todoHtml).toContain('data-share-trigger');
     expect(todoHtml).toContain('data-upload-dropzone');

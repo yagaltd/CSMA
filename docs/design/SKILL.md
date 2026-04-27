@@ -163,6 +163,10 @@ input, theme-toggle, and toast. Do not add video, chart, map, or carousel as
 global primitives by default; heavy or domain-specific UI belongs under
 `src/modules/<module>/ui/` unless it is genuinely cross-app infrastructure.
 True reusable primitives live under `src/ui/components/<component>/`.
+Domain patterns such as account panels, checkout steps, upload affordances, or
+module-specific pickers belong under `src/modules/<module>/ui/` and should be
+declared with `manifest.aiUi.components` when they need agent/composer
+discovery.
 
 `frontend/` pages and screens are authored surfaces, not automatically reusable
 components. Register only reusable units. Any reusable UI intended for AI answer
