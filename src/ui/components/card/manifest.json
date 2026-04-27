@@ -66,6 +66,41 @@
     ],
     "render": {
       "kind": "element",
+      "tag": "article",
+      "className": "card",
+      "attributes": {
+        "data-tone": {
+          "prop": "tone"
+        }
+      },
+      "children": [
+        {
+          "tag": "header",
+          "className": "card__header",
+          "children": [
+            {
+              "tag": "h2",
+              "className": "card__title",
+              "textProp": "title"
+            },
+            {
+              "tag": "p",
+              "className": "card__description",
+              "textProp": "description"
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "className": "card__body",
+          "slot": "body"
+        },
+        {
+          "tag": "footer",
+          "className": "card__footer",
+          "slot": "footer"
+        }
+      ],
       "template": "<article class=\"card\"><header class=\"card__header\"><h2 class=\"card__title\">Title</h2><p class=\"card__description\">Description</p></header><div class=\"card__body\"></div><footer class=\"card__footer\"></footer></article>"
     },
     "behavior": {

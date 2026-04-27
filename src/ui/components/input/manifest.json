@@ -48,6 +48,41 @@
     "allowedChildren": [],
     "render": {
       "kind": "element",
+      "tag": "input",
+      "className": "input",
+      "attributes": {
+        "id": {
+          "prop": "id"
+        },
+        "type": {
+          "prop": "type",
+          "fallback": "text",
+          "allowedValues": [
+            "text",
+            "email",
+            "password",
+            "search",
+            "tel",
+            "url",
+            "number"
+          ]
+        },
+        "name": {
+          "prop": "name"
+        },
+        "value": {
+          "prop": "value"
+        },
+        "placeholder": {
+          "prop": "placeholder"
+        },
+        "autocomplete": {
+          "prop": "autocomplete"
+        },
+        "data-state": {
+          "prop": "state"
+        }
+      },
       "template": "<input class=\"input\" type=\"email\" name=\"email\" placeholder=\"name@company.com\" autocomplete=\"email\" />"
     },
     "behavior": {

@@ -158,6 +158,23 @@ Write into `DESIGN.md`:
 **This is the most important section.** Name components specific to the user's
 app, not generic primitives.
 
+Start with existing primitives before adding new UI: badge, button, card, field,
+input, theme-toggle, and toast. Do not add video, chart, map, or carousel as
+global primitives by default; heavy or domain-specific UI belongs under
+`src/modules/<module>/ui/` unless it is genuinely cross-app infrastructure.
+True reusable primitives live under `src/ui/components/<component>/`.
+
+`frontend/` pages and screens are authored surfaces, not automatically reusable
+components. Register only reusable units. Any reusable UI intended for AI answer
+composition must include explicit `aiUi` metadata in its component manifest, or
+in `manifest.aiUi.components` for module-scoped UI. Registered ids must be
+globally unique; module ids should be namespaced, such as `consent.banner` or
+`media.video-player`.
+
+Build-time skills author components and manifests. The `ai-ui` module is the
+runtime prefab renderer for AI answers, and registered manifests are the bridge
+between those layers.
+
 Write component decisions into the `Component Recipes` table in root
 `DESIGN.md`. Use domain names and compose from CSMA primitives where possible:
 

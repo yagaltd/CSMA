@@ -44,6 +44,20 @@
     "allowedChildren": [],
     "render": {
       "kind": "button",
+      "tag": "button",
+      "className": "theme-toggle",
+      "textProp": "label",
+      "attributes": {
+        "type": "button",
+        "data-theme-toggle": "",
+        "data-theme-active": {
+          "prop": "theme",
+          "fallback": "light"
+        },
+        "data-variant": {
+          "prop": "variant"
+        }
+      },
       "template": "<button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-theme-active=\"light\"><span class=\"theme-toggle__icons\" aria-hidden=\"true\"><span class=\"theme-icon theme-icon--sun\">☀</span><span class=\"theme-icon theme-icon--moon\">◐</span><span class=\"theme-icon theme-icon--contrast\">◫</span></span><span class=\"theme-toggle__label\">Theme</span></button>"
     },
     "behavior": {

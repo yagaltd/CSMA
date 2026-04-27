@@ -1555,7 +1555,8 @@ const CoreContracts = {
                 dependencies: array(string()),
                 services: array(string()),
                 contracts: array(string()),
-                contributes: optional(any())
+                contributes: optional(any()),
+                aiUi: optional(any())
             }),
             serviceNames: array(string()),
             contributions: object({
@@ -1588,7 +1589,8 @@ const CoreContracts = {
                 dependencies: array(string()),
                 services: array(string()),
                 contracts: array(string()),
-                contributes: optional(any())
+                contributes: optional(any()),
+                aiUi: optional(any())
             }),
             serviceNames: array(string()),
             contributions: object({

@@ -6,9 +6,9 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..', '..');
-const COMPONENTS_DIR = path.join(ROOT, 'library', 'ui', 'components');
+export const COMPONENTS_DIR = path.join(ROOT, 'src', 'ui', 'components');
 const COMPONENT_INDEX = path.join(COMPONENTS_DIR, 'index.css');
-const UI_INIT = path.join(ROOT, 'library', 'ui', 'init.js');
+export const UI_INIT = path.join(ROOT, 'src', 'ui', 'init.js');
 
 function printHelp() {
   console.log(`Usage:
@@ -142,7 +142,7 @@ export function init${pascal}System(eventBus) {
 
 export function buildComponentManifestTemplate({ name, type, owner, title, description, category }) {
   const isTypeTwo = type === 'II';
-  const renderKind = isTypeTwo ? 'template' : 'inline';
+  const renderKind = isTypeTwo ? 'template' : 'element';
   const template = isTypeTwo
     ? `<!-- ${title} is managed by init${toPascal(name)}System(eventBus) -->`
     : `<div class="${name}">${title}</div>`;
@@ -189,6 +189,9 @@ export function buildComponentManifestTemplate({ name, type, owner, title, descr
       allowedChildren: [],
       render: {
         kind: renderKind,
+        tag: 'div',
+        className: name,
+        textProp: 'label',
         template
       },
       behavior: {

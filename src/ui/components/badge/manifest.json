@@ -57,7 +57,21 @@
     },
     "allowedChildren": [],
     "render": {
-      "kind": "inline",
+      "kind": "element",
+      "tag": "span",
+      "className": "badge",
+      "textProp": "label",
+      "attributes": {
+        "data-variant": {
+          "prop": "variant"
+        },
+        "data-tone": {
+          "prop": "tone"
+        },
+        "data-size": {
+          "prop": "size"
+        }
+      },
       "template": "<span class=\"badge\" data-variant=\"soft-primary\">Primary</span>\n<span class=\"badge\" data-variant=\"soft-success\">Success</span>\n<span class=\"badge\" data-variant=\"soft-warning\">Warning</span>\n<span class=\"badge\" data-variant=\"soft-danger\">Danger</span>\n<span class=\"badge\" data-variant=\"soft-info\">Info</span>"
     },
     "behavior": {

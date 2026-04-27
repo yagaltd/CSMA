@@ -195,12 +195,27 @@
         },
         "render": {
           "type": "object",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "required": ["kind", "template"],
           "properties": {
             "kind": {
               "type": "string",
               "enum": ["inline", "button", "template", "element", "custom"]
+            },
+            "tag": {
+              "type": "string"
+            },
+            "className": {
+              "type": "string"
+            },
+            "textProp": {
+              "type": "string"
+            },
+            "attributes": {
+              "type": "object"
+            },
+            "children": {
+              "type": "array"
             },
             "template": {
               "type": "string",

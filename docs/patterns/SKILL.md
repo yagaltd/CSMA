@@ -18,6 +18,23 @@ Module    = Feature/service layer with contracts, registries, and behavior
 Build with existing primitives first. Compose pages freely using layout tokens
 and CSS utilities. There is no rigid page scaffold and no pattern compiler.
 
+Existing primitives are badge, button, card, field, input, theme-toggle, and
+toast. Do not promote heavy UI such as video players, charts, maps, or carousels
+to global primitives by default. Put domain UI under `src/modules/<module>/ui/`
+and put true cross-app primitives under `src/ui/components/<component>/`.
+
+Pages and screens under `frontend/` are authoring surfaces, not reusable UI by
+default. Reusable UI becomes AI-discoverable only when it has explicit `aiUi`
+metadata. Core primitives use `src/ui/components/<component>/manifest.json`;
+module-scoped reusable UI uses `manifest.aiUi.components` and is discoverable
+only after that module is loaded. Component ids must be globally unique, with
+module ids namespaced like `consent.banner` or `media.video-player`.
+
+The `ai-ui` module is a runtime prefab renderer for AI answers. Skills are the
+build-time authoring layer. Registered component manifests bridge those layers,
+and `aiUi.render` is the safe DOM rendering source of truth while `template`
+remains documentation/example material.
+
 After layout or breakpoint token edits, inspect
 `/showcase/token-showcase.html` and its Layout Primitives section before
 composing page recipes.

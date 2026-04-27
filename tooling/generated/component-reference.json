@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-04-22T05:04:26.630Z",
+  "generatedAt": "2026-04-25T05:33:51.895Z",
   "source": "src/ui/components/*/{manifest.json,*.css,*.demo.html}",
   "totalComponents": 7,
   "components": [
@@ -97,7 +97,21 @@
       },
       "template": "<span class=\"badge\" data-variant=\"soft-primary\">Primary</span>\n<span class=\"badge\" data-variant=\"soft-success\">Success</span>\n<span class=\"badge\" data-variant=\"soft-warning\">Warning</span>\n<span class=\"badge\" data-variant=\"soft-danger\">Danger</span>\n<span class=\"badge\" data-variant=\"soft-info\">Info</span>",
       "render": {
-        "kind": "inline",
+        "kind": "element",
+        "tag": "span",
+        "className": "badge",
+        "textProp": "label",
+        "attributes": {
+          "data-variant": {
+            "prop": "variant"
+          },
+          "data-tone": {
+            "prop": "tone"
+          },
+          "data-size": {
+            "prop": "size"
+          }
+        },
         "template": "<span class=\"badge\" data-variant=\"soft-primary\">Primary</span>\n<span class=\"badge\" data-variant=\"soft-success\">Success</span>\n<span class=\"badge\" data-variant=\"soft-warning\">Warning</span>\n<span class=\"badge\" data-variant=\"soft-danger\">Danger</span>\n<span class=\"badge\" data-variant=\"soft-info\">Info</span>"
       },
       "states": [],
@@ -249,6 +263,24 @@
       "template": "<button class=\"button\">Default</button>\n<button class=\"button\" data-variant=\"primary\">Primary</button>\n<button class=\"button\" data-variant=\"secondary\">Secondary</button>\n<button class=\"button\" data-variant=\"ghost\">Ghost</button>\n<button class=\"button\" data-variant=\"destructive\">Destructive</button>",
       "render": {
         "kind": "button",
+        "tag": "button",
+        "className": "button",
+        "textProp": "label",
+        "attributes": {
+          "type": "button",
+          "data-variant": {
+            "prop": "variant"
+          },
+          "data-tone": {
+            "prop": "tone"
+          },
+          "data-size": {
+            "prop": "size"
+          },
+          "data-shape": {
+            "prop": "shape"
+          }
+        },
         "template": "<button class=\"button\">Default</button>\n<button class=\"button\" data-variant=\"primary\">Primary</button>\n<button class=\"button\" data-variant=\"secondary\">Secondary</button>\n<button class=\"button\" data-variant=\"ghost\">Ghost</button>\n<button class=\"button\" data-variant=\"destructive\">Destructive</button>"
       },
       "states": [
@@ -395,6 +427,41 @@
       "template": "<article class=\"card\"><header class=\"card__header\"><h2 class=\"card__title\">Title</h2><p class=\"card__description\">Description</p></header><div class=\"card__body\"></div><footer class=\"card__footer\"></footer></article>",
       "render": {
         "kind": "element",
+        "tag": "article",
+        "className": "card",
+        "attributes": {
+          "data-tone": {
+            "prop": "tone"
+          }
+        },
+        "children": [
+          {
+            "tag": "header",
+            "className": "card__header",
+            "children": [
+              {
+                "tag": "h2",
+                "className": "card__title",
+                "textProp": "title"
+              },
+              {
+                "tag": "p",
+                "className": "card__description",
+                "textProp": "description"
+              }
+            ]
+          },
+          {
+            "tag": "div",
+            "className": "card__body",
+            "slot": "body"
+          },
+          {
+            "tag": "footer",
+            "className": "card__footer",
+            "slot": "footer"
+          }
+        ],
         "template": "<article class=\"card\"><header class=\"card__header\"><h2 class=\"card__title\">Title</h2><p class=\"card__description\">Description</p></header><div class=\"card__body\"></div><footer class=\"card__footer\"></footer></article>"
       },
       "states": [],
@@ -446,7 +513,9 @@
         "helper": "string",
         "error": "string",
         "for": "string",
-        "required": "string"
+        "required": "string",
+        "state": "string",
+        "tone": "string"
       },
       "defaultSlot": "control",
       "slots": {
@@ -497,6 +566,43 @@
       "template": "<div class=\"field\"><label class=\"field__label\" for=\"email\">Email</label><div class=\"field__control\"></div><p class=\"field__helper\">Helper text</p></div>",
       "render": {
         "kind": "element",
+        "tag": "div",
+        "className": "field",
+        "attributes": {
+          "data-tone": {
+            "prop": "tone"
+          },
+          "data-state": {
+            "prop": "state"
+          }
+        },
+        "children": [
+          {
+            "tag": "label",
+            "className": "field__label",
+            "textProp": "label",
+            "attributes": {
+              "for": {
+                "prop": "for"
+              }
+            }
+          },
+          {
+            "tag": "div",
+            "className": "field__control",
+            "slot": "control"
+          },
+          {
+            "tag": "p",
+            "className": "field__helper",
+            "textProp": "helper"
+          },
+          {
+            "tag": "p",
+            "className": "field__error",
+            "textProp": "error"
+          }
+        ],
         "template": "<div class=\"field\"><label class=\"field__label\" for=\"email\">Email</label><div class=\"field__control\"></div><p class=\"field__helper\">Helper text</p></div>"
       },
       "states": [
@@ -586,6 +692,41 @@
       "template": "<input class=\"input\" type=\"email\" name=\"email\" placeholder=\"name@company.com\" autocomplete=\"email\" />",
       "render": {
         "kind": "element",
+        "tag": "input",
+        "className": "input",
+        "attributes": {
+          "id": {
+            "prop": "id"
+          },
+          "type": {
+            "prop": "type",
+            "fallback": "text",
+            "allowedValues": [
+              "text",
+              "email",
+              "password",
+              "search",
+              "tel",
+              "url",
+              "number"
+            ]
+          },
+          "name": {
+            "prop": "name"
+          },
+          "value": {
+            "prop": "value"
+          },
+          "placeholder": {
+            "prop": "placeholder"
+          },
+          "autocomplete": {
+            "prop": "autocomplete"
+          },
+          "data-state": {
+            "prop": "state"
+          }
+        },
         "template": "<input class=\"input\" type=\"email\" name=\"email\" placeholder=\"name@company.com\" autocomplete=\"email\" />"
       },
       "states": [
@@ -683,6 +824,20 @@
       "template": "<button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-theme-active=\"light\"><span class=\"theme-toggle__icons\" aria-hidden=\"true\"><span class=\"theme-icon theme-icon--sun\">☀</span><span class=\"theme-icon theme-icon--moon\">◐</span><span class=\"theme-icon theme-icon--contrast\">◫</span></span><span class=\"theme-toggle__label\">Theme</span></button>",
       "render": {
         "kind": "button",
+        "tag": "button",
+        "className": "theme-toggle",
+        "textProp": "label",
+        "attributes": {
+          "type": "button",
+          "data-theme-toggle": "",
+          "data-theme-active": {
+            "prop": "theme",
+            "fallback": "light"
+          },
+          "data-variant": {
+            "prop": "variant"
+          }
+        },
         "template": "<button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-theme-active=\"light\"><span class=\"theme-toggle__icons\" aria-hidden=\"true\"><span class=\"theme-icon theme-icon--sun\">☀</span><span class=\"theme-icon theme-icon--moon\">◐</span><span class=\"theme-icon theme-icon--contrast\">◫</span></span><span class=\"theme-toggle__label\">Theme</span></button>"
       },
       "states": [
@@ -842,6 +997,7 @@
         "space-md",
         "space-xs",
         "success",
+        "toast-enter-offset",
         "transition-normal",
         "transition-slow",
         "warning",

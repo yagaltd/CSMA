@@ -59,6 +59,24 @@
     "allowedChildren": [],
     "render": {
       "kind": "button",
+      "tag": "button",
+      "className": "button",
+      "textProp": "label",
+      "attributes": {
+        "type": "button",
+        "data-variant": {
+          "prop": "variant"
+        },
+        "data-tone": {
+          "prop": "tone"
+        },
+        "data-size": {
+          "prop": "size"
+        },
+        "data-shape": {
+          "prop": "shape"
+        }
+      },
       "template": "<button class=\"button\">Default</button>\n<button class=\"button\" data-variant=\"primary\">Primary</button>\n<button class=\"button\" data-variant=\"secondary\">Secondary</button>\n<button class=\"button\" data-variant=\"ghost\">Ghost</button>\n<button class=\"button\" data-variant=\"destructive\">Destructive</button>"
     },
     "behavior": {

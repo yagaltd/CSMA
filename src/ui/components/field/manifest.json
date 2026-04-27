@@ -36,7 +36,9 @@
       "helper": "string",
       "error": "string",
       "for": "string",
-      "required": "string"
+      "required": "string",
+      "state": "string",
+      "tone": "string"
     },
     "defaultSlot": "control",
     "slots": {
@@ -52,6 +54,43 @@
     ],
     "render": {
       "kind": "element",
+      "tag": "div",
+      "className": "field",
+      "attributes": {
+        "data-tone": {
+          "prop": "tone"
+        },
+        "data-state": {
+          "prop": "state"
+        }
+      },
+      "children": [
+        {
+          "tag": "label",
+          "className": "field__label",
+          "textProp": "label",
+          "attributes": {
+            "for": {
+              "prop": "for"
+            }
+          }
+        },
+        {
+          "tag": "div",
+          "className": "field__control",
+          "slot": "control"
+        },
+        {
+          "tag": "p",
+          "className": "field__helper",
+          "textProp": "helper"
+        },
+        {
+          "tag": "p",
+          "className": "field__error",
+          "textProp": "error"
+        }
+      ],
       "template": "<div class=\"field\"><label class=\"field__label\" for=\"email\">Email</label><div class=\"field__control\"></div><p class=\"field__helper\">Helper text</p></div>"
     },
     "behavior": {

@@ -1,6 +1,6 @@
 /**
  * CSMA Component Registry
- * Keep imports aligned with library/ui/components/* and manifest-backed catalog generation.
+ * Keep imports aligned with src/ui/components/* and manifest-backed catalog generation.
  */
 
 @import './button/button.css';

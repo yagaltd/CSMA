@@ -72,6 +72,42 @@ describe('Module manifest validation', () => {
             services: {}
         })).toThrow(/Unknown contribution types: routes/i);
     });
+
+    it('preserves module-scoped aiUi component declarations', () => {
+        const validated = validateModuleDefinition('demo', {
+            manifest: {
+                id: 'demo',
+                name: 'Demo',
+                version: '1.0.0',
+                description: 'Manifest with AI UI components',
+                dependencies: [],
+                services: [],
+                contracts: [],
+                aiUi: {
+                    components: [
+                        {
+                            id: 'demo.panel',
+                            alias: 'panel',
+                            title: 'Demo Panel',
+                            category: 'Demo',
+                            propsSchema: {},
+                            slots: {},
+                            allowedChildren: [],
+                            render: {
+                                kind: 'element',
+                                tag: 'section',
+                                className: 'demo-panel'
+                            }
+                        }
+                    ]
+                }
+            },
+            services: {}
+        });
+
+        expect(validated.manifest.aiUi.components).toHaveLength(1);
+        expect(validated.manifest.aiUi.components[0].id).toBe('demo.panel');
+    });
 });
 
 describe('Contribution registries', () => {

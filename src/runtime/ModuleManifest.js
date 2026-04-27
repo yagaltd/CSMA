@@ -72,6 +72,27 @@ function ensureContributes(value) {
     return contributes;
 }
 
+function ensureAiUi(value) {
+    if (value === undefined) {
+        return undefined;
+    }
+
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+        throw new Error('[ModuleManifest] manifest.aiUi must be an object');
+    }
+
+    if (value.components !== undefined) {
+        if (!Array.isArray(value.components) || value.components.some((entry) => !entry || typeof entry !== 'object' || Array.isArray(entry))) {
+            throw new Error('[ModuleManifest] manifest.aiUi.components must be an array of objects');
+        }
+    }
+
+    return {
+        ...value,
+        components: value.components ? value.components.map((entry) => ({ ...entry })) : []
+    };
+}
+
 export function validateModuleDefinition(moduleId, moduleDefinition) {
     if (!moduleDefinition || typeof moduleDefinition !== 'object') {
         throw new Error(`[ModuleManifest] Module "${moduleId}" must export an object`);
@@ -110,7 +131,8 @@ export function validateModuleDefinition(moduleId, moduleDefinition) {
             dependencies: ensureStringArray(manifest.dependencies, 'manifest.dependencies'),
             services: serviceNames,
             contracts: ensureStringArray(manifest.contracts, 'manifest.contracts'),
-            contributes: ensureContributes(manifest.contributes)
+            contributes: ensureContributes(manifest.contributes),
+            ...(manifest.aiUi !== undefined ? { aiUi: ensureAiUi(manifest.aiUi) } : {})
         },
         services,
         contracts: moduleDefinition.contracts || {}
