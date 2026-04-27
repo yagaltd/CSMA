@@ -290,7 +290,10 @@ export async function loadOptionalFeatures(state, {
         try {
             await moduleManager.loadModule('search');
             const searchService = serviceManager.get('search');
-            searchService?.init(searchConfig);
+            searchService?.init({
+                ...searchConfig,
+                adapterRegistry: registries.adapters
+            });
             window.csma = window.csma || {};
             window.csma.search = searchService;
             console.log('[Search] Tiered search module enabled');

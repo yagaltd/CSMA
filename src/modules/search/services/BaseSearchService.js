@@ -1,4 +1,3 @@
-import { SearchFacade } from '../adapters/SearchFacade.js';
 import { sanitizeLLMInput } from '../../../utils/sanitize.js';
 
 const DEFAULT_OPTIONS = {
@@ -27,12 +26,7 @@ export class BaseSearchService {
             }
         };
 
-        this.facade = new SearchFacade({
-            variant: this.options.variant,
-            indexName: this.options.indexName,
-            persistence: this.options.persistence
-        });
-
+        this.adapter = options.searchAdapter || null;
         this.documents = new Map();
         this.subscriptions = [];
     }
@@ -47,6 +41,17 @@ export class BaseSearchService {
             }
         };
 
+        if (!this.adapter) {
+            throw new Error('[Search] Search service requires a search adapter');
+        }
+
+        this.adapter.init?.({
+            variant: this.options.variant,
+            indexName: this.options.indexName,
+            persistence: this.options.persistence,
+            storageKey: this.options.storageKey
+        });
+
         if (this.subscriptions.length === 0 && this.eventBus) {
             this.subscriptions.push(
                 this.eventBus.subscribe('SEARCH_QUERY_INITIATED', (payload) => this.handleQuery(payload))
@@ -57,7 +62,7 @@ export class BaseSearchService {
     }
 
     async add(id, content) {
-        const recordId = await this.facade.add(id, content);
+        const recordId = await this.adapter.add(id, content);
         this.documents.set(recordId, { id: recordId, content: String(content) });
         this.#publishIndexUpdated(recordId, 'add');
         return recordId;
@@ -67,7 +72,7 @@ export class BaseSearchService {
         if (!doc || !doc.id) {
             throw new Error('Document requires an id');
         }
-        await this.facade.addDocument(doc);
+        await this.adapter.addDocument(doc);
         this.documents.set(doc.id, { ...doc });
         this.#publishIndexUpdated(doc.id, 'add');
         return doc.id;
@@ -75,12 +80,13 @@ export class BaseSearchService {
 
     async addDocuments(docs) {
         if (!Array.isArray(docs)) return;
-        const promises = docs.map(async (doc) => {
-            if (!doc || !doc.id) return;
-            await this.facade.addDocument(doc);
+        await this.adapter.addDocuments(docs);
+        docs.forEach((doc) => {
+            if (!doc || !doc.id) {
+                return;
+            }
             this.documents.set(doc.id, { ...doc });
         });
-        await Promise.all(promises);
 
         // Emit non-contract event for speed (or add contract later)
         this.eventBus?.publish('SEARCH_INDEX_BATCH_UPDATED', {
@@ -91,13 +97,13 @@ export class BaseSearchService {
     }
 
     async remove(id) {
-        await this.facade.remove(id);
+        await this.adapter.remove(id);
         this.documents.delete(id);
         this.#publishIndexUpdated(id, 'remove');
     }
 
     async clear() {
-        await this.facade.clear();
+        await this.adapter.clear();
         this.documents.clear();
         this.eventBus?.publish('SEARCH_INDEX_CLEARED', {
             timestamp: Date.now()
@@ -105,7 +111,7 @@ export class BaseSearchService {
     }
 
     getIndexInfo() {
-        return this.facade.getIndexInfo();
+        return this.adapter.getIndexInfo();
     }
 
     async handleQuery(payload = {}) {
@@ -142,7 +148,7 @@ export class BaseSearchService {
         const bool = payload?.options?.bool ?? 'or';
         const threshold = payload?.options?.threshold;
         const suggest = payload?.options?.suggest;
-        return this.facade.search(query, { limit, bool, threshold, suggest });
+        return this.adapter.search(query, { limit, bool, threshold, suggest });
     }
 
     publishResults({ version, query, ids, durationMs }) {
@@ -167,6 +173,7 @@ export class BaseSearchService {
         this.subscriptions.forEach((unsubscribe) => unsubscribe && unsubscribe());
         this.subscriptions = [];
         this.documents.clear();
+        this.adapter?.destroy?.();
     }
 
     #matchesTier(requestedTier) {

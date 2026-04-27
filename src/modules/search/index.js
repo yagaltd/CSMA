@@ -2,6 +2,7 @@ import { SearchModuleService, createSearchService } from './services/SearchModul
 import { CoreSearchService } from './services/CoreSearchService.js';
 import { EnhancedSearchService } from './services/EnhancedSearchService.js';
 import { AISearchService } from './services/AISearchService.js';
+import { FlexSearchAdapter } from './adapters/FlexSearchAdapter.js';
 
 export const manifest = {
     id: 'search',
@@ -9,7 +10,7 @@ export const manifest = {
     version: '1.0.0',
     description: 'Tiered FlexSearch integration for CSMA',
     dependencies: [],
-    services: ['search'],
+    services: ['search', 'searchFlexSearchAdapter'],
     bundleSize: '+13KB',
     contracts: [
         'SEARCH_QUERY_INITIATED',
@@ -23,11 +24,22 @@ export const manifest = {
         'AI_CONTEXT_REQUESTED',
         'AI_CONTEXT_RETRIEVED',
         'AI_CONTEXT_FAILED'
-    ]
+    ],
+    contributes: {
+        adapters: [
+            {
+                id: 'search.flexsearch',
+                type: 'search-engine',
+                serviceName: 'searchFlexSearchAdapter',
+                capabilities: ['local', 'in-memory', 'persistence', 'suggestions']
+            }
+        ]
+    }
 };
 
 export const services = {
-    search: SearchModuleService
+    search: SearchModuleService,
+    searchFlexSearchAdapter: FlexSearchAdapter
 };
 
-export { createSearchService, CoreSearchService, EnhancedSearchService, AISearchService };
+export { createSearchService, SearchModuleService, CoreSearchService, EnhancedSearchService, AISearchService, FlexSearchAdapter };

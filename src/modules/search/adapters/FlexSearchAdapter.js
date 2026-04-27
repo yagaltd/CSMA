@@ -33,16 +33,26 @@ const VARIANT_CONFIG = {
     }
 };
 
-export class SearchFacade {
-    constructor(options = {}) {
+const DEFAULT_OPTIONS = {
+    variant: 'light',
+    indexName: 'default',
+    persistence: false,
+    storageKey: null
+};
+
+export class FlexSearchAdapter {
+    constructor() {
+        this.options = { ...DEFAULT_OPTIONS };
+        this.config = VARIANT_CONFIG.light;
+        this.documents = new Map();
+        this.engine = this.#createIndex();
+    }
+
+    init(options = {}) {
         this.options = {
-            variant: 'light',
-            indexName: 'default',
-            persistence: false,
-            storageKey: null,
+            ...DEFAULT_OPTIONS,
             ...options
         };
-
         this.config = VARIANT_CONFIG[this.options.variant] || VARIANT_CONFIG.light;
         this.documents = new Map();
         this.engine = this.#createIndex();
@@ -50,11 +60,13 @@ export class SearchFacade {
         if (this.options.persistence) {
             this.#restoreFromStorage();
         }
+
+        return this;
     }
 
     async add(id, content) {
         if (!id) {
-            throw new Error('SearchFacade.add requires an id');
+            throw new Error('FlexSearchAdapter.add requires an id');
         }
         const normalized = this.#normalizeContent(content);
         this.engine.add(id, normalized);
@@ -65,13 +77,28 @@ export class SearchFacade {
 
     async addDocument(doc) {
         if (!doc || !doc.id) {
-            throw new Error('SearchFacade.addDocument requires an id');
+            throw new Error('FlexSearchAdapter.addDocument requires an id');
         }
         const normalized = this.#normalizeDocument(doc);
         this.engine.add(doc.id, normalized);
         this.documents.set(doc.id, { ...doc });
         this.#persist();
         return doc.id;
+    }
+
+    async addDocuments(docs) {
+        if (!Array.isArray(docs)) {
+            return [];
+        }
+
+        const ids = [];
+        for (const doc of docs) {
+            if (!doc || !doc.id) {
+                continue;
+            }
+            ids.push(await this.addDocument(doc));
+        }
+        return ids;
     }
 
     async remove(id) {
@@ -129,6 +156,11 @@ export class SearchFacade {
         };
     }
 
+    destroy() {
+        this.documents.clear();
+        this.engine = this.#createIndex();
+    }
+
     #createIndex() {
         return new FlexSearch.Index({
             ...this.config,
@@ -167,28 +199,30 @@ export class SearchFacade {
         return entries.join(' ');
     }
 
+    #storageKey() {
+        return this.options.storageKey || `csma-search-${this.options.indexName}`;
+    }
+
     #persist(reset = false) {
         if (!this.options.persistence) {
             return;
         }
-        const key = this.options.storageKey || `csma-search-${this.options.indexName}`;
         if (typeof window === 'undefined' || !window.localStorage) {
             return;
         }
         if (reset) {
-            window.localStorage.removeItem(key);
+            window.localStorage.removeItem(this.#storageKey());
             return;
         }
         const snapshot = JSON.stringify(Array.from(this.documents.values()));
-        window.localStorage.setItem(key, snapshot);
+        window.localStorage.setItem(this.#storageKey(), snapshot);
     }
 
     #restoreFromStorage() {
         if (typeof window === 'undefined' || !window.localStorage) {
             return;
         }
-        const key = this.options.storageKey || `csma-search-${this.options.indexName}`;
-        const snapshot = window.localStorage.getItem(key);
+        const snapshot = window.localStorage.getItem(this.#storageKey());
         if (!snapshot) {
             return;
         }
@@ -204,8 +238,8 @@ export class SearchFacade {
                 });
             }
         } catch (error) {
-            console.warn('[SearchFacade] Failed to restore persisted index', error);
-            window.localStorage.removeItem(key);
+            console.warn('[FlexSearchAdapter] Failed to restore persisted index', error);
+            window.localStorage.removeItem(this.#storageKey());
         }
     }
 }

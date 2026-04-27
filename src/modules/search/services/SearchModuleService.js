@@ -8,13 +8,30 @@ const TIERS = {
     ai: AISearchService
 };
 
+const DEFAULT_ADAPTER_ID = 'search.flexsearch';
+const SEARCH_ADAPTER_TYPE = 'search-engine';
+
 export function createSearchService(eventBus, options = {}) {
+    if (!options.adapterRegistry) {
+        throw new Error('[Search] createSearchService requires options.adapterRegistry');
+    }
+
     const tier = options.tier ?? 'core';
     const ServiceClass = TIERS[tier];
     if (!ServiceClass) {
         throw new Error(`Unknown search tier: ${tier}`);
     }
-    return new ServiceClass(eventBus, options);
+
+    const adapterId = options.adapter || DEFAULT_ADAPTER_ID;
+    const searchAdapter = options.adapterRegistry.resolve(SEARCH_ADAPTER_TYPE, adapterId);
+    if (!searchAdapter) {
+        throw new Error(`[Search] Adapter "${adapterId}" is not registered or has no service`);
+    }
+
+    return new ServiceClass(eventBus, {
+        ...options,
+        searchAdapter
+    });
 }
 
 export class SearchModuleService {
@@ -27,7 +44,7 @@ export class SearchModuleService {
     init(options = {}) {
         this.options = { ...this.options, ...options };
         this.service = createSearchService(this.eventBus, this.options);
-        this.service.init?.(options);
+        this.service.init?.(this.options);
         return this.service;
     }
 
