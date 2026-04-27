@@ -573,39 +573,36 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    if (FEATURES.MEDIA_CAPTURE) {
-        if (!FEATURES.FILE_SYSTEM) {
-            console.warn('[MediaCapture] Requires FILE_SYSTEM feature. Skipping load.');
-        } else {
-            try {
-                await moduleManager.loadModule('media-capture');
-                const mediaCaptureService = serviceManager.get('mediaCapture');
-                const fileSystemService = serviceManager.get('fileSystem');
-                mediaCaptureService?.init({ fileSystemService });
-                window.csma = window.csma || {};
-                window.csma.mediaCapture = mediaCaptureService;
-                console.log('[MediaCapture] Audio recording enabled');
-            } catch (error) {
-                console.warn('[MediaCapture] Failed to load module:', error);
-            }
+    // ─── Media Module (unified) ───────────────────────────
+    // Alias old flags to FEATURES.MEDIA for deprecation window
+    if (FEATURES.CAMERA_MODULE || FEATURES.MEDIA_CAPTURE || FEATURES.MEDIA_TRANSFORM || FEATURES.IMAGE_OPTIMIZER) {
+        if (!FEATURES.MEDIA) {
+            const sources = [];
+            if (FEATURES.CAMERA_MODULE) sources.push('CAMERA_MODULE');
+            if (FEATURES.MEDIA_CAPTURE) sources.push('MEDIA_CAPTURE');
+            if (FEATURES.MEDIA_TRANSFORM) sources.push('MEDIA_TRANSFORM');
+            if (FEATURES.IMAGE_OPTIMIZER) sources.push('IMAGE_OPTIMIZER');
+            console.warn(`[Features] ${sources.join(', ')} ${sources.length === 1 ? 'is' : 'are'} deprecated, use MEDIA`);
+            FEATURES.MEDIA = true;
         }
     }
 
-    if (FEATURES.CAMERA_MODULE) {
-        if (!FEATURES.FILE_SYSTEM) {
-            console.warn('[Camera] Requires FILE_SYSTEM feature. Skipping load.');
-        } else {
-            try {
-                await moduleManager.loadModule('camera');
-                const cameraService = serviceManager.get('camera');
-                const fileSystemService = serviceManager.get('fileSystem');
-                cameraService?.init({ fileSystemService });
-                window.csma = window.csma || {};
-                window.csma.camera = cameraService;
-                console.log('[Camera] Photo/video capture enabled');
-            } catch (error) {
-                console.warn('[Camera] Failed to load module:', error);
-            }
+    if (FEATURES.MEDIA) {
+        try {
+            await moduleManager.loadModule('media');
+            const mediaService = serviceManager.get('media');
+            const fileSystemService = serviceManager.get('fileSystem');
+            mediaService?.init({ fileSystemService });
+            window.csma = window.csma || {};
+            window.csma.media = mediaService;
+            // Legacy aliases for backward compat
+            window.csma.camera = mediaService;
+            window.csma.mediaCapture = mediaService;
+            window.csma.mediaTransform = mediaService;
+            window.csma.imageOptimizer = mediaService;
+            console.log('[Media] Photo, video, audio, screen capture + image optimization enabled');
+        } catch (error) {
+            console.warn('[Media] Failed to load module:', error);
         }
     }
 
@@ -624,37 +621,7 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    if (FEATURES.MEDIA_TRANSFORM) {
-        try {
-            await moduleManager.loadModule('media-transform');
-            const mediaTransformService = serviceManager.get('mediaTransform');
-            mediaTransformService?.init();
-            window.csma = window.csma || {};
-            window.csma.mediaTransform = mediaTransformService;
-            console.log('[MediaTransform] Conversion utilities enabled');
-        } catch (error) {
-            console.warn('[MediaTransform] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.IMAGE_OPTIMIZER) {
-        if (!FEATURES.MEDIA_TRANSFORM || !FEATURES.FILE_SYSTEM) {
-            console.warn('[ImageOptimizer] Requires MEDIA_TRANSFORM and FILE_SYSTEM features. Skipping load.');
-        } else {
-            try {
-                await moduleManager.loadModule('image-optimizer');
-                const imageOptimizer = serviceManager.get('imageOptimizer');
-                const mediaTransform = serviceManager.get('mediaTransform');
-                const fileSystemService = serviceManager.get('fileSystem');
-                imageOptimizer?.init({ mediaTransformService: mediaTransform, fileSystemService });
-                window.csma = window.csma || {};
-                window.csma.imageOptimizer = imageOptimizer;
-                console.log('[ImageOptimizer] Image optimization enabled');
-            } catch (error) {
-                console.warn('[ImageOptimizer] Failed to load module:', error);
-            }
-        }
-    }
+    // MEDIA_TRANSFORM and IMAGE_OPTIMIZER handled by unified MEDIA module above
 
     if (cacheManagerEnabled) {
         try {

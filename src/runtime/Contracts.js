@@ -5,11 +5,9 @@
  */
 import { object, string, number, boolean, enums, optional, size, array, any } from './validation/index.js';
 import { FileSystemContracts } from '../modules/file-system/contracts/file-system-contracts.js';
-import { MediaCaptureContracts } from '../modules/media-capture/contracts/media-capture-contracts.js';
-import { CameraContracts } from '../modules/camera/contracts/camera-contracts.js';
+import { MediaContracts } from '../modules/media/contracts/media-contracts.js';
 import { LocationContracts } from '../modules/location/contracts/location-contracts.js';
-import { MediaTransformContracts } from '../modules/media-transform/contracts/media-transform-contracts.js';
-import { ImageOptimizerContracts } from '../modules/image-optimizer/contracts/image-optimizer-contracts.js';
+// media-transform and image-optimizer contracts merged into MediaContracts
 import { NetworkStatusContracts } from '../modules/network-status/contracts/network-status-contracts.js';
 import { SyncQueueContracts } from '../modules/sync-queue/contracts/sync-queue-contracts.js';
 import { FormManagementContracts } from '../modules/form-management/contracts/form-management-contracts.js';
@@ -1642,11 +1640,9 @@ const CoreContracts = {
 const mergedContracts = {
     ...CoreContracts,
     ...FileSystemContracts,
-    ...MediaCaptureContracts,
-    ...CameraContracts,
+    ...MediaContracts,
     ...LocationContracts,
-    ...MediaTransformContracts,
-    ...ImageOptimizerContracts,
+    // MediaTransform + ImageOptimizer merged into MediaContracts above
     ...NetworkStatusContracts,
     ...SyncQueueContracts,
     ...FormManagementContracts,

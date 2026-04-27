@@ -36,7 +36,7 @@
 | `analytics`, `consent` | Tracking, analytics, consent |
 | `auth` | Accounts, credentials, sessions |
 | `checkout` | Billing, payment, refunds |
-| `file-upload`, `media-capture`, `file-system` | Uploaded content and storage |
+| `file-upload`, `media`, `file-system` | Uploaded content and storage |
 | `location` | Location data |
 | `notifications` | Communications and push |
 | `ai`, `ai-ui` | AI processing and output disclosure |
