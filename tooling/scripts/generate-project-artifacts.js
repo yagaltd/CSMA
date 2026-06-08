@@ -13,7 +13,7 @@ const SECTION_MODULES = {
   tracking: ['analytics', 'consent'],
   account: ['auth'],
   checkout: ['checkout'],
-  uploads: ['file-upload', 'media-capture', 'file-system'],
+  uploads: ['file-upload', 'media', 'media-capture', 'file-system'],
   location: ['location'],
   notifications: ['notifications'],
   ai: ['ai', 'ai-ui']

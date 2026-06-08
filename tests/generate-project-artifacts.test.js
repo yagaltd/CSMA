@@ -164,7 +164,7 @@ describe('generate-project-artifacts', () => {
         'ai',
         'ai-ui',
         'file-upload',
-        'media-capture',
+        'media',
         'file-system',
         'location',
         'notifications'
