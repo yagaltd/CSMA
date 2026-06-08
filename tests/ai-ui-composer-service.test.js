@@ -227,4 +227,332 @@ describe('AIUIComposerService', () => {
     });
     expect(service.getComponent('auth-ui.panel')).toBeNull();
   });
+
+  // ── applyOp — mount ─────────────────────────────────────────────
+
+  describe('applyOp — mount', () => {
+    it('mounts a root component with text', () => {
+      const service = createService();
+      const result = service.applyOp({
+        type: 'mount',
+        id: 'badge-1',
+        spec: { component: 'badge', props: { label: 'Hello' } }
+      }, { documentRef: document });
+
+      expect(result.id).toBe('badge-1');
+      expect(result.element.getAttribute('data-aiui-id')).toBe('badge-1');
+      expect(result.element.textContent).toBe('Hello');
+      expect(result.parentId).toBeNull();
+    });
+
+    it('mounts a component into a parent slot', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'Test' } }
+      }, { documentRef: document });
+
+      service.applyOp({
+        type: 'mount', id: 'badge-1',
+        parent: 'card-1', slot: 'body',
+        spec: { component: 'badge', props: { label: 'Inside' } }
+      }, { documentRef: document });
+
+      const badge = service.getLiveNode('badge-1');
+      expect(badge.parentId).toBe('card-1');
+      expect(badge.slot).toBe('body');
+      expect(badge.element.closest('.card__body')).toBeTruthy();
+    });
+
+    it('rejects duplicate mount id', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'badge-1',
+        spec: { component: 'badge', props: { label: 'First' } }
+      }, { documentRef: document });
+
+      expect(() => service.applyOp({
+        type: 'mount', id: 'badge-1',
+        spec: { component: 'badge', props: { label: 'Second' } }
+      }, { documentRef: document })).toThrow(/already exists/);
+    });
+
+    it('rejects mount with unknown component', () => {
+      const service = createService();
+      expect(() => service.applyOp({
+        type: 'mount', id: 'x-1',
+        spec: { component: 'does-not-exist' }
+      }, { documentRef: document })).toThrow(/Unknown/);
+    });
+
+    it('rejects mount at invalid slot', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'Test' } }
+      }, { documentRef: document });
+
+      expect(() => service.applyOp({
+        type: 'mount', id: 'badge-1',
+        parent: 'card-1', slot: 'nonexistent',
+        spec: { component: 'badge', props: { label: 'X' } }
+      }, { documentRef: document })).toThrow(/Unknown slot/);
+    });
+  });
+
+  // ── applyOp — unmount ────────────────────────────────────────────
+
+  describe('applyOp — unmount', () => {
+    it('unmounts a root component and removes from registry', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'badge-1',
+        spec: { component: 'badge', props: { label: 'Hello' } }
+      }, { documentRef: document });
+
+      expect(service.getLiveNode('badge-1')).toBeTruthy();
+      expect(service.getLiveNode('badge-1').element).toBeTruthy();
+
+      service.applyOp({ type: 'unmount', id: 'badge-1' });
+      expect(service.getLiveNode('badge-1')).toBeNull();
+    });
+
+    it('cascades unmount to children', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'Parent' } }
+      }, { documentRef: document });
+      service.applyOp({
+        type: 'mount', id: 'badge-1',
+        parent: 'card-1', slot: 'body',
+        spec: { component: 'badge', props: { label: 'Child' } }
+      }, { documentRef: document });
+
+      service.applyOp({ type: 'unmount', id: 'card-1' });
+      expect(service.getLiveNode('card-1')).toBeNull();
+      expect(service.getLiveNode('badge-1')).toBeNull();
+    });
+
+    it('rejects unmount of unknown id', () => {
+      const service = createService();
+      expect(() => service.applyOp({
+        type: 'unmount', id: 'does-not-exist'
+      })).toThrow(/not found/);
+    });
+  });
+
+  // ── applyOp — updateProps ────────────────────────────────────────
+
+  describe('applyOp — updateProps', () => {
+    it('updates data-variant on a badge', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'badge-1',
+        spec: { component: 'badge', props: { label: 'Status', variant: 'soft-info' } }
+      }, { documentRef: document });
+
+      service.applyOp({
+        type: 'updateProps', id: 'badge-1',
+        props: { variant: 'soft-success' }
+      });
+
+      const el = service.getLiveNode('badge-1').element;
+      expect(el.getAttribute('data-variant')).toBe('soft-success');
+    });
+
+    it('rejects update with unknown prop', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'badge-1',
+        spec: { component: 'badge', props: { label: 'Test' } }
+      }, { documentRef: document });
+
+      expect(() => service.applyOp({
+        type: 'updateProps', id: 'badge-1',
+        props: { nonexistent: 'value' }
+      })).toThrow(/Unknown prop/);
+    });
+  });
+
+  // ── applyOp — setState ──────────────────────────────────────────
+
+  describe('applyOp — setState', () => {
+    it('sets data-state on a card', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'Loading' } }
+      }, { documentRef: document });
+
+      service.applyOp({ type: 'setState', id: 'card-1', attr: 'state', value: 'loading' });
+
+      const el = service.getLiveNode('card-1').element;
+      expect(el.getAttribute('data-state')).toBe('loading');
+    });
+
+    it('rejects unknown state attribute', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'Test' } }
+      }, { documentRef: document });
+
+      expect(() => service.applyOp({
+        type: 'setState', id: 'card-1', attr: 'onerror', value: 'alert(1)'
+      })).toThrow(/Unknown state attribute/);
+    });
+
+    it('transitions through loading → ready → error', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'Data' } }
+      }, { documentRef: document });
+
+      const el = service.getLiveNode('card-1').element;
+
+      service.applyOp({ type: 'setState', id: 'card-1', attr: 'state', value: 'loading' });
+      expect(el.getAttribute('data-state')).toBe('loading');
+
+      service.applyOp({ type: 'setState', id: 'card-1', attr: 'state', value: 'ready' });
+      expect(el.getAttribute('data-state')).toBe('ready');
+
+      service.applyOp({ type: 'setState', id: 'card-1', attr: 'state', value: 'error' });
+      expect(el.getAttribute('data-state')).toBe('error');
+    });
+  });
+
+  // ── applyOp — setText ───────────────────────────────────────────
+
+  describe('applyOp — setText', () => {
+    it('updates text content on a badge', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'badge-1',
+        spec: { component: 'badge', props: { label: 'Old' } }
+      }, { documentRef: document });
+
+      service.applyOp({ type: 'setText', id: 'badge-1', text: 'Updated' });
+      expect(service.getLiveNode('badge-1').element.textContent).toBe('Updated');
+    });
+
+    it('rejects setText on a component without textProp', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'Test' } }
+      }, { documentRef: document });
+
+      expect(() => service.applyOp({
+        type: 'setText', id: 'card-1', text: 'New'
+      })).toThrow(/does not support text updates/);
+    });
+  });
+
+  // ── applyOp — reorder ───────────────────────────────────────────
+
+  describe('applyOp — reorder', () => {
+    it('reorders children in a slot', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'List' } }
+      }, { documentRef: document });
+
+      service.applyOp({ type: 'mount', id: 'a', parent: 'card-1', slot: 'body',
+        spec: { component: 'badge', props: { label: 'A' } } }, { documentRef: document });
+      service.applyOp({ type: 'mount', id: 'b', parent: 'card-1', slot: 'body',
+        spec: { component: 'badge', props: { label: 'B' } } }, { documentRef: document });
+      service.applyOp({ type: 'mount', id: 'c', parent: 'card-1', slot: 'body',
+        spec: { component: 'badge', props: { label: 'C' } } }, { documentRef: document });
+
+      const slotEl = service.getLiveNode('card-1').element.querySelector('.card__body');
+      const originalOrder = [...slotEl.children].map((c) => c.textContent).join('');
+      expect(originalOrder).toBe('ABC');
+
+      service.applyOp({ type: 'reorder', parent: 'card-1', slot: 'body',
+        order: ['c', 'a', 'b'] });
+
+      const newOrder = [...slotEl.children].map((c) => c.textContent).join('');
+      expect(newOrder).toBe('CAB');
+    });
+  });
+
+  // ── applyOps — batch ─────────────────────────────────────────────
+
+  describe('applyOps — batch', () => {
+    it('applies multiple ops atomically', () => {
+      const service = createService();
+      service.applyOps([
+        { type: 'mount', id: 'card-1',
+          spec: { component: 'card', props: { title: 'Result' } } },
+        { type: 'mount', id: 'badge-1',
+          parent: 'card-1', slot: 'body',
+          spec: { component: 'badge', props: { label: 'Complete' } } },
+        { type: 'setState', id: 'card-1', attr: 'state', value: 'ready' }
+      ], { documentRef: document });
+
+      expect(service.getLiveNode('card-1').element.getAttribute('data-state')).toBe('ready');
+      expect(service.getLiveNode('badge-1').parentId).toBe('card-1');
+    });
+
+    it('rejects batch with duplicate mount IDs', () => {
+      const service = createService();
+      expect(() => service.applyOps([
+        { type: 'mount', id: 'badge-1',
+          spec: { component: 'badge', props: { label: 'A' } } },
+        { type: 'mount', id: 'badge-1',
+          spec: { component: 'badge', props: { label: 'B' } } }
+      ], { documentRef: document })).toThrow(/duplicate/);
+    });
+
+    it('does not apply any op if one fails validation (atomicity)', () => {
+      const service = createService();
+      const batch = [
+        { type: 'mount', id: 'card-1',
+          spec: { component: 'card', props: { title: 'Test' } } },
+        { type: 'mount', id: 'badge-1',
+          parent: 'card-1', slot: 'nonexistent',
+          spec: { component: 'badge', props: { label: 'X' } } }
+      ];
+
+      expect(() => service.applyOps(batch, { documentRef: document })).toThrow();
+      expect(service.getLiveNode('card-1')).toBeNull();
+    });
+  });
+
+  // ── liveSnapshot ─────────────────────────────────────────────────
+
+  describe('liveSnapshot', () => {
+    it('returns current live tree structure', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: { component: 'card', props: { title: 'Analysis' } }
+      }, { documentRef: document });
+
+      const snapshot = service.liveSnapshot();
+      expect(snapshot).toHaveLength(1);
+      expect(snapshot[0].id).toBe('card-1');
+      expect(snapshot[0].component).toBe('card');
+      expect(snapshot[0].parentId).toBeNull();
+    });
+  });
+
+  // ── cleanup clears live nodes ───────────────────────────────────
+
+  describe('cleanup', () => {
+    it('clears all live nodes on cleanup', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'badge-1',
+        spec: { component: 'badge', props: { label: 'Alive' } }
+      }, { documentRef: document });
+
+      expect(service.liveSnapshot()).toHaveLength(1);
+      service.cleanup();
+      expect(service.liveSnapshot()).toHaveLength(0);
+    });
+  });
 });

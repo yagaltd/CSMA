@@ -20,6 +20,7 @@ const SAFE_ATTRIBUTES = new Set([
   'aria-label',
   'autocomplete',
   'class',
+  'data-aiui-id',
   'data-disabled',
   'data-shape',
   'data-size',
@@ -38,6 +39,15 @@ const SAFE_ATTRIBUTES = new Set([
   'value'
 ]);
 const URL_ATTRIBUTES = new Set(['href', 'src']);
+const KNOWN_STATE_ATTRS = new Set([
+  'data-state',
+  'data-variant',
+  'data-tone',
+  'data-size',
+  'data-shape',
+  'data-disabled',
+  'data-theme-active'
+]);
 
 function isPlainObject(value) {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
@@ -84,6 +94,7 @@ export class AIUIComposerService {
     this.eventBus = eventBus;
     this.catalog = new Map();
     this.ownerIndex = new Map();
+    this.liveNodes = new Map();
     this.cleanups = [];
 
     Object.values(generatedCatalog).forEach((definition) => {
@@ -386,7 +397,372 @@ export class AIUIComposerService {
     }
   }
 
+  // ────────────────────────────────────────────────────────────────
+  // Live node registry — streaming composition via ops
+  // ────────────────────────────────────────────────────────────────
+
+  getLiveNode(id) {
+    const node = this.liveNodes.get(id);
+    if (!node) return null;
+    return {
+      id: node.id,
+      element: node.element,
+      props: { ...node.props },
+      parentId: node.parentId,
+      slot: node.slot,
+      children: node.children
+    };
+  }
+
+  liveSnapshot() {
+    return [...this.liveNodes.entries()].map(([, node]) => ({
+      id: node.id,
+      component: node.definition.id,
+      props: { ...node.props },
+      parentId: node.parentId,
+      slot: node.slot,
+      children: [...node.children.entries()].map(([slot, children]) => ({
+        slot,
+        children: children.map((c) => c.id)
+      }))
+    }));
+  }
+
+  applyOp(op, { documentRef = globalThis.document } = {}) {
+    this._validateOp(op);
+    switch (op.type) {
+      case 'mount': return this._applyMount(op, { documentRef });
+      case 'unmount': return this._applyUnmount(op);
+      case 'reorder': return this._applyReorder(op);
+      case 'clear': return this._applyClear(op);
+      case 'updateProps': return this._applyUpdateProps(op);
+      case 'setState': return this._applySetState(op);
+      case 'setText': return this._applySetText(op);
+      default: throw new Error(`Unknown op type "${op.type}"`);
+    }
+  }
+
+  applyOps(ops, { documentRef = globalThis.document } = {}) {
+    // Pre-flight: validate all ops with awareness of pending mounts
+    const pendingIds = new Set();
+    const pendingParents = new Map(); // id → { definition }
+    for (let i = 0; i < ops.length; i++) {
+      try {
+        const op = ops[i];
+        if (op.type === 'mount') {
+          if (typeof op.id !== 'string' || op.id.trim() === '') {
+            throw new Error('Mount op requires a non-empty string "id"');
+          }
+          if (this.liveNodes.has(op.id) || pendingIds.has(op.id)) {
+            throw new Error(`duplicate mount id "${op.id}" in batch`);
+          }
+          if (!isPlainObject(op.spec) || typeof op.spec.component !== 'string') {
+            throw new Error('Mount op requires a "spec" with a "component" string');
+          }
+          if (!this.catalog.has(op.spec.component)) {
+            throw new Error(`Unknown component "${op.spec.component}"`);
+          }
+          pendingIds.add(op.id);
+          pendingParents.set(op.id, { definition: this.catalog.get(op.spec.component) });
+          if (op.parent !== undefined) {
+            if (typeof op.parent !== 'string') throw new Error('"parent" must be a string');
+            if (!this.liveNodes.has(op.parent) && !pendingIds.has(op.parent)) {
+              throw new Error(`Parent "${op.parent}" not found`);
+            }
+            if (op.slot !== undefined) {
+              if (typeof op.slot !== 'string') throw new Error('"slot" must be a string');
+              const parentDef = this.liveNodes.has(op.parent)
+                ? this.liveNodes.get(op.parent).definition
+                : pendingParents.get(op.parent)?.definition;
+              if (parentDef && !parentDef.slots?.[op.slot]) {
+                throw new Error(`Unknown slot "${op.slot}" on "${parentDef.id}"`);
+              }
+            }
+          }
+        } else if (op.type === 'unmount') {
+          if (typeof op.id !== 'string') throw new Error('Requires a string "id"');
+          if (!this.liveNodes.has(op.id) && !pendingIds.has(op.id)) {
+            throw new Error(`Instance "${op.id}" not found`);
+          }
+          pendingIds.delete(op.id);
+        } else if (op.type === 'setState') {
+          if (typeof op.id !== 'string') throw new Error('Requires a string "id"');
+          if (!this.liveNodes.has(op.id) && !pendingIds.has(op.id)) {
+            throw new Error(`Instance "${op.id}" not found`);
+          }
+          if (typeof op.attr !== 'string') throw new Error('Requires a string "attr"');
+          const attrName = `data-${op.attr}`;
+          if (!KNOWN_STATE_ATTRS.has(attrName)) throw new Error(`Unknown state attribute "${attrName}"`);
+          if (typeof op.value !== 'string') throw new Error('Value must be a string');
+        } else if (op.type === 'updateProps') {
+          if (typeof op.id !== 'string') throw new Error('Requires a string "id"');
+          if (!this.liveNodes.has(op.id) && !pendingIds.has(op.id)) {
+            throw new Error(`Instance "${op.id}" not found`);
+          }
+        } else if (op.type === 'setText') {
+          if (typeof op.id !== 'string') throw new Error('Requires a string "id"');
+          if (!this.liveNodes.has(op.id) && !pendingIds.has(op.id)) {
+            throw new Error(`Instance "${op.id}" not found`);
+          }
+        } else if (op.type === 'reorder' || op.type === 'clear') {
+          if (typeof op.parent !== 'string') throw new Error('Requires a string "parent"');
+          if (!this.liveNodes.has(op.parent) && !pendingIds.has(op.parent)) {
+            throw new Error(`Parent "${op.parent}" not found`);
+          }
+          if (typeof op.slot !== 'string') throw new Error('Requires a string "slot"');
+        } else {
+          throw new Error(`Unknown op type "${op.type}"`);
+        }
+      } catch (err) {
+        throw new Error(`Op ${i} failed validation: ${err.message}`);
+      }
+    }
+
+    // All valid — apply in sequence
+    const results = [];
+    for (const op of ops) {
+      const result = this.applyOp(op, { documentRef });
+      if (result !== undefined) results.push(result);
+    }
+    return results;
+  }
+
+  _validateOpDry() {
+    throw new Error('_validateOpDry is not used — validation is inline in applyOps');
+  }
+
+  _validateOp(op) {
+    if (!isPlainObject(op) || typeof op.type !== 'string') {
+      throw new Error('Op must be an object with a string "type"');
+    }
+    switch (op.type) {
+      case 'mount': this._validateMountOp(op); break;
+      case 'unmount': this._validateUnmountOp(op); break;
+      case 'reorder': this._validateReorderOp(op); break;
+      case 'clear': this._validateClearOp(op); break;
+      case 'updateProps': this._validateUpdatePropsOp(op); break;
+      case 'setState': this._validateSetStateOp(op); break;
+      case 'setText': this._validateSetTextOp(op); break;
+      default: throw new Error(`Unknown op type "${op.type}"`);
+    }
+  }
+
+  _validateMountOp(op) {
+    if (typeof op.id !== 'string' || op.id.trim() === '') {
+      throw new Error('Mount op requires a non-empty string "id"');
+    }
+    if (this.liveNodes.has(op.id)) {
+      throw new Error(`Instance "${op.id}" already exists`);
+    }
+    if (!isPlainObject(op.spec) || typeof op.spec.component !== 'string') {
+      throw new Error('Mount op requires a "spec" with a "component" string');
+    }
+    if (!this.catalog.has(op.spec.component)) {
+      throw new Error(`Unknown component "${op.spec.component}"`);
+    }
+    if (op.parent !== undefined) {
+      if (typeof op.parent !== 'string') {
+        throw new Error('Mount op "parent" must be a string');
+      }
+      if (!this.liveNodes.has(op.parent)) {
+        throw new Error(`Parent "${op.parent}" not found`);
+      }
+      const parent = this.liveNodes.get(op.parent);
+      if (op.slot !== undefined) {
+        if (typeof op.slot !== 'string') {
+          throw new Error('Mount op "slot" must be a string');
+        }
+        const slotDef = parent.definition.slots?.[op.slot];
+        if (!slotDef) {
+          throw new Error(`Unknown slot "${op.slot}" on "${parent.definition.id}"`);
+        }
+      }
+    }
+  }
+
+  _validateUnmountOp(op) {
+    if (typeof op.id !== 'string') {
+      throw new Error('Unmount op requires a string "id"');
+    }
+    if (!this.liveNodes.has(op.id)) {
+      throw new Error(`Instance "${op.id}" not found`);
+    }
+  }
+
+  _validateReorderOp(op) {
+    if (typeof op.parent !== 'string') throw new Error('Reorder op requires a string "parent"');
+    if (typeof op.slot !== 'string') throw new Error('Reorder op requires a string "slot"');
+    if (!Array.isArray(op.order) || op.order.length === 0) throw new Error('Reorder op requires a non-empty "order" array');
+    const parent = this.liveNodes.get(op.parent);
+    if (!parent) throw new Error(`Parent "${op.parent}" not found`);
+    const slotDef = parent.definition.slots?.[op.slot];
+    if (!slotDef) throw new Error(`Unknown slot "${op.slot}" on "${parent.definition.id}"`);
+    const current = parent.children.get(op.slot) || [];
+    if (op.order.length !== current.length) {
+      throw new Error('Reorder "order" length must match current children count');
+    }
+    const currentIds = new Set(current.map((c) => c.id));
+    for (const id of op.order) {
+      if (!currentIds.has(id)) throw new Error(`Child "${id}" not found in slot "${op.slot}"`);
+    }
+  }
+
+  _validateClearOp(op) {
+    if (typeof op.parent !== 'string') throw new Error('Clear op requires a string "parent"');
+    if (typeof op.slot !== 'string') throw new Error('Clear op requires a string "slot"');
+    const parent = this.liveNodes.get(op.parent);
+    if (!parent) throw new Error(`Parent "${op.parent}" not found`);
+    const slotDef = parent.definition.slots?.[op.slot];
+    if (!slotDef) throw new Error(`Unknown slot "${op.slot}" on "${parent.definition.id}"`);
+  }
+
+  _validateUpdatePropsOp(op) {
+    if (typeof op.id !== 'string') throw new Error('updateProps op requires a string "id"');
+    if (!this.liveNodes.has(op.id)) throw new Error(`Instance "${op.id}" not found`);
+    if (!isPlainObject(op.props)) throw new Error('updateProps op requires a "props" object');
+    const node = this.liveNodes.get(op.id);
+    const allowedProps = new Set(Object.keys(node.definition.propsSchema || {}));
+    for (const key of Object.keys(op.props)) {
+      if (!allowedProps.has(key)) throw new Error(`Unknown prop "${key}" for "${node.definition.id}"`);
+      const value = op.props[key];
+      if (typeof value !== 'string') throw new Error(`Prop "${key}" must be a string`);
+      if (value.length > MAX_TEXT_LENGTH) throw new Error(`Prop "${key}" exceeds max length`);
+      if (/(url|href|src)$/i.test(key) && !this.isSafeUrl(value)) {
+        throw new Error(`Unsafe URL rejected for prop "${key}"`);
+      }
+    }
+  }
+
+  _validateSetStateOp(op) {
+    if (typeof op.id !== 'string') throw new Error('setState op requires a string "id"');
+    if (!this.liveNodes.has(op.id)) throw new Error(`Instance "${op.id}" not found`);
+    if (typeof op.attr !== 'string') throw new Error('setState op requires a string "attr"');
+    const attrName = `data-${op.attr}`;
+    if (!KNOWN_STATE_ATTRS.has(attrName)) throw new Error(`Unknown state attribute "${attrName}"`);
+    if (typeof op.value !== 'string') throw new Error('State value must be a string');
+    if (op.value.length > MAX_TEXT_LENGTH) throw new Error('State value exceeds max length');
+  }
+
+  _validateSetTextOp(op) {
+    if (typeof op.id !== 'string') throw new Error('setText op requires a string "id"');
+    if (!this.liveNodes.has(op.id)) throw new Error(`Instance "${op.id}" not found`);
+    const node = this.liveNodes.get(op.id);
+    if (!node.definition.render.textProp) {
+      throw new Error(`Component "${node.definition.id}" does not support text updates`);
+    }
+    if (typeof op.text !== 'string') throw new Error('Text must be a string');
+    if (op.text.length > MAX_TEXT_LENGTH) throw new Error('Text exceeds max length');
+  }
+
+  // ── Op application ──────────────────────────────────────────────
+
+  _applyMount(op, { documentRef }) {
+    const normalized = this.normalizeSpec(op.spec);
+    const element = this.renderNode(normalized, { documentRef, depth: 0, parent: null });
+    element.setAttribute('data-aiui-id', op.id);
+
+    const definition = this.catalog.get(op.spec.component);
+    const liveNode = {
+      id: op.id,
+      definition,
+      element,
+      props: { ...(op.spec.props || {}) },
+      parentId: op.parent || null,
+      slot: op.slot || null,
+      children: new Map()
+    };
+
+    if (op.parent && op.slot) {
+      const parentNode = this.liveNodes.get(op.parent);
+      const slotContainer = parentNode.element.querySelector(
+        parentNode.definition.slots[op.slot]?.selector || ':root'
+      );
+      if (!slotContainer) throw new Error(`Slot container for "${op.slot}" not found`);
+      slotContainer.append(element);
+      if (!parentNode.children.has(op.slot)) parentNode.children.set(op.slot, []);
+      parentNode.children.get(op.slot).push(liveNode);
+    }
+
+    this.liveNodes.set(op.id, liveNode);
+    return liveNode;
+  }
+
+  _applyUnmount(op) {
+    this._unmountRecursive(op.id);
+  }
+
+  _applyReorder(op) {
+    const parentNode = this.liveNodes.get(op.parent);
+    const slotDef = parentNode.definition.slots[op.slot];
+    const slotChildren = parentNode.children.get(op.slot);
+    const slotContainer = parentNode.element.querySelector(slotDef.selector || ':root');
+    for (const id of op.order) {
+      const childNode = slotChildren.find((c) => c.id === id);
+      slotContainer.append(childNode.element);
+    }
+    slotChildren.sort((a, b) => op.order.indexOf(a.id) - op.order.indexOf(b.id));
+  }
+
+  _applyClear(op) {
+    const parentNode = this.liveNodes.get(op.parent);
+    const slotChildren = parentNode.children.get(op.slot) || [];
+    for (const child of [...slotChildren]) {
+      this._unmountRecursive(child.id);
+    }
+  }
+
+  _applyUpdateProps(op) {
+    const node = this.liveNodes.get(op.id);
+    this.applyAttributes(node.element, node.definition.render.attributes || {}, op.props);
+    Object.assign(node.props, op.props);
+  }
+
+  _applySetState(op) {
+    const node = this.liveNodes.get(op.id);
+    node.element.setAttribute(`data-${op.attr}`, op.value);
+  }
+
+  _applySetText(op) {
+    const node = this.liveNodes.get(op.id);
+    node.element.textContent = op.text;
+    node.props[node.definition.render.textProp] = op.text;
+  }
+
+  // ── Internal helpers ────────────────────────────────────────────
+
+  _unmountRecursive(id) {
+    const node = this.liveNodes.get(id);
+    if (!node) return;
+    for (const [, children] of node.children) {
+      for (const child of [...children]) {
+        this._unmountRecursive(child.id);
+      }
+    }
+    node.element.remove();
+    if (node.parentId) {
+      const parent = this.liveNodes.get(node.parentId);
+      if (parent) {
+        const slotChildren = parent.children.get(node.slot);
+        if (slotChildren) {
+          const idx = slotChildren.findIndex((c) => c.id === id);
+          if (idx !== -1) slotChildren.splice(idx, 1);
+        }
+      }
+    }
+    this.liveNodes.delete(id);
+  }
+
+  _clearAllLiveNodes() {
+    const rootIds = [...this.liveNodes.values()]
+      .filter((n) => !n.parentId)
+      .map((n) => n.id);
+    for (const id of rootIds) {
+      this._unmountRecursive(id);
+    }
+  }
+
   cleanup() {
+    this._clearAllLiveNodes();
     this.cleanups.splice(0).reverse().forEach((cleanup) => cleanup?.());
     this.unregisterOwner('runtime');
   }
