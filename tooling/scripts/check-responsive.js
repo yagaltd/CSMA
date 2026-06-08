@@ -69,7 +69,9 @@ function runPlaywriterCheck(sessionId, pagePath, viewport) {
     const viewportName = "${name}";
 
     // Get or create page
-    state.page = context.pages().find(p => p.url() === 'about:blank') ?? (await context.newPage());
+    if (!state.page || state.page.isClosed()) {
+      state.page = await context.newPage();
+    }
     await state.page.setViewportSize({ width, height });
     await state.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
     await state.page.waitForTimeout(500);
@@ -183,28 +185,42 @@ function runPlaywriterCheck(sessionId, pagePath, viewport) {
     console.log(JSON.stringify({ url, viewportName, width, findings: results }));
   `;
 
-  try {
-    const output = execSync(
-      `playwriter -s ${sessionId} -e "$(cat <<'PLAYEOF'\n${code}\nPLAYEOF\n)"`,
-      { encoding: 'utf8', timeout: 30000, stdio: ['pipe', 'pipe', 'pipe'] }
-    );
+  const MAX_RETRIES = 2;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const output = execSync(
+        `playwriter -s ${sessionId} -e "$(cat <<'PLAYEOF'\n${code}\nPLAYEOF\n)"`,
+        { encoding: 'utf8', timeout: 30000, stdio: ['pipe', 'pipe', 'pipe'] }
+      );
 
-    // Parse the last JSON line from output
-    const lines = output.trim().split('\n');
-    for (const line of lines.reverse()) {
-      try {
-        const result = JSON.parse(line);
-        if (result.findings && Array.isArray(result.findings)) {
-          return result.findings;
+      // Parse the last JSON line from output
+      const lines = output.trim().split('\n');
+      for (const line of lines.reverse()) {
+        try {
+          const result = JSON.parse(line);
+          if (result.findings && Array.isArray(result.findings)) {
+            return result.findings;
+          }
+        } catch {
+          // Not JSON, skip
         }
-      } catch {
-        // Not JSON, skip
       }
+      return [];
+    } catch (err) {
+      if (attempt < MAX_RETRIES) {
+        // Retry with fresh page on next iteration
+        try {
+          execSync(`playwriter -s ${sessionId} -e 'if (state.page && !state.page.isClosed()) { await state.page.close(); state.page = null; }'`,
+            { timeout: 5000, stdio: 'pipe' });
+        } catch {
+          // Ignore cleanup errors
+        }
+        continue;
+      }
+      return [{ rule: 'page-error', message: `Failed to load after ${MAX_RETRIES + 1} attempts: ${err.message.substring(0, 200)}` }];
     }
-    return [];
-  } catch (err) {
-    return [{ rule: 'page-error', message: `Failed to load: ${err.message.substring(0, 200)}` }];
   }
+  return [];
 }
 
 // ── Main ─────────────────────────────────────────────────────────
@@ -222,13 +238,15 @@ function main() {
   // Create playwriter session
   let sessionId;
   try {
-    const sessionOutput = execSync('playwriter session new', { encoding: 'utf8', timeout: 15000 });
+    const sessionOutput = execSync('playwriter session new', { encoding: 'utf8', timeout: 20000 });
     const match = sessionOutput.match(/Session (\d+) created/);
     if (!match) {
       console.error('Failed to create Playwriter session. Is the extension connected?');
+      console.error('Output:', sessionOutput.substring(0, 200));
       process.exit(1);
     }
     sessionId = match[1];
+    console.log(`Playwriter session ${sessionId} created.`);
   } catch (err) {
     console.error('Failed to create Playwriter session:', err.message);
     console.error('Make sure Chrome is running with Playwriter extension enabled.');
@@ -258,7 +276,7 @@ function main() {
 
   // Clean up session
   try {
-    execSync(`playwriter -s ${sessionId} -e 'if (state.page) await state.page.close()'`, { timeout: 5000 });
+    execSync(`playwriter -s ${sessionId} -e 'if (state.page && !state.page.isClosed()) await state.page.close()'`, { timeout: 5000, stdio: 'pipe' });
   } catch {
     // Ignore cleanup errors
   }

@@ -141,20 +141,23 @@ function componentPreviewTemplate(name, title, type) {
     {
       id: 'hover',
       label: 'Hover',
-      attrs: 'data-preview-hover',
-      description: 'Mouse pointer over element (use [data-preview-hover] in CSS to simulate :hover)'
+      attrs: 'class="' + name + ' is-hover"',
+      noClass: true,
+      description: 'Mouse pointer over element (.is-hover mirrors :hover)'
     },
     {
       id: 'active',
       label: 'Active / Pressed',
-      attrs: 'data-preview-active',
-      description: 'Element is being pressed'
+      attrs: 'class="' + name + ' is-active"',
+      noClass: true,
+      description: 'Element is being pressed (.is-active mirrors :active)'
     },
     {
       id: 'focus',
       label: 'Focus',
-      attrs: 'data-preview-focus',
-      description: 'Element has keyboard focus (use [data-preview-focus] to simulate :focus-visible)'
+      attrs: 'class="' + name + ' is-focus"',
+      noClass: true,
+      description: 'Keyboard focus (.is-focus mirrors :focus-visible)'
     },
     {
       id: 'disabled',
@@ -171,7 +174,7 @@ function componentPreviewTemplate(name, title, type) {
     {
       id: 'error',
       label: 'Error',
-      attrs: 'aria-invalid="true"',
+      attrs: 'data-state="error"',
       description: 'Validation or operation error'
     },
     {
@@ -183,10 +186,17 @@ function componentPreviewTemplate(name, title, type) {
   ];
 
   const stateCards = states.map(s => {
-    const attrStr = s.attrs ? ` ${s.attrs}` : '';
+    let el;
+    if (s.noClass) {
+      // Hover/active/focus use their own class attribute replacing the base class
+      el = `      <div ${s.attrs.replace('class="' + name + ' ', 'class="')}>${title}</div>`;
+    } else {
+      const attrStr = s.attrs ? ` ${s.attrs}` : '';
+      el = `      <div class="${name}"${attrStr}>${title}</div>`;
+    }
     return `    <div class="preview-state" data-state-group="${s.id}">
       <span class="preview-state__label">${s.label}</span>
-      <div class="${name}"${attrStr}>${title}</div>
+${el}
       <span class="preview-state__desc">${s.description}</span>
     </div>`;
   }).join('\n');
@@ -235,10 +245,10 @@ function componentPreviewTemplate(name, title, type) {
         line-height: var(--line-height-body);
       }
 
-      /* Simulated states for preview — use these in your component CSS */
-      /* [data-preview-hover] should match your :hover styles */
-      /* [data-preview-active] should match your :active styles */
-      /* [data-preview-focus] should match your :focus-visible styles */
+      /* Simulated state classes for preview — mirror these in your component CSS */
+      /* .is-hover mirrors :hover, .is-active mirrors :active, .is-focus mirrors :focus-visible */
+      /* Example component CSS pattern: */
+      /*   .my-button:hover, .my-button.is-hover { ... } */
 
       .preview-state:hover {
         border-color: var(--primary);
