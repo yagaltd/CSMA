@@ -108,12 +108,154 @@ function componentDemoTemplate(name, title, type) {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>${title} Demo</title>
     <link rel="stylesheet" href="../../../style/main.css" />
+    <style>
+      .preview-states { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-lg); }
+      .preview-state { display: flex; flex-direction: column; gap: var(--space-xs); }
+      .preview-state__label { font-size: var(--font-size-xs); color: var(--foreground-muted); font-family: var(--font-family-mono); text-transform: uppercase; letter-spacing: 0.05em; }
+    </style>
   </head>
   <body>
     <main class="stack" data-gap="lg">
       <h1>${title}</h1>
       <div class="${name}">${title}</div>${behaviorNote}
     </main>
+  </body>
+</html>
+`;
+}
+
+function componentPreviewTemplate(name, title, type) {
+  const isTypeII = type === 'II';
+  const initNote = isTypeII
+    ? `    <p class="preview-note">Type II component — initialize with <code>init${toPascal(name)}System(eventBus)</code> for interactive behavior.</p>\n`
+    : '';
+
+  // Build 8-state examples. States use data-state, data-variant, and standard HTML attributes.
+  const states = [
+    {
+      id: 'default',
+      label: 'Default',
+      attrs: '',
+      description: 'Resting state, no user interaction'
+    },
+    {
+      id: 'hover',
+      label: 'Hover',
+      attrs: 'data-preview-hover',
+      description: 'Mouse pointer over element (use [data-preview-hover] in CSS to simulate :hover)'
+    },
+    {
+      id: 'active',
+      label: 'Active / Pressed',
+      attrs: 'data-preview-active',
+      description: 'Element is being pressed'
+    },
+    {
+      id: 'focus',
+      label: 'Focus',
+      attrs: 'data-preview-focus',
+      description: 'Element has keyboard focus (use [data-preview-focus] to simulate :focus-visible)'
+    },
+    {
+      id: 'disabled',
+      label: 'Disabled',
+      attrs: 'disabled',
+      description: 'Element is non-interactive'
+    },
+    {
+      id: 'loading',
+      label: 'Loading',
+      attrs: 'data-state="loading"',
+      description: 'Async operation in progress'
+    },
+    {
+      id: 'error',
+      label: 'Error',
+      attrs: 'aria-invalid="true"',
+      description: 'Validation or operation error'
+    },
+    {
+      id: 'selected',
+      label: 'Selected',
+      attrs: 'aria-pressed="true"',
+      description: 'Toggle/toggleable element in selected state'
+    }
+  ];
+
+  const stateCards = states.map(s => {
+    const attrStr = s.attrs ? ` ${s.attrs}` : '';
+    return `    <div class="preview-state" data-state-group="${s.id}">
+      <span class="preview-state__label">${s.label}</span>
+      <div class="${name}"${attrStr}>${title}</div>
+      <span class="preview-state__desc">${s.description}</span>
+    </div>`;
+  }).join('\n');
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>${title} — 8-State Preview</title>
+    <link rel="stylesheet" href="../../../style/main.css" />
+    <style>
+      /* Preview-only layout */
+      .preview-page { max-width: 64rem; margin: 0 auto; padding: var(--space-xl); }
+      .preview-header { margin-bottom: var(--space-xl); }
+      .preview-header h1 { margin: 0 0 var(--space-xs) 0; }
+      .preview-header p { margin: 0; color: var(--foreground-muted); }
+      .preview-note { color: var(--foreground-muted); font-size: var(--font-size-sm); }
+      .preview-note code { background: var(--muted); padding: 0.125em 0.375em; border-radius: var(--radius-sm); }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: var(--space-lg);
+      }
+      .preview-state {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        padding: var(--space-md);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        background: var(--surface);
+      }
+      .preview-state__label {
+        font-size: var(--font-size-xs);
+        color: var(--foreground-muted);
+        font-family: var(--font-family-mono);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: var(--space-2xs);
+      }
+      .preview-state__desc {
+        font-size: var(--font-size-xs);
+        color: var(--foreground-muted);
+        line-height: var(--line-height-body);
+      }
+
+      /* Simulated states for preview — use these in your component CSS */
+      /* [data-preview-hover] should match your :hover styles */
+      /* [data-preview-active] should match your :active styles */
+      /* [data-preview-focus] should match your :focus-visible styles */
+
+      .preview-state:hover {
+        border-color: var(--primary);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="preview-page">
+      <header class="preview-header">
+        <h1>${title} — 8-State Preview</h1>
+        <p>All visual states for the <code>.${name}</code> component. Use this page to verify state styles are complete and consistent.</p>
+${initNote}      </header>
+
+      <section class="preview-grid">
+${stateCards}
+      </section>
+    </div>
   </body>
 </html>
 `;
@@ -290,8 +432,11 @@ function main() {
   const demoPath = path.join(componentDir, `${name}.demo.html`);
   const manifestPath = path.join(componentDir, 'manifest.json');
 
+  const previewPath = path.join(componentDir, `${name}.preview.html`);
+
   ensureFile(cssPath, componentCssTemplate(name, title), options.force);
   ensureFile(demoPath, componentDemoTemplate(name, title, type), options.force);
+  ensureFile(previewPath, componentPreviewTemplate(name, title, type), options.force);
   ensureFile(manifestPath, buildComponentManifestTemplate({ name, type, owner, title, description, category }), options.force);
 
   let jsCreated = false;
@@ -306,6 +451,10 @@ function main() {
 
   console.log(`Created component scaffold for "${name}" (${type}).`);
   console.log(`- Files: src/ui/components/${name}/`);
+  console.log(`  - ${name}.css`);
+  console.log(`  - ${name}.demo.html`);
+  console.log(`  - ${name}.preview.html (8-state visual preview)`);
+  console.log(`  - manifest.json`);
   console.log(`- CSS import ${cssImported ? 'added' : 'already present'} in src/ui/components/index.css`);
   if (type === 'II') {
     console.log(`- JS file created: ${jsCreated ? 'yes' : 'no'}`);

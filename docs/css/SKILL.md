@@ -631,6 +631,49 @@ Use this skill when:
 | `docs/animation/SKILL.md` | Runtime animation implementation with timing curves |
 | `docs/rigor/SKILL.md` | Deciding test coverage and transition rigor level |
 
+## Modern Web Guidance Integration
+
+CSMA components should leverage modern CSS capabilities before reaching
+for JavaScript. Use the `modern-web-guidance` skill for real-time MDN
+compatibility checks and best-practice patterns when:
+
+- Building layouts with `grid`, `flex`, or `@container`
+- Implementing modals, dialogs, popovers, or disclosure patterns
+- Adding scroll-based reveals or parallax
+- Optimizing Core Web Vitals (LCP, INP, CLS)
+- Using `:has()`, `:is()`, `:where()`, `:user-valid`, `anchor()` positioning
+- Deciding between CSS-native and JS-driven visual behavior
+- Working with `backdrop-filter`, glassmorphism, or `@starting-style`
+- Handling form autofill, custom scrollbars, or advanced input states
+
+### Decision flow
+
+```
+Need visual behavior?
+  ├─ Check docs/css/SKILL.md feature map first
+  │   └─ Has a CSS-native pattern? → Use it with @supports fallback
+  ├─ Not listed here or Baseline unclear?
+  │   └─ Trigger modern-web-guidance skill → verify MDN Baseline
+  └─ CSS can't handle it (state coordination, async, persistence)?
+      └─ Use JS for logic, CSS for visual response
+```
+
+### When NOT to trigger modern-web-guidance
+
+- Backend work (databases, ORMs, API routes)
+- CI/CD pipelines, Docker, GitHub Actions
+- Local scripts (Python/Go tools), ESLint, Git
+- Decisions already covered by the feature map in this skill
+
+### Relationship to this skill
+
+`modern-web-guidance` is a **lookup tool** — it fetches current MDN
+compatibility data and modern API patterns. This skill (`docs/css/SKILL.md`)
+is the **policy layer** — it defines CSMA's CSS philosophy, migration
+priorities, and fallback strategies. Always check this skill's feature map
+first; escalate to modern-web-guidance when the map doesn't cover the
+feature or Baseline status needs verification.
+
 ## External References
 
 - MDN Baseline: https://developer.mozilla.org/en-US/docs/Glossary/Baseline/Compatibility
