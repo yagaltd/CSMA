@@ -555,4 +555,220 @@ describe('AIUIComposerService', () => {
       expect(service.liveSnapshot()).toHaveLength(0);
     });
   });
+
+  // ── Nested ID passthrough (Step 6 from ai-ui-refactor.md) ──
+
+  describe('mount with nested id hints', () => {
+    it('registers nested children with id hints in liveNodes', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Status' },
+          slots: {
+            body: [{
+              id: 'badge-1',
+              component: 'badge',
+              props: { label: 'Online', variant: 'soft-info' }
+            }]
+          }
+        }
+      }, { documentRef: document });
+
+      // Root is registered
+      expect(service.getLiveNode('card-1')).toBeTruthy();
+      // Nested child is also registered
+      expect(service.getLiveNode('badge-1')).toBeTruthy();
+      expect(service.getLiveNode('badge-1').parentId).toBe('card-1');
+      expect(service.getLiveNode('badge-1').element.getAttribute('data-aiui-id')).toBe('badge-1');
+    });
+
+    it('allows targeting nested children with updateProps after mount', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Data' },
+          slots: {
+            body: [{
+              id: 'badge-1',
+              component: 'badge',
+              props: { label: 'Processing', variant: 'soft-info' }
+            }]
+          }
+        }
+      }, { documentRef: document });
+
+      // Update the nested badge
+      service.applyOp({ type: 'updateProps', id: 'badge-1', props: { label: 'Done', variant: 'soft-success' } });
+
+      const el = service.getLiveNode('badge-1').element;
+      expect(el.textContent).toBe('Done');
+      expect(el.getAttribute('data-variant')).toBe('soft-success');
+    });
+
+    it('allows setState on nested children', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Report' },
+          slots: {
+            body: [{
+              id: 'badge-1',
+              component: 'badge',
+              props: { label: 'Running' }
+            }]
+          }
+        }
+      }, { documentRef: document });
+
+      service.applyOp({ type: 'setState', id: 'badge-1', attr: 'state', value: 'loading' });
+      expect(service.getLiveNode('badge-1').element.getAttribute('data-state')).toBe('loading');
+    });
+
+    it('unmounts nested children when root is unmounted', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Parent' },
+          slots: {
+            body: [{
+              id: 'badge-1',
+              component: 'badge',
+              props: { label: 'Child' }
+            }]
+          }
+        }
+      }, { documentRef: document });
+
+      expect(service.liveSnapshot().length).toBe(2);
+
+      service.applyOp({ type: 'unmount', id: 'card-1' });
+
+      expect(service.liveSnapshot().length).toBe(0);
+      expect(service.getLiveNode('card-1')).toBeNull();
+      expect(service.getLiveNode('badge-1')).toBeNull();
+    });
+
+    it('registers multiple nested children across different slots', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Multi' },
+          slots: {
+            body: [{
+              id: 'badge-body',
+              component: 'badge',
+              props: { label: 'In Body' }
+            }],
+            footer: [{
+              id: 'btn-footer',
+              component: 'button',
+              props: { label: 'In Footer', variant: 'primary' }
+            }]
+          }
+        }
+      }, { documentRef: document });
+
+      expect(service.getLiveNode('badge-body')).toBeTruthy();
+      expect(service.getLiveNode('btn-footer')).toBeTruthy();
+      expect(service.getLiveNode('badge-body').parentId).toBe('card-1');
+      expect(service.getLiveNode('btn-footer').parentId).toBe('card-1');
+    });
+
+    it('ignores children without id hints (anonymous, not tracked)', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Mixed' },
+          slots: {
+            body: [
+              { id: 'badge-1', component: 'badge', props: { label: 'Tracked' } },
+              { component: 'badge', props: { label: 'Anonymous' } }
+            ]
+          }
+        }
+      }, { documentRef: document });
+
+      // Only the id-hinted child is tracked
+      expect(service.getLiveNode('badge-1')).toBeTruthy();
+      // Anonymous one is not in liveNodes
+      const snapshot = service.liveSnapshot();
+      expect(snapshot.length).toBe(2); // card-1 + badge-1
+    });
+
+    it('rejects duplicate nested id that conflicts with root id', () => {
+      const service = createService();
+      expect(() => service.applyOp({
+        type: 'mount', id: 'badge-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Bad' },
+          slots: {
+            body: [{
+              id: 'badge-1',  // same as root id
+              component: 'badge',
+              props: { label: 'Duplicate' }
+            }]
+          }
+        }
+      }, { documentRef: document })).toThrow(/already exists/);
+    });
+
+    it('nested ids appear in liveSnapshot', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Snap' },
+          slots: {
+            body: [{
+              id: 'badge-1',
+              component: 'badge',
+              props: { label: 'Test' }
+            }]
+          }
+        }
+      }, { documentRef: document });
+
+      const snapshot = service.liveSnapshot();
+      const card = snapshot.find(n => n.id === 'card-1');
+      const badge = snapshot.find(n => n.id === 'badge-1');
+      expect(card).toBeTruthy();
+      expect(badge).toBeTruthy();
+      expect(card.children.find(c => c.slot === 'body')?.children).toContain('badge-1');
+    });
+
+    it('works with setText on nested badge', () => {
+      const service = createService();
+      service.applyOp({
+        type: 'mount', id: 'card-1',
+        spec: {
+          component: 'card',
+          props: { title: 'Stream' },
+          slots: {
+            body: [{
+              id: 'badge-1',
+              component: 'badge',
+              props: { label: 'Loading...' }
+            }]
+          }
+        }
+      }, { documentRef: document });
+
+      service.applyOp({ type: 'setText', id: 'badge-1', text: 'Complete' });
+      expect(service.getLiveNode('badge-1').element.textContent).toBe('Complete');
+    });
+  });
 });
