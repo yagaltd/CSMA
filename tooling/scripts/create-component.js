@@ -178,10 +178,10 @@ function componentPreviewTemplate(name, title, type) {
       description: 'Validation or operation error'
     },
     {
-      id: 'selected',
-      label: 'Selected',
-      attrs: 'aria-pressed="true"',
-      description: 'Toggle/toggleable element in selected state'
+      id: 'success',
+      label: 'Success',
+      attrs: 'data-state="success"',
+      description: 'Operation completed successfully'
     }
   ];
 
