@@ -2,8 +2,11 @@
 name: <your-app-name>
 version: "1.0.0"
 description: <brief description of your app>
-visual_direction: <professional | playful | premium | dense | editorial | utility>
-primary_user: <who uses this app>
+register: <brand | product>
+color_strategy: <restrained | committed | full_palette | drenched>
+variance: 6
+motion: 4
+density: 4
 themes: [light, dark, contrast]
 ---
 
@@ -96,9 +99,9 @@ components.navbar.height.$value
 |:---------|:---------|
 | App category | `<SaaS dashboard / commerce / tool / content / internal app>` |
 | Primary user | `<role, context, expertise>` |
-| Desired feeling | `<calm, dense, premium, playful, editorial, clinical, etc.>` |
+| Register | `<brand | product>` |
 | Brand signals | `<colors, typography, imagery, tone>` |
-| Density | `<compact / balanced / spacious>` |
+| Color strategy | `<restrained | committed | full_palette | drenched>` |
 | Reference products | `<specific products or visual references>` |
 
 ## Token Usage
@@ -190,7 +193,7 @@ components.navbar.height.$value
 | Static visual variants | Type I | Use classes, ARIA, and `data-*`; CSS handles rendering. |
 | Form field styling and validation display | Type I | Use `data-state`; do not mutate inline styles. |
 | User action changes app state | Type II | Publish `INTENT_*`; validate payload with Contracts. |
-| Async loading or persistence | Type II | Render `data-loading`/`data-state` from confirmed state. |
+| Async loading or persistence | Type II | Render `data-state="loading"` / `data-state="ready"` from confirmed state. |
 | Notifications | Type II | Use toast system and cleanup subscriptions. |
 | Theme changes | Type II | Set `document.documentElement.dataset.theme`; persist outside CSS. |
 

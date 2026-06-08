@@ -25,7 +25,7 @@
     box-shadow var(--transition-fast);
 }
 
-.button:hover:not([disabled]):not([data-loading="true"]) {
+.button:hover:not([disabled]):not([data-state="loading"]) {
   background: color-mix(in srgb, var(--primary) 90%, var(--background));
 }
 
@@ -34,7 +34,7 @@
   box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
 }
 
-.button:active:not([disabled]):not([data-loading="true"]) {
+.button:active:not([disabled]):not([data-state="loading"]) {
   box-shadow: none;
 }
 
@@ -53,8 +53,8 @@
   border-color: transparent;
 }
 
-.button[data-variant="primary"]:hover:not([disabled]):not([data-loading="true"]),
-.button[data-variant="default"]:hover:not([disabled]):not([data-loading="true"]) {
+.button[data-variant="primary"]:hover:not([disabled]):not([data-state="loading"]),
+.button[data-variant="default"]:hover:not([disabled]):not([data-state="loading"]) {
   background: color-mix(in srgb, var(--primary) 90%, var(--background));
 }
 
@@ -65,7 +65,7 @@
   border-color: transparent;
 }
 
-.button[data-variant="secondary"]:hover:not([disabled]):not([data-loading="true"]) {
+.button[data-variant="secondary"]:hover:not([disabled]):not([data-state="loading"]) {
   background: color-mix(in srgb, var(--secondary) 88%, var(--foreground));
 }
 
@@ -76,7 +76,7 @@
   color: var(--foreground);
 }
 
-.button[data-variant="ghost"]:hover:not([disabled]):not([data-loading="true"]) {
+.button[data-variant="ghost"]:hover:not([disabled]):not([data-state="loading"]) {
   background: var(--accent);
 }
 
@@ -87,7 +87,7 @@
   color: var(--foreground);
 }
 
-.button[data-variant="outline"]:hover:not([disabled]):not([data-loading="true"]) {
+.button[data-variant="outline"]:hover:not([disabled]):not([data-state="loading"]) {
   background: var(--accent);
 }
 
@@ -107,7 +107,7 @@
   color: var(--destructive-foreground);
 }
 
-.button[data-variant="destructive"]:hover:not([disabled]):not([data-loading="true"]) {
+.button[data-variant="destructive"]:hover:not([disabled]):not([data-state="loading"]) {
   background: color-mix(in srgb, var(--destructive) 90%, var(--background));
 }
 
@@ -118,7 +118,7 @@
   color: var(--success-foreground);
 }
 
-.button[data-variant="success"]:hover:not([disabled]):not([data-loading="true"]) {
+.button[data-variant="success"]:hover:not([disabled]):not([data-state="loading"]) {
   background: color-mix(in srgb, var(--success) 90%, var(--background));
 }
 
@@ -129,7 +129,7 @@
   color: var(--info-foreground);
 }
 
-.button[data-variant="info"]:hover:not([disabled]):not([data-loading="true"]) {
+.button[data-variant="info"]:hover:not([disabled]):not([data-state="loading"]) {
   background: color-mix(in srgb, var(--info) 90%, var(--background));
 }
 
@@ -164,12 +164,12 @@
 }
 
 /* Loading State */
-.button[data-loading="true"] {
+.button[data-state="loading"] {
   pointer-events: none;
   opacity: 0.8;
 }
 
-.button[data-loading="true"]::after {
+.button[data-state="loading"]::after {
   content: "";
   width: 1em;
   height: 1em;
@@ -197,7 +197,7 @@
     transition: none;
   }
 
-  .button[data-loading="true"]::after {
+  .button[data-state="loading"]::after {
     animation: none;
   }
 }

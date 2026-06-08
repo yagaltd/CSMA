@@ -22,11 +22,14 @@ the architectural boundaries below.
 ## Design Workflow
 
 1. Read `docs/design/SKILL.md`.
-2. Chat with the user to understand desired changes.
-3. Update `src/style/token-overrides.json` with dot-notation token patches.
-4. Run `npm run tokens:patch` to merge into `src/style/design-tokens.json` and regenerate `src/generated/tokens.css`.
-5. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
-6. Compose layouts and pages using generated tokens. Never edit CSS output directly.
+2. Read the brief, declare a one-line Design Read.
+3. Set register (brand | product), Three Dials, and color strategy.
+4. Update `DESIGN.md` front matter with the 5-field schema.
+5. Update `src/style/token-overrides.json` with dot-notation token patches.
+6. Run `npm run tokens:patch` to merge and regenerate `src/generated/tokens.css`.
+7. Inspect `/showcase/token-showcase.html` across light, dark, and contrast themes.
+8. Compose layouts and pages using generated tokens. Never edit CSS output directly.
+9. Run `npm run check:design` and `npm run check:responsive` before shipping.
 
 ## Tokens
 
@@ -51,7 +54,7 @@ edit `src/style/design-tokens.json` directly; patch via
 
 | Task | Skill |
 |------|-------|
-| Design tokens, visual rules, layout | `docs/design/SKILL.md` |
+| Design tokens, visual rules, layout, register system, Three Dials, anti-patterns | `docs/design/SKILL.md` |
 | Import or translate an external DESIGN.md | `docs/design-import/SKILL.md` |
 | Website, app, page, route, flow, or motion planning | `docs/product-planning/SKILL.md` |
 | Runtime animation implementation | `docs/animation/SKILL.md` |
