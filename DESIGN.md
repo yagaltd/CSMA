@@ -138,10 +138,30 @@ components.navbar.height.$value
 
 | Anti-pattern | Why it is forbidden | Safer alternative |
 |:-------------|:--------------------|:------------------|
-| `<no nested cards>` | `<reason>` | `<sibling sections or unframed layout>` |
-| `<no decorative gradients>` | `<reason>` | `<token surface, image, or meaningful status color>` |
-| `<no emoji or mascot empty states>` | `<reason>` | `<short copy plus relevant action>` |
-| `<no heavy shadows>` | `<reason>` | `<border, tonal surface, or spacing>` |
+| No em-dashes (`—` or `–`) in visible text | #1 AI tell in production. Distrustful to readers. | Use commas, parentheses, or colon separators |
+| No italic headers (`h1`–`h3` with `font-style: italic`) | Looks editorial-pretentious, degrades readability. | Use weight contrast (semibold/bold) or size contrast |
+| No re-drawn chrome (fake browser bars, phone frames, IDE windows) | Decorative noise, adds no information. | Real screenshots or plain element references |
+| No section-numbering eyebrows (`01 / INDEX`, `002 · Features`) | AI-generated visual crutch. | Named section headings with no numbering |
+| No scroll cues (`Scroll`, `↓ scroll`, `Scroll to explore`) | Users know how to scroll. Unnecessary patronization. | Remove entirely — trust the content |
+| No version labels in hero (`V0.6`, `BETA`, `INVITE-ONLY`) | Looks like a startup landing page template. | Place version info in footer or settings |
+| No decoration text strips (`BRAND. MOTION. SPATIAL.`) | Filler content, zero informational value. | Actual content or omit |
+| No locale/time strips (`Lisbon 14:23 · 18°C`) | Performative sophistication, irrelevant to most users. | Real data or omit |
+| No pills/labels overlaid on images | Obscures content, looks like a stock template. | Place labels adjacent to or below images |
+| No generic step labels (`Stage 1 / Stage 2`, `Step 01`) | Mechanical, templated feel. | Named steps with actual meaning |
+| No `border-t` + `border-b` on every row of long lists | Visual noise, doubles border thickness. | Single border between rows or striped backgrounds |
+| No Fraunces or Instrument_Serif as default serif | Most over-used LLM serifs, instant AI tell. | Playfair Display, Cormorant, Libre Baskerville, or token serif |
+| No "Jane Doe" / "Acme Corp" / startup-slop brand names | Obviously placeholder content. | Real or contextually appropriate names |
+| No "Quietly in use at" / performative-craftsman copy | AI-generated humblebrag pattern. | Straightforward testimonials or omit |
+| No fake-precise numbers without source (`92%`, `4.1×`, `48k`) | Invented statistics erode trust. | Real data with cited source or rounded/approximate |
+| No two consecutive pages with identical layout fingerprint | Makes site feel auto-generated. | Vary column splits, hero scales, section spacing |
+| No zigzag (image+text split) 3+ sections in a row | Predictable rhythm = template feel. | Mix layouts: full-bleed, bento, centered, asymmetric |
+| No nested cards | Card-in-card-in-card looks generic. | Sibling sections or unframed layout |
+| No decorative gradients | Fill without meaning. | Token surface, image, or meaningful status color |
+| No emoji or mascot empty states | Childish, undermines trust. | Short copy plus relevant action |
+| No heavy shadows | Dated skeuomorphism. | Border, tonal surface, or spacing |
+| Eyebrow limit: max 1 per 3 sections | Excess eyebrows = AI-generated visual noise. | Use sparingly for genuine categorization |
+| Page Theme Lock: one light/dark mode per page | Mixed themes mid-page is disorienting. | Consistent register per page |
+| Max 2 display faces + 1 body face | Too many fonts = amateurish. | One display + one body is ideal |
 
 ## Component Recipes
 
