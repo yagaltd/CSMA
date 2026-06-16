@@ -577,6 +577,13 @@ export class AIUIComposerService {
           throw new Error(`Unknown slot "${op.slot}" on "${parent.definition.id}"`);
         }
       }
+    } else {
+      // Root mount (no parent): optional "target" CSS selector for a mount point.
+      if (op.target !== undefined) {
+        if (typeof op.target !== 'string' || op.target.trim() === '') {
+          throw new Error('Mount op "target" must be a non-empty string (CSS selector)');
+        }
+      }
     }
   }
 
@@ -681,6 +688,13 @@ export class AIUIComposerService {
       slotContainer.append(element);
       if (!parentNode.children.has(op.slot)) parentNode.children.set(op.slot, []);
       parentNode.children.get(op.slot).push(liveNode);
+    } else if (op.target) {
+      // Root mount with a mount-point target: attach to a DOM anchor.
+      const anchor = documentRef.querySelector(op.target);
+      if (!anchor) {
+        throw new Error(`Mount target "${op.target}" not found in document`);
+      }
+      anchor.append(element);
     }
 
     this.liveNodes.set(op.id, liveNode);

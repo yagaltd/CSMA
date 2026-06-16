@@ -48,7 +48,14 @@ runtime can safely compose.
 ### Streaming example
 
 ```js
-// Mount a loading card
+// Mount into a page-level mount point (anchor in static HTML)
+service.applyOp({
+  type: 'mount', id: 'results',
+  target: '[data-mount="ai-results"]',   // CSS selector for a mount-point anchor
+  spec: { component: 'card', props: { title: 'Analyzing…' } }
+}, { documentRef });
+
+// Mount a loading card (no target — orphaned element, caller attaches manually)
 service.applyOp({
   type: 'mount', id: 'results',
   spec: { component: 'card', props: { title: 'Analyzing…' } }
@@ -68,6 +75,32 @@ service.applyOp({ type: 'updateProps', id: 'stat-1', props: { variant: 'soft-suc
 
 No full re-render at any step. Each op touches exactly what changed. CSS
 handles visual transitions via `data-*` attributes.
+
+### Mount points
+
+Root-level `mount` ops can include an optional `target` — a CSS selector that
+points to an empty anchor element in the page. The composed element is appended
+directly to that anchor.
+
+```html
+<!-- Static HTML includes empty mount-point anchors -->
+<div data-mount="ai-results"></div>
+```
+
+```js
+// The composed card lands inside the anchor
+service.applyOp({
+  type: 'mount', id: 'results',
+  target: '[data-mount="ai-results"]',
+  spec: { component: 'card', props: { title: 'Live Results' } }
+}, { documentRef });
+```
+
+The `data-mount` attribute is a convention. The foundation CSS hides empty
+mount points (`[data-mount]:empty { display: none }`) and makes filled ones
+transparent (`display: contents`). This means the anchor is invisible until
+content arrives, then collapses away so the child participates directly in the
+parent's layout. No re-render, no layout shift.
 
 ### Batch (atomic)
 

@@ -129,6 +129,28 @@
 }
 
 /* ============================================
+   MOUNT POINTS
+   ============================================ */
+
+/*
+ * Mount points are empty anchors in the DOM that AI-UI (or any Type II
+ * module) fills at runtime. An empty mount point is invisible — it collapses
+ * to zero height and does not affect layout. Once a child is injected, the
+ * mount point becomes transparent (display: contents) so the child participates
+ * directly in the parent's layout.
+ *
+ * Convention:  <div data-mount="ai-results"></div>
+ * Fill:        applyOp({ type:'mount', target:'[data-mount="ai-results"]', spec:{...} })
+ */
+[data-mount]:empty {
+  display: none;
+}
+
+[data-mount]:not(:empty) {
+  display: contents;
+}
+
+/* ============================================
    CONTAINER QUERY CONTEXTS
    ============================================ */
 

@@ -354,7 +354,22 @@ All CSMA components use consistent `data-*` attributes for state:
 
 Never use `data-loading` — use `data-state="loading"` instead.
 
-### 3.4 Craft rules before CSS
+### 3.4 Enhanced `create-component`
+
+Use `npm run create-component` to scaffold new primitives. It generates:
+
+```
+src/ui/components/Button/
+  Button.css           ← 8 states styled
+  Button.js            ← Type I/II skeleton
+  Button.preview.html  ← Standalone 8-state demo page (delete after review)
+```
+
+The preview.html renders all 8 states simultaneously using `.is-hover`,
+`.is-focus`, `.is-active` classes alongside real pseudo-classes. Inspect it
+before composing the component into a page.
+
+### 3.5 Craft rules before CSS
 
 Before writing component or page CSS:
 
@@ -365,7 +380,7 @@ Before writing component or page CSS:
 5. Use cards only for repeated items, framed tools, and modals.
 6. Record forbidden visual moves in `DESIGN.md` before composing.
 
-### 3.5 Redesign priority order
+### 3.6 Redesign priority order
 
 When refining an existing UI, improve in this order:
 
@@ -399,7 +414,12 @@ Before showing any output, score it 1-5 on six axes:
 | **R**estraint — Is there nothing unnecessary? | 1-5 | ≥3 |
 | **V**ariety — Is this visually different from the last page? | 1-5 | ≥3 |
 
-If any score < 3, redesign before shipping.
+If any score < 3, redesign before shipping. Stamp the result:
+
+```css
+/* register: brand · variance: 7 · motion: 5 · density: 3
+ * critique: P5 H4 E5 S4 R5 V5 */
+```
 
 ### 4.3 Copy self-audit
 
@@ -457,6 +477,8 @@ These apply to **every** build regardless of register.
 | Numbered section markers | Only when the section genuinely IS a sequence |
 | Cards as default grouping | Use spacing and alignment first. Cards only when hierarchy demands them. |
 | Zigzag > 2 consecutive | Image+text split 3+ sections in a row = banned |
+| `repeating-linear-gradient` stripe backgrounds | Banned as decoration |
+| `border-t` + `border-b` on every row of long lists | Use spacing instead of ruled lines |
 
 ### Content
 
@@ -478,6 +500,8 @@ These apply to **every** build regardless of register.
 | Hero > 4 text elements | Maximum 4 text elements in hero |
 | Hero subtext > 20 words | Cap hero subtitle/description at 20 words |
 | Two CTAs with same intent | Same action → one CTA, not two |
+| Emoji in code, markup, headings, or alt text | Banned unless playful register explicitly requested |
+| Marketing buzzwords | "Empower", "Seamless", "Unleash", "Next-Gen", "Game-changer" = banned |
 
 ### Motion
 
@@ -505,6 +529,9 @@ These apply to **every** build regardless of register.
 - Reinventing standard affordances (custom scrollbars, weird form controls)
 - Modal as first thought
 - Heavy color on inactive states
+
+For programmatic check rules with severities and check methods, see
+`docs/design/references/anti-patterns.md`.
 
 ---
 
@@ -577,3 +604,14 @@ export function initToastSystem(eventBus) {
 2. Run `npm run tokens:patch` to merge and regenerate CSS.
 3. Reference tokens in CSS: `var(--primary)`, `var(--space-lg)`.
 4. Never edit `src/style/design-tokens.json` or `src/generated/tokens.css` directly.
+
+---
+
+## Reference files
+
+| File | When to load |
+|------|-------------|
+| `docs/design/references/register-brand.md` | When `register` is `brand` — font selection procedure, imagery rules, brand-specific bans |
+| `docs/design/references/register-product.md` | When `register` is `product` — typography, color, layout, motion, product-specific bans |
+| `docs/design/references/anti-patterns.md` | During Phase 4 verification — full rule reference with severities and check methods |
+| `docs/design/agent-map.md` | Before reading raw source files — canonical entrypoints and read order |
