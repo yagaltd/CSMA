@@ -212,9 +212,22 @@ through an adapter, not hard-coded into UI or core search services.
 
 ## Track B - CSMA Modules With Backend Contracts
 
-These modules can have a CSMA frontend package, but production usage needs a
-backend. CSMA should define the frontend API, contracts, events, demos, and
-adapter boundaries. SSMA can implement gateway support and examples.
+Status: the CSMA frontend halves for the high-priority vertical modules are now
+implemented. CSMA defines their frontend services, manifests, contracts, events,
+feature flags, docs, tests, and adapter boundaries. Production usage still needs
+backend/edge companions for authoritative validation, secrets, durable writes,
+private indexes, moderation, payment sessions, RBAC, audit sources, imports, and
+workflow persistence. Those companions belong in `agent-frontend`, SSMA,
+`agents-framework`, or project-specific backend templates — not in CSMA runtime
+code.
+
+Implemented frontend modules from `MODULE_IMPLEMENTATION_PLAN.md`:
+
+- Wave 1: `feature-flags`, `content-prefetch`, `cms-content`, `catalog`
+- Wave 2: `cart`, `payment-adapters`, `reviews`, `ab-testing`
+- Wave 3: `permissions-ui`, `charts`, `admin-audit-log`, `import-export`
+- Wave 4: `comments`, `content-workflow`, `edge-search`
+
 
 ### B1. Payments
 

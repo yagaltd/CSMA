@@ -10,9 +10,12 @@ const PUBLIC_DIRNAME = 'public';
 
 const PRODUCT_TYPES = new Set(['site', 'web-app', 'hybrid', 'mobile-app']);
 const SECTION_MODULES = {
-  tracking: ['analytics', 'consent'],
-  account: ['auth'],
-  checkout: ['checkout'],
+  tracking: ['analytics', 'consent', 'ab-testing'],
+  account: ['auth', 'auth-ui', 'permissions-ui'],
+  checkout: ['checkout', 'cart', 'payment-adapters'],
+  catalog: ['catalog', 'reviews'],
+  content: ['cms-content', 'content-prefetch', 'content-workflow', 'comments', 'edge-search'],
+  admin: ['charts', 'admin-audit-log', 'import-export', 'data-table'],
   uploads: ['file-upload', 'media', 'media-capture', 'file-system'],
   location: ['location'],
   notifications: ['notifications'],
@@ -242,11 +245,36 @@ function buildPrivacyDraft(manifest) {
   }
 
   if (includesAny(modules, SECTION_MODULES.checkout)) {
-    sections.push(`## Payments, Billing, And Refunds
+    sections.push(`## Payments, Billing, Cart, And Refunds
 
-- TODO: List billing data collected during checkout and who processes payment information.
+- TODO: List cart, billing, checkout, coupon, tax, shipping, and payment-session data collected.
+- TODO: State who validates authoritative totals and who processes payment information.
 - TODO: State invoicing, tax handling, refund policy references, and charge dispute workflow.
-- TODO: Confirm whether any payment data is stored directly by the product.`);
+- TODO: Confirm that provider secrets and payment confirmation live outside the frontend.`);
+  }
+
+  if (includesAny(modules, SECTION_MODULES.catalog)) {
+    sections.push(`## Catalog, Reviews, And Commerce Content
+
+- TODO: Describe product/content catalog data, inventory/availability sources, review data, and purchase-verification rules.
+- TODO: State moderation, fraud-prevention, retention, and deletion rules for reviews.
+- TODO: Identify which catalog fields are public CDN data versus backend-authoritative data.`);
+  }
+
+  if (includesAny(modules, SECTION_MODULES.content)) {
+    sections.push(`## Content, Comments, Search, And Publishing Workflow
+
+- TODO: Describe pages, posts, comments, search queries, workflow states, draft/publish data, and moderation rules.
+- TODO: State whether comments/search/workflow data is public, private, or role-gated.
+- TODO: Identify backend/edge companions responsible for durable writes, moderation, private indexes, and workflow persistence.`);
+  }
+
+  if (includesAny(modules, SECTION_MODULES.admin)) {
+    sections.push(`## Admin, Metrics, Imports, Exports, And Audit Logs
+
+- TODO: Describe dashboard metrics, imported/exported files, audit log data, actor identifiers, and retention rules.
+- TODO: State who can access admin data and how backend authority enforces that access.
+- TODO: Document whether audit logs are immutable and where authoritative records are stored.`);
   }
 
   if (includesAny(modules, SECTION_MODULES.uploads)) {
@@ -337,10 +365,32 @@ function buildTermsDraft(manifest) {
   }
 
   if (includesAny(modules, SECTION_MODULES.checkout)) {
-    sections.push(`## Billing, Purchases, And Refunds
+    sections.push(`## Billing, Cart, Purchases, And Refunds
 
-- TODO: Describe pricing notices, taxes, subscription renewal rules, refund terms, and chargeback handling.
+- TODO: Describe cart behavior, pricing notices, taxes, subscriptions, refund terms, and chargeback handling.
+- TODO: State that final prices, coupons, tax, shipping, and payment confirmation are validated by backend/edge systems.
 - TODO: State whether purchases are final, prorated, or subject to separate commercial terms.`);
+  }
+
+  if (includesAny(modules, SECTION_MODULES.catalog)) {
+    sections.push(`## Catalog, Availability, Reviews, And Ratings
+
+- TODO: Explain catalog accuracy, availability, pricing display rules, review submission terms, moderation rights, and fraud controls.
+- TODO: State that inventory, private pricing, review verification, and moderation authority are backend-controlled.`);
+  }
+
+  if (includesAny(modules, SECTION_MODULES.content)) {
+    sections.push(`## Content, Comments, Search, And Publishing
+
+- TODO: Define rules for comments, draft/published content, search use, prohibited content, moderation, takedown, and workflow responsibilities.
+- TODO: State whether publishing or moderation decisions are human, automated, or backend-enforced.`);
+  }
+
+  if (includesAny(modules, SECTION_MODULES.admin)) {
+    sections.push(`## Admin Tools, Imports, Exports, Metrics, And Audit Records
+
+- TODO: Define authorized admin use, import/export responsibilities, audit log expectations, and data accuracy obligations.
+- TODO: State that audit records and private metrics are authoritative only when backed by the configured backend/edge system.`);
   }
 
   if (includesAny(modules, SECTION_MODULES.uploads)) {
@@ -415,6 +465,8 @@ function buildCookiesDraft(manifest) {
   const trackingEnabled = includesAny(modules, SECTION_MODULES.tracking);
   const authEnabled = includesAny(modules, SECTION_MODULES.account);
   const checkoutEnabled = includesAny(modules, SECTION_MODULES.checkout);
+  const contentEnabled = includesAny(modules, SECTION_MODULES.content);
+  const adminEnabled = includesAny(modules, SECTION_MODULES.admin);
 
   const cookieCategories = [
     '- Strictly necessary: TODO: list essential session, security, or load-balancing technologies.',
@@ -423,8 +475,14 @@ function buildCookiesDraft(manifest) {
       : '- Analytics and measurement: TODO: confirm whether analytics cookies are not used.',
     '- Preferences: TODO: list language, theme, accessibility, or consent-preference storage.',
     checkoutEnabled
-      ? '- Commerce: TODO: describe cart, checkout, or fraud-prevention storage if used.'
-      : '- Commerce: TODO: confirm whether commerce-related storage is not used.'
+      ? '- Commerce: TODO: describe cart, checkout, payment-session, or fraud-prevention storage if used.'
+      : '- Commerce: TODO: confirm whether commerce-related storage is not used.',
+    contentEnabled
+      ? '- Content and search: TODO: describe comments, drafts, workflow, search-query, or preference storage if used.'
+      : '- Content and search: TODO: confirm whether content/search storage is not used.',
+    adminEnabled
+      ? '- Admin and audit: TODO: describe admin UI preferences, import/export state, dashboard filters, and audit-view storage if used.'
+      : '- Admin and audit: TODO: confirm whether admin-related browser storage is not used.'
   ];
 
   const consentSection = trackingEnabled

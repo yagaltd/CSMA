@@ -26,6 +26,18 @@ Domain UI patterns belong inside their owning module, usually
 `src/modules/<module>/ui/`, and can advertise reusable agent-safe patterns with
 `manifest.aiUi.components`.
 
+Module boundary:
+
+- CSMA modules own only the client-side half: UI state, EventBus contracts,
+  adapters, optimistic behavior, and safe local/cache behavior
+- backend/edge companions own authority: secrets, DB writes, payment sessions,
+  private search indexes, moderation, RBAC, audit sources, imports, and workflow persistence
+- the vertical frontend modules currently include `catalog`, `cart`,
+  `cms-content`, `comments`, `reviews`, `payment-adapters`, `permissions-ui`,
+  `charts`, `admin-audit-log`, `import-export`, `content-workflow`,
+  `edge-search`, `feature-flags`, `content-prefetch`, and `ab-testing`
+- do not put backend authority or deployment orchestration into CSMA modules
+
 Routing boundary:
 
 - core runtime owns path normalization, page resolution, and optional History API interception

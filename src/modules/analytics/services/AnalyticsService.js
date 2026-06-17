@@ -42,6 +42,9 @@ export class AnalyticsService {
         this.appVersion = options.appVersion || window.csma?.config?.version || 'dev';
         this.user = null;
         this.analyticsConsent = options.consent || window.csma?.analyticsConsent || null;
+        this.runtimeLogConfig = this.normalizeRuntimeLogConfig(options.runtimeLogs || options.collectRuntimeLogs);
+        this.runtimeLogUnsubscribe = null;
+        this.fetchLaterController = null;
         this.pipelineConfig = mergePipelineConfig(options.pipeline);
         this.classifier = new EventClassifier({
             rules: this.pipelineConfig.classifier.rules,
@@ -62,6 +65,7 @@ export class AnalyticsService {
         this.batchInterval = options.batchInterval || this.batchInterval;
         this.serverBatchLimit = options.serverBatchLimit || this.serverBatchLimit;
         this.analyticsConsent = options.consent || this.analyticsConsent || window.csma?.analyticsConsent || null;
+        this.runtimeLogConfig = this.normalizeRuntimeLogConfig(options.runtimeLogs ?? options.collectRuntimeLogs ?? this.runtimeLogConfig);
         this.pipelineConfig = mergePipelineConfig(options.pipeline || this.pipelineConfig);
         this.classifier = new EventClassifier({
             rules: this.pipelineConfig.classifier.rules,
@@ -74,6 +78,7 @@ export class AnalyticsService {
         this.setupUnloadHandler();
         this.setupClickTracking();
         this.setupNavigationTracking();
+        this.setupRuntimeLogBridge();
         this.lifecycle.subscribe(this.eventBus, 'PAGE_CHANGED', (payload) => {
             this.trackPageView(payload.title || document.title);
         });
@@ -125,6 +130,87 @@ export class AnalyticsService {
                 timestamp: event.timestamp
             });
         }
+    }
+
+    setupRuntimeLogBridge() {
+        this.runtimeLogUnsubscribe?.();
+        this.runtimeLogUnsubscribe = null;
+
+        if (!this.runtimeLogConfig.enabled) {
+            return;
+        }
+
+        this.runtimeLogUnsubscribe = this.eventBus.subscribe('LOG_ENTRY', (entry) => {
+            this.trackRuntimeLog(entry);
+        });
+    }
+
+    normalizeRuntimeLogConfig(config) {
+        if (config === true) {
+            return {
+                enabled: true,
+                types: ['error', 'promise-error', 'security', 'contract-violation'],
+                includeStack: false,
+                includePayloads: false
+            };
+        }
+
+        if (!config || config === false) {
+            return {
+                enabled: false,
+                types: [],
+                includeStack: false,
+                includePayloads: false
+            };
+        }
+
+        return {
+            enabled: Boolean(config.enabled ?? true),
+            types: Array.isArray(config.types)
+                ? config.types
+                : ['error', 'promise-error', 'security', 'contract-violation'],
+            includeStack: Boolean(config.includeStack),
+            includePayloads: Boolean(config.includePayloads)
+        };
+    }
+
+    trackRuntimeLog(entry = {}) {
+        if (!this.runtimeLogConfig.enabled || !this.runtimeLogConfig.types.includes(entry.type)) {
+            return null;
+        }
+
+        const data = entry.data && typeof entry.data === 'object' ? entry.data : {};
+        const runtimeEvent = {
+            type: entry.type,
+            name: `runtime_${entry.type}`,
+            message: this.truncate(data.message || data.reason?.message || data.type || entry.type, 200),
+            reason: this.truncate(data.reason?.message || (typeof data.reason === 'string' ? data.reason : ''), 200),
+            timestamp: entry.timestamp || Date.now(),
+            sourceSessionId: entry.sessionId,
+            data: this.sanitizeRuntimeLogData(data)
+        };
+
+        return this.processTrackedEvent(runtimeEvent);
+    }
+
+    sanitizeRuntimeLogData(data = {}) {
+        const allowed = ['type', 'message', 'url', 'line', 'column', 'blocked', 'pattern', 'event', 'error'];
+        const sanitized = {};
+
+        for (const key of allowed) {
+            if (data[key] === undefined) continue;
+            sanitized[key] = typeof data[key] === 'string' ? this.truncate(data[key], 300) : data[key];
+        }
+
+        if (this.runtimeLogConfig.includeStack && data.stack) {
+            sanitized.stack = this.truncate(data.stack, 2000);
+        }
+
+        if (this.runtimeLogConfig.includePayloads && data.payload !== undefined) {
+            sanitized.payload = data.payload;
+        }
+
+        return sanitized;
     }
 
     processTrackedEvent(data) {
@@ -182,7 +268,7 @@ export class AnalyticsService {
         return processed;
     }
 
-    flush() {
+    flush({ preferDeferred = false } = {}) {
         if (this.analyticsQueue.length === 0) return;
         if (!this.analyticsEndpoint) {
             console.warn('[Analytics] No endpoint configured. Call init({ endpoint: "/logs/batch" })');
@@ -205,7 +291,7 @@ export class AnalyticsService {
             });
         };
 
-        this.flushViaFetch(payload, finalize).catch((error) => {
+        this.flushViaTransport(payload, finalize, { preferDeferred }).catch((error) => {
             console.error('[Analytics] Failed to flush:', error);
             this.eventBus.publish('ANALYTICS_FLUSH_ERROR', {
                 error: error.message,
@@ -222,7 +308,7 @@ export class AnalyticsService {
             return;
         }
 
-        this.flushViaFetch(payload, () => {
+        this.flushViaTransport(payload, () => {
             this.storeBatch(payload.entries);
             this.eventBus.publish('ANALYTICS_BATCH_FLUSH', {
                 batchId: payload.batchId,
@@ -241,11 +327,21 @@ export class AnalyticsService {
         });
     }
 
-    async flushViaFetch(payload, onSuccess) {
+    async flushViaTransport(payload, onSuccess, { preferDeferred = false } = {}) {
+        const body = JSON.stringify(payload);
+
+        if (preferDeferred && this.flushViaFetchLater(body, onSuccess)) {
+            return;
+        }
+
+        if (preferDeferred && this.flushViaBeacon(body, onSuccess)) {
+            return;
+        }
+
         const response = await fetch(this.analyticsEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
+            body,
             keepalive: true
         });
 
@@ -254,6 +350,46 @@ export class AnalyticsService {
         }
 
         onSuccess?.();
+    }
+
+    flushViaFetchLater(body, onSuccess) {
+        if (typeof globalThis.fetchLater !== 'function' || typeof AbortController === 'undefined') {
+            return false;
+        }
+
+        try {
+            this.fetchLaterController?.abort?.();
+            this.fetchLaterController = new AbortController();
+            globalThis.fetchLater(this.analyticsEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body,
+                signal: this.fetchLaterController.signal,
+                activateAfter: 0
+            });
+            onSuccess?.();
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    flushViaBeacon(body, onSuccess) {
+        if (typeof navigator === 'undefined' || typeof navigator.sendBeacon !== 'function') {
+            return false;
+        }
+
+        try {
+            const blob = new Blob([body], { type: 'application/json' });
+            if (navigator.sendBeacon(this.analyticsEndpoint, blob)) {
+                onSuccess?.();
+                return true;
+            }
+        } catch {
+            // Fall through to fetch keepalive.
+        }
+
+        return false;
     }
 
     startBatchTimer() {
@@ -442,11 +578,12 @@ export class AnalyticsService {
     }
 
     setupUnloadHandler() {
-        this.lifecycle.listen(window, 'beforeunload', () => this.flush());
-        if (document.visibilityState) {
+        this.lifecycle.listen(window, 'pagehide', () => this.flush({ preferDeferred: true }));
+        this.lifecycle.listen(window, 'beforeunload', () => this.flush({ preferDeferred: true }));
+        if ('visibilityState' in document) {
             this.lifecycle.listen(document, 'visibilitychange', () => {
                 if (document.visibilityState === 'hidden') {
-                    this.flush();
+                    this.flush({ preferDeferred: true });
                 }
             });
         }
@@ -575,8 +712,12 @@ export class AnalyticsService {
         this.destroyed = true;
 
         if (this.analyticsQueue.length > 0) {
-            this.flush();
+            this.flush({ preferDeferred: true });
         }
+
+        this.fetchLaterController?.abort?.();
+        this.runtimeLogUnsubscribe?.();
+        this.runtimeLogUnsubscribe = null;
 
         if (this.batchTimer) {
             clearInterval(this.batchTimer);

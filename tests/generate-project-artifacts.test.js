@@ -181,14 +181,14 @@ describe('generate-project-artifacts', () => {
 
     expect(privacy).toContain('## Tracking, Analytics, And Consent');
     expect(privacy).toContain('## Accounts, Sessions, And Credentials');
-    expect(privacy).toContain('## Payments, Billing, And Refunds');
+    expect(privacy).toContain('## Payments, Billing, Cart, And Refunds');
     expect(privacy).toContain('## Uploaded Content And Stored Files');
     expect(privacy).toContain('## Location Data');
     expect(privacy).toContain('## Notifications And Communications');
     expect(privacy).toContain('## AI Features And Automated Processing');
 
     expect(terms).toContain('## Accounts And Access');
-    expect(terms).toContain('## Billing, Purchases, And Refunds');
+    expect(terms).toContain('## Billing, Cart, Purchases, And Refunds');
     expect(terms).toContain('## User Content');
     expect(terms).toContain('## Communications');
     expect(terms).toContain('## AI Features');

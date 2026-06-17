@@ -25,6 +25,21 @@ import { ShareContracts } from '../modules/share/contracts/share-contracts.js';
 import { FileUploadContracts } from '../modules/file-upload/contracts/file-upload-contracts.js';
 import { RouterContracts } from '../modules/router/contracts/router-contracts.js';
 import { CaptchaContracts } from '../modules/captcha/contracts/captcha-contracts.js';
+import { FeatureFlagsContracts } from '../modules/feature-flags/contracts/feature-flags-contracts.js';
+import { ContentPrefetchContracts } from '../modules/content-prefetch/contracts/content-prefetch-contracts.js';
+import { CmsContentContracts } from '../modules/cms-content/contracts/cms-content-contracts.js';
+import { CatalogContracts } from '../modules/catalog/contracts/catalog-contracts.js';
+import { CartContracts } from '../modules/cart/contracts/cart-contracts.js';
+import { PaymentAdaptersContracts } from '../modules/payment-adapters/contracts/payment-adapters-contracts.js';
+import { ReviewsContracts } from '../modules/reviews/contracts/reviews-contracts.js';
+import { AbTestingContracts } from '../modules/ab-testing/contracts/ab-testing-contracts.js';
+import { PermissionsUIContracts } from '../modules/permissions-ui/contracts/permissions-ui-contracts.js';
+import { ChartsContracts } from '../modules/charts/contracts/charts-contracts.js';
+import { AdminAuditLogContracts } from '../modules/admin-audit-log/contracts/admin-audit-log-contracts.js';
+import { ImportExportContracts } from '../modules/import-export/contracts/import-export-contracts.js';
+import { CommentsContracts } from '../modules/comments/contracts/comments-contracts.js';
+import { ContentWorkflowContracts } from '../modules/content-workflow/contracts/content-workflow-contracts.js';
+import { EdgeSearchContracts } from '../modules/edge-search/contracts/edge-search-contracts.js';
 
 /**
  * Helper function for creating contracts with full ECCA metadata
@@ -1661,6 +1676,21 @@ const mergedContracts = {
     ...FileUploadContracts,
     ...RouterContracts,
     ...CaptchaContracts,
+    ...FeatureFlagsContracts,
+    ...ContentPrefetchContracts,
+    ...CmsContentContracts,
+    ...CatalogContracts,
+    ...CartContracts,
+    ...PaymentAdaptersContracts,
+    ...ReviewsContracts,
+    ...AbTestingContracts,
+    ...PermissionsUIContracts,
+    ...ChartsContracts,
+    ...AdminAuditLogContracts,
+    ...ImportExportContracts,
+    ...CommentsContracts,
+    ...ContentWorkflowContracts,
+    ...EdgeSearchContracts,
 
     // Developer Logs
     LOG_ENTRY: {

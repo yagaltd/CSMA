@@ -242,6 +242,14 @@ For every module:
 4. Forms use honeypot fields where applicable
 5. No `innerHTML` for user data
 6. No `eval()` or dynamic code execution
+7. No secrets, payment confirmation, private RBAC decisions, DB writes, private search index writes, moderation authority, or durable workflow authority in frontend modules
+8. Broad public payload schemas must either be narrowed or explicitly marked with security metadata and tests
+
+For frontend/backend split modules (`cart`, `payment-adapters`, `catalog`,
+`reviews`, `comments`, `permissions-ui`, `admin-audit-log`, `import-export`,
+`content-workflow`, `edge-search`), CSMA may show optimistic state and adapter
+boundaries only. Backend/edge companions must perform authoritative validation
+and persistence.
 
 ## Security Testing Patterns
 

@@ -195,9 +195,15 @@ V1 rules:
 | Build a company website | `project-manifest.json`, `DESIGN.md`, `SITE.md`, `pages/home.md`, plus required page specs |
 | Build a SaaS app | `project-manifest.json`, `DESIGN.md`, `APP.md`, screen specs, flow specs |
 | Use this uploaded `DESIGN.md` | `docs/design-import/SKILL.md`, then product planning artifacts |
-| Add checkout/payment | `project-manifest.json`, `flows/checkout.md`, Contracts/EventBus plan, payment integration notes |
-| Add account/auth flows | `project-manifest.json`, `APP.md` auth state/roles, `flows/auth.md`, modules `auth`, `auth-ui`, `form-management`, and optional `captcha` |
+| Add catalog/product listing | `project-manifest.json`, `pages/catalog.md` or page specs, module notes for `catalog`, optional `content-prefetch` |
+| Add cart | `project-manifest.json`, `flows/cart.md`, module notes for `cart`, backend validation notes for price/tax/coupons |
+| Add checkout/payment | `project-manifest.json`, `flows/checkout.md`, Contracts/EventBus plan, module notes for `checkout` and `payment-adapters`, backend payment-session/webhook notes |
+| Add account/auth flows | `project-manifest.json`, `APP.md` auth state/roles, `flows/auth.md`, modules `auth`, `auth-ui`, `permissions-ui`, `form-management`, and optional `captcha` |
 | Add contact form | `project-manifest.json`, `pages/contact.md`, `flows/contact-submit.md`, validation/submission contract |
+| Add reviews/comments | `project-manifest.json`, page/flow specs, modules `reviews` or `comments`, backend moderation/write contract notes |
+| Add dashboard/charts/audit log | `APP.md`, screen specs, modules `charts`, `data-table`, `admin-audit-log`, backend metrics/audit-source notes |
+| Add imports/exports | `flows/import-export.md`, module `import-export`, backend persistence/large-file notes if needed |
+| Add content workflow/CMS | `SITE.md` or `APP.md`, page specs, modules `cms-content`, `content-workflow`, optional `edge-search`, backend publish/workflow notes |
 | Add cookie consent | `project-manifest.json`, `SITE.md` consent section, `flows/consent.md`, Consent module configuration notes |
 | Add legal pages | `project-manifest.json`, `SITE.md` legal map, generated `pages/privacy.md`, `pages/terms.md`, `pages/cookies.md` as applicable |
 | Add or revise not-found handling | `pages/404.md`, route recovery notes in `SITE.md` or `APP.md`, and the implementation target matching the chosen delivery mode |

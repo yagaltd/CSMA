@@ -48,6 +48,9 @@ npm run test:browser-smoke  # Playwright browser smoke test
 Good property-test candidates:
 
 - checkout
+- cart totals and quantity invariants
+- content workflow transition edges
+- import/export parsing
 - optimistic sync
 - sync queue
 - complex persisted form flows
@@ -63,9 +66,11 @@ Poor property-test candidates:
 ### File Naming
 
 - One test file per module/service: `tests/[module-name].test.js`
+- Wave-level module coverage may live in `tests/wave*-modules.test.js` when validating a grouped implementation plan.
 - Test helpers in `tests/helpers/`
 - Browser smoke specs in `tests/browser/`
 - Keep runtime diagnostics tests separate from outbound analytics tests
+- For frontend/backend split modules, test the frontend contract only: state, optimistic behavior, adapter boundary, teardown, and rejection of invalid payloads. Do not mock backend authority as if CSMA owned it.
 
 ### Test Structure
 

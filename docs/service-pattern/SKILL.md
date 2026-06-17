@@ -307,6 +307,10 @@ Use a service-local transition map when:
 Examples:
 
 - checkout
+- cart totals previews
+- payment-adapter flow state
+- content workflow transitions
+- comments/reviews optimistic pending states
 - retry/queue workflows
 - optimistic flows with pending/in-progress/error states
 
@@ -400,6 +404,8 @@ exportAnalytics() {
 ```
 
 If you apply this pattern in the current repo, keep analytics ownership in `src/modules/analytics/` rather than attaching tracking methods to `LogAccumulator`.
+
+For vertical modules such as `catalog`, `cart`, `reviews`, `comments`, `payment-adapters`, `permissions-ui`, `charts`, `admin-audit-log`, `import-export`, `content-workflow`, and `edge-search`, keep services frontend-only: state, contracts, adapters, optimistic behavior, and teardown. Authoritative backend/edge behavior stays outside CSMA.
 
 ## Best Practices
 

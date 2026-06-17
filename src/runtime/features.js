@@ -1,8 +1,20 @@
 import { initConsentUI } from '../modules/consent/ui/consent-ui.js';
 import { auditPage } from './seoAudit.js';
 import { buildLogEndpoint } from '../style/theme/theme-helpers.js';
-import { resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from './ssma.js';
+import { resolveSsmaBaseUrl, resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from './ssma.js';
 import { assertProductionSecurityPolicy, resolveSecurityPolicy } from './SecurityPolicy.js';
+
+function resolveOptionalSsmaEndpoint(path, override, runtimeConfig = {}) {
+    if (override) {
+        return override;
+    }
+
+    if (!resolveSsmaBaseUrl(runtimeConfig)) {
+        return null;
+    }
+
+    return resolveSsmaHttpEndpoint(path, undefined, runtimeConfig);
+}
 
 function cloneRuntimeSection(value, fallback = {}) {
     if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -61,6 +73,21 @@ export async function loadOptionalFeatures(state, {
     const shareConfig = cloneRuntimeSection(runtimeConfig.share, {});
     const fileUploadConfig = cloneRuntimeSection(runtimeConfig.fileUpload, {});
     const captchaConfig = cloneRuntimeSection(runtimeConfig.captcha, { adapter: 'captcha.cap' });
+    const featureFlagsConfig = { endpoint: resolveOptionalSsmaEndpoint('/flags/client-config', runtimeConfig.featureFlags?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.featureFlags, {}) };
+    const contentPrefetchConfig = { endpoint: resolveOptionalSsmaEndpoint('/content/manifest', runtimeConfig.contentPrefetch?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.contentPrefetch, {}) };
+    const cmsContentConfig = { endpoint: resolveOptionalSsmaEndpoint('/content', runtimeConfig.cmsContent?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.cmsContent, {}) };
+    const catalogConfig = { endpoint: resolveOptionalSsmaEndpoint('/catalog/items', runtimeConfig.catalog?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.catalog, {}) };
+    const cartConfig = { validateEndpoint: resolveOptionalSsmaEndpoint('/cart/validate', runtimeConfig.cart?.validateEndpoint || runtimeConfig.cart?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.cart, {}) };
+    const paymentAdaptersConfig = { sessionEndpoint: resolveOptionalSsmaEndpoint('/checkout/session', runtimeConfig.paymentAdapters?.sessionEndpoint || runtimeConfig.paymentAdapters?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.paymentAdapters, {}) };
+    const reviewsConfig = { endpoint: resolveOptionalSsmaEndpoint('/reviews', runtimeConfig.reviews?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.reviews, {}) };
+    const abTestingConfig = { assignEndpoint: resolveOptionalSsmaEndpoint('/experiments/assign', runtimeConfig.abTesting?.assignEndpoint || runtimeConfig.abTesting?.endpoint, runtimeConfig), exposureEndpoint: resolveOptionalSsmaEndpoint('/experiments/exposure', runtimeConfig.abTesting?.exposureEndpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.abTesting, {}) };
+    const permissionsUiConfig = { endpoint: resolveOptionalSsmaEndpoint('/permissions/effective', runtimeConfig.permissionsUi?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.permissionsUi, {}) };
+    const chartsConfig = { endpoint: resolveOptionalSsmaEndpoint('/metrics/query', runtimeConfig.charts?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.charts, {}) };
+    const adminAuditLogConfig = { endpoint: resolveOptionalSsmaEndpoint('/admin/audit-log', runtimeConfig.adminAuditLog?.endpoint, runtimeConfig), exportEndpoint: resolveOptionalSsmaEndpoint('/admin/audit-log/export', runtimeConfig.adminAuditLog?.exportEndpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.adminAuditLog, {}) };
+    const importExportConfig = { previewEndpoint: resolveOptionalSsmaEndpoint('/imports/preview', runtimeConfig.importExport?.previewEndpoint || runtimeConfig.importExport?.endpoint, runtimeConfig), exportEndpoint: resolveOptionalSsmaEndpoint('/exports/jobs', runtimeConfig.importExport?.exportEndpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.importExport, {}) };
+    const commentsConfig = { endpoint: resolveOptionalSsmaEndpoint('/comments', runtimeConfig.comments?.endpoint, runtimeConfig), moderationEndpoint: resolveOptionalSsmaEndpoint('/comments', runtimeConfig.comments?.moderationEndpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.comments, {}) };
+    const contentWorkflowConfig = { endpoint: resolveOptionalSsmaEndpoint('/workflow/items', runtimeConfig.contentWorkflow?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.contentWorkflow, {}) };
+    const edgeSearchConfig = { endpoint: resolveOptionalSsmaEndpoint('/search', runtimeConfig.edgeSearch?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.edgeSearch, {}) };
     const authEnabled = Boolean(FEATURES.AUTH_MODULE || FEATURES.AUTH_SERVICE);
     const offlineCacheEnabled = Boolean(FEATURES.OFFLINE_CACHE);
     const pwaEnabled = Boolean(FEATURES.PWA || offlineCacheEnabled);
@@ -328,6 +355,201 @@ export async function loadOptionalFeatures(state, {
             console.log('[Search] Tiered search module enabled');
         } catch (error) {
             console.warn('[Search] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.FEATURE_FLAGS) {
+        try {
+            await moduleManager.loadModule('feature-flags');
+            const featureFlags = serviceManager.get('featureFlags');
+            featureFlags?.init(featureFlagsConfig);
+            window.csma = window.csma || {};
+            window.csma.featureFlags = featureFlags;
+            console.log('[FeatureFlags] Client feature flags enabled');
+        } catch (error) {
+            console.warn('[FeatureFlags] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.CONTENT_PREFETCH) {
+        try {
+            await moduleManager.loadModule('content-prefetch');
+            const contentPrefetch = serviceManager.get('contentPrefetch');
+            contentPrefetch?.init(contentPrefetchConfig);
+            window.csma = window.csma || {};
+            window.csma.contentPrefetch = contentPrefetch;
+            console.log('[ContentPrefetch] Route/content prefetch enabled');
+        } catch (error) {
+            console.warn('[ContentPrefetch] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.CMS_CONTENT) {
+        try {
+            await moduleManager.loadModule('cms-content');
+            const cmsContent = serviceManager.get('cmsContent');
+            cmsContent?.init(cmsContentConfig);
+            window.csma = window.csma || {};
+            window.csma.cmsContent = cmsContent;
+            console.log('[CMSContent] Structured content loading enabled');
+        } catch (error) {
+            console.warn('[CMSContent] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.CATALOG_MODULE) {
+        try {
+            await moduleManager.loadModule('catalog');
+            const catalog = serviceManager.get('catalog');
+            catalog?.init(catalogConfig);
+            window.csma = window.csma || {};
+            window.csma.catalog = catalog;
+            console.log('[Catalog] Catalog state and filters enabled');
+        } catch (error) {
+            console.warn('[Catalog] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.CART_MODULE) {
+        try {
+            await moduleManager.loadModule('cart');
+            const cart = serviceManager.get('cart');
+            cart?.init(cartConfig);
+            window.csma = window.csma || {};
+            window.csma.cart = cart;
+            console.log('[Cart] Client cart state enabled');
+        } catch (error) {
+            console.warn('[Cart] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.PAYMENT_ADAPTERS) {
+        try {
+            await moduleManager.loadModule('payment-adapters');
+            const paymentAdapters = serviceManager.get('paymentAdapters');
+            paymentAdapters?.init(paymentAdaptersConfig);
+            window.csma = window.csma || {};
+            window.csma.paymentAdapters = paymentAdapters;
+            console.log('[PaymentAdapters] Client payment adapters enabled');
+        } catch (error) {
+            console.warn('[PaymentAdapters] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.REVIEWS_MODULE) {
+        try {
+            await moduleManager.loadModule('reviews');
+            const reviews = serviceManager.get('reviews');
+            reviews?.init(reviewsConfig);
+            window.csma = window.csma || {};
+            window.csma.reviews = reviews;
+            console.log('[Reviews] Review state enabled');
+        } catch (error) {
+            console.warn('[Reviews] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.AB_TESTING) {
+        try {
+            await moduleManager.loadModule('ab-testing');
+            const abTesting = serviceManager.get('abTesting');
+            abTesting?.init(abTestingConfig);
+            window.csma = window.csma || {};
+            window.csma.abTesting = abTesting;
+            console.log('[ABTesting] Experiment assignment enabled');
+        } catch (error) {
+            console.warn('[ABTesting] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.PERMISSIONS_UI) {
+        try {
+            await moduleManager.loadModule('permissions-ui');
+            const permissionsUI = serviceManager.get('permissionsUI');
+            permissionsUI?.init(permissionsUiConfig);
+            window.csma = window.csma || {};
+            window.csma.permissionsUI = permissionsUI;
+            console.log('[PermissionsUI] Capability-aware UI state enabled');
+        } catch (error) {
+            console.warn('[PermissionsUI] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.CHARTS_MODULE) {
+        try {
+            await moduleManager.loadModule('charts');
+            const charts = serviceManager.get('charts');
+            charts?.init(chartsConfig);
+            window.csma = window.csma || {};
+            window.csma.charts = charts;
+            console.log('[Charts] Dashboard chart state enabled');
+        } catch (error) {
+            console.warn('[Charts] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.ADMIN_AUDIT_LOG) {
+        try {
+            await moduleManager.loadModule('admin-audit-log');
+            const adminAuditLog = serviceManager.get('adminAuditLog');
+            adminAuditLog?.init(adminAuditLogConfig);
+            window.csma = window.csma || {};
+            window.csma.adminAuditLog = adminAuditLog;
+            console.log('[AdminAuditLog] Audit log UI state enabled');
+        } catch (error) {
+            console.warn('[AdminAuditLog] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.IMPORT_EXPORT) {
+        try {
+            await moduleManager.loadModule('import-export');
+            const importExport = serviceManager.get('importExport');
+            importExport?.init(importExportConfig);
+            window.csma = window.csma || {};
+            window.csma.importExport = importExport;
+            console.log('[ImportExport] Import/export preview enabled');
+        } catch (error) {
+            console.warn('[ImportExport] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.COMMENTS_MODULE) {
+        try {
+            await moduleManager.loadModule('comments');
+            const comments = serviceManager.get('comments');
+            comments?.init(commentsConfig);
+            window.csma = window.csma || {};
+            window.csma.comments = comments;
+            console.log('[Comments] Comment UI state enabled');
+        } catch (error) {
+            console.warn('[Comments] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.CONTENT_WORKFLOW) {
+        try {
+            await moduleManager.loadModule('content-workflow');
+            const contentWorkflow = serviceManager.get('contentWorkflow');
+            contentWorkflow?.init(contentWorkflowConfig);
+            window.csma = window.csma || {};
+            window.csma.contentWorkflow = contentWorkflow;
+            console.log('[ContentWorkflow] Content workflow UI state enabled');
+        } catch (error) {
+            console.warn('[ContentWorkflow] Failed to load module:', error);
+        }
+    }
+
+    if (FEATURES.EDGE_SEARCH) {
+        try {
+            await moduleManager.loadModule('edge-search');
+            const edgeSearch = serviceManager.get('edgeSearch');
+            edgeSearch?.init(edgeSearchConfig);
+            window.csma = window.csma || {};
+            window.csma.edgeSearch = edgeSearch;
+            console.log('[EdgeSearch] Edge/static search client enabled');
+        } catch (error) {
+            console.warn('[EdgeSearch] Failed to load module:', error);
         }
     }
 

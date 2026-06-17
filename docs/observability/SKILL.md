@@ -23,6 +23,11 @@ Treat observability as two separate subsystems:
   - consent-gated
   - responsible for page views, custom events, classification, batching, and shipping
 
+`LogAccumulator` may feed `AnalyticsService` only through the explicit
+analytics runtime-log bridge. The bridge is off by default and must be enabled
+with `runtimeConfig.analytics.collectRuntimeLogs` or
+`runtimeConfig.analytics.runtimeLogs.enabled`.
+
 If a change tries to merge these again, that is usually a regression.
 
 ## Ownership Boundaries
@@ -42,17 +47,20 @@ Does not own:
 - `flush`
 - user/session analytics state
 - outbound batching
+- outbound network delivery for `LOG_ENTRY`
 
 ### `AnalyticsService`
 
 Owns:
 - page views and custom analytics events
+- optional `LOG_ENTRY` bridge when explicitly configured
 - event pipeline classification
 - security scanning of analytics payloads
 - aggregation and batch payload construction
 - immediate send for critical/security telemetry
 - SEO-enriched page-view telemetry
 - consent-aware outbound gating
+- lifecycle-safe delivery using `fetchLater`, `sendBeacon`, then fetch keepalive fallback
 
 ### Shared runtime seams
 
@@ -71,6 +79,38 @@ Expected behavior:
 - critical runtime/security telemetry bypasses normal batch delay
 - dev noise is discarded in production
 - scanner anomalies may upgrade analytics entries into security telemetry
+- lifecycle flushes must not block unload and should prefer browser-native deferred delivery
+
+## Production Observability / Privacy Contract
+
+Outbound telemetry is a production data boundary. Treat every new field as user
+or environment data until proven otherwise.
+
+Required contract:
+- local diagnostics are always local unless an explicit analytics bridge flag is set
+- `LOG_ENTRY` forwarding is off by default
+- production bridge defaults redact stacks and raw contract payloads
+- URL fields must be stripped of query strings and hashes before shipment
+- consent scopes gate outbound UI analytics, performance, error-tracking, and security categories
+- security/abuse telemetry may be configured as operationally required, but that policy must be documented by the product
+- analytics endpoints receive batches shaped as `{ batchId, sessionId, userId, source, meta, entries }`
+- no access tokens, auth cookies, form secrets, file contents, or raw user-generated body text may be added to analytics context
+- retention, processor/vendor, and user-rights language belongs in the product privacy/cookie documentation before deployment
+
+Recommended runtime config:
+
+```js
+runtimeConfig.analytics = {
+  endpoint: '/logs/batch',
+  collectRuntimeLogs: false,
+  runtimeLogs: {
+    enabled: false,
+    types: ['error', 'promise-error', 'security', 'contract-violation'],
+    includeStack: false,
+    includePayloads: false
+  }
+};
+```
 
 ## Consent Rules
 
