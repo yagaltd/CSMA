@@ -1,0 +1,304 @@
+/* CSMA Archetype — Data Grid */
+
+.csma-datagrid {
+    --dg-row-height: 40px;
+    --dg-header-height: 40px;
+    --dg-border: var(--border);
+    --dg-surface: var(--surface);
+    --dg-foreground: var(--foreground);
+    --dg-muted: var(--foreground-muted);
+    --dg-primary: var(--primary);
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+      overflow: hidden;
+    background: var(--surface, oklch(1 0.001 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    font-size: var(--font-size-sm, 0.8125rem);
+    line-height: var(--line-height-body, 1.5);
+    border: 1px solid var(--border, oklch(0.88 0.008 248));
+    border-radius: var(--radius-md, 0.5rem);
+    position: relative;
+    container-type: inline-size;
+}
+
+/* ─── Header ─────────────────────────────────────────── */
+
+.csma-datagrid__header {
+    display: flex;
+    flex-shrink: 0;
+    height: var(--dg-header-height);
+    border-bottom: 1px solid var(--dg-border);
+    background: var(--background-muted, oklch(0.954 0.008 248));
+      overflow: hidden;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.csma-datagrid__header-cell {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-sm, 0.5rem);
+    font-weight: var(--font-weight-semibold, 600);
+    font-size: var(--font-size-xs, 0.75rem);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-label, 0.05em);
+    color: var(--dg-muted);
+    user-select: none;
+    white-space: nowrap;
+      overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid var(--dg-border);
+    position: relative;
+    gap: var(--space-2xs, 0.25rem);
+}
+
+.csma-datagrid__header-cell:last-child {
+    border-right: none;
+}
+
+.csma-datagrid__header-cell[aria-sort] {
+    cursor: pointer;
+}
+
+.csma-datagrid__header-cell[aria-sort]:hover {
+    background: var(--primary-soft, color-mix(in srgb, var(--dg-primary) 8%, transparent));
+}
+
+.csma-datagrid__header-cell[aria-sort]:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--ring, var(--dg-primary));
+}
+
+.csma-datagrid__sort-icon {
+    flex-shrink: 0;
+    width: 0.75rem;
+    height: 0.75rem;
+    opacity: 0.4;
+    transition: opacity var(--transition-fast, 120ms) var(--motion-easing-out-quart, ease-out),
+                transform var(--transition-fast, 120ms) var(--motion-easing-out-quart, ease-out);
+}
+
+.csma-datagrid__header-cell[aria-sort="ascending"] .csma-datagrid__sort-icon,
+.csma-datagrid__header-cell[aria-sort="descending"] .csma-datagrid__sort-icon {
+    opacity: 1;
+    color: var(--dg-primary);
+}
+
+.csma-datagrid__header-cell[aria-sort="descending"] .csma-datagrid__sort-icon {
+    transform: rotate(180deg);
+}
+
+/* ─── Resize Handle ──────────────────────────────────── */
+
+.csma-datagrid__resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    cursor: col-resize;
+    z-index: 1;
+    transition: background var(--transition-fast, 120ms) ease;
+}
+
+.csma-datagrid__resize-handle:hover,
+.csma-datagrid__resize-handle[data-active="true"] {
+    background: var(--dg-primary);
+}
+
+.csma-datagrid--resizing {
+    cursor: col-resize;
+    user-select: none;
+}
+
+/* ─── Body / Scroll Container ────────────────────────── */
+
+.csma-datagrid__body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.csma-datagrid__spacer {
+    pointer-events: none;
+}
+
+.csma-datagrid__row {
+    display: flex;
+    height: var(--dg-row-height);
+    border-bottom: 1px solid var(--dg-border);
+    transition: background var(--transition-fast, 120ms) ease;
+    cursor: default;
+}
+
+.csma-datagrid__row:hover {
+    background: var(--primary-soft, color-mix(in srgb, var(--dg-primary) 4%, transparent));
+}
+
+.csma-datagrid__row[aria-selected="true"] {
+    background: var(--primary-soft, color-mix(in srgb, var(--dg-primary) 12%, transparent));
+}
+
+.csma-datagrid__row:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--ring, var(--dg-primary));
+}
+
+.csma-datagrid__row:last-child {
+    border-bottom: none;
+}
+
+.csma-datagrid__cell {
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-sm, 0.5rem);
+    white-space: nowrap;
+      overflow: hidden;
+    text-overflow: ellipsis;
+    border-right: 1px solid var(--dg-border);
+}
+
+.csma-datagrid__cell:last-child {
+    border-right: none;
+}
+
+/* ─── Checkbox Column ────────────────────────────────── */
+
+.csma-datagrid__cell--checkbox {
+    justify-content: center;
+    padding: 0;
+}
+
+.csma-datagrid__checkbox {
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    accent-color: var(--dg-primary);
+    margin: 0;
+}
+
+/* ─── States ─────────────────────────────────────────── */
+
+.csma-datagrid[data-state="loading"] .csma-datagrid__body {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.csma-datagrid[data-state="empty"] .csma-datagrid__body,
+.csma-datagrid[data-state="error"] .csma-datagrid__body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.csma-datagrid__state {
+    display: none;
+    position: absolute;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-2xl, 2rem);
+    color: var(--dg-muted);
+    text-align: center;
+    background: var(--dg-surface, oklch(1 0.001 248));
+    z-index: 3;
+}
+
+.csma-datagrid[data-state="loading"] .csma-datagrid__state[data-state="loading"],
+.csma-datagrid[data-state="empty"] .csma-datagrid__state[data-state="empty"],
+.csma-datagrid[data-state="error"] .csma-datagrid__state[data-state="error"] {
+    display: flex;
+}
+
+.csma-datagrid__state-icon {
+    width: 2rem;
+    height: 2rem;
+    opacity: 0.5;
+    overflow: hidden;
+}
+
+.csma-datagrid__state-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.csma-datagrid__state-message {
+    font-size: var(--font-size-sm, 0.8125rem);
+    max-width: 24ch;
+}
+
+.csma-datagrid__state-retry {
+    cursor: pointer;
+    color: var(--dg-primary);
+    font-weight: var(--font-weight-medium, 500);
+    border: none;
+    background: none;
+    padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+    border-radius: var(--radius-sm, 0.25rem);
+    font-size: var(--font-size-sm, 0.8125rem);
+}
+
+.csma-datagrid__state-retry:hover {
+    background: var(--primary-soft, color-mix(in srgb, var(--dg-primary) 12%, transparent));
+}
+
+.csma-datagrid__state-retry:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background, #fff), 0 0 0 4px var(--ring, var(--dg-primary));
+}
+
+/* ─── Spinner ────────────────────────────────────────── */
+
+.csma-datagrid__spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--dg-border);
+    border-top-color: var(--dg-primary);
+    border-radius: 50%;
+    animation: csma-datagrid-spin 0.6s linear infinite;
+}
+
+@keyframes csma-datagrid-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─── Reduced Motion ─────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .csma-datagrid__spinner {
+        animation: none;
+        opacity: 0.6;
+    }
+
+    .csma-datagrid__row,
+    .csma-datagrid__header-cell[aria-sort]:hover,
+    .csma-datagrid__sort-icon,
+    .csma-datagrid__resize-handle {
+        transition: none;
+    }
+}
+
+/* ─── High Contrast ──────────────────────────────────── */
+
+@media (prefers-contrast: high) {
+    .csma-datagrid {
+        border-width: 2px;
+    }
+
+    .csma-datagrid__header-cell {
+        border-right-width: 2px;
+    }
+
+    .csma-datagrid__row {
+        border-bottom-width: 1px;
+    }
+}

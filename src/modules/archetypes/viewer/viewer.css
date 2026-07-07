@@ -1,0 +1,244 @@
+/* CSMA Archetype — Viewer */
+
+.csma-viewer {
+    --vw-surface: var(--surface, oklch(1 0.001 248));
+    --vw-foreground: var(--foreground, oklch(0.215 0.018 252));
+    --vw-muted: var(--foreground-muted, oklch(0.5 0.015 248));
+    --vw-primary: var(--primary, oklch(0.29 0.04 260));
+    --vw-border: var(--border, oklch(0.88 0.008 248));
+
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--vw-surface);
+    color: var(--vw-foreground);
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    font-size: var(--font-size-base, 0.875rem);
+    line-height: var(--line-height-body, 1.5);
+    position: relative;
+}
+
+/* ─── Content Area ──────────────────────────────────── */
+
+.csma-viewer__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-lg, 1rem) var(--space-xl, 1.5rem);
+}
+
+.csma-viewer__content > *:first-child {
+    margin-top: 0;
+}
+
+/* ─── Typography Within Content ──────────────────────── */
+
+.csma-viewer__content h1,
+.csma-viewer__content h2,
+.csma-viewer__content h3,
+.csma-viewer__content h4,
+.csma-viewer__content h5,
+.csma-viewer__content h6 {
+    margin-top: var(--space-xl, 1.5rem);
+    margin-bottom: var(--space-sm, 0.5rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: var(--line-height-heading, 1.3);
+    color: var(--vw-foreground);
+}
+
+.csma-viewer__content h1 { font-size: var(--font-size-2xl, 1.5rem); }
+.csma-viewer__content h2 { font-size: var(--font-size-xl, 1.25rem); }
+.csma-viewer__content h3 { font-size: var(--font-size-lg, 1.125rem); }
+
+.csma-viewer__content p {
+    margin-bottom: var(--space-md, 0.75rem);
+}
+
+.csma-viewer__content a {
+    color: var(--vw-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.csma-viewer__content a:hover {
+    opacity: 0.8;
+}
+
+.csma-viewer__content code {
+    font-family: var(--font-family-mono, 'SF Mono', 'Cascadia Code', monospace);
+    font-size: 0.875em;
+    background: var(--background-muted, oklch(0.954 0.008 248));
+    padding: 0.125em 0.375em;
+    border-radius: var(--radius-sm, 0.25rem);
+    border: 1px solid var(--vw-border);
+}
+
+.csma-viewer__content pre {
+    background: var(--background-muted, oklch(0.954 0.008 248));
+    border: 1px solid var(--vw-border);
+    border-radius: var(--radius-md, 0.5rem);
+    padding: var(--space-md, 0.75rem);
+    overflow-x: auto;
+    margin-bottom: var(--space-md, 0.75rem);
+}
+
+.csma-viewer__content pre code {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.csma-viewer__content blockquote {
+    border-left: 3px solid var(--vw-primary);
+    margin: var(--space-md, 0.75rem) 0;
+    padding: var(--space-xs, 0.25rem) var(--space-md, 0.75rem);
+    color: var(--vw-muted);
+}
+
+.csma-viewer__content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-md, 0.5rem);
+}
+
+.csma-viewer__content ul,
+.csma-viewer__content ol {
+    margin-bottom: var(--space-md, 0.75rem);
+    padding-left: var(--space-xl, 1.5rem);
+}
+
+.csma-viewer__content li {
+    margin-bottom: var(--space-2xs, 0.25rem);
+}
+
+.csma-viewer__content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--space-md, 0.75rem);
+    font-size: var(--font-size-sm, 0.8125rem);
+}
+
+.csma-viewer__content th,
+.csma-viewer__content td {
+    padding: var(--space-sm, 0.5rem);
+    border: 1px solid var(--vw-border);
+    text-align: left;
+}
+
+.csma-viewer__content th {
+    background: var(--background-muted, oklch(0.954 0.008 248));
+    font-weight: var(--font-weight-semibold, 600);
+}
+
+.csma-viewer__content hr {
+    border: none;
+    border-top: 1px solid var(--vw-border);
+    margin: var(--space-xl, 1.5rem) 0;
+}
+
+/* ─── States ─────────────────────────────────────────── */
+
+.csma-viewer__state {
+    display: none;
+    position: absolute;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md, 0.75rem);
+    padding: var(--space-3xl, 3rem) var(--space-xl, 1.5rem);
+    color: var(--vw-muted);
+    text-align: center;
+    background: var(--vw-surface, oklch(1 0.001 248));
+    z-index: 3;
+}
+
+.csma-viewer[data-state="loading"] .csma-viewer__state[data-state="loading"],
+.csma-viewer[data-state="empty"] .csma-viewer__state[data-state="empty"],
+.csma-viewer[data-state="error"] .csma-viewer__state[data-state="error"] {
+    display: flex;
+}
+
+.csma-viewer[data-state="loading"] .csma-viewer__content,
+.csma-viewer[data-state="empty"] .csma-viewer__content,
+.csma-viewer[data-state="error"] .csma-viewer__content {
+    display: none;
+}
+
+.csma-viewer__state-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    opacity: 0.4;
+    overflow: hidden;
+}
+
+.csma-viewer__state-icon svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.csma-viewer__state-message {
+    font-size: var(--font-size-sm, 0.8125rem);
+    max-width: 32ch;
+}
+
+.csma-viewer__state-detail {
+    font-size: var(--font-size-xs, 0.75rem);
+    max-width: 48ch;
+    word-break: break-word;
+}
+
+.csma-viewer__state-retry {
+    cursor: pointer;
+    color: var(--vw-primary);
+    font-weight: var(--font-weight-medium, 500);
+    border: none;
+    background: none;
+    padding: var(--space-xs, 0.25rem) var(--space-md, 0.75rem);
+    border-radius: var(--radius-sm, 0.25rem);
+    font-size: var(--font-size-sm, 0.8125rem);
+    margin-top: var(--space-xs, 0.25rem);
+}
+
+.csma-viewer__state-retry:hover {
+    background: var(--primary-soft, color-mix(in srgb, var(--vw-primary) 12%, transparent));
+}
+
+.csma-viewer__state-retry:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background, #fff), 0 0 0 4px var(--ring, var(--vw-primary));
+}
+
+/* ─── Spinner ────────────────────────────────────────── */
+
+.csma-viewer__spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--vw-border);
+    border-top-color: var(--vw-primary);
+    border-radius: 50%;
+    animation: csma-viewer-spin 0.6s linear infinite;
+}
+
+@keyframes csma-viewer-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─── Reduced Motion ─────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .csma-viewer__spinner {
+        animation: none;
+        opacity: 0.6;
+    }
+}
+
+/* ─── High Contrast ──────────────────────────────────── */
+
+@media (prefers-contrast: high) {
+    .csma-viewer__content blockquote {
+        border-left-width: 4px;
+    }
+}

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSMA Archetypes : E2E Test Fixture</title>
+  <link rel="stylesheet" href="../src/generated/tokens.css" />
+  <link rel="stylesheet" href="../src/style/base.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--background, #f8f9fa);
+      color: var(--foreground, #1a1a2e);
+      padding: 2rem;
+    }
+    h2 { clear: both;
+      margin: 2rem 0 1rem;
+      font-size: 1.25rem;
+    }
+    .section-wrap { margin-bottom: 3rem; }
+    .grid-wrap { width: 100%; max-width: 900px; height: 420px; margin-bottom: 3rem; border: 1px dashed var(--border, #ccc); }
+    .viewer-wrap { width: 100%; max-width: 700px; height: 340px; margin-bottom: 3rem; border: 1px dashed var(--border, #ccc); }
+    .controls { display: flex; gap: 0.5rem; margin: 0.5rem 0 1rem; flex-wrap: wrap; }
+    .controls button {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8125rem;
+      border: 1px solid var(--border, #ccc);
+      border-radius: var(--radius-sm, 0.25rem);
+      background: var(--surface, #fff);
+      color: var(--foreground, #1a1a2e);
+      cursor: pointer;
+    }
+    .controls button:hover { background: var(--background-muted, #eee); }
+    .log { margin-top: 0.5rem; font-size: 0.75rem; color: var(--foreground-muted, #666); }
+  </style>
+</head>
+<body>
+  <h1>CSMA Archetypes : E2E Test Fixture</h1>
+
+  <!-- ─── Data Grid ──────────────────────────────── -->
+  <h2>Data Grid : Normal</h2>
+  <div class="controls">
+    <button id="dg-sort-name">Sort by Name</button>
+    <button id="dg-sort-age">Sort by Age</button>
+    <button id="dg-loading">Set Loading</button>
+    <button id="dg-empty">Set Empty</button>
+    <button id="dg-error">Set Error</button>
+    <button id="dg-select-first">Select Row 1</button>
+    <button id="dg-get-selected">Log Selected</button>
+    <button id="dg-update">Update Data</button>
+  </div>
+  <div id="grid-container" class="grid-wrap"></div>
+  <div id="grid-log" class="log"></div>
+
+  <h2>Data Grid : Selectable (multi)</h2>
+  <div id="grid-selectable-container" class="grid-wrap"></div>
+  <div id="grid-selectable-log" class="log"></div>
+
+  <!-- ─── Viewer ──────────────────────────────────── -->
+  <h2>Viewer : Markdown</h2>
+  <div class="controls">
+    <button id="vw-loading">Set Loading</button>
+    <button id="vw-empty">Set Empty</button>
+    <button id="vw-error">Set Error</button>
+    <button id="vw-update-md">Update (Markdown)</button>
+    <button id="vw-update-html">Update (HTML)</button>
+  </div>
+  <div id="viewer-container" class="viewer-wrap"></div>
+  <div id="viewer-log" class="log"></div>
+
+  <h2>Viewer : Plain Text</h2>
+  <div id="viewer-plain-container" class="viewer-wrap"></div>
+
+  <script type="module">
+    import { createDataGrid } from '../src/modules/archetypes/data-grid/index.js';
+    import { createViewer } from '../src/modules/archetypes/viewer/index.js';
+
+    // ─── Test Data ────────────────────────────────────
+
+    const PEOPLE = [
+      { id: 1, name: 'Alice',   age: 30, role: 'Engineer' },
+      { id: 2, name: 'Bob',     age: 25, role: 'Designer' },
+      { id: 3, name: 'Charlie', age: 35, role: 'Manager' },
+      { id: 4, name: 'Diana',   age: 28, role: 'Engineer' },
+      { id: 5, name: 'Eve',     age: 32, role: 'Designer' },
+      { id: 6, name: 'Frank',   age: 40, role: 'Manager' },
+      { id: 7, name: 'Grace',   age: 22, role: 'Intern' },
+      { id: 8, name: 'Hank',    age: 45, role: 'Director' },
+      { id: 9, name: 'Iris',    age: 29, role: 'Engineer' },
+      { id: 10, name: 'Jack',   age: 33, role: 'Designer' },
+      { id: 11, name: 'Kate',   age: 27, role: 'Manager' },
+      { id: 12, name: 'Leo',    age: 31, role: 'Engineer' },
+      { id: 13, name: 'Mia',    age: 26, role: 'Intern' },
+      { id: 14, name: 'Nate',   age: 38, role: 'Director' },
+      { id: 15, name: 'Olivia', age: 24, role: 'Designer' },
+    ];
+
+    const log = (id, msg) => {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+    };
+
+    // ─── Data Grid 1 : Basic ─────────────────────────
+
+    const gridContainer = document.getElementById('grid-container');
+    const grid = createDataGrid(gridContainer, (event, payload) => {
+      log('grid-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    }, {
+      columns: [
+        { id: 'name', label: 'Name', width: 180, sortable: true },
+        { id: 'age', label: 'Age', width: 80, sortable: true },
+        { id: 'role', label: 'Role', width: 160 },
+      ],
+      data: PEOPLE,
+      selectable: false,
+      resizable: true,
+      rowHeight: 36,
+    });
+
+    document.getElementById('dg-sort-name').onclick = () => grid.sort('name', 'asc');
+    document.getElementById('dg-sort-age').onclick = () => grid.sort('age', 'desc');
+    document.getElementById('dg-loading').onclick = () => grid.setLoading(true);
+    document.getElementById('dg-empty').onclick = () => grid.update([]);
+    document.getElementById('dg-error').onclick = () => {
+      grid.setLoading(false);
+      grid.update([]);
+      // Manually set error-like state
+      gridContainer.querySelector('.csma-datagrid').dataset.state = 'error';
+    };
+    document.getElementById('dg-select-first').onclick = () => {
+      // Focus row 0
+      gridContainer.querySelector('.csma-datagrid').dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Home', bubbles: true })
+      );
+    };
+    document.getElementById('dg-get-selected').onclick = () => {
+      log('grid-log', `Selected: ${JSON.stringify(grid.getSelected())}`);
+    };
+    document.getElementById('dg-update').onclick = () => {
+      grid.update([
+        { id: 100, name: 'New Alice', age: 31, role: 'VP' },
+        { id: 101, name: 'New Bob', age: 26, role: 'CTO' },
+      ]);
+    };
+
+    // ─── Data Grid 2 : Selectable ────────────────────
+
+    const gridSelContainer = document.getElementById('grid-selectable-container');
+    const gridSel = createDataGrid(gridSelContainer, null, {
+      columns: [
+        { id: 'name', label: 'Name', width: 200 },
+        { id: 'role', label: 'Role', width: 180 },
+      ],
+      data: PEOPLE.slice(0, 6),
+      selectable: true,
+      multiSelect: true,
+      rowHeight: 40,
+      onSelectionChange: (ids) => {
+        log('grid-selectable-log', `Selection: [${ids.join(', ')}]`);
+      },
+    });
+
+    window.__gridSel = gridSel;
+
+    // ─── Viewer 1 : Markdown ─────────────────────────
+
+    const viewerContainer = document.getElementById('viewer-container');
+    const viewer = createViewer(viewerContainer, (event, payload) => {
+      log('viewer-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    }, {
+      markdown: 'auto',
+      loadingMessage: 'Loading content…',
+      emptyMessage: 'No content to display',
+      errorMessage: 'Content failed to load',
+    });
+
+    // Seed with markdown
+    viewer.update(`# Hello World
+
+This is a **markdown** viewer test.
+
+## Features
+- Renders *italic* and **bold** text
+- Supports \`inline code\`
+- Handles [links](https://example.com)
+
+> Blockquote test
+
+### Code Block
+\`\`\`js
+console.log('hello');
+\`\`\`
+`);
+
+    document.getElementById('vw-loading').onclick = () => viewer.setLoading(true);
+    document.getElementById('vw-empty').onclick = () => viewer.update('');
+    document.getElementById('vw-error').onclick = () => {
+      viewer.setLoading(false);
+      viewer.update(null);
+      viewerContainer.querySelector('.csma-viewer').dataset.state = 'error';
+    };
+    document.getElementById('vw-update-md').onclick = () => {
+      viewer.update('## Updated\n\nNew **markdown** content with `code`.');
+    };
+    document.getElementById('vw-update-html').onclick = () => {
+      viewer.update({ html: '<h2>HTML Content</h2><p>Rendered from <strong>API</strong> response.</p>' });
+    };
+
+    // ─── Viewer 2 : Plain Text ───────────────────────
+
+    const viewerPlainContainer = document.getElementById('viewer-plain-container');
+    const viewerPlain = createViewer(viewerPlainContainer, null, {
+      markdown: false,
+      emptyMessage: 'Nothing here yet',
+    });
+    viewerPlain.update('Plain text content. No markdown rendering applied.');
+
+    // Expose for debugging
+    window.__grid = grid;
+    window.__viewer = viewer;
+    window.__viewerPlain = viewerPlain;
+
+    console.log('E2E test fixture ready');
+  </script>
+</body>
+</html>
