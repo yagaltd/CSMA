@@ -3,137 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CSMA Archetypes : E2E Test Fixture</title>
+  <title>CSMA Archetypes Demo</title>
   <link rel="stylesheet" href="../src/generated/tokens.css" />
   <link rel="stylesheet" href="../src/style/base.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; }
     body {
       font-family: system-ui, sans-serif;
       background: var(--background, #f8f9fa);
       color: var(--foreground, #1a1a2e);
-      padding: 2rem;
+      padding: 1.5rem;
     }
-    h2 { clear: both;
-      margin: 2rem 0 1rem;
-      font-size: 1.25rem;
+    h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+    h2 { font-size: 1rem; margin: 0 0 0.5rem; color: var(--foreground-muted, #666); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+
+    /* 2-column grid for sections */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
     }
-    .section-wrap { margin-bottom: 3rem; }
-    .grid-wrap { width: 100%; max-width: 900px; height: 420px; margin-bottom: 3rem; border: 1px dashed var(--border, #ccc); }
-    .viewer-wrap { width: 100%; max-width: 700px; height: 340px; margin-bottom: 3rem; border: 1px dashed var(--border, #ccc); }
-    .controls { display: flex; gap: 0.5rem; margin: 0.5rem 0 1rem; flex-wrap: wrap; }
+    @media (max-width: 900px) { .demo-grid { grid-template-columns: 1fr; } }
+
+    .demo-section {
+      border: 1px solid var(--border, #ddd);
+      border-radius: var(--radius-md, 0.5rem);
+      background: var(--surface, #fff);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .demo-section--wide { grid-column: 1 / -1; }
+
+    .grid-wrap { min-height: 340px; max-height: 420px; }
+    .viewer-wrap { min-height: 260px; max-height: 380px; }
+
+    .controls { display: flex; gap: 0.375rem; flex-wrap: wrap; }
     .controls button {
-      padding: 0.375rem 0.75rem;
-      font-size: 0.8125rem;
+      padding: 0.25rem 0.625rem;
+      font-size: 0.75rem;
       border: 1px solid var(--border, #ccc);
       border-radius: var(--radius-sm, 0.25rem);
       background: var(--surface, #fff);
       color: var(--foreground, #1a1a2e);
       cursor: pointer;
+      white-space: nowrap;
     }
     .controls button:hover { background: var(--background-muted, #eee); }
-    .log { margin-top: 0.5rem; font-size: 0.75rem; color: var(--foreground-muted, #666); }
+    .log { font-size: 0.6875rem; color: var(--foreground-muted, #888); min-height: 1em; word-break: break-all; }
   </style>
 </head>
 <body>
-  <h1>CSMA Archetypes : E2E Test Fixture</h1>
+  <h1>CSMA Archetypes Demo</h1>
 
-  <!-- ─── Data Grid ──────────────────────────────── -->
-  <h2>Data Grid : Normal</h2>
-  <div class="controls">
-    <button id="dg-sort-name">Sort by Name</button>
-    <button id="dg-sort-age">Sort by Age</button>
-    <button id="dg-loading">Set Loading</button>
-    <button id="dg-empty">Set Empty</button>
-    <button id="dg-error">Set Error</button>
-    <button id="dg-select-first">Select Row 1</button>
-    <button id="dg-get-selected">Log Selected</button>
-    <button id="dg-update">Update Data</button>
+  <div class="demo-grid">
+
+    <!-- ── Data Grid ── -->
+    <div class="demo-section demo-section--wide">
+      <h2>Data Grid</h2>
+      <div class="controls">
+        <button id="dg-sort-name">Sort Name</button>
+        <button id="dg-sort-age">Sort Age</button>
+        <button id="dg-loading">Loading</button>
+        <button id="dg-empty">Empty</button>
+        <button id="dg-error">Error</button>
+        <button id="dg-update">Update Data</button>
+      </div>
+      <div id="grid-container" class="grid-wrap"></div>
+      <div id="grid-log" class="log"></div>
+    </div>
+
+    <!-- ── Data Grid Selectable ── -->
+    <div class="demo-section">
+      <h2>Data Grid (Multi-Select)</h2>
+      <div class="controls">
+        <button id="dg-get-selected">Log Selected</button>
+      </div>
+      <div id="grid-selectable-container" class="grid-wrap"></div>
+      <div id="grid-selectable-log" class="log"></div>
+    </div>
+
+    <!-- ── Stats Dashboard ── -->
+    <div class="demo-section demo-section--wide">
+      <h2>Stats Dashboard (Chart.js)</h2>
+      <div class="controls">
+        <button id="sd-refresh">Refresh</button>
+        <button id="sd-randomize">Randomize Data</button>
+      </div>
+      <div id="stats-container" class="grid-wrap"></div>
+      <div id="stats-log" class="log"></div>
+    </div>
+
+    <!-- ── Viewer ── -->
+    <div class="demo-section">
+      <h2>Viewer (Markdown)</h2>
+      <div class="controls">
+        <button id="vw-update-md">Markdown</button>
+        <button id="vw-update-html">HTML</button>
+        <button id="vw-loading">Loading</button>
+        <button id="vw-empty">Empty</button>
+      </div>
+      <div id="viewer-container" class="viewer-wrap"></div>
+      <div id="viewer-log" class="log"></div>
+    </div>
+
+    <!-- ── Viewer Plain ── -->
+    <div class="demo-section">
+      <h2>Viewer (Plain Text)</h2>
+      <div id="viewer-plain-container" class="viewer-wrap"></div>
+    </div>
+
+    <!-- ── Editor Builder ── -->
+    <div class="demo-section">
+      <h2>Editor Builder</h2>
+      <div class="controls">
+        <button id="eb-set-values">Pre-fill</button>
+        <button id="eb-submit">Submit</button>
+        <button id="eb-reset">Reset</button>
+      </div>
+      <div id="editor-container" class="viewer-wrap"></div>
+      <div id="editor-log" class="log"></div>
+    </div>
+
+    <!-- ── Config Panel ── -->
+    <div class="demo-section">
+      <h2>Config Panel</h2>
+      <div class="controls">
+        <button id="cp-get-values">Log Values</button>
+        <button id="cp-set-values">Dark Mode</button>
+      </div>
+      <div id="config-container" class="viewer-wrap"></div>
+      <div id="config-log" class="log"></div>
+    </div>
+
   </div>
-  <div id="grid-container" class="grid-wrap"></div>
-  <div id="grid-log" class="log"></div>
 
-  <h2>Data Grid : Selectable (multi)</h2>
-  <div id="grid-selectable-container" class="grid-wrap"></div>
-  <div id="grid-selectable-log" class="log"></div>
-
-  <!-- ─── Viewer ──────────────────────────────────── -->
-  <h2>Viewer : Markdown</h2>
-  <div class="controls">
-    <button id="vw-loading">Set Loading</button>
-    <button id="vw-empty">Set Empty</button>
-    <button id="vw-error">Set Error</button>
-    <button id="vw-update-md">Update (Markdown)</button>
-    <button id="vw-update-html">Update (HTML)</button>
-  </div>
-  <div id="viewer-container" class="viewer-wrap"></div>
-  <div id="viewer-log" class="log"></div>
-
-  <h2>Viewer : Plain Text</h2>
-  <div id="viewer-plain-container" class="viewer-wrap"></div>
-
-
-  <h2>Stats Dashboard</h2>
-  <div class="controls">
-    <button id="sd-refresh">Refresh</button>
-    <button id="sd-error">Set Error</button>
-  </div>
-  <div id="stats-container" class="grid-wrap"></div>
-  <div id="stats-log" class="log"></div>
-
-  <h2>Editor Builder</h2>
-  <div class="controls">
-    <button id="eb-submit">Submit</button>
-    <button id="eb-reset">Reset</button>
-    <button id="eb-set-values">Pre-fill Values</button>
-  </div>
-  <div id="editor-container" class="viewer-wrap"></div>
-  <div id="editor-log" class="log"></div>
-
-  <h2>Config Panel</h2>
-  <div class="controls">
-    <button id="cp-get-values">Log Values</button>
-    <button id="cp-set-values">Set Values</button>
-  </div>
-  <div id="config-container" class="viewer-wrap"></div>
-  <div id="config-log" class="log"></div>
   <script type="module">
     import { createDataGrid } from '../src/modules/archetypes/data-grid/index.js';
     import { createViewer } from '../src/modules/archetypes/viewer/index.js';
     import { createStatsDashboard } from '../src/modules/archetypes/stats-dashboard/index.js';
-import { createEditor } from '../src/modules/archetypes/editor-builder/index.js';
-import { createConfigPanel } from '../src/modules/archetypes/config-panel/index.js';
+    import { createEditor } from '../src/modules/archetypes/editor-builder/index.js';
+    import { createConfigPanel } from '../src/modules/archetypes/config-panel/index.js';
 
-    // ─── Test Data ────────────────────────────────────
+    const log = (id, msg) => { const el = document.getElementById(id); if (el) el.textContent = msg; };
 
     const PEOPLE = [
-      { id: 1, name: 'Alice',   age: 30, role: 'Engineer' },
-      { id: 2, name: 'Bob',     age: 25, role: 'Designer' },
+      { id: 1, name: 'Alice', age: 30, role: 'Engineer' },
+      { id: 2, name: 'Bob', age: 25, role: 'Designer' },
       { id: 3, name: 'Charlie', age: 35, role: 'Manager' },
-      { id: 4, name: 'Diana',   age: 28, role: 'Engineer' },
-      { id: 5, name: 'Eve',     age: 32, role: 'Designer' },
-      { id: 6, name: 'Frank',   age: 40, role: 'Manager' },
-      { id: 7, name: 'Grace',   age: 22, role: 'Intern' },
-      { id: 8, name: 'Hank',    age: 45, role: 'Director' },
-      { id: 9, name: 'Iris',    age: 29, role: 'Engineer' },
-      { id: 10, name: 'Jack',   age: 33, role: 'Designer' },
-      { id: 11, name: 'Kate',   age: 27, role: 'Manager' },
-      { id: 12, name: 'Leo',    age: 31, role: 'Engineer' },
-      { id: 13, name: 'Mia',    age: 26, role: 'Intern' },
-      { id: 14, name: 'Nate',   age: 38, role: 'Director' },
-      { id: 15, name: 'Olivia', age: 24, role: 'Designer' },
+      { id: 4, name: 'Diana', age: 28, role: 'Engineer' },
+      { id: 5, name: 'Eve', age: 32, role: 'Designer' },
+      { id: 6, name: 'Frank', age: 40, role: 'Manager' },
+      { id: 7, name: 'Grace', age: 22, role: 'Intern' },
+      { id: 8, name: 'Hank', age: 45, role: 'Director' },
+      { id: 9, name: 'Iris', age: 29, role: 'Engineer' },
+      { id: 10, name: 'Jack', age: 33, role: 'Designer' },
+      { id: 11, name: 'Kate', age: 27, role: 'Manager' },
+      { id: 12, name: 'Leo', age: 31, role: 'Engineer' },
     ];
 
-    const log = (id, msg) => {
-      const el = document.getElementById(id);
-      el.textContent = msg;
-    };
-
-    // ─── Data Grid 1 : Basic ─────────────────────────
-
-    const gridContainer = document.getElementById('grid-container');
-    const grid = createDataGrid(gridContainer, (event, payload) => {
-      log('grid-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    // ─── Data Grid ────────────────────────────────────
+    const grid = createDataGrid(document.getElementById('grid-container'), (evt, payload) => {
+      log('grid-log', `[${evt}] ${JSON.stringify(payload).slice(0, 100)}`);
     }, {
       columns: [
         { id: 'name', label: 'Name', width: 180, sortable: true },
@@ -141,142 +174,159 @@ import { createConfigPanel } from '../src/modules/archetypes/config-panel/index.
         { id: 'role', label: 'Role', width: 160 },
       ],
       data: PEOPLE,
-      selectable: false,
       resizable: true,
       rowHeight: 36,
     });
 
-    document.getElementById('dg-sort-name').onclick = () => grid.sort('name', 'asc');
-    document.getElementById('dg-sort-age').onclick = () => grid.sort('age', 'desc');
+    document.getElementById('dg-sort-name').onclick = () => grid.sort('name');
+    document.getElementById('dg-sort-age').onclick = () => grid.sort('age');
     document.getElementById('dg-loading').onclick = () => grid.setLoading(true);
     document.getElementById('dg-empty').onclick = () => grid.update([]);
-    document.getElementById('dg-error').onclick = () => {
-      grid.setLoading(false);
-      grid.update([]);
-      // Manually set error-like state
-      gridContainer.querySelector('.csma-datagrid').dataset.state = 'error';
-    };
-    document.getElementById('dg-select-first').onclick = () => {
-      // Focus row 0
-      gridContainer.querySelector('.csma-datagrid').dispatchEvent(
-        new KeyboardEvent('keydown', { key: 'Home', bubbles: true })
-      );
-    };
-    document.getElementById('dg-get-selected').onclick = () => {
-      log('grid-log', `Selected: ${JSON.stringify(grid.getSelected())}`);
-    };
-    document.getElementById('dg-update').onclick = () => {
-      grid.update([
-        { id: 100, name: 'New Alice', age: 31, role: 'VP' },
-        { id: 101, name: 'New Bob', age: 26, role: 'CTO' },
-      ]);
-    };
+    document.getElementById('dg-error').onclick = () => { grid.setLoading(false); grid.update([]); document.getElementById('grid-container').querySelector('.csma-datagrid').dataset.state = 'error'; };
+    document.getElementById('dg-update').onclick = () => grid.update([{ id: 100, name: 'New Alice', age: 31, role: 'VP' }, { id: 101, name: 'New Bob', age: 26, role: 'CTO' }]);
 
-    // ─── Data Grid 2 : Selectable ────────────────────
-
-    const gridSelContainer = document.getElementById('grid-selectable-container');
-    const gridSel = createDataGrid(gridSelContainer, null, {
-      columns: [
-        { id: 'name', label: 'Name', width: 200 },
-        { id: 'role', label: 'Role', width: 180 },
-      ],
+    // Multi-select grid
+    const gridSel = createDataGrid(document.getElementById('grid-selectable-container'), null, {
+      columns: [{ id: 'name', label: 'Name', width: 200 }, { id: 'role', label: 'Role', width: 180 }],
       data: PEOPLE.slice(0, 6),
-      selectable: true,
-      multiSelect: true,
-      rowHeight: 40,
-      onSelectionChange: (ids) => {
-        log('grid-selectable-log', `Selection: [${ids.join(', ')}]`);
-      },
+      selectable: true, multiSelect: true, rowHeight: 40,
+      onSelectionChange: (ids) => log('grid-selectable-log', `Selected: [${ids.join(', ')}]`),
     });
+    document.getElementById('dg-get-selected').onclick = () => log('grid-selectable-log', `API: ${JSON.stringify(gridSel.getSelected())}`);
 
-    window.__gridSel = gridSel;
+    // ─── Stats Dashboard + Chart.js ───────────────────
+    let chartInstances = [];
 
-    // ─── Viewer 1 : Markdown ─────────────────────────
+    function randomData() {
+      return {
+        total: { value: 800 + Math.floor(Math.random() * 1200), trend: Math.round((Math.random() - 0.3) * 30) },
+        active: { value: 300 + Math.floor(Math.random() * 800), trend: Math.round((Math.random() - 0.5) * 20) },
+        storage: { value: (1.5 + Math.random() * 4) * 1e9, trend: Math.round((Math.random() - 0.2) * 15) },
+        uptime: { value: 99 + Math.random(), trend: Math.round((Math.random() - 0.6) * 2) },
+      };
+    }
 
-    const viewerContainer = document.getElementById('viewer-container');
-    const viewer = createViewer(viewerContainer, (event, payload) => {
-      log('viewer-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    function renderCharts() {
+      const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#e0e0e0';
+      // Destroy old charts
+      chartInstances.forEach(c => c.destroy());
+      chartInstances = [];
+
+      const container = document.getElementById('stats-container');
+      const canvases = container.querySelectorAll('.csma-stats__chart-canvas');
+      if (canvases.length < 2) return;
+
+      // Chart 1: Daily Events (line)
+      const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const ctx1 = canvases[0].getContext('2d');
+      chartInstances.push(new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [{
+            label: 'Events',
+            data: labels.map(() => 20 + Math.floor(Math.random() * 80)),
+            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#4f6ef7',
+            backgroundColor: 'transparent',
+            tension: 0.3,
+            pointRadius: 3,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, ticks: { font: { size: 10 } }, grid: { color: gridColor } },
+            x: { ticks: { font: { size: 10 } }, grid: { display: false } },
+          },
+        },
+      }));
+
+      // Chart 2: Usage Breakdown (doughnut)
+      const ctx2 = canvases[1].getContext('2d');
+      chartInstances.push(new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Compute', 'Storage', 'Network', 'Other'],
+          datasets: [{
+            data: [45, 25, 18, 12],
+            backgroundColor: ['#4f6ef7', '#38bdf8', '#a78bfa', '#e2e8f0'],
+            borderWidth: 0,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 12 } } },
+        },
+      }));
+    }
+
+    const stats = createStatsDashboard(document.getElementById('stats-container'), (evt, p) => {
+      log('stats-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`);
     }, {
-      markdown: 'auto',
-      loadingMessage: 'Loading content…',
-      emptyMessage: 'No content to display',
-      errorMessage: 'Content failed to load',
+      cards: [
+        { id: 'total', label: 'Total Items', format: 'number', fetch: async () => randomData().total },
+        { id: 'active', label: 'Active Users', format: 'number', fetch: async () => randomData().active },
+        { id: 'storage', label: 'Storage Used', format: 'bytes', fetch: async () => randomData().storage },
+        { id: 'uptime', label: 'Uptime', format: 'percent', fetch: async () => randomData().uptime },
+      ],
+      charts: [
+        { id: 'daily', label: 'Daily Events', type: 'line' },
+        { id: 'usage', label: 'Usage Breakdown', type: 'doughnut' },
+      ],
     });
 
-    // Seed with markdown
+    // Render charts after stats dashboard loads
+    setTimeout(renderCharts, 800);
+
+    document.getElementById('sd-refresh').onclick = async () => { await stats.refresh(); setTimeout(renderCharts, 300); };
+    document.getElementById('sd-randomize').onclick = () => { stats.refresh(); setTimeout(renderCharts, 300); };
+
+    // ─── Viewer ───────────────────────────────────────
+    const viewer = createViewer(document.getElementById('viewer-container'), (evt, p) => {
+      log('viewer-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`);
+    }, { markdown: 'auto' });
+
     viewer.update(`# Hello World
 
-This is a **markdown** viewer test.
+This is a **markdown** viewer with *italic*, \`inline code\`, and [links](https://example.com).
 
 ## Features
-- Renders *italic* and **bold** text
-- Supports \`inline code\`
-- Handles [links](https://example.com)
+- Renders headings, lists, and blocks
+- Supports code blocks
+- Handles images and links
 
-> Blockquote test
+> Blockquote: archetypes are reusable
 
-### Code Block
+### Code
 \`\`\`js
-console.log('hello');
+const msg = 'hello csma';
+console.log(msg);
 \`\`\`
 `);
 
+    document.getElementById('vw-update-md').onclick = () => viewer.update('## Updated\n\nNew **markdown** content.');
+    document.getElementById('vw-update-html').onclick = () => viewer.update({ html: '<h2>HTML Content</h2><p>Rendered from <strong>API</strong>.</p>' });
     document.getElementById('vw-loading').onclick = () => viewer.setLoading(true);
     document.getElementById('vw-empty').onclick = () => viewer.update('');
-    document.getElementById('vw-error').onclick = () => {
-      viewer.setLoading(false);
-      viewer.update(null);
-      viewerContainer.querySelector('.csma-viewer').dataset.state = 'error';
-    };
-    document.getElementById('vw-update-md').onclick = () => {
-      viewer.update('## Updated\n\nNew **markdown** content with `code`.');
-    };
-    document.getElementById('vw-update-html').onclick = () => {
-      viewer.update({ html: '<h2>HTML Content</h2><p>Rendered from <strong>API</strong> response.</p>' });
-    };
 
-    // ─── Viewer 2 : Plain Text ───────────────────────
-
-    const viewerPlainContainer = document.getElementById('viewer-plain-container');
-    const viewerPlain = createViewer(viewerPlainContainer, null, {
-      markdown: false,
-      emptyMessage: 'Nothing here yet',
+    const viewerPlain = createViewer(document.getElementById('viewer-plain-container'), null, {
+      markdown: false, emptyMessage: 'Nothing here yet',
     });
-    viewerPlain.update('Plain text content. No markdown rendering applied.');
+    viewerPlain.update('Plain text content with no markdown applied. Safe by default via textContent.');
 
-
-    // ─── Stats Dashboard ─────────────────────────────
-
-    const statsContainer = document.getElementById('stats-container');
-    const stats = createStatsDashboard(statsContainer, (event, payload) => {
-      log('stats-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
-    }, {
-      cards: [
-        { id: 'total', label: 'Total Items', format: 'number', fetch: async () => ({ value: 1420, trend: 12 }) },
-        { id: 'active', label: 'Active Users', format: 'number', fetch: async () => ({ value: 873, trend: -3 }) },
-        { id: 'storage', label: 'Storage Used', format: 'bytes', fetch: async () => ({ value: 2.4e9, trend: 5 }) },
-        { id: 'uptime', label: 'Uptime', format: 'percent', fetch: async () => ({ value: 99.97, trend: 0 }) },
-      ],
-      cols: { sm: 2, md: 3, lg: 4 },
-    });
-
-    document.getElementById('sd-refresh').onclick = () => stats.refresh();
-    document.getElementById('sd-error').onclick = () => {
-      statsContainer.querySelector('.csma-stats').dataset.state = 'error';
-    };
-
-    // ─── Editor Builder ──────────────────────────────
-
-    const editorContainer = document.getElementById('editor-container');
-    const editor = createEditor(editorContainer, (event, payload) => {
-      log('editor-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    // ─── Editor Builder ───────────────────────────────
+    const editor = createEditor(document.getElementById('editor-container'), (evt, p) => {
+      log('editor-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`);
     }, {
       fields: [
         { id: 'name', type: 'text', label: 'Name', required: true, placeholder: 'Enter name' },
         { id: 'email', type: 'email', label: 'Email', required: true },
-        { id: 'role', type: 'select', label: 'Role', options: ['Engineer', 'Designer', 'Manager', 'Intern'] },
-        { id: 'bio', type: 'textarea', label: 'Bio', placeholder: 'Tell us about yourself', help: 'Optional short biography' },
-        { id: 'notify', type: 'toggle', label: 'Enable notifications' },
+        { id: 'role', type: 'select', label: 'Role', options: ['Engineer', 'Designer', 'Manager'] },
+        { id: 'bio', type: 'textarea', label: 'Bio', help: 'Optional' },
+        { id: 'notify', type: 'toggle', label: 'Notifications' },
       ],
       onSave: async (data) => {
         await new Promise(r => setTimeout(r, 500));
@@ -285,17 +335,13 @@ console.log('hello');
       draftKey: 'demo-editor',
     });
 
+    document.getElementById('eb-set-values').onclick = () => editor.setValues({ name: 'Alice', email: 'alice@example.com', role: 'Engineer', bio: 'Senior engineer', notify: true });
     document.getElementById('eb-submit').onclick = () => editor.submit();
     document.getElementById('eb-reset').onclick = () => editor.reset();
-    document.getElementById('eb-set-values').onclick = () => {
-      editor.setValues({ name: 'Alice', email: 'alice@example.com', role: 'Engineer', bio: 'Senior engineer', notify: true });
-    };
 
-    // ─── Config Panel ────────────────────────────────
-
-    const configContainer = document.getElementById('config-container');
-    const config = createConfigPanel(configContainer, (event, payload) => {
-      log('config-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    // ─── Config Panel ─────────────────────────────────
+    const config = createConfigPanel(document.getElementById('config-container'), (evt, p) => {
+      log('config-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`);
     }, {
       sections: [
         {
@@ -309,8 +355,8 @@ console.log('hello');
         {
           label: 'Notifications',
           controls: [
-            { id: 'emailNotifs', type: 'toggle', label: 'Email Notifications', value: true },
-            { id: 'pushNotifs', type: 'toggle', label: 'Push Notifications', value: false },
+            { id: 'emailNotifs', type: 'toggle', label: 'Email', value: true },
+            { id: 'pushNotifs', type: 'toggle', label: 'Push', value: false },
           ],
         },
         {
@@ -322,27 +368,18 @@ console.log('hello');
           ],
         },
       ],
-      onChange: (id, value) => {
-        log('config-log', `${id}: ${JSON.stringify(value)}`);
-      },
+      onChange: (id, value) => log('config-log', `${id}: ${JSON.stringify(value)}`),
     });
 
-    document.getElementById('cp-get-values').onclick = () => {
-      log('config-log', 'Values: ' + JSON.stringify(config.getValues()));
-    };
-    document.getElementById('cp-set-values').onclick = () => {
-      config.setValues({ theme: 'Dark', density: '8', animations: false, emailNotifs: false });
-    };
+    document.getElementById('cp-get-values').onclick = () => log('config-log', JSON.stringify(config.getValues()));
+    document.getElementById('cp-set-values').onclick = () => config.setValues({ theme: 'Dark', density: '8', animations: false, emailNotifs: false });
 
-        // Expose for debugging
-    window.__grid = grid;
-    window.__viewer = viewer;
-    window.__viewerPlain = viewerPlain;
-    window.__stats = stats;
-    window.__editor = editor;
-    window.__config = config;
+    // Expose for tests
+    window.__grid = grid; window.__gridSel = gridSel; window.__stats = stats;
+    window.__viewer = viewer; window.__viewerPlain = viewerPlain;
+    window.__editor = editor; window.__config = config;
 
-    console.log('E2E test fixture ready');
+    console.log('CSMA Archetypes Demo ready');
   </script>
 </body>
 </html>
