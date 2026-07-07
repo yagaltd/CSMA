@@ -127,11 +127,14 @@
 }
 
 .csma-stats__chart {
+    display: flex;
+    flex-direction: column;
     padding: var(--space-md, 0.75rem);
     background: var(--surface, oklch(1 0.001 248));
     border: 1px solid var(--border, oklch(0.88 0.008 248));
     border-radius: var(--radius-md, 0.5rem);
-    min-height: 200px;
+    min-height: 160px;
+    height: 200px;
 }
 
 .csma-stats__chart-label {
@@ -139,11 +142,13 @@
     font-weight: var(--font-weight-semibold, 600);
     color: var(--foreground-muted, oklch(0.5 0.015 248));
     margin-bottom: var(--space-sm, 0.5rem);
+    flex-shrink: 0;
 }
 
 .csma-stats__chart-canvas {
+    flex: 1;
+    min-height: 0;
     width: 100%;
-    height: calc(100% - 1.5rem);
 }
 
 /* ─── States ────────────────────────────────────────── */

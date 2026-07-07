@@ -157,24 +157,33 @@ export function createStatsDashboard(container, emit, options = {}) {
         return chart;
     }
 
-    function renderAll() {
-        grid.innerHTML = '';
-        chartsEl.innerHTML = '';
+    let chartsBuilt = false;
 
+    function renderCards() {
+        grid.innerHTML = '';
         cards.forEach((cardDef) => {
             const data = cardData[cardDef.id];
             grid.appendChild(buildCard(cardDef, data));
         });
+    }
 
+    function renderChartsDOM() {
+        if (chartsBuilt) return;
+        chartsEl.innerHTML = '';
         charts.forEach((chartDef) => {
             chartsEl.appendChild(buildChart(chartDef));
         });
-
         if (charts.length === 0) {
             chartsEl.setAttribute('hidden', '');
         } else {
             chartsEl.removeAttribute('hidden');
         }
+        chartsBuilt = true;
+    }
+
+    function renderAll() {
+        renderCards();
+        renderChartsDOM();
     }
 
     function setState(state) {

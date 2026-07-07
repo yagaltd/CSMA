@@ -206,27 +206,42 @@
       };
     }
 
-    function renderCharts() {
-      const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#e0e0e0';
-      // Destroy old charts
+    function destroyCharts() {
       chartInstances.forEach(c => c.destroy());
       chartInstances = [];
+    }
 
+    function renderCharts() {
+      destroyCharts();
       const container = document.getElementById('stats-container');
       const canvases = container.querySelectorAll('.csma-stats__chart-canvas');
       if (canvases.length < 2) return;
 
+      const style = getComputedStyle(document.documentElement);
+      const primary = style.getPropertyValue('--primary').trim() || '#3b82f6';
+      const gridColor = style.getPropertyValue('--border').trim() || '#d4d4d4';
+      const accent = style.getPropertyValue('--accent').trim() || '#38bdf8';
+      const info = style.getPropertyValue('--info').trim() || '#a78bfa';
+      const muted = style.getPropertyValue('--foreground-muted').trim() || '#9ca3af';
+
+      canvases.forEach(c => {
+        const rect = c.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          c.width = rect.width * devicePixelRatio;
+          c.height = rect.height * devicePixelRatio;
+        }
+      });
+
       // Chart 1: Daily Events (line)
       const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      const ctx1 = canvases[0].getContext('2d');
-      chartInstances.push(new Chart(ctx1, {
+      chartInstances.push(new Chart(canvases[0], {
         type: 'line',
         data: {
           labels,
           datasets: [{
             label: 'Events',
             data: labels.map(() => 20 + Math.floor(Math.random() * 80)),
-            borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#4f6ef7',
+            borderColor: primary,
             backgroundColor: 'transparent',
             tension: 0.3,
             pointRadius: 3,
@@ -244,14 +259,13 @@
       }));
 
       // Chart 2: Usage Breakdown (doughnut)
-      const ctx2 = canvases[1].getContext('2d');
-      chartInstances.push(new Chart(ctx2, {
+      chartInstances.push(new Chart(canvases[1], {
         type: 'doughnut',
         data: {
           labels: ['Compute', 'Storage', 'Network', 'Other'],
           datasets: [{
             data: [45, 25, 18, 12],
-            backgroundColor: ['#4f6ef7', '#38bdf8', '#a78bfa', '#e2e8f0'],
+            backgroundColor: [primary, accent, info, muted],
             borderWidth: 0,
           }],
         },
@@ -261,6 +275,15 @@
           plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 12 } } },
         },
       }));
+    }
+
+    function waitForCanvases(retries = 15) {
+      const canvases = document.querySelectorAll('.csma-stats__chart-canvas');
+      if (canvases.length >= 2) {
+        requestAnimationFrame(() => { requestAnimationFrame(() => renderCharts()); });
+      } else if (retries > 0) {
+        setTimeout(() => waitForCanvases(retries - 1), 150);
+      }
     }
 
     const stats = createStatsDashboard(document.getElementById('stats-container'), (evt, p) => {
@@ -278,11 +301,11 @@
       ],
     });
 
-    // Render charts after stats dashboard loads
-    setTimeout(renderCharts, 800);
+    waitForCanvases();
 
-    document.getElementById('sd-refresh').onclick = async () => { await stats.refresh(); setTimeout(renderCharts, 300); };
-    document.getElementById('sd-randomize').onclick = () => { stats.refresh(); setTimeout(renderCharts, 300); };
+    const refreshCharts = () => { stats.refresh(); setTimeout(() => waitForCanvases(8), 300); };
+    document.getElementById('sd-refresh').onclick = refreshCharts;
+    document.getElementById('sd-randomize').onclick = refreshCharts;
 
     // ─── Viewer ───────────────────────────────────────
     const viewer = createViewer(document.getElementById('viewer-container'), (evt, p) => {
@@ -368,7 +391,14 @@ console.log(msg);
           ],
         },
       ],
-      onChange: (id, value) => log('config-log', `${id}: ${JSON.stringify(value)}`),
+      onChange: (id, value) => {
+        log('config-log', `${id}: ${JSON.stringify(value)}`);
+        if (id === 'theme') {
+          if (value === 'Dark') document.documentElement.dataset.theme = 'dark';
+          else if (value === 'Light') document.documentElement.dataset.theme = 'light';
+          else delete document.documentElement.dataset.theme;
+        }
+      },
     });
 
     document.getElementById('cp-get-values').onclick = () => log('config-log', JSON.stringify(config.getValues()));
