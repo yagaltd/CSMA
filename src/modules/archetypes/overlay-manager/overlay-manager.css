@@ -1,0 +1,165 @@
+/* CSMA Archetype — Overlay Manager */
+
+.csma-overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: var(--z-overlay, 100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: csma-overlay-fadein 150ms ease;
+}
+
+@keyframes csma-overlay-fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ─── Modal ─────────────────────────────────────────── */
+
+.csma-overlay-modal {
+    background: var(--surface, oklch(1 0.001 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+    border-radius: var(--radius-lg, 0.75rem);
+    box-shadow: var(--shadow-xl, 0 20px 60px rgba(0,0,0,0.2));
+    max-width: min(90vw, 560px);
+    max-height: 85vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    animation: csma-overlay-slideup 200ms var(--motion-easing-out-quart, ease-out);
+}
+
+@keyframes csma-overlay-slideup {
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.csma-overlay-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md, 0.75rem) var(--space-lg, 1rem);
+    border-bottom: 1px solid var(--border, oklch(0.88 0.008 248));
+    font-weight: var(--font-weight-semibold, 600);
+    font-size: var(--font-size-base, 0.875rem);
+    flex-shrink: 0;
+}
+
+.csma-overlay-close {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: var(--radius-sm, 0.25rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+    font-size: 1.125rem;
+}
+
+.csma-overlay-close:hover {
+    background: var(--background-muted, oklch(0.954 0.008 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+}
+
+.csma-overlay-body {
+    padding: var(--space-lg, 1rem);
+    overflow-y: auto;
+    flex: 1;
+    font-size: var(--font-size-sm, 0.8125rem);
+    line-height: var(--line-height-body, 1.5);
+}
+
+.csma-overlay-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-md, 0.75rem) var(--space-lg, 1rem);
+    border-top: 1px solid var(--border, oklch(0.88 0.008 248));
+    flex-shrink: 0;
+}
+
+/* ─── Drawer ────────────────────────────────────────── */
+
+.csma-overlay-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(90vw, 400px);
+    background: var(--surface, oklch(1 0.001 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+    box-shadow: var(--shadow-xl, 0 20px 60px rgba(0,0,0,0.2));
+    display: flex;
+    flex-direction: column;
+    z-index: var(--z-overlay, 100);
+    animation: csma-overlay-slideright 200ms var(--motion-easing-out-quart, ease-out);
+}
+
+@keyframes csma-overlay-slideright {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+.csma-overlay-drawer .csma-overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: calc(var(--z-overlay, 100) - 1);
+}
+
+/* ─── Popover ───────────────────────────────────────── */
+
+.csma-overlay-popover {
+    position: absolute;
+    background: var(--surface, oklch(1 0.001 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+    border: 1px solid var(--border, oklch(0.88 0.008 248));
+    border-radius: var(--radius-md, 0.5rem);
+    box-shadow: var(--shadow-lg, 0 10px 40px rgba(0,0,0,0.12));
+    padding: var(--space-sm, 0.5rem);
+    min-width: 160px;
+    z-index: var(--z-popover, 200);
+    animation: csma-overlay-fadein 100ms ease;
+}
+
+/* ─── Lightbox ──────────────────────────────────────── */
+
+.csma-overlay-lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: var(--z-lightbox, 300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: csma-overlay-fadein 200ms ease;
+}
+
+.csma-overlay-lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: var(--radius-sm, 0.25rem);
+}
+
+.csma-overlay-lightbox .csma-overlay-close {
+    position: absolute;
+    top: var(--space-md, 0.75rem);
+    right: var(--space-md, 0.75rem);
+    color: #fff;
+}
+
+/* ─── Reduced Motion ────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .csma-overlay-backdrop,
+    .csma-overlay-modal,
+    .csma-overlay-drawer,
+    .csma-overlay-popover,
+    .csma-overlay-lightbox { animation: none; }
+}

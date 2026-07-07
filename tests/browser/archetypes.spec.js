@@ -521,3 +521,149 @@ test.describe('Config Panel Archetype', () => {
     await expect(panel).toHaveCount(0);
   });
 });
+
+
+test.describe('Media Browser Archetype', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(`${BASE}/demo/archetypes-demo.html`);
+    await page.waitForSelector('.csma-media');
+  });
+
+  test('renders thumbnail grid', async ({ page }) => {
+    const items = page.locator('#media-container .csma-media__item');
+    expect(await items.count()).toBeGreaterThanOrEqual(6);
+  });
+
+  test('search input exists', async ({ page }) => {
+    const search = page.locator('#media-container .csma-media__search');
+    await expect(search).toBeVisible();
+  });
+
+  test('sort dropdown exists', async ({ page }) => {
+    const sort = page.locator('#media-container .csma-media__sort');
+    await expect(sort).toBeVisible();
+  });
+
+  test('search filters items', async ({ page }) => {
+    const search = page.locator('#media-container .csma-media__search');
+    await search.fill('Sunset');
+    await page.waitForTimeout(300);
+
+    const items = page.locator('#media-container .csma-media__item');
+    expect(await items.count()).toBe(1);
+  });
+
+  test('clicking item selects it', async ({ page }) => {
+    const item = page.locator('#media-container .csma-media__item').first();
+    await item.click();
+
+    await expect(item).toHaveAttribute('aria-selected', 'true');
+  });
+
+  test('destroy removes browser from DOM', async ({ page }) => {
+    await page.evaluate(() => window.__media.destroy());
+    const media = page.locator('#media-container .csma-media');
+    await expect(media).toHaveCount(0);
+  });
+});
+
+test.describe('Nav Tabs Archetype', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(`${BASE}/demo/archetypes-demo.html`);
+    await page.waitForSelector('.csma-navtabs');
+  });
+
+  test('renders tabs', async ({ page }) => {
+    const tabs = page.locator('#navtabs-container [role="tab"]');
+    expect(await tabs.count()).toBe(6);
+  });
+
+  test('first tab is active', async ({ page }) => {
+    const firstTab = page.locator('#navtabs-container [role="tab"]').first();
+    await expect(firstTab).toHaveAttribute('aria-selected', 'true');
+  });
+
+  test('clicking tab activates it', async ({ page }) => {
+    const thirdTab = page.locator('#navtabs-container [role="tab"]').nth(2);
+    await thirdTab.click();
+
+    await expect(thirdTab).toHaveAttribute('aria-selected', 'true');
+  });
+
+  test('badge count renders', async ({ page }) => {
+    const badge = page.locator('#navtabs-container .csma-navtabs__tab-badge').first();
+    await expect(badge).toHaveText('5');
+  });
+
+  test('close button exists on tabs', async ({ page }) => {
+    const closeBtn = page.locator('#navtabs-container .csma-navtabs__close').first();
+    await expect(closeBtn).toBeAttached();
+  });
+
+  test('destroy removes tabs from DOM', async ({ page }) => {
+    await page.evaluate(() => window.__navtabs.destroy());
+    const tabs = page.locator('#navtabs-container .csma-navtabs');
+    await expect(tabs).toHaveCount(0);
+  });
+});
+
+test.describe('Overlay Manager Archetype', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(`${BASE}/demo/archetypes-demo.html`);
+    await page.waitForSelector('body');
+  });
+
+  test('openModal shows overlay', async ({ page }) => {
+    await page.click('#om-modal');
+
+    const modal = page.locator('.csma-overlay-modal');
+    await expect(modal).toBeVisible();
+
+    const title = modal.locator('.csma-overlay-header');
+    await expect(title).toContainText('Modal Title');
+  });
+
+  test('Escape closes modal', async ({ page }) => {
+    await page.click('#om-modal');
+    await page.waitForSelector('.csma-overlay-modal');
+
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.csma-overlay-modal')).toHaveCount(0);
+  });
+
+  test('openDrawer shows side panel', async ({ page }) => {
+    await page.click('#om-drawer');
+
+    const drawer = page.locator('.csma-overlay-drawer');
+    await expect(drawer).toBeVisible();
+    await expect(page.locator('.csma-overlay-header')).toContainText('Settings');
+  });
+
+  test('openPopover appears near anchor', async ({ page }) => {
+    await page.click('#om-popover');
+
+    const popover = page.locator('.csma-overlay-popover');
+    await expect(popover).toBeVisible();
+    await expect(popover).toContainText('Edit');
+  });
+
+  test('openLightbox shows image', async ({ page }) => {
+    await page.click('#om-lightbox');
+
+    const lightbox = page.locator('.csma-overlay-lightbox');
+    await expect(lightbox).toBeVisible();
+    await expect(lightbox.locator('img')).toBeAttached();
+  });
+
+  test('closeAll clears all overlays', async ({ page }) => {
+    await page.click('#om-drawer');
+    await page.waitForSelector('.csma-overlay-drawer');
+
+    await page.evaluate(() => window.__overlays.closeAll());
+
+    await expect(page.locator('.csma-overlay-drawer')).toHaveCount(0);
+  });
+});

@@ -138,6 +138,37 @@
       <div id="config-log" class="log"></div>
     </div>
 
+
+    <!-- ── Media Browser ── -->
+    <div class="demo-section demo-section--wide">
+      <h2>Media Browser</h2>
+      <div class="controls">
+        <button id="mb-clear">Clear Selection</button>
+      </div>
+      <div id="media-container" class="grid-wrap"></div>
+      <div id="media-log" class="log"></div>
+    </div>
+
+    <!-- ── Nav Tabs ── -->
+    <div class="demo-section demo-section--wide">
+      <h2>Nav Tabs</h2>
+      <div id="navtabs-container"></div>
+      <div id="navtabs-content" style="padding:1rem;font-size:0.8125rem;color:var(--foreground-muted)">Select a tab</div>
+      <div id="navtabs-log" class="log"></div>
+    </div>
+
+    <!-- ── Overlay Manager ── -->
+    <div class="demo-section">
+      <h2>Overlay Manager</h2>
+      <div class="controls">
+        <button id="om-modal">Open Modal</button>
+        <button id="om-drawer">Open Drawer</button>
+        <button id="om-popover">Open Popover</button>
+        <button id="om-lightbox">Lightbox</button>
+      </div>
+      <div id="overlay-log" class="log"></div>
+    </div>
+
   </div>
 
   <script type="module">
@@ -146,6 +177,9 @@
     import { createStatsDashboard } from '../src/modules/archetypes/stats-dashboard/index.js';
     import { createEditor } from '../src/modules/archetypes/editor-builder/index.js';
     import { createConfigPanel } from '../src/modules/archetypes/config-panel/index.js';
+    import { createMediaBrowser } from '../src/modules/archetypes/media-browser/index.js';
+    import { createNavTabs } from '../src/modules/archetypes/nav-tabs/index.js';
+    import { createOverlayManager } from '../src/modules/archetypes/overlay-manager/index.js';
 
     const log = (id, msg) => { const el = document.getElementById(id); if (el) el.textContent = msg; };
 
@@ -404,10 +438,81 @@ console.log(msg);
     document.getElementById('cp-get-values').onclick = () => log('config-log', JSON.stringify(config.getValues()));
     document.getElementById('cp-set-values').onclick = () => config.setValues({ theme: 'Dark', density: '8', animations: false, emailNotifs: false });
 
+
+    // ─── Media Browser ────────────────────────────────
+    const mediaItems = [
+      { id: 'img1', name: 'Sunset.jpg', type: 'image', size: 2.4e6, date: '2024-01-15', src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23f97316" width="100" height="100"/%3E%3Ccircle fill="%23fbbf24" cx="50" cy="60" r="25"/%3E%3C/svg%3E' },
+      { id: 'img2', name: 'Mountains.png', type: 'image', size: 5.1e6, date: '2024-02-20', src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Cpolygon fill="%236366f1" points="0,100 30,40 60,80 100,20 100,100"/%3E%3Crect fill="%233b82f6" y="70" width="100" height="30"/%3E%3C/svg%3E' },
+      { id: 'vid1', name: 'Demo.mp4', type: 'video', size: 48e6, date: '2024-03-10' },
+      { id: 'doc1', name: 'Report.pdf', type: 'file', size: 1.2e6, date: '2024-04-05' },
+      { id: 'img3', name: 'Portrait.jpg', type: 'image', size: 3.8e6, date: '2024-05-12', src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ec4899" width="100" height="100"/%3E%3Ccircle fill="%23f9a8d4" cx="50" cy="40" r="20"/%3E%3C/svg%3E' },
+      { id: 'doc2', name: 'Notes.txt', type: 'file', size: 45e3, date: '2024-06-01' },
+      { id: 'vid2', name: 'Tutorial.mov', type: 'video', size: 120e6, date: '2024-06-15' },
+      { id: 'img4', name: 'Logo.svg', type: 'image', size: 120e3, date: '2024-07-01', src: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Ccircle fill="%2310b981" cx="50" cy="50" r="40"/%3E%3Cpolygon fill="white" points="50,25 65,65 35,65"/%3E%3C/svg%3E' },
+    ];
+
+    const media = createMediaBrowser(document.getElementById('media-container'), (evt, p) => {
+      log('media-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`);
+    }, {
+      items: mediaItems,
+      selectable: true,
+      multiSelect: true,
+      onItemClick: (item) => log('media-log', `Clicked: ${item.name}`),
+    });
+
+    document.getElementById('mb-clear').onclick = () => {
+      media.update(mediaItems);
+      log('media-log', 'Selection cleared');
+    };
+
+    // ─── Nav Tabs ──────────────────────────────────────
+    const navtabs = createNavTabs(document.getElementById('navtabs-container'), (evt, p) => {
+      log('navtabs-log', `[${evt}] Tab: ${p.id}`);
+      const content = document.getElementById('navtabs-content');
+      if (content) content.textContent = `Active: ${p.tab?.label || p.id}`;
+    }, {
+      tabs: [
+        { id: 'tab1', label: 'Dashboard', active: true },
+        { id: 'tab2', label: 'Analytics', badge: 5 },
+        { id: 'tab3', label: 'Settings' },
+        { id: 'tab4', label: 'Reports', badge: 12 },
+        { id: 'tab5', label: 'Users' },
+        { id: 'tab6', label: 'Logs' },
+      ],
+      closable: true,
+    });
+
+    // ─── Overlay Manager ───────────────────────────────
+    const overlays = createOverlayManager(document.body, (evt, p) => {
+      log('overlay-log', `[${evt}] ${p.type}`);
+    });
+
+    document.getElementById('om-modal').onclick = () => {
+      overlays.openModal('<p>This is a <strong>modal dialog</strong> with CSMA token-driven styling.</p><p>Press Escape or click the backdrop to close.</p>', {
+        title: 'Modal Title',
+        footer: '<button class="csma-editor__submit" id="modal-ok-btn">OK</button>',
+      });
+    };
+
+    document.getElementById('om-drawer').onclick = () => {
+      overlays.openDrawer('<p>Drawer slides in from the right. Useful for settings panels and detail views.</p>', {
+        title: 'Settings',
+      });
+    };
+
+    document.getElementById('om-popover').onclick = () => {
+      overlays.openPopover('<div style="padding:0.25rem 0"><div style="padding:0.25rem 0.5rem;cursor:pointer;border-radius:4px">Edit</div><div style="padding:0.25rem 0.5rem;cursor:pointer;border-radius:4px">Share</div><div style="padding:0.25rem 0.5rem;cursor:pointer;border-radius:4px;color:var(--destructive)">Delete</div></div>', document.getElementById('om-popover'));
+    };
+
+    document.getElementById('om-lightbox').onclick = () => {
+      overlays.openLightbox(mediaItems[0].src, { alt: 'Sunset' });
+    };
+
     // Expose for tests
     window.__grid = grid; window.__gridSel = gridSel; window.__stats = stats;
     window.__viewer = viewer; window.__viewerPlain = viewerPlain;
     window.__editor = editor; window.__config = config;
+    window.__media = media; window.__navtabs = navtabs; window.__overlays = overlays;
 
     console.log('CSMA Archetypes Demo ready');
   </script>
