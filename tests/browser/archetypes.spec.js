@@ -667,3 +667,63 @@ test.describe('Overlay Manager Archetype', () => {
     await expect(page.locator('.csma-overlay-drawer')).toHaveCount(0);
   });
 });
+
+
+test.describe('Newsletter Dashboard (Greenfield)', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(`${BASE}/demo/newsletter-dashboard.html`);
+    await page.waitForSelector('.csma-datagrid');
+  });
+
+  test('renders stats dashboard with cards', async ({ page }) => {
+    await page.waitForSelector('.csma-stats__card-value');
+    const cards = page.locator('.csma-stats__card-value');
+    expect(await cards.count()).toBe(4);
+  });
+
+  test('renders campaign data grid', async ({ page }) => {
+    const rows = page.locator('#campaigns-grid .csma-datagrid__row');
+    expect(await rows.count()).toBeGreaterThanOrEqual(4);
+  });
+
+  test('nav tabs switch between views', async ({ page }) => {
+    // Click Compose tab
+    const composeTab = page.locator('#sidebar-tabs [role="tab"]').nth(1);
+    await composeTab.click();
+
+    // Compose view should be visible, campaigns hidden
+    await expect(page.locator('#view-compose')).toBeVisible();
+    await expect(page.locator('#view-campaigns')).toBeHidden();
+  });
+
+  test('compose editor has fields', async ({ page }) => {
+    // Switch to compose
+    await page.locator('#sidebar-tabs [role="tab"]').nth(1).click();
+    await page.waitForSelector('.csma-editor__field');
+
+    const fields = page.locator('#compose-editor .csma-editor__field');
+    expect(await fields.count()).toBe(5);
+  });
+
+  test('config panel renders in sidebar', async ({ page }) => {
+    const toggles = page.locator('#sidebar-config .csma-config__toggle');
+    expect(await toggles.count()).toBe(3);
+  });
+
+  test('templates browser has items', async ({ page }) => {
+    await page.locator('#sidebar-tabs [role="tab"]').nth(2).click();
+    await page.waitForSelector('.csma-media__item');
+
+    const items = page.locator('#templates-browser .csma-media__item');
+    expect(await items.count()).toBeGreaterThanOrEqual(3);
+  });
+
+  test('campaign row click opens modal', async ({ page }) => {
+    const firstRow = page.locator('#campaigns-grid .csma-datagrid__row').first();
+    await firstRow.click();
+
+    const modal = page.locator('.csma-overlay-modal');
+    await expect(modal).toBeVisible();
+  });
+});

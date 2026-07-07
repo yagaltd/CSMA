@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Newsletter Dashboard : CSMA Archetypes Greenfield Demo</title>
+  <link rel="stylesheet" href="../src/generated/tokens.css" />
+  <link rel="stylesheet" href="../src/style/base.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--background, #f8f9fa);
+      color: var(--foreground, #1a1a2e);
+      display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+    }
+    .app-shell { display: flex; flex-direction: column; height: 100%; }
+    .app-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.5rem 1.5rem; border-bottom: 1px solid var(--border, #ddd);
+      background: var(--surface, #fff); flex-shrink: 0;
+    }
+    .app-header h1 { font-size: 1rem; font-weight: 600; }
+    .app-body { display: flex; flex: 1; overflow: hidden; }
+    .app-sidebar {
+      width: 240px; border-right: 1px solid var(--border, #ddd);
+      background: var(--surface, #fff); padding: 1rem; overflow-y: auto; flex-shrink: 0;
+    }
+    .app-main { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; }
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 900px) { .card-grid { grid-template-columns: 1fr; } .app-sidebar { display: none; } }
+    .panel { background: var(--surface, #fff); border: 1px solid var(--border, #ddd); border-radius: var(--radius-md, 0.5rem); padding: 1rem; }
+    .panel h3 { font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--foreground-muted, #666); margin-bottom: 0.75rem; }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-header">
+    <h1>📨 Newsletter Dashboard</h1>
+    <span style="font-size:0.75rem;color:var(--foreground-muted)">Built with CSMA Archetypes</span>
+  </header>
+  <div class="app-body">
+    <aside class="app-sidebar">
+      <div id="sidebar-tabs"></div>
+      <div id="sidebar-config" style="margin-top:1rem"></div>
+    </aside>
+    <main class="app-main" id="main-content">
+      <!-- Campaigns view (default) -->
+      <div id="view-campaigns">
+        <div class="panel">
+          <h3>Campaign Metrics</h3>
+          <div id="stats-container" style="min-height:100px"></div>
+        </div>
+        <div class="panel">
+          <h3>Active Campaigns</h3>
+          <div id="campaigns-grid" style="min-height:300px"></div>
+        </div>
+      </div>
+      <!-- Compose view (hidden) -->
+      <div id="view-compose" style="display:none">
+        <div class="panel">
+          <h3>New Campaign</h3>
+          <div id="compose-editor" style="min-height:400px"></div>
+        </div>
+      </div>
+      <!-- Templates view (hidden) -->
+      <div id="view-templates" style="display:none">
+        <div class="panel">
+          <h3>Template Gallery</h3>
+          <div id="templates-browser" style="min-height:300px"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script type="module">
+import { createDataGrid } from '../src/modules/archetypes/data-grid/index.js';
+import { createStatsDashboard } from '../src/modules/archetypes/stats-dashboard/index.js';
+import { createEditor } from '../src/modules/archetypes/editor-builder/index.js';
+import { createConfigPanel } from '../src/modules/archetypes/config-panel/index.js';
+import { createNavTabs } from '../src/modules/archetypes/nav-tabs/index.js';
+import { createMediaBrowser } from '../src/modules/archetypes/media-browser/index.js';
+import { createOverlayManager } from '../src/modules/archetypes/overlay-manager/index.js';
+
+// ─── Mock Data ───────────────────────────────────────
+
+const CAMPAIGNS = [
+  { id: 1, name: 'Welcome Series', status: 'Active', sent: 1240, opens: 432, clicks: 89, date: 'Jul 1' },
+  { id: 2, name: 'July Promotion', status: 'Active', sent: 3200, opens: 1100, clicks: 234, date: 'Jul 3' },
+  { id: 3, name: 'Product Launch', status: 'Draft', sent: 0, opens: 0, clicks: 0, date: 'Jul 5' },
+  { id: 4, name: 'Monthly Digest', status: 'Sent', sent: 5600, opens: 2100, clicks: 450, date: 'Jun 28' },
+  { id: 5, name: 'Re-engagement', status: 'Active', sent: 890, opens: 120, clicks: 15, date: 'Jul 2' },
+  { id: 6, name: 'Onboarding Flow', status: 'Draft', sent: 0, opens: 0, clicks: 0, date: 'Jul 6' },
+];
+
+const TEMPLATES = [
+  { id: 't1', name: 'Welcome Email', type: 'file', meta: 'HTML · 12KB', date: 'Jun 15' },
+  { id: 't2', name: 'Promo Banner', type: 'image', meta: 'PNG · 240KB', date: 'Jun 20' },
+  { id: 't3', name: 'Monthly Roundup', type: 'file', meta: 'HTML · 18KB', date: 'Jun 25' },
+  { id: 't4', name: 'Abandoned Cart', type: 'file', meta: 'HTML · 9KB', date: 'Jul 1' },
+];
+
+// ─── Overlay Manager ──────────────────────────────────
+
+const overlays = createOverlayManager(document.body, null);
+
+// ─── Stats Dashboard ──────────────────────────────────
+
+createStatsDashboard(document.getElementById('stats-container'), null, {
+  cards: [
+    { id: 'subs', label: 'Subscribers', format: 'number', fetch: async () => ({ value: 12840, trend: 8 }) },
+    { id: 'openRate', label: 'Open Rate', format: 'percent', fetch: async () => ({ value: 34.2, trend: -2 }) },
+    { id: 'ctr', label: 'Click Rate', format: 'percent', fetch: async () => ({ value: 8.1, trend: 3 }) },
+    { id: 'bounce', label: 'Bounce Rate', format: 'percent', fetch: async () => ({ value: 1.2, trend: -1 }) },
+  ],
+});
+
+// ─── Campaigns Grid ───────────────────────────────────
+
+const campaignsGrid = createDataGrid(document.getElementById('campaigns-grid'), null, {
+  columns: [
+    { id: 'name', label: 'Campaign', width: 200, sortable: true },
+    { id: 'status', label: 'Status', width: 90 },
+    { id: 'sent', label: 'Sent', width: 80, sortable: true },
+    { id: 'opens', label: 'Opens', width: 80 },
+    { id: 'clicks', label: 'Clicks', width: 80 },
+    { id: 'date', label: 'Date', width: 80 },
+  ],
+  data: CAMPAIGNS,
+  rowHeight: 36,
+  onRowClick: (row) => {
+    overlays.openModal(
+      `<h3 style="margin:0 0 0.5rem">${row.name}</h3>
+       <p style="font-size:0.8125rem;color:var(--foreground-muted);margin:0">Status: ${row.status}</p>
+       <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-top:0.75rem">
+         <div><strong>Sent:</strong> ${row.sent}</div><div><strong>Opens:</strong> ${row.opens}</div>
+         <div><strong>Clicks:</strong> ${row.clicks}</div><div><strong>Date:</strong> ${row.date}</div>
+       </div>`,
+      { title: `Campaign: ${row.name}` }
+    );
+  },
+});
+
+// ─── Compose Editor ───────────────────────────────────
+
+const editor = createEditor(document.getElementById('compose-editor'), null, {
+  fields: [
+    { id: 'name', type: 'text', label: 'Campaign Name', required: true },
+    { id: 'subject', type: 'text', label: 'Subject Line', required: true },
+    { id: 'segment', type: 'select', label: 'Audience', options: ['All Subscribers', 'Active (30d)', 'New (7d)', 'Inactive (90d)'] },
+    { id: 'body', type: 'textarea', label: 'Email Body', required: true },
+    { id: 'schedule', type: 'toggle', label: 'Schedule for later' },
+  ],
+  onSave: async (data) => {
+    await new Promise(r => setTimeout(r, 600));
+    CAMPAIGNS.unshift({ id: Date.now(), name: data.name, status: 'Draft', sent: 0, opens: 0, clicks: 0, date: 'Today' });
+    campaignsGrid.update(CAMPAIGNS);
+  },
+  draftKey: 'newsletter-compose',
+});
+
+// ─── Nav Tabs (sidebar) ───────────────────────────────
+
+const views = { campaigns: 'view-campaigns', compose: 'view-compose', templates: 'view-templates' };
+
+const sidebarTabs = createNavTabs(document.getElementById('sidebar-tabs'), null, {
+  tabs: [
+    { id: 'campaigns', label: 'Campaigns', active: true },
+    { id: 'compose', label: 'Compose' },
+    { id: 'templates', label: 'Templates' },
+  ],
+  onTabClick: (tab) => {
+    Object.values(views).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    const target = document.getElementById(views[tab.id]);
+    if (target) target.style.display = '';
+  },
+});
+
+// ─── Config Panel (sidebar) ───────────────────────────
+
+createConfigPanel(document.getElementById('sidebar-config'), null, {
+  sections: [{
+    label: 'Preferences',
+    controls: [
+      { id: 'autoSave', type: 'toggle', label: 'Auto-save drafts', value: true },
+      { id: 'sendTest', type: 'toggle', label: 'Send test email', value: false },
+      { id: 'trackOpens', type: 'toggle', label: 'Track opens', value: true },
+    ],
+  }],
+});
+
+// ─── Templates Browser ────────────────────────────────
+
+createMediaBrowser(document.getElementById('templates-browser'), null, {
+  items: TEMPLATES,
+  selectable: true,
+  searchable: true,
+  onItemClick: (item) => {
+    overlays.openModal(`<p>Template <strong>${item.name}</strong> selected.</p><p style="color:var(--foreground-muted);font-size:0.8125rem">${item.meta}</p>`, { title: 'Template Preview' });
+  },
+});
+
+console.log('Newsletter Dashboard ready : built with 7 CSMA archetypes');
+</script>
+</body>
+</html>
