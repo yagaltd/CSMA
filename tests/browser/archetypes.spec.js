@@ -313,3 +313,193 @@ test.describe('Viewer Archetype', () => {
     await expect(viewer).toHaveCount(0);
   });
 });
+
+
+test.describe('Stats Dashboard Archetype', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(`${BASE}/demo/archetypes-demo.html`);
+    await page.waitForSelector('.csma-stats');
+    await page.waitForTimeout(1500); // wait for fetch
+  });
+
+  test('renders stat cards', async ({ page }) => {
+    const cards = page.locator('#stats-container .csma-stats__card');
+    expect(await cards.count()).toBe(4);
+  });
+
+  test('card labels are visible', async ({ page }) => {
+    const labels = page.locator('#stats-container .csma-stats__card-label');
+    expect(await labels.count()).toBe(4);
+    await expect(labels.first()).toContainText('Total Items');
+  });
+
+  test('card values populate after fetch', async ({ page }) => {
+    const values = page.locator('#stats-container .csma-stats__card-value');
+    await expect(values.first()).not.toBeEmpty();
+  });
+
+  test('trend indicators render with direction', async ({ page }) => {
+    const trends = page.locator('#stats-container .csma-stats__card-trend');
+    const count = await trends.count();
+    expect(count).toBeGreaterThan(0);
+
+    // At least one should have data-direction
+    const first = trends.first();
+    const dir = await first.getAttribute('data-direction');
+    expect(['up', 'down', 'neutral']).toContain(dir);
+  });
+
+  test('error state shows retry button', async ({ page }) => {
+    await page.click('#sd-error');
+
+    const retry = page.locator('#stats-container .csma-stats__state-retry');
+    await expect(retry).toBeVisible();
+  });
+
+  test('destroy removes dashboard from DOM', async ({ page }) => {
+    await page.evaluate(() => window.__stats.destroy());
+    const stats = page.locator('#stats-container .csma-stats');
+    await expect(stats).toHaveCount(0);
+  });
+});
+
+test.describe('Editor Builder Archetype', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(`${BASE}/demo/archetypes-demo.html`);
+    await page.waitForSelector('.csma-editor');
+  });
+
+  test('renders fields from definitions', async ({ page }) => {
+    const fields = page.locator('#editor-container .csma-editor__field');
+    expect(await fields.count()).toBe(5); // name, email, role, bio, notify
+  });
+
+  test('text input accepts typing', async ({ page }) => {
+    const input = page.locator('#editor-container #field-name');
+    await input.fill('Test User');
+    await expect(input).toHaveValue('Test User');
+  });
+
+  test('select field has options', async ({ page }) => {
+    const select = page.locator('#editor-container #field-role');
+    const options = await select.locator('option').allTextContents();
+    expect(options).toContain('Engineer');
+    expect(options).toContain('Designer');
+  });
+
+  test('toggle field is clickable', async ({ page }) => {
+    const toggle = page.locator('#editor-container .csma-editor__toggle input').first();
+    const wasChecked = await toggle.isChecked();
+    await toggle.check();
+    await expect(toggle).toBeChecked();
+  });
+
+  test('pre-fill values populates fields', async ({ page }) => {
+    await page.click('#eb-set-values');
+
+    const nameInput = page.locator('#editor-container #field-name');
+    await expect(nameInput).toHaveValue('Alice');
+
+    const emailInput = page.locator('#editor-container #field-email');
+    await expect(emailInput).toHaveValue('alice@example.com');
+
+    const toggle = page.locator('#editor-container .csma-editor__toggle input').last();
+    await expect(toggle).toBeChecked();
+  });
+
+  test('validation shows error for required fields', async ({ page }) => {
+    // Clear name and try to submit
+    const nameInput = page.locator('#editor-container #field-name');
+    await nameInput.fill('');
+
+    await page.click('#eb-submit');
+
+    const error = page.locator('#editor-container .csma-editor__error').first();
+    await expect(error).toBeVisible();
+    await expect(error).toContainText('required');
+  });
+
+  test('reset clears form to initial values', async ({ page }) => {
+    const nameInput = page.locator('#editor-container #field-name');
+    await nameInput.fill('Changed');
+    await page.click('#eb-reset');
+    await expect(nameInput).toHaveValue('');
+  });
+
+  test('destroy removes editor from DOM', async ({ page }) => {
+    await page.evaluate(() => window.__editor.destroy());
+    const editor = page.locator('#editor-container .csma-editor');
+    await expect(editor).toHaveCount(0);
+  });
+});
+
+test.describe('Config Panel Archetype', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto(`${BASE}/demo/archetypes-demo.html`);
+    await page.waitForSelector('.csma-config');
+  });
+
+  test('renders sections', async ({ page }) => {
+    const sections = page.locator('#config-container .csma-config__section');
+    expect(await sections.count()).toBe(3);
+  });
+
+  test('section headers are visible', async ({ page }) => {
+    const header = page.locator('#config-container .csma-config__section-header').first();
+    await expect(header).toContainText('Appearance');
+  });
+
+  test('collapsed section hides body', async ({ page }) => {
+    const advSection = page.locator('#config-container .csma-config__section').last();
+    await expect(advSection).toHaveAttribute('aria-expanded', 'false');
+
+    const body = advSection.locator('.csma-config__section-body');
+    await expect(body).toBeHidden();
+  });
+
+  test('click section header toggles expand', async ({ page }) => {
+    const advHeader = page.locator('#config-container .csma-config__section-header').last();
+    await advHeader.click();
+
+    const advSection = page.locator('#config-container .csma-config__section').last();
+    await expect(advSection).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  test('slider control renders', async ({ page }) => {
+    const slider = page.locator('#config-container .csma-config__slider input[type="range"]');
+    await expect(slider.first()).toBeVisible();
+  });
+
+  test('toggle control is interactive', async ({ page }) => {
+    const toggle = page.locator('#config-container .csma-config__toggle input').first();
+    await toggle.check();
+    await expect(toggle).toBeChecked();
+  });
+
+  test('setValues updates controls', async ({ page }) => {
+    await page.click('#cp-set-values');
+
+    // Theme select should be "Dark"
+    const themeSelect = page.locator('#config-container .csma-config__select').first();
+    await expect(themeSelect).toHaveValue('Dark');
+
+    // Animations toggle should be off
+    const animToggle = page.locator('#config-container .csma-config__toggle input').first();
+    await expect(animToggle).not.toBeChecked();
+  });
+
+  test('getValues returns current state', async ({ page }) => {
+    await page.click('#cp-get-values');
+    const log = page.locator('#config-log');
+    await expect(log).not.toBeEmpty();
+  });
+
+  test('destroy removes panel from DOM', async ({ page }) => {
+    await page.evaluate(() => window.__config.destroy());
+    const panel = page.locator('#config-container .csma-config');
+    await expect(panel).toHaveCount(0);
+  });
+});

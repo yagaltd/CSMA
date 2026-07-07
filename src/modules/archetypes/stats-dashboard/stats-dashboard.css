@@ -1,0 +1,231 @@
+/* CSMA Archetype — Stats Dashboard */
+
+.csma-stats {
+    --sd-gap: var(--space-lg, 1rem);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--sd-gap);
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: var(--space-md, 0.75rem);
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    position: relative;
+}
+
+/* ─── Card Grid ─────────────────────────────────────── */
+
+.csma-stats__grid {
+    display: grid;
+    gap: var(--sd-gap);
+    grid-template-columns: repeat(1, 1fr);
+}
+
+.csma-stats__grid[data-cols-sm] {
+    grid-template-columns: repeat(attr(data-cols-sm integer, 2), 1fr);
+}
+
+/* Breakpoints via container queries */
+@container (min-width: 480px) {
+    .csma-stats__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@container (min-width: 768px) {
+    .csma-stats__grid { grid-template-columns: repeat(3, 1fr); }
+}
+@container (min-width: 1024px) {
+    .csma-stats__grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ─── Stat Card ─────────────────────────────────────── */
+
+.csma-stats__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs, 0.25rem);
+    padding: var(--space-lg, 1rem);
+    background: var(--surface, oklch(1 0.001 248));
+    border: 1px solid var(--border, oklch(0.88 0.008 248));
+    border-radius: var(--radius-md, 0.5rem);
+    transition: box-shadow var(--transition-fast, 120ms) ease;
+}
+
+.csma-stats__card:hover {
+    box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.06));
+}
+
+.csma-stats__card[data-loading="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.csma-stats__card-label {
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-medium, 500);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-label, 0.05em);
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+}
+
+.csma-stats__card-value {
+    font-size: var(--font-size-2xl, 1.5rem);
+    font-weight: var(--font-weight-bold, 700);
+    color: var(--foreground, oklch(0.215 0.018 252));
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.csma-stats__card-trend {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs, 0.25rem);
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-medium, 500);
+}
+
+.csma-stats__card-trend[data-direction="up"] {
+    color: var(--success, oklch(0.55 0.17 155));
+}
+
+.csma-stats__card-trend[data-direction="down"] {
+    color: var(--destructive, oklch(0.58 0.17 25));
+}
+
+.csma-stats__card-trend[data-direction="neutral"] {
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+}
+
+/* ─── Skeleton Loading ─────────────────────────────── */
+
+.csma-stats__skeleton {
+    height: 1.5rem;
+    background: var(--background-muted, oklch(0.954 0.008 248));
+    border-radius: var(--radius-sm, 0.25rem);
+    animation: csma-stats-pulse 1.5s ease-in-out infinite;
+}
+
+.csma-stats__skeleton--label {
+    width: 50%;
+    height: 0.75rem;
+}
+
+@keyframes csma-stats-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ─── Charts Section ────────────────────────────────── */
+
+.csma-stats__charts {
+    display: grid;
+    gap: var(--sd-gap);
+    grid-template-columns: repeat(1, 1fr);
+}
+
+@container (min-width: 768px) {
+    .csma-stats__charts { grid-template-columns: repeat(2, 1fr); }
+}
+
+.csma-stats__chart {
+    padding: var(--space-md, 0.75rem);
+    background: var(--surface, oklch(1 0.001 248));
+    border: 1px solid var(--border, oklch(0.88 0.008 248));
+    border-radius: var(--radius-md, 0.5rem);
+    min-height: 200px;
+}
+
+.csma-stats__chart-label {
+    font-size: var(--font-size-xs, 0.75rem);
+    font-weight: var(--font-weight-semibold, 600);
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+    margin-bottom: var(--space-sm, 0.5rem);
+}
+
+.csma-stats__chart-canvas {
+    width: 100%;
+    height: calc(100% - 1.5rem);
+}
+
+/* ─── States ────────────────────────────────────────── */
+
+.csma-stats[data-state="loading"] .csma-stats__grid {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.csma-stats[data-state="empty"] .csma-stats__grid,
+.csma-stats[data-state="error"] .csma-stats__grid {
+    display: none;
+}
+
+.csma-stats__state {
+    display: none;
+    position: absolute;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-2xl, 2rem);
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+    text-align: center;
+    background: var(--surface, oklch(1 0.001 248));
+    z-index: 3;
+}
+
+.csma-stats[data-state="loading"] .csma-stats__state[data-state="loading"],
+.csma-stats[data-state="empty"] .csma-stats__state[data-state="empty"],
+.csma-stats[data-state="error"] .csma-stats__state[data-state="error"] {
+    display: flex;
+}
+
+.csma-stats__state-message {
+    font-size: var(--font-size-sm, 0.8125rem);
+    max-width: 24ch;
+}
+
+.csma-stats__state-retry {
+    cursor: pointer;
+    color: var(--primary, oklch(0.29 0.04 260));
+    font-weight: var(--font-weight-medium, 500);
+    border: none;
+    background: none;
+    padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+    border-radius: var(--radius-sm, 0.25rem);
+    font-size: var(--font-size-sm, 0.8125rem);
+}
+
+.csma-stats__state-retry:hover {
+    background: var(--primary-soft, color-mix(in srgb, var(--primary) 12%, transparent));
+}
+
+.csma-stats__state-retry:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background, #fff), 0 0 0 4px var(--ring, var(--primary));
+}
+
+.csma-stats__spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--border, oklch(0.88 0.008 248));
+    border-top-color: var(--primary, oklch(0.29 0.04 260));
+    border-radius: 50%;
+    animation: csma-stats-spin 0.6s linear infinite;
+}
+
+@keyframes csma-stats-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ─── Reduced Motion ────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .csma-stats__spinner,
+    .csma-stats__skeleton {
+        animation: none;
+    }
+    .csma-stats__skeleton { opacity: 0.6; }
+    .csma-stats__spinner { opacity: 0.6; }
+}
+
+.csma-stats__card-trend svg { width: 0.75rem; height: 0.75rem; display: inline-block; flex-shrink: 0; }

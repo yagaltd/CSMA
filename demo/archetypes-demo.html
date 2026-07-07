@@ -72,9 +72,37 @@
   <h2>Viewer : Plain Text</h2>
   <div id="viewer-plain-container" class="viewer-wrap"></div>
 
+
+  <h2>Stats Dashboard</h2>
+  <div class="controls">
+    <button id="sd-refresh">Refresh</button>
+    <button id="sd-error">Set Error</button>
+  </div>
+  <div id="stats-container" class="grid-wrap"></div>
+  <div id="stats-log" class="log"></div>
+
+  <h2>Editor Builder</h2>
+  <div class="controls">
+    <button id="eb-submit">Submit</button>
+    <button id="eb-reset">Reset</button>
+    <button id="eb-set-values">Pre-fill Values</button>
+  </div>
+  <div id="editor-container" class="viewer-wrap"></div>
+  <div id="editor-log" class="log"></div>
+
+  <h2>Config Panel</h2>
+  <div class="controls">
+    <button id="cp-get-values">Log Values</button>
+    <button id="cp-set-values">Set Values</button>
+  </div>
+  <div id="config-container" class="viewer-wrap"></div>
+  <div id="config-log" class="log"></div>
   <script type="module">
     import { createDataGrid } from '../src/modules/archetypes/data-grid/index.js';
     import { createViewer } from '../src/modules/archetypes/viewer/index.js';
+    import { createStatsDashboard } from '../src/modules/archetypes/stats-dashboard/index.js';
+import { createEditor } from '../src/modules/archetypes/editor-builder/index.js';
+import { createConfigPanel } from '../src/modules/archetypes/config-panel/index.js';
 
     // ─── Test Data ────────────────────────────────────
 
@@ -216,10 +244,103 @@ console.log('hello');
     });
     viewerPlain.update('Plain text content. No markdown rendering applied.');
 
-    // Expose for debugging
+
+    // ─── Stats Dashboard ─────────────────────────────
+
+    const statsContainer = document.getElementById('stats-container');
+    const stats = createStatsDashboard(statsContainer, (event, payload) => {
+      log('stats-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    }, {
+      cards: [
+        { id: 'total', label: 'Total Items', format: 'number', fetch: async () => ({ value: 1420, trend: 12 }) },
+        { id: 'active', label: 'Active Users', format: 'number', fetch: async () => ({ value: 873, trend: -3 }) },
+        { id: 'storage', label: 'Storage Used', format: 'bytes', fetch: async () => ({ value: 2.4e9, trend: 5 }) },
+        { id: 'uptime', label: 'Uptime', format: 'percent', fetch: async () => ({ value: 99.97, trend: 0 }) },
+      ],
+      cols: { sm: 2, md: 3, lg: 4 },
+    });
+
+    document.getElementById('sd-refresh').onclick = () => stats.refresh();
+    document.getElementById('sd-error').onclick = () => {
+      statsContainer.querySelector('.csma-stats').dataset.state = 'error';
+    };
+
+    // ─── Editor Builder ──────────────────────────────
+
+    const editorContainer = document.getElementById('editor-container');
+    const editor = createEditor(editorContainer, (event, payload) => {
+      log('editor-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    }, {
+      fields: [
+        { id: 'name', type: 'text', label: 'Name', required: true, placeholder: 'Enter name' },
+        { id: 'email', type: 'email', label: 'Email', required: true },
+        { id: 'role', type: 'select', label: 'Role', options: ['Engineer', 'Designer', 'Manager', 'Intern'] },
+        { id: 'bio', type: 'textarea', label: 'Bio', placeholder: 'Tell us about yourself', help: 'Optional short biography' },
+        { id: 'notify', type: 'toggle', label: 'Enable notifications' },
+      ],
+      onSave: async (data) => {
+        await new Promise(r => setTimeout(r, 500));
+        log('editor-log', 'Saved: ' + JSON.stringify(data).slice(0, 120));
+      },
+      draftKey: 'demo-editor',
+    });
+
+    document.getElementById('eb-submit').onclick = () => editor.submit();
+    document.getElementById('eb-reset').onclick = () => editor.reset();
+    document.getElementById('eb-set-values').onclick = () => {
+      editor.setValues({ name: 'Alice', email: 'alice@example.com', role: 'Engineer', bio: 'Senior engineer', notify: true });
+    };
+
+    // ─── Config Panel ────────────────────────────────
+
+    const configContainer = document.getElementById('config-container');
+    const config = createConfigPanel(configContainer, (event, payload) => {
+      log('config-log', `[${event}] ${JSON.stringify(payload).slice(0, 120)}`);
+    }, {
+      sections: [
+        {
+          label: 'Appearance',
+          controls: [
+            { id: 'theme', type: 'select', label: 'Theme', options: ['Light', 'Dark', 'System'] },
+            { id: 'density', type: 'slider', label: 'Density', min: 1, max: 10, value: 5 },
+            { id: 'animations', type: 'toggle', label: 'Animations', value: true },
+          ],
+        },
+        {
+          label: 'Notifications',
+          controls: [
+            { id: 'emailNotifs', type: 'toggle', label: 'Email Notifications', value: true },
+            { id: 'pushNotifs', type: 'toggle', label: 'Push Notifications', value: false },
+          ],
+        },
+        {
+          label: 'Advanced',
+          collapsed: true,
+          controls: [
+            { id: 'apiKey', type: 'text', label: 'API Key', placeholder: 'sk-...' },
+            { id: 'endpoint', type: 'text', label: 'Endpoint', placeholder: 'https://api.example.com' },
+          ],
+        },
+      ],
+      onChange: (id, value) => {
+        log('config-log', `${id}: ${JSON.stringify(value)}`);
+      },
+    });
+
+    document.getElementById('cp-get-values').onclick = () => {
+      log('config-log', 'Values: ' + JSON.stringify(config.getValues()));
+    };
+    document.getElementById('cp-set-values').onclick = () => {
+      config.setValues({ theme: 'Dark', density: '8', animations: false, emailNotifs: false });
+    };
+
+        // Expose for debugging
     window.__grid = grid;
     window.__viewer = viewer;
     window.__viewerPlain = viewerPlain;
+    window.__stats = stats;
+    window.__editor = editor;
+    window.__config = config;
 
     console.log('E2E test fixture ready');
   </script>

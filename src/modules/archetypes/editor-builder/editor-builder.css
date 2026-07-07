@@ -1,0 +1,210 @@
+/* CSMA Archetype — Editor Builder */
+
+.csma-editor {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: var(--space-lg, 1rem) var(--space-xl, 1.5rem);
+    background: var(--surface, oklch(1 0.001 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    font-size: var(--font-size-base, 0.875rem);
+    line-height: var(--line-height-body, 1.5);
+    position: relative;
+}
+
+/* ─── Field ─────────────────────────────────────────── */
+
+.csma-editor__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs, 0.25rem);
+    margin-bottom: var(--space-lg, 1rem);
+}
+
+.csma-editor__label {
+    font-size: var(--font-size-sm, 0.8125rem);
+    font-weight: var(--font-weight-medium, 500);
+    color: var(--foreground, oklch(0.215 0.018 252));
+}
+
+.csma-editor__label-required::after {
+    content: ' *';
+    color: var(--destructive, oklch(0.58 0.17 25));
+}
+
+.csma-editor__input,
+.csma-editor__textarea,
+.csma-editor__select {
+    padding: var(--space-sm, 0.5rem) var(--space-md, 0.75rem);
+    border: 1px solid var(--border, oklch(0.88 0.008 248));
+    border-radius: var(--radius-sm, 0.25rem);
+    background: var(--background, oklch(0.975 0.004 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+    font-family: inherit;
+    font-size: inherit;
+    transition: border-color var(--transition-fast, 120ms) ease,
+                box-shadow var(--transition-fast, 120ms) ease;
+}
+
+.csma-editor__input:focus,
+.csma-editor__textarea:focus,
+.csma-editor__select:focus {
+    outline: none;
+    border-color: var(--primary, oklch(0.29 0.04 260));
+    box-shadow: 0 0 0 3px var(--primary-soft, color-mix(in srgb, var(--primary) 16%, transparent));
+}
+
+.csma-editor__input[aria-invalid="true"],
+.csma-editor__textarea[aria-invalid="true"] {
+    border-color: var(--destructive, oklch(0.58 0.17 25));
+}
+
+.csma-editor__input[aria-invalid="true"]:focus {
+    box-shadow: 0 0 0 3px var(--destructive-soft, color-mix(in srgb, var(--destructive) 12%, var(--surface) 88%));
+}
+
+.csma-editor__textarea {
+    min-height: 6rem;
+    resize: vertical;
+}
+
+.csma-editor__error {
+    display: none;
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--destructive, oklch(0.58 0.17 25));
+}
+
+.csma-editor__error[data-visible="true"] {
+    display: block;
+}
+
+.csma-editor__help {
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+}
+
+/* ─── Toggle ────────────────────────────────────────── */
+
+.csma-editor__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+    cursor: pointer;
+    user-select: none;
+}
+
+.csma-editor__toggle-track {
+    width: 2.5rem;
+    height: 1.375rem;
+    border-radius: var(--radius-full, 999px);
+    background: var(--border, oklch(0.88 0.008 248));
+    position: relative;
+    transition: background var(--transition-fast, 120ms) ease;
+}
+
+.csma-editor__toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 50%;
+    background: var(--surface, oklch(1 0.001 248));
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    transition: transform var(--transition-fast, 120ms) ease;
+}
+
+.csma-editor__toggle input:checked + .csma-editor__toggle-track {
+    background: var(--primary, oklch(0.29 0.04 260));
+}
+
+.csma-editor__toggle input:checked + .csma-editor__toggle-track::after {
+    transform: translateX(1.125rem);
+}
+
+.csma-editor__toggle input:focus-visible + .csma-editor__toggle-track {
+    box-shadow: 0 0 0 3px var(--primary-soft, color-mix(in srgb, var(--primary) 16%, transparent));
+}
+
+/* ─── Actions ───────────────────────────────────────── */
+
+.csma-editor__actions {
+    display: flex;
+    gap: var(--space-sm, 0.5rem);
+    margin-top: var(--space-lg, 1rem);
+    padding-top: var(--space-lg, 1rem);
+    border-top: 1px solid var(--border, oklch(0.88 0.008 248));
+}
+
+.csma-editor__submit {
+    padding: var(--space-sm, 0.5rem) var(--space-xl, 1.5rem);
+    border: none;
+    border-radius: var(--radius-sm, 0.25rem);
+    background: var(--primary, oklch(0.29 0.04 260));
+    color: var(--primary-foreground, oklch(0.98 0.005 248));
+    font-size: var(--font-size-sm, 0.8125rem);
+    font-weight: var(--font-weight-medium, 500);
+    cursor: pointer;
+    transition: opacity var(--transition-fast, 120ms) ease;
+}
+
+.csma-editor__submit:hover { opacity: 0.9; }
+.csma-editor__submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.csma-editor__submit:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background, #fff), 0 0 0 4px var(--ring, var(--primary));
+}
+
+.csma-editor__reset {
+    padding: var(--space-sm, 0.5rem) var(--space-xl, 1.5rem);
+    border: 1px solid var(--border, oklch(0.88 0.008 248));
+    border-radius: var(--radius-sm, 0.25rem);
+    background: var(--surface, oklch(1 0.001 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+    font-size: var(--font-size-sm, 0.8125rem);
+    cursor: pointer;
+}
+
+.csma-editor__reset:hover {
+    background: var(--background-muted, oklch(0.954 0.008 248));
+}
+
+/* ─── States ────────────────────────────────────────── */
+
+.csma-editor[data-state="saving"] {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.csma-editor__save-status {
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs, 0.25rem);
+}
+
+.csma-editor__save-status[data-status="saved"] {
+    color: var(--success, oklch(0.55 0.17 155));
+}
+
+.csma-editor__save-status[data-status="error"] {
+    color: var(--destructive, oklch(0.58 0.17 25));
+}
+
+/* ─── Reduced Motion ────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .csma-editor__toggle-track,
+    .csma-editor__toggle-track::after,
+    .csma-editor__input,
+    .csma-editor__textarea,
+    .csma-editor__select {
+        transition: none;
+    }
+}

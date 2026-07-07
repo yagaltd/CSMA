@@ -1,0 +1,222 @@
+/* CSMA Archetype — Config Panel */
+
+.csma-config {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    font-size: var(--font-size-base, 0.875rem);
+    line-height: var(--line-height-body, 1.5);
+    color: var(--foreground, oklch(0.215 0.018 252));
+    position: relative;
+}
+
+/* ─── Section ───────────────────────────────────────── */
+
+.csma-config__section {
+    border-bottom: 1px solid var(--border, oklch(0.88 0.008 248));
+}
+
+.csma-config__section:last-child {
+    border-bottom: none;
+}
+
+.csma-config__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md, 0.75rem) var(--space-lg, 1rem);
+    cursor: pointer;
+    user-select: none;
+    font-weight: var(--font-weight-semibold, 600);
+    font-size: var(--font-size-sm, 0.8125rem);
+    transition: background var(--transition-fast, 120ms) ease;
+}
+
+.csma-config__section-header:hover {
+    background: var(--background-muted, oklch(0.954 0.008 248));
+}
+
+.csma-config__section-arrow {
+    width: 0.75rem;
+    height: 0.75rem;
+    transition: transform var(--transition-fast, 120ms) ease;
+    opacity: 0.4;
+}
+
+.csma-config__section[aria-expanded="false"] .csma-config__section-arrow {
+    transform: rotate(-90deg);
+}
+
+.csma-config__section-body {
+    padding: 0 var(--space-lg, 1rem) var(--space-md, 0.75rem);
+}
+
+.csma-config__section[aria-expanded="false"] .csma-config__section-body {
+    display: none;
+}
+
+/* ─── Control Row ───────────────────────────────────── */
+
+.csma-config__control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md, 0.75rem);
+    padding: var(--space-sm, 0.5rem) 0;
+    min-height: 2.5rem;
+}
+
+.csma-config__control + .csma-config__control {
+    border-top: 1px solid var(--background-muted, oklch(0.954 0.008 248));
+}
+
+.csma-config__control-label {
+    font-size: var(--font-size-sm, 0.8125rem);
+    color: var(--foreground, oklch(0.215 0.018 252));
+    flex-shrink: 0;
+}
+
+.csma-config__control-desc {
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+}
+
+.csma-config__control-input {
+    flex-shrink: 0;
+}
+
+/* ─── Toggle ────────────────────────────────────────── */
+
+.csma-config__toggle {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.csma-config__toggle input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.csma-config__toggle-track {
+    width: 2.5rem;
+    height: 1.375rem;
+    border-radius: var(--radius-full, 999px);
+    background: var(--border, oklch(0.88 0.008 248));
+    position: relative;
+    transition: background var(--transition-fast, 120ms) ease;
+}
+
+.csma-config__toggle-track::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 50%;
+    background: var(--surface, oklch(1 0.001 248));
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    transition: transform var(--transition-fast, 120ms) ease;
+}
+
+.csma-config__toggle input:checked + .csma-config__toggle-track {
+    background: var(--primary, oklch(0.29 0.04 260));
+}
+
+.csma-config__toggle input:checked + .csma-config__toggle-track::after {
+    transform: translateX(1.125rem);
+}
+
+.csma-config__toggle input:focus-visible + .csma-config__toggle-track {
+    box-shadow: 0 0 0 3px var(--primary-soft, color-mix(in srgb, var(--primary) 16%, transparent));
+}
+
+/* ─── Color Picker ──────────────────────────────────── */
+
+.csma-config__color {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+}
+
+.csma-config__color-swatch {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-sm, 0.25rem);
+    border: 1px solid var(--border, oklch(0.88 0.008 248));
+    cursor: pointer;
+}
+
+.csma-config__color-input {
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    position: absolute;
+}
+
+.csma-config__color-hex {
+    font-size: var(--font-size-xs, 0.75rem);
+    font-family: var(--font-family-mono, monospace);
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+}
+
+/* ─── Slider ────────────────────────────────────────── */
+
+.csma-config__slider {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm, 0.5rem);
+    min-width: 120px;
+}
+
+.csma-config__slider input[type="range"] {
+    flex: 1;
+    height: 4px;
+    accent-color: var(--primary, oklch(0.29 0.04 260));
+}
+
+.csma-config__slider-value {
+    font-size: var(--font-size-xs, 0.75rem);
+    font-variant-numeric: tabular-nums;
+    min-width: 2rem;
+    text-align: right;
+    color: var(--foreground-muted, oklch(0.5 0.015 248));
+}
+
+/* ─── Select ────────────────────────────────────────── */
+
+.csma-config__select {
+    padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
+    border: 1px solid var(--border, oklch(0.88 0.008 248));
+    border-radius: var(--radius-sm, 0.25rem);
+    background: var(--background, oklch(0.975 0.004 248));
+    color: var(--foreground, oklch(0.215 0.018 252));
+    font-size: var(--font-size-xs, 0.75rem);
+    cursor: pointer;
+}
+
+.csma-config__select:focus {
+    outline: none;
+    border-color: var(--primary, oklch(0.29 0.04 260));
+    box-shadow: 0 0 0 3px var(--primary-soft, color-mix(in srgb, var(--primary) 16%, transparent));
+}
+
+/* ─── Reduced Motion ────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .csma-config__toggle-track,
+    .csma-config__toggle-track::after,
+    .csma-config__section-arrow,
+    .csma-config__section-header {
+        transition: none;
+    }
+}
