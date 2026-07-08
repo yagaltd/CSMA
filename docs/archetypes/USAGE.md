@@ -67,13 +67,14 @@ grid.destroy();
 
 ## Viewer
 
-Content display with fetch-and-render and optional markdown.
+Content display with fetch-and-render, safe markdown, sanitized HTML fragments,
+and explicit plain-text handling.
 
 ```javascript
 const viewer = createViewer(container, emit, {
   fetch: (id) => fetch(`/api/content/${id}`).then(r => r.json()),
   render: (data, el) => {
-    el.innerHTML = ''; // Clear
+    el.textContent = ''; // Clear with text-safe DOM APIs
     const h2 = document.createElement('h2');
     h2.textContent = data.title;
     el.appendChild(h2);
@@ -89,6 +90,13 @@ viewer.setLoading(true);
 viewer.destroy();
 ```
 
+Default rendering rules:
+
+- markdown and HTML-shaped strings pass through the viewer sanitizer when `sanitize: true`
+- object `{ html: '<p>Safe fragment</p>' }` is treated as sanitizable HTML
+- object `{ text: '<p>literal text</p>' }` is treated as literal text and rendered through `textContent`
+- use `render(data, el)` for trusted custom DOM construction instead of relying on raw `innerHTML`
+
 ### Token Overrides
 
 ```json
@@ -100,27 +108,33 @@ viewer.destroy();
 
 ## Stats Dashboard
 
-Responsive stat cards with declarative metrics. Optional chart placeholders.
+Responsive stat cards with declarative metrics. Optional charts are explicit:
+provide a `renderChart(chartDef, context)` callback to mount a chart node, or the
+dashboard renders a textual summary fallback.
 
 ```javascript
 const dash = createStatsDashboard(container, emit, {
   cards: [
-    { id: 'total', label: 'Total', format: 'number', fetch: async () => ({ value: 1420, trend: 12 }) },
-    { id: 'size', label: 'Storage', format: 'bytes', fetch: async () => api.totalSize() },
-    { id: 'uptime', label: 'Uptime', format: 'percent', fetch: async () => ({ value: 99.9 }) },
+    { id: 'total', label: 'Total Videos', fetch: () => api.count('videos'), format: 'number' },
+    { id: 'views', label: 'Total Views', fetch: () => api.sum('views'), format: 'number' },
+    { id: 'size', label: 'Storage', fetch: () => api.totalSize(), format: 'bytes' },
   ],
   charts: [
-    { id: 'daily', label: 'Daily Events', type: 'line' },
-    { id: 'usage', label: 'Usage', type: 'doughnut' },
+    { id: 'daily', label: 'Daily Events', type: 'line', description: 'Daily event totals' },
   ],
+  renderChart(chartDef, { container }) {
+    const chartNode = document.createElement('div');
+    chartNode.dataset.chartType = chartDef.type;
+    chartNode.textContent = `Render ${chartDef.label} here with your chart library`;
+    container.appendChild(chartNode);
+    return chartNode;
+  },
+  cols: { sm: 2, md: 3, lg: 4 },
 });
-
-// Wire Chart.js (or D3, Observable Plot) to chart canvases:
-const canvas = document.querySelector('[data-chart-id="daily"] canvas');
-new Chart(canvas, { type: 'line', data: {...} });
 
 // API
 dash.refresh();
+dash.update({ total: { value: 1500, trend: 4 } });
 dash.getData();
 dash.destroy();
 ```

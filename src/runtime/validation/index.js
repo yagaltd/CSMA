@@ -19,7 +19,11 @@ export {
     optional,
     nullable,
     any,
-    literal
+    literal,
+    record,
+    looseObject,
+    configSchema,
+    validateConfig
 } from './types/primitives.js';
 
 // Refinements
@@ -55,3 +59,6 @@ export {
     sqlSafe,
     strongPassword
 } from './validators/security.js';
+
+// Tile Manifest Parser
+export { parseManifest, ErrorCode } from '../tile-manifest-parser.js';

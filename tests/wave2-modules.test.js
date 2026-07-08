@@ -55,7 +55,20 @@ describe('wave 2 frontend modules', () => {
     service.destroy();
   });
 
-  it('ab-testing creates deterministic local fallback assignments and exposure events', async () => {
+  it('ab-testing returns no assignment and emits nothing when no experiment is configured', () => {
+    const eventBus = bus();
+    const publishSpy = vi.spyOn(eventBus, 'publish');
+    const service = new AbTestingService(eventBus);
+    service.init({ seed: 'test' });
+
+    const assignment = service.assign('hero', { userId: 'u1' });
+
+    expect(assignment).toBeNull();
+    expect(publishSpy).not.toHaveBeenCalledWith('AB_TEST_ASSIGNED', expect.anything());
+    service.destroy();
+  });
+
+  it('ab-testing creates deterministic local configured assignments and exposure events', async () => {
     const eventBus = bus();
     const service = new AbTestingService(eventBus);
     service.init({ seed: 'test', experiments: { hero: { variants: ['a', 'b'] } } });
@@ -65,7 +78,11 @@ describe('wave 2 frontend modules', () => {
     const exposure = service.expose('hero');
 
     expect(second).toEqual(first);
-    expect(exposure.experimentId).toBe('hero');
+    expect(first).toEqual(expect.objectContaining({
+      experimentId: 'hero',
+      reason: 'local-configured'
+    }));
+    expect(exposure).toEqual(first);
     const invalidResult = await eventBus.publish('INTENT_AB_TEST_ASSIGN', { key: 'hero', extra: true, timestamp: Date.now() });
     expect(invalidResult).toEqual([]);
     service.destroy();

@@ -43,7 +43,7 @@ export class RateLimiter {
     /**
      * Check if request is within rate limits
      * 
-     * @param {string} key - Unique key for the rate limit (e.g., 'INTENT_CREATE_ITEM-user123')
+     * @param {string} key - Unique key for the rate limit (e.g., 'INTENT_SUBMIT-user123')
      * @param {Object} limits - Rate limit configuration
      * @param {number} limits.requests - Maximum requests allowed
      * @param {number} limits.windowMs - Time window in milliseconds

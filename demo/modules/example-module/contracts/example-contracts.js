@@ -1,4 +1,4 @@
-import { object, string, number } from '../../../runtime/validation/index.js';
+import { object, string, number } from '../../../../src/runtime/validation/index.js';
 
 export const ExampleModuleContracts = {
     EXAMPLE_MODULE_EVENT: {

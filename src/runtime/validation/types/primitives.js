@@ -212,3 +212,124 @@ export function literal(constant) {
         }
     });
 }
+
+/**
+ * Ensure that a value is an object with dynamic keys and values
+ *
+ * Like TypeScript's Record<K, V> — keys must pass `keyValidator`, values
+ * must pass `valueValidator`. Both key and value validation errors are
+ * reported at their respective paths.
+ *
+ * @param {Struct} Key - Struct for validating each key (typically string())
+ * @param {Struct} Value - Struct for validating each value
+ * @returns {Struct}
+ *
+ * @example
+ *   // { [key: string]: number }
+ *   record(string(), number())
+ *
+ * @example
+ *   // { [key: string]: string } — e.g. environment variables
+ *   record(string(), string())
+ */
+export function record(Key, Value) {
+    return new Struct({
+        type: 'record',
+        schema: { Key, Value },
+        *entries(value) {
+            if (isPlainObject(value)) {
+                for (const [k, v] of Object.entries(value)) {
+                    yield [k, k, Key];
+                    yield [k, v, Value];
+                }
+            }
+        },
+        validator(value) {
+            return (
+                isPlainObject(value) ||
+                `Expected an object, but received: ${print(value)}`
+            );
+        },
+        coercer(value) {
+            return isPlainObject(value) ? { ...value } : value;
+        }
+    });
+}
+
+/**
+ * Ensure that a value is an object with known properties, but allow
+ * unknown extra keys to pass through silently.
+ *
+ * Unlike `object()` which rejects unknown keys, `looseObject()` validates
+ * declared keys against their schemas and preserves undeclared keys.
+ * Useful for config where forward-compatibility matters: a shell can validate
+ * the keys it knows about while letting app-owned extension keys survive.
+ *
+ * @param {Object} shape - Schema: { key: Struct, ... }
+ * @returns {Struct}
+ */
+export function looseObject(shape = {}) {
+    const knowns = Object.keys(shape);
+
+    return new Struct({
+        type: 'object',
+        schema: shape,
+        *entries(value) {
+            if (isPlainObject(value)) {
+                for (const key of knowns) {
+                    if (key in value) {
+                        yield [key, value[key], shape[key]];
+                    }
+                }
+            }
+        },
+        validator(value) {
+            return (
+                isPlainObject(value) ||
+                `Expected an object, but received: ${print(value)}`
+            );
+        },
+        coercer(value) {
+            return isPlainObject(value) ? { ...value } : value;
+        }
+    });
+}
+
+/**
+ * Create a config schema with forward-compatibility options.
+ *
+ * Wraps `object()` or `looseObject()` depending on the `allowUnknown`
+ * option, and attaches a config name for error reporting.
+ *
+ * @param {Object} shape - Schema definition { key: Struct, ... }
+ * @param {Object} [options]
+ * @param {boolean} [options.allowUnknown=false] - Preserve undeclared keys
+ * @param {string} [options.name='config'] - Config name for error context
+ * @returns {Struct}
+ */
+export function configSchema(shape, options = {}) {
+    const { allowUnknown = false, name = 'config' } = options;
+    const schema = allowUnknown ? looseObject(shape) : object(shape);
+    schema._configName = name;
+    return schema;
+}
+
+/**
+ * Validate a config object against a schema and return a result object
+ * with path-specific errors.
+ *
+ * This is a convenience wrapper around `Struct.validate()` that returns
+ * a uniform `{ valid, errors, value }` shape instead of a tuple.
+ * Errors carry their full path for use in settings UIs.
+ *
+ * @param {Struct} schema - Schema to validate against
+ * @param {*} config - Config data to validate
+ * @returns {{ valid: boolean, errors: Array, value: *|null }}
+ */
+export function validateConfig(schema, config) {
+    const [error, value] = schema.validate(config);
+    if (error) {
+        return { valid: false, errors: error.failures(), value: null };
+    }
+    return { valid: true, errors: [], value };
+}

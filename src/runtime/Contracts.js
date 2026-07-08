@@ -16,7 +16,6 @@ import { DataTableContracts } from '../modules/data-table/contracts/data-table-c
 import { CheckoutContracts } from '../modules/checkout/contracts/checkout-contracts.js';
 import { SearchContracts } from '../modules/search/contracts/search-contracts.js';
 import { AIContracts } from '../modules/ai/contracts/ai-contracts.js';
-import { ExampleModuleContracts } from '../modules/example-module/contracts/example-contracts.js';
 import { AnalyticsContracts } from '../modules/analytics/contracts/analytics-contracts.js';
 import { ConsentContracts } from '../modules/consent/contracts/consent-contracts.js';
 import { AuthContracts } from '../modules/auth/contracts/auth-contracts.js';
@@ -83,43 +82,6 @@ export const DeprecatedEvents = new Set([
 ]);
 
 const CoreContracts = {
-    // Example: Item saved event
-    ITEM_SAVED: {
-        version: 1,
-        type: 'event',
-        owner: 'storage-service',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'public',
-        description: 'Published when an item is successfully saved',
-
-        schema: object({
-            version: number(),
-            id: string(),
-            title: size(string(), 1, 200),
-            description: optional(string()),
-            status: enums(['pending', 'completed', 'failed']),
-            priority: optional(enums(['low', 'medium', 'high'])),
-            timestamp: number()
-        })
-    },
-
-    // Example: Item status changed
-    ITEM_STATUS_CHANGED: {
-        version: 1,
-        type: 'event',
-        owner: 'ui-service',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'public',
-        description: 'Published when item status changes',
-
-        schema: object({
-            id: string(),
-            status: enums(['pending', 'completed', 'failed']),
-            timestamp: number()
-        })
-    },
 
     // Example: Theme changed
     THEME_CHANGED: {
@@ -673,27 +635,6 @@ const CoreContracts = {
         })
     },
 
-    INTENT_CREATE_ITEM: {
-        version: 1,
-        type: 'intent',
-        owner: 'ui-service',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'public',
-        description: 'User intent to create a new item',
-
-        security: {
-            rateLimits: {
-                perUser: { requests: 10, windowMs: 60000, scope: 'user' }  // 10 requests per minute
-            }
-        },
-
-        schema: object({
-            title: size(string(), 1, 200),
-            description: optional(string()),
-            priority: optional(enums(['low', 'medium', 'high']))
-        })
-    },
 
     // Page metadata changed (for MetaManager)
     PAGE_CHANGED: {
@@ -1667,7 +1608,6 @@ const mergedContracts = {
     ...SearchContracts,
     ...AIContracts,
 
-    ...ExampleModuleContracts,
     ...ConsentContracts,
     ...AnalyticsContracts,
     ...AuthContracts,

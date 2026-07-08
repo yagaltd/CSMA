@@ -90,7 +90,7 @@ Conclusion: previous CSMA modules already followed the rule that CSMA talks to c
 
 ## New Modules Added From `MODULE_IMPLEMENTATION_PLAN.md`
 
-The following modules are frontend halves. They now include the standard CSMA gateway seam: explicit `runtimeConfig.<module>` endpoints are honored, and default routes resolve through `runtimeConfig.ssma.baseUrl` when configured. If no SSMA base URL or explicit endpoint exists, modules stay in local/mock mode. They still need backend/edge companions before they can provide production authority.
+The following modules are frontend halves. They now include the standard CSMA gateway seam: explicit `runtimeConfig.<module>` endpoints are honored, and default routes resolve through `runtimeConfig.ssma.baseUrl` when configured. If no SSMA base URL or explicit endpoint exists, modules remain in local client mode. They still need backend/edge companions before they can provide production authority.
 
 ### Wave 1 — Generic Site/App Foundation
 

@@ -13,14 +13,12 @@ import { AdapterRegistry } from './AdapterRegistry.js';
 import { ViewRegistry } from './ViewRegistry.js';
 import { PageResolver } from './PageResolver.js';
 import { ClientNavigationService } from './ClientNavigationService.js';
-import { ExampleService } from '../services/ExampleService.js';
 import { PlatformService } from '../services/PlatformService.js';
 import { auditPage } from './seoAudit.js';
 import { resolveSecurityPolicy } from './SecurityPolicy.js';
 
 export const CORE_SERVICE_NAMES = new Set([
     'leader',
-    'example',
     'platform',
     'channels',
     'metaManager',
@@ -57,7 +55,6 @@ export function createRuntimeState() {
         version: '1.0.0',
         description: 'Cross-tab leader election and coordination'
     });
-    serviceManager.register('example', new ExampleService());
     serviceManager.register('platform', new PlatformService(eventBus));
     serviceManager.register('channels', channelManager, {
         version: '1.0.0',

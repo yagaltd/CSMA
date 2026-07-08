@@ -145,11 +145,6 @@
     flex-shrink: 0;
 }
 
-.csma-stats__chart-canvas {
-    flex: 1;
-    min-height: 0;
-    width: 100%;
-}
 
 /* ─── States ────────────────────────────────────────── */
 

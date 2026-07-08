@@ -18,6 +18,140 @@
  *   (absent)   — content displayed normally
  */
 
+
+// ─── HTML Sanitizer ───────────────────────────────────
+
+/**
+ * Sanitize HTML by stripping dangerous elements and attributes.
+ * Allows basic formatting tags with safe attributes only.
+ */
+const ALLOWED_TAGS = new Set([
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+    'p', 'br', 'hr',
+    'strong', 'em', 'b', 'i', 'u', 's', 'code', 'pre',
+    'a', 'img',
+    'ul', 'ol', 'li',
+    'blockquote',
+    'table', 'thead', 'tbody', 'tr', 'th', 'td',
+    'div', 'span',
+]);
+
+const ALLOWED_ATTRS = new Set([
+    'href', 'src', 'alt', 'title', 'target', 'rel',
+    'class', 'id',
+    'loading', 'width', 'height',
+    'colspan', 'rowspan',
+]);
+
+const DANGEROUS_PROTOCOLS = /^(javascript|data|vbscript):/i;
+
+/**
+ * Strip dangerous event handlers from an attribute name.
+ */
+function isSafeAttr(name) {
+    const lower = name.toLowerCase().trim();
+    // Reject event handlers
+    if (lower.startsWith('on')) return false;
+    return ALLOWED_ATTRS.has(lower);
+}
+
+/**
+ * Sanitize a URL value, stripping dangerous protocols.
+ */
+function safeUrl(value) {
+    if (!value) return '';
+    const trimmed = value.trim();
+    if (DANGEROUS_PROTOCOLS.test(trimmed)) return '';
+    return trimmed;
+}
+
+/**
+ * Strip dangerous content from an HTML string.
+ * Uses a two-pass approach: regex for script/style removal,
+ * then DOM parse for attribute stripping.
+ */
+function sanitizeHtml(html) {
+    if (!html || typeof html !== 'string') return '';
+
+    // Pass 1: Remove <script>, <style>, and comment nodes with regex
+    let cleaned = html
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+        .replace(/<!--[\s\S]*?-->/g, '');
+
+    // Pass 2: Use a temporary DOM to strip dangerous attributes
+    try {
+        const template = document.createElement('template');
+        template.innerHTML = cleaned;
+        walkAndSanitize(template.content);
+        cleaned = stripDangerousHtmlAttributes(template.innerHTML);
+    } catch (_) {
+        // Fallback: if DOM parsing fails, strip all tags and use textContent
+        cleaned = cleaned.replace(/<[^>]*>/g, '');
+    }
+
+    return cleaned;
+}
+
+function stripDangerousHtmlAttributes(html) {
+    return html
+        .replace(/\s+on[a-z0-9:_-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+        .replace(/\s+(href|src)\s*=\s*(["'])\s*(?:javascript|data|vbscript):[^"']*\2/gi, '')
+        .replace(/\s+(href|src)\s*=\s*(?:javascript|data|vbscript):[^\s>]*/gi, '');
+}
+
+/**
+ * Walk parsed HTML once, unwrapping disallowed elements and sanitizing every
+ * allowed element's attributes. `querySelectorAll('*')` snapshots descendants
+ * before mutations, so children moved out of a removed wrapper are still
+ * visited later in the same pass.
+ */
+function walkAndSanitize(root) {
+    const elements = root.querySelectorAll ? [...root.querySelectorAll('*')] : [];
+
+    for (const node of elements) {
+        if (!node.parentNode) continue;
+
+        const tag = node.tagName.toLowerCase();
+
+        if (!ALLOWED_TAGS.has(tag)) {
+            while (node.firstChild) {
+                node.parentNode.insertBefore(node.firstChild, node);
+            }
+            node.parentNode.removeChild(node);
+            continue;
+        }
+
+        sanitizeElementAttributes(node, tag);
+    }
+}
+
+function sanitizeElementAttributes(node, tag) {
+    const attrs = [...node.attributes];
+    for (const attr of attrs) {
+        if (!isSafeAttr(attr.name)) {
+            node.removeAttribute(attr.name);
+            continue;
+        }
+
+        if (attr.name === 'href' || attr.name === 'src') {
+            const safe = safeUrl(attr.value);
+            if (safe) {
+                node.setAttribute(attr.name, safe);
+            } else {
+                node.removeAttribute(attr.name);
+            }
+        }
+    }
+
+    if (tag === 'a' && node.getAttribute('target') === '_blank') {
+        const rel = node.getAttribute('rel') || '';
+        if (!rel.includes('noopener')) {
+            node.setAttribute('rel', (rel + ' noopener noreferrer').trim());
+        }
+    }
+}
+
 // Simple Markdown-to-HTML converter (safe subset)
 function parseMarkdown(text) {
     if (!text) return '';
@@ -173,30 +307,31 @@ export function createViewer(container, emit, options = {}) {
         }
 
         let content = data;
+        let forceText = false;
 
-        // Extract body/content from common API shapes
+        // Extract body/content from common API shapes. `text` is explicitly
+        // plain text, even if its value contains markup-looking characters.
         if (typeof data === 'object' && data !== null) {
             if (typeof data.body === 'string') content = data.body;
             else if (typeof data.content === 'string') content = data.content;
             else if (typeof data.html === 'string') content = data.html;
-            else if (typeof data.text === 'string') content = data.text;
-            else content = JSON.stringify(data, null, 2);
+            else if (typeof data.text === 'string') { content = data.text; forceText = true; }
+            else { content = JSON.stringify(data, null, 2); forceText = true; }
         }
 
         const shouldRenderMarkdown =
-            markdown === true ||
-            (markdown === 'auto' && typeof content === 'string' && looksLikeMarkdown(content));
+            !forceText && (
+                markdown === true ||
+                (markdown === 'auto' && typeof content === 'string' && looksLikeMarkdown(content))
+            );
 
         if (shouldRenderMarkdown) {
-            contentEl.innerHTML = parseMarkdown(String(content));
+            contentEl.innerHTML = sanitizeHtml(parseMarkdown(String(content)));
         } else if (typeof content === 'string') {
-            if (sanitize && looksLikeHtml(content)) {
-                // For pre-rendered HTML, use innerHTML but strip scripts
-                contentEl.innerHTML = content.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-            } else if (sanitize) {
-                contentEl.textContent = content;
+            if (!forceText && sanitize && looksLikeHtml(content)) {
+                contentEl.innerHTML = sanitizeHtml(content);
             } else {
-                contentEl.innerHTML = String(content);
+                contentEl.textContent = content;
             }
         } else {
             contentEl.textContent = String(content);

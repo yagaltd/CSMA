@@ -57,7 +57,7 @@ Required behavior:
 | `payment-adapters` | Client payment SDK adapters, payment intent UI state, safe redirect/return handling | `checkout`, `auth`, `captcha` | Yes: payment intents, secrets, webhooks |
 | `edge-search` | Search client, facets, suggestions, result state, public/static index adapter | `search`, `analytics` | Optional/Yes: private index queries, ranking, ACLs |
 | `content-prefetch` | Route/data manifest prefetch, stale-while-revalidate hints, static-feeling transitions | `router`, `storage`, `network-status` | Optional: CDN manifests, cache headers |
-| `ab-testing` | Variant state, data attributes, analytics labels, deterministic local fallback | `analytics`, `consent` | Yes for production assignment/targeting |
+| `ab-testing` | Variant state, data attributes, analytics labels, explicitly configured local assignment | `analytics`, `consent` | Yes for production assignment/targeting |
 | `feature-flags` | Client flag cache, fallback defaults, UI state toggles | `storage`, optional `auth` | Yes for dynamic rollout/targeting |
 | `admin-audit-log` | Audit table UI, filters, export affordances | `data-table`, `auth`, `search` | Yes: immutable audit source |
 | `import-export` | CSV/JSON import preview, client validation, export downloads | `file-upload`, `form-management`, `data-table` | Optional/Yes: large imports, DB writes |

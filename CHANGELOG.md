@@ -15,7 +15,7 @@
 ### Changed
 
 - Updated runtime contract aggregation and optional feature loading for the new modules.
-- Added standard SSMA/gateway seams for new backend-capable modules: explicit endpoint config, default `runtimeConfig.ssma.baseUrl` route resolution, and local/mock mode when no gateway is configured.
+- Added standard SSMA/gateway seams for new backend-capable modules: explicit endpoint config, default `runtimeConfig.ssma.baseUrl` route resolution, and local client mode when no gateway is configured.
 - Updated docs to clarify the CSMA frontend/backend split: CSMA owns client state, contracts, adapters, optimistic behavior, and local cache behavior; backend/edge companions own authoritative validation, secrets, durable writes, payments, private search, RBAC, moderation, audit sources, imports, and workflow persistence.
 - Expanded legal/public artifact generator drafts for catalog, cart/payment, content/search/comments, admin/audit/import/export, and experiment/storage categories.
 

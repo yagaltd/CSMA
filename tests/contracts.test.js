@@ -25,8 +25,7 @@ const moduleLoaders = [
     ['file-upload', () => import('../src/modules/file-upload/index.js')],
     ['share', () => import('../src/modules/share/index.js')],
     ['captcha', () => import('../src/modules/captcha/index.js')],
-    ['router', () => import('../src/modules/router/index.js')],
-    ['example-module', () => import('../src/modules/example-module/index.js')]
+    ['router', () => import('../src/modules/router/index.js')]
 ];
 
 const loadedManifests = await Promise.all(
@@ -41,46 +40,6 @@ const loadedManifests = await Promise.all(
 );
 
 describe('Contract Validation', () => {
-    describe('ITEM_SAVED', () => {
-        it('should validate correct payload', () => {
-            const payload = {
-                version: 1,
-                id: 'test-123',
-                title: 'Test Item',
-                description: 'Test description',
-                status: 'pending',
-                priority: 'high',
-                timestamp: Date.now()
-            };
-
-            const [error, validated] = Contracts.ITEM_SAVED.schema.validate(payload);
-            expect(error).toBeUndefined();
-            expect(validated).toEqual(payload);
-        });
-
-        it('should reject invalid status', () => {
-            const payload = {
-                version: 1,
-                id: 'test-123',
-                title: 'Test',
-                status: 'invalid-status', // Invalid!
-                timestamp: Date.now()
-            };
-
-            const [error] = Contracts.ITEM_SAVED.schema.validate(payload);
-            expect(error).toBeDefined();
-        });
-
-        it('should reject missing required fields', () => {
-            const payload = {
-                title: 'Test'
-                // Missing: version, id, status, timestamp
-            };
-
-            const [error] = Contracts.ITEM_SAVED.schema.validate(payload);
-            expect(error).toBeDefined();
-        });
-    });
 
     describe('THEME_CHANGED', () => {
         it('should validate correct theme', () => {

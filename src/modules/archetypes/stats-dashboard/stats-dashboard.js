@@ -7,7 +7,7 @@
  * - Responsive auto-grid of stat cards
  * - Declarative metric definitions (label, fetch, format)
  * - Optional trend indicators (up/down/neutral)
- * - Optional charts section (canvas placeholders)
+ * - Optional charts section with explicit renderer hook or text summary fallback
  * - Loading / empty / error states
  * - Skeleton loading animation per card
  * - CSMA design tokens for all visual values
@@ -150,9 +150,19 @@ export function createStatsDashboard(container, emit, options = {}) {
         label.textContent = chartDef.label;
         chart.appendChild(label);
 
-        const canvas = document.createElement('canvas');
-        canvas.className = 'csma-stats__chart-canvas';
-        chart.appendChild(canvas);
+        // Extension point: if a renderChart callback is provided, use it.
+        // If absent, render an accessible summary instead of a blank canvas.
+        if (typeof options.renderChart === 'function') {
+            const rendered = options.renderChart(chartDef, { emit, container: chart });
+            if (rendered instanceof Node) {
+                chart.appendChild(rendered);
+            }
+        } else {
+            const summary = document.createElement('p');
+            summary.className = 'csma-stats__chart-summary';
+            summary.textContent = chartDef.description || `Chart: ${chartDef.label}`;
+            chart.appendChild(summary);
+        }
 
         return chart;
     }
@@ -251,10 +261,8 @@ export function createStatsDashboard(container, emit, options = {}) {
             loadAll();
         },
 
-        /** Update dashboard with new card definitions and optional preloaded data. */
-        update(newCards, data = {}) {
-            // cards is a const reference, but we can't reassign function params easily
-            // Instead, provide new data to existing cards
+        /** Update dashboard runtime data for existing card definitions. */
+        update(data = {}) {
             cardData = data;
             renderAll();
         },
