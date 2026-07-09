@@ -7,6 +7,30 @@ and this project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-07-09
+
+### Added
+
+- **visual-editor module** (`src/modules/visual-editor/`): chromeless structured content editor for CSMA.
+  - Graph document model (document / block / text / mark / annotation) with schema validation and defaults.
+  - Copy-on-write `Transaction` engine with inverse ops, cascade delete, history batching (1000ms), undo/redo.
+  - Selection model (`text` / `node` / `property`), mark/annotation ops, transforms (`breakTextNode`, `joinTextNode`, insert default).
+  - `EditorSessionService` with multi-session map (`editorId`), EventBus intents (`INTENT_EDITOR_*`), and `EDITOR_*` events including `EDITOR_COMMAND_ERROR`.
+  - Command + KeyMapper stack (`CommandRegistry` supports class constructors and `ToggleMarkCommand.forMarkType` factories).
+  - Type II rendering surface: EditorSurface, TextPropertyEditor (only `contenteditable`), NodeArrayContainer, SelectionOverlay, NodeGapInserter, optional toolbar + CSS tokens.
+  - `EditorContentAdapter` CMS blocks ↔ graph document, with **fail-closed** image URL sanitization (https/http/relative/`data:image/*` only).
+  - Module contracts, feature load after `cms-content` when `FEATURES.VISUAL_EDITOR` is set, plan doc `docs/visual-editor-module.md`, engine + integration tests.
+
+### Security
+
+- Image `src` / link `href` scheme validation in `NodeValidator` (`javascript:` and non-image `data:` rejected; `data:image/*` allowed for images).
+- Adapter conversion blanks dangerous or unknown image URL schemes at the boundary (default-deny unknown schemes).
+- documented frontend-only boundary: no secrets, no authoritative persistence, no collaborative OT/CRDT in CSMA.
+
+### Fixed
+
+- Registry/factory, intent lifecycle (`destroy` unsubscribes intents, brand-new INIT when `editorId` is null), mark preservation on text input, empty-history no-ops, mark split unique node IDs, and list-item merge into shared nodes map (verification remediations against the module plan).
+
 ## [2.1.0] - 2026-07-09
 
 ### Added
@@ -186,7 +210,8 @@ auth-ui, checkout, data-table, modal-system, search-demo, sidebar
 
 - plugin runtime, sandboxing, SDK, marketplace, and third-party install flows remain intentionally out of scope
 
-[Unreleased]: https://github.com/yagaltd/CSMA/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/yagaltd/CSMA/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/yagaltd/CSMA/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/yagaltd/CSMA/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/yagaltd/CSMA/compare/v1.2.0...v2.0.0
 [1.2.0]: https://github.com/yagaltd/CSMA/compare/v1.1.0...v1.2.0

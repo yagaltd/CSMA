@@ -100,6 +100,7 @@ export async function loadOptionalFeatures(state, {
     const featureFlagsConfig = { endpoint: resolveOptionalSsmaEndpoint('/flags/client-config', runtimeConfig.featureFlags?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.featureFlags, {}) };
     const contentPrefetchConfig = { endpoint: resolveOptionalSsmaEndpoint('/content/manifest', runtimeConfig.contentPrefetch?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.contentPrefetch, {}) };
     const cmsContentConfig = { endpoint: resolveOptionalSsmaEndpoint('/content', runtimeConfig.cmsContent?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.cmsContent, {}) };
+
     const catalogConfig = { endpoint: resolveOptionalSsmaEndpoint('/catalog/items', runtimeConfig.catalog?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.catalog, {}) };
     const cartConfig = { validateEndpoint: resolveOptionalSsmaEndpoint('/cart/validate', runtimeConfig.cart?.validateEndpoint || runtimeConfig.cart?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.cart, {}) };
     const paymentAdaptersConfig = { sessionEndpoint: resolveOptionalSsmaEndpoint('/checkout/session', runtimeConfig.paymentAdapters?.sessionEndpoint || runtimeConfig.paymentAdapters?.endpoint, runtimeConfig), ...cloneRuntimeSection(runtimeConfig.paymentAdapters, {}) };
@@ -254,6 +255,17 @@ export async function loadOptionalFeatures(state, {
             const csma = ensureCsma();
             csma.cmsContent = cmsContent;
             console.log('[CMSContent] Structured content loading enabled');
+        }),
+
+        FEATURES.VISUAL_EDITOR && runFeature('[VisualEditor] Failed to load module:', async () => {
+            await moduleManager.loadModule('visual-editor');
+            // Constructor binds EventBus intents; call init() after schema+doc via
+            // INTENT_EDITOR_INIT or session.init({ editorId, schema, doc }).
+            const editorSession = serviceManager.get('editorSession');
+            const csma = ensureCsma();
+            csma.editorSession = editorSession;
+            csma.visualEditor = editorSession;
+            console.log('[VisualEditor] Visual editor module enabled');
         }),
 
         FEATURES.CATALOG_MODULE && runFeature('[Catalog] Failed to load module:', async () => {

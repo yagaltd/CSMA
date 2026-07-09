@@ -1,0 +1,103 @@
+/**
+ * Editor Toolbar CSS
+ *
+ * Minimal formatting toolbar using design tokens.
+ */
+
+.ve-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs, 0.25rem);
+    padding: var(--space-sm, 0.5rem);
+    background: var(--surface, #f9fafb);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: var(--radius-md, 8px);
+    flex-wrap: wrap;
+}
+
+.ve-toolbar-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 var(--space-sm, 0.5rem);
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm, 4px);
+    background: transparent;
+    color: var(--foreground, #1a1a1a);
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-medium, 500);
+    cursor: pointer;
+    transition: background var(--transition-fast, 120ms),
+                border-color var(--transition-fast, 120ms),
+                color var(--transition-fast, 120ms);
+    user-select: none;
+}
+
+.ve-toolbar-button:hover:not([disabled]) {
+    background: var(--surface-muted, rgba(0, 0, 0, 0.05));
+    border-color: var(--border, #e5e7eb);
+}
+
+.ve-toolbar-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background, #ffffff),
+                0 0 0 4px var(--primary, #3b82f6);
+}
+
+.ve-toolbar-button:active:not([disabled]) {
+    background: var(--surface-muted, rgba(0, 0, 0, 0.1));
+}
+
+.ve-toolbar-button[data-state="selected"] {
+    background: var(--primary, #3b82f6);
+    color: var(--primary-foreground, #ffffff);
+    border-color: var(--primary, #3b82f6);
+}
+
+.ve-toolbar-button[data-state="selected"]:hover {
+    background: var(--primary-foreground, #1d4ed8);
+}
+
+.ve-toolbar-button[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Loading state */
+.ve-toolbar-button[data-state="loading"] {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Error state */
+.ve-toolbar-button[data-state="error"] {
+    border-color: var(--destructive, #ef4444);
+    color: var(--destructive, #ef4444);
+}
+
+/* Separator */
+.ve-toolbar-separator {
+    width: 1px;
+    height: 24px;
+    background: var(--border, #e5e7eb);
+    margin: 0 var(--space-xs, 0.25rem);
+    flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ve-toolbar {
+        gap: var(--space-2xs, 0.125rem);
+        padding: var(--space-xs, 0.25rem);
+    }
+
+    .ve-toolbar-button {
+        min-width: 28px;
+        height: 28px;
+        font-size: var(--font-size-xs, 0.75rem);
+    }
+}

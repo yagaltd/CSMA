@@ -260,7 +260,7 @@ Consent, Content Prefetch, Content Workflow, Data Table, Edge Search,
 Feature Flags, File System, File Upload, Form Management, I18n, Import Export,
 Location, Media, Meta Manager, Modal System, Network Status, Notifications,
 Optimistic Sync, Payment Adapters, Permissions UI, Reviews, Router, Search,
-Share, Storage, Sync Queue.
+Share, Storage, Sync Queue, Visual Editor.
 
 The newer vertical modules are **frontend halves**: they own UI state, EventBus
 contracts, adapters, optimistic behavior, safe local/cache behavior, and standard
