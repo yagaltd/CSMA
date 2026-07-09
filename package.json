@@ -1,6 +1,6 @@
 {
     "name": "csma",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Design-token-first vanilla JS template with modular runtime",
     "type": "module",
     "dependencies": {

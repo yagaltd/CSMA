@@ -7,6 +7,8 @@ and this project uses [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-07-09
+
 ### Added
 
 - Parallel optional feature loading: `loadOptionalFeatures` runs independent modules under `Promise.all` with `runFeature` isolation, while preserving dependency order (network → sync → optimistic; form before auth-ui/checkout; consent before analytics/notifications; router before client navigation; file-system before file-upload/media).
@@ -183,3 +185,9 @@ auth-ui, checkout, data-table, modal-system, search-demo, sidebar
 ### Deferred
 
 - plugin runtime, sandboxing, SDK, marketplace, and third-party install flows remain intentionally out of scope
+
+[Unreleased]: https://github.com/yagaltd/CSMA/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/yagaltd/CSMA/compare/v2.0.0...v2.1.0
+[2.0.0]: https://github.com/yagaltd/CSMA/compare/v1.2.0...v2.0.0
+[1.2.0]: https://github.com/yagaltd/CSMA/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/yagaltd/CSMA/releases/tag/v1.1.0
