@@ -354,7 +354,10 @@ import { afterEach, beforeEach, describe, it, expect } from 'vitest';
 describe('Accessibility: Button', () => {
   it('has no axe violations', async () => {
     // Render component
-    document.body.innerHTML = '<button class="button">Click</button>';
+    const button = document.createElement('button');
+    button.className = 'button';
+    button.textContent = 'Click';
+    document.body.replaceChildren(button);
     const results = await axe.run(document.body);
     expect(results.violations).toHaveLength(0);
   });

@@ -67,6 +67,11 @@ export class TransportMessageGuard {
         return message;
     }
 
+    parseMessage(message) {
+        this.validate(message);
+        return message;
+    }
+
     validate(message) {
         if (!message || typeof message !== 'object' || Array.isArray(message)) {
             throw new Error('Transport message must be an object');

@@ -1,7 +1,7 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ConsentService } from '../src/modules/consent/services/ConsentService.js';
-import { Contracts } from '../src/runtime/Contracts.js';
+import { ConsentContracts } from '../src/modules/consent/contracts/consent-contracts.js';
 
 function createEventBus() {
     const handlers = new Map();
@@ -111,7 +111,7 @@ describe('ConsentService', () => {
         service.setConsent('analytics', true, 'test');
 
         const [eventName, payload] = eventBus.publish.mock.calls.find(([name]) => name === 'CONSENT_UPDATED');
-        const [error] = Contracts[eventName].schema.validate(payload);
+        const [error] = ConsentContracts[eventName].schema.validate(payload);
         expect(error).toBeUndefined();
     });
 

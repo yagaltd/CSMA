@@ -4,6 +4,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import { Contracts } from '../src/runtime/Contracts.js';
+import { RouterContracts } from '../src/modules/router/contracts/router-contracts.js';
 
 const moduleLoaders = [
     ['auth', () => import('../src/modules/auth/index.js')],
@@ -28,11 +29,11 @@ const moduleLoaders = [
     ['router', () => import('../src/modules/router/index.js')]
 ];
 
-const loadedManifests = await Promise.all(
+const loadedModules = await Promise.all(
     moduleLoaders.map(async ([name, loader]) => {
         try {
             const mod = await loader();
-            return [name, mod.manifest];
+            return [name, mod];
         } catch {
             return [name, null];
         }
@@ -168,7 +169,7 @@ describe('Contract Validation', () => {
 
     describe('Router contracts', () => {
         it('validates INTENT_ROUTE_NAVIGATE', () => {
-            const [error, validated] = Contracts.INTENT_ROUTE_NAVIGATE.schema.validate({
+            const [error, validated] = RouterContracts.INTENT_ROUTE_NAVIGATE.schema.validate({
                 path: '/products/demo',
                 source: 'ui',
                 timestamp: Date.now()
@@ -179,7 +180,7 @@ describe('Contract Validation', () => {
         });
 
         it('validates ROUTE_CHANGED with params', () => {
-            const [error] = Contracts.ROUTE_CHANGED.schema.validate({
+            const [error] = RouterContracts.ROUTE_CHANGED.schema.validate({
                 path: '/products/demo',
                 routeId: 'product-detail',
                 pattern: '/products/:slug',
@@ -190,16 +191,22 @@ describe('Contract Validation', () => {
 
             expect(error).toBeUndefined();
         });
+
+        it('keeps router contracts out of core Contracts export', () => {
+            expect(Contracts.INTENT_ROUTE_NAVIGATE).toBeUndefined();
+            expect(Contracts.ROUTE_CHANGED).toBeUndefined();
+        });
     });
 });
 
 describe('Module contract registration', () => {
-    const modules = loadedManifests.filter(([, manifest]) => manifest?.contracts?.length);
+    const modules = loadedModules.filter(([, mod]) => mod?.manifest?.contracts?.length);
 
-    modules.forEach(([name, manifest]) => {
-        it(`includes ${name} module contracts`, () => {
-            for (const contractName of manifest.contracts) {
-                expect(Contracts).toHaveProperty(contractName);
+    modules.forEach(([name, mod]) => {
+        it(`exports ${name} module contracts for ModuleManager registration`, () => {
+            expect(mod.contracts).toBeTruthy();
+            for (const contractName of mod.manifest.contracts) {
+                expect(mod.contracts).toHaveProperty(contractName);
             }
         });
     });

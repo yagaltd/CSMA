@@ -35,7 +35,7 @@
   grid-template-columns: repeat(var(--grid-responsive-columns, 1), minmax(0, 1fr));
 }
 
-@media (min-width: var(--breakpoint-md)) {
+@media (min-width: 768px) {
   .grid[data-responsive-columns="2"] { --grid-responsive-columns: 2; }
   .grid[data-responsive-columns="3"] { --grid-responsive-columns: 3; }
   .grid[data-responsive-columns="4"] { --grid-responsive-columns: 4; }

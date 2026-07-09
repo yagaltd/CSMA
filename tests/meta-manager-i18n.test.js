@@ -68,8 +68,8 @@ describe('MetaManager localized SEO', () => {
     let manager;
 
     beforeEach(() => {
-        document.head.innerHTML = '';
-        document.body.innerHTML = '';
+        document.head.replaceChildren();
+        document.body.replaceChildren();
         document.title = '';
         eventBus = new EventBus();
         manager = new MetaManager(eventBus, { document });
@@ -77,8 +77,8 @@ describe('MetaManager localized SEO', () => {
 
     afterEach(() => {
         manager.destroy();
-        document.head.innerHTML = '';
-        document.body.innerHTML = '';
+        document.head.replaceChildren();
+        document.body.replaceChildren();
         document.documentElement.lang = '';
         document.documentElement.dir = '';
     });
@@ -139,8 +139,8 @@ describe('MetaManagerModuleService localized page binding', () => {
     let i18n;
 
     beforeEach(async () => {
-        document.head.innerHTML = '';
-        document.body.innerHTML = '';
+        document.head.replaceChildren();
+        document.body.replaceChildren();
         document.title = '';
         eventBus = new EventBus();
         manager = new MetaManager(eventBus, { document });
@@ -156,8 +156,8 @@ describe('MetaManagerModuleService localized page binding', () => {
     afterEach(() => {
         moduleService.destroy();
         manager.destroy();
-        document.head.innerHTML = '';
-        document.body.innerHTML = '';
+        document.head.replaceChildren();
+        document.body.replaceChildren();
         document.documentElement.lang = '';
         document.documentElement.dir = '';
         localStorage.clear();

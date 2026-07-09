@@ -37,9 +37,6 @@ export class AIService {
             if (!factory) continue;
             const provider = factory(config);
             if (!provider) continue;
-            if (config.apiKey && typeof provider.setApiKey === 'function') {
-                provider.setApiKey(config.apiKey);
-            }
             await this.client.registerProvider(name, provider, config);
         }
     }

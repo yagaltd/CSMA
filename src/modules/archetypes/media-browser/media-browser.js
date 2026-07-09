@@ -12,11 +12,26 @@
  * - CSMA design tokens for all visual values
  */
 
-const FILE_ICONS = {
-    image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>',
-    video: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
-    file:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
-};
+import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+
+function createFileIcon(type = 'file') {
+    if (type === 'image') {
+        return createIcon('0 0 24 24', [
+            createSvgElement('rect', { x: 3, y: 3, width: 18, height: 18, rx: 2 }),
+            createSvgElement('circle', { cx: 8.5, cy: 8.5, r: 1.5 }),
+            createSvgElement('path', { d: 'm21 15-5-5L5 21' })
+        ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+    }
+    if (type === 'video') {
+        return createIcon('0 0 24 24', [
+            createSvgElement('polygon', { points: '5 3 19 12 5 21 5 3' })
+        ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+    }
+    return createIcon('0 0 24 24', [
+        createSvgElement('path', { d: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' }),
+        createSvgElement('polyline', { points: '14 2 14 8 20 8' })
+    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+}
 
 export function createMediaBrowser(container, emit, options = {}) {
     const {
@@ -198,7 +213,7 @@ export function createMediaBrowser(container, emit, options = {}) {
         const div = document.createElement('div');
         div.className = 'csma-media__thumbnail csma-media__thumbnail--placeholder';
         const type = item.type || 'file';
-        div.innerHTML = FILE_ICONS[type] || FILE_ICONS.file;
+        div.appendChild(createFileIcon(type));
         return div;
     }
 
@@ -218,7 +233,7 @@ export function createMediaBrowser(container, emit, options = {}) {
 
     function renderGrid() {
         const filtered = getFilteredItems();
-        grid.innerHTML = '';
+        clearChildren(grid);
 
         if (filtered.length === 0) {
             setState(searchQuery ? 'empty' : 'empty');

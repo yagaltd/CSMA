@@ -38,6 +38,12 @@ Module boundary:
   `edge-search`, `feature-flags`, `content-prefetch`, and `ab-testing`
 - do not put backend authority or deployment orchestration into CSMA modules
 
+- `loadOptionalFeatures` (`src/runtime/features.js`) loads enabled modules in
+  dependency waves: independent modules run under `Promise.all`, while
+  ordered edges remain sequential (network → sync → optimistic; captcha/form
+  before auth-ui/checkout; consent before analytics/notifications; router
+  before client navigation; file-system before file-upload/media)
+
 Routing boundary:
 
 - core runtime owns path normalization, page resolution, and optional History API interception
@@ -107,8 +113,8 @@ const [error, validated] = Schema.validate(userInput);
 if (error) throw error;
 eventBus.publish('NOTE_SAVED', validated);
 
-// WRONG: innerHTML or skip validation
-element.innerHTML = userInput; // XSS vulnerability!
+// WRONG: parse user-controlled markup or skip validation
+parseAndAppendUserMarkup(element, userInput); // XSS vulnerability!
 ```
 
 ### 5. Data Attributes for Complex State
@@ -227,21 +233,31 @@ eventBus.publish('INTENT_ACTION', {
 
 ## Contracts
 
-Contracts validate all EventBus payloads:
+Contracts validate all EventBus payloads.
+
+`src/runtime/Contracts.js` exports **core contracts only** (shared runtime,
+component, module-lifecycle, and a few root services). Feature modules own
+their contracts under `src/modules/<id>/contracts/*` and export them as
+`export const contracts = …` from the module index. `ModuleManager.loadModule`
+registers those contracts before contributions are installed, normalizes
+intent rate limits, and unregisters them on unload.
 
 ```javascript
-// In src/runtime/Contracts.js
-export const Contracts = {
-  INTENT_MODAL_OPEN: {
-    schema: object({
-      modalId: string(),
-      timestamp: number()
-    }),
+// Core bootstrap (default-deny base map)
+eventBus.contracts = Contracts;
+
+// Module contracts arrive when loadModule runs
+// ModuleManager.registerContracts(module.contracts)
+
+// Example module-owned intent
+export const FormManagementContracts = {
+  INTENT_FORM_SUBMIT: {
+    version: 1,
+    type: 'intent',
+    owner: 'form-management',
+    schema: object({ formId: string(), timestamp: number() }),
     security: {
-      rateLimits: {
-        perSecond: 10,
-        perMinute: 100
-      }
+      rateLimits: { requests: 10, windowMs: 60000, scope: 'session' }
     }
   }
 };
@@ -254,6 +270,9 @@ modules and services implement behavior.
 Contracts are the production boundary. They are not a substitute for higher
 development-time rigor, and they do not imply every service needs a transition
 map. Use `docs/rigor/SKILL.md` to decide when to add more.
+
+Tests that construct a runtime without `loadModule` must register the module's
+`contracts` export themselves or events will default-deny.
 
 Current runtime registries: `commandRegistry`, `navigationRegistry`,
 `panelRegistry`, `adapterRegistry`, `viewRegistry`.

@@ -78,8 +78,8 @@ All user input is sanitized before use.
 // CORRECT: textContent prevents XSS
 element.textContent = userInput;
 
-// WRONG: innerHTML allows script injection
-element.innerHTML = userInput;
+// WRONG: parsing user-controlled markup allows script injection
+parseAndAppendUserMarkup(element, userInput);
 ```
 
 CSMA sanitization rules:
@@ -135,6 +135,18 @@ CSMA assumes SSMA production backends enforce HttpOnly Secure SameSite cookies,
 allowed origins, server-side rate limits, authenticated WS/SSE cookies,
 protected channels, `/forms/submit` anti-bot policy, and no bearer-token storage
 in the browser. Client-side rate limits are only UX/backpressure.
+
+### Production OAuth Allowlists
+
+In production, OAuth must validate both redirect targets and authorization
+endpoints against SecurityPolicy allowlists. Configure these keys before enabling
+external providers or `startOAuth` will throw:
+
+- `allowedRedirectOrigins` / `allowedRedirectUris`
+- `allowedAuthorizationOrigins` / `allowedAuthorizationUris`
+
+External authorization URLs also require HTTPS. Prefer the narrowest origin/URI
+lists that cover your real providers; do not open wildcards for convenience.
 
 ### Layer 5: Honeypot Fields
 

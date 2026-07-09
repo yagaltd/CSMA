@@ -13,9 +13,20 @@
  * - CSMA design tokens for all visual values
  */
 
-const CLOSE_ICON = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="3" x2="9" y2="9"/><line x1="9" y1="3" x2="3" y2="9"/></svg>';
-const ARROW_LEFT = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="8 2 4 6 8 10"/></svg>';
-const ARROW_RIGHT = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="4 2 8 6 4 10"/></svg>';
+import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+
+function createCloseIcon() {
+    return createIcon('0 0 12 12', [
+        createSvgElement('line', { x1: 3, y1: 3, x2: 9, y2: 9 }),
+        createSvgElement('line', { x1: 9, y1: 3, x2: 3, y2: 9 })
+    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+}
+
+function createArrowIcon(direction) {
+    return createIcon('0 0 12 12', [
+        createSvgElement('polyline', { points: direction === 'left' ? '8 2 4 6 8 10' : '4 2 8 6 4 10' })
+    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+}
 
 export function createNavTabs(container, emit, options = {}) {
     const {
@@ -39,7 +50,7 @@ export function createNavTabs(container, emit, options = {}) {
     const arrowLeft = document.createElement('button');
     arrowLeft.className = 'csma-navtabs__arrow csma-navtabs__arrow--left';
     arrowLeft.setAttribute('aria-label', 'Scroll tabs left');
-    arrowLeft.innerHTML = ARROW_LEFT;
+    arrowLeft.appendChild(createArrowIcon('left'));
     arrowLeft.addEventListener('click', () => scrollTabs(-200));
 
     // Scroll container
@@ -50,7 +61,7 @@ export function createNavTabs(container, emit, options = {}) {
     const arrowRight = document.createElement('button');
     arrowRight.className = 'csma-navtabs__arrow csma-navtabs__arrow--right';
     arrowRight.setAttribute('aria-label', 'Scroll tabs right');
-    arrowRight.innerHTML = ARROW_RIGHT;
+    arrowRight.appendChild(createArrowIcon('right'));
     arrowRight.addEventListener('click', () => scrollTabs(200));
 
     root.appendChild(arrowLeft);
@@ -87,7 +98,7 @@ export function createNavTabs(container, emit, options = {}) {
         if (closable) {
             const closeBtn = document.createElement('button');
             closeBtn.className = 'csma-navtabs__close';
-            closeBtn.innerHTML = CLOSE_ICON;
+            closeBtn.appendChild(createCloseIcon());
             closeBtn.setAttribute('aria-label', `Close ${tab.label || tab.id}`);
             closeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -107,7 +118,7 @@ export function createNavTabs(container, emit, options = {}) {
     }
 
     function renderAll() {
-        scrollEl.innerHTML = '';
+        clearChildren(scrollEl);
         tabList.forEach((tab) => scrollEl.appendChild(buildTab(tab)));
         updateOverflowIndicators();
     }

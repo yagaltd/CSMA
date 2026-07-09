@@ -1,4 +1,5 @@
 import { AIService } from './services/AIService.js';
+import { AIContracts } from './contracts/ai-contracts.js';
 
 export const manifest = {
     id: 'ai',
@@ -35,3 +36,5 @@ export function createAI(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = AIContracts;

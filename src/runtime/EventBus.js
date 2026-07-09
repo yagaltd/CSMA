@@ -3,6 +3,7 @@ import { rateLimiter } from './RateLimiter.js';
 const PROTOTYPE_POLLUTION_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const MAX_PUBLIC_STRING_LENGTH = 16000;
 const MAX_PUBLIC_ARRAY_LENGTH = 1000;
+const INTERNAL_SECURITY_EVENTS = new Set(['SECURITY_VIOLATION', 'CONTRACT_VIOLATION', 'SECURITY_RATE_LIMITED']);
 
 export class EventBus {
   constructor() {
@@ -38,9 +39,17 @@ export class EventBus {
   }
 
   async publish(eventName, payload) {
-    // Validate payload if contracts are available
-    if (this.contracts && this.contracts[eventName]) {
-      const contract = this.contracts[eventName];
+    const contract = this.contracts?.[eventName];
+    if (this.contracts && !contract && !INTERNAL_SECURITY_EVENTS.has(eventName)) {
+      this._publishSecurityViolation({
+        type: 'unknown-event',
+        eventName,
+        timestamp: Date.now()
+      });
+      return [];
+    }
+
+    if (contract) {
 
       // Check rate limits if defined
       const rateLimits = this._normalizeRateLimits(contract.security?.rateLimits);
@@ -100,9 +109,17 @@ export class EventBus {
   }
 
   publishSync(eventName, payload) {
-    // Apply same validation as async publish
-    if (this.contracts && this.contracts[eventName]) {
-      const contract = this.contracts[eventName];
+    const contract = this.contracts?.[eventName];
+    if (this.contracts && !contract && !INTERNAL_SECURITY_EVENTS.has(eventName)) {
+      this._publishSecurityViolation({
+        type: 'unknown-event',
+        eventName,
+        timestamp: Date.now()
+      });
+      return;
+    }
+
+    if (contract) {
 
       // Check rate limits
       const rateLimits = this._normalizeRateLimits(contract.security?.rateLimits);
@@ -180,7 +197,14 @@ export class EventBus {
       if (value.length > MAX_PUBLIC_ARRAY_LENGTH) {
         throw new Error(`Oversized array at ${path.join('.') || 'payload'}`);
       }
-      value.forEach((item, index) => this._scanPayloadSecurity(item, [...path, index]));
+      for (let index = 0; index < value.length; index++) {
+        path.push(index);
+        try {
+          this._scanPayloadSecurity(value[index], path);
+        } finally {
+          path.pop();
+        }
+      }
       return;
     }
 
@@ -198,9 +222,17 @@ export class EventBus {
         throw new Error(`Prototype pollution key rejected: ${key}`);
       }
       if (/url$/i.test(key) && typeof value[key] === 'string' && !this._isSafeUrl(value[key])) {
-        throw new Error(`Unsafe URL rejected at ${[...path, key].join('.')}`);
+        path.push(key);
+        const location = path.join('.');
+        path.pop();
+        throw new Error(`Unsafe URL rejected at ${location}`);
       }
-      this._scanPayloadSecurity(value[key], [...path, key]);
+      path.push(key);
+      try {
+        this._scanPayloadSecurity(value[key], path);
+      } finally {
+        path.pop();
+      }
     }
   }
 

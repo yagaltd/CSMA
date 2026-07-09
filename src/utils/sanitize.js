@@ -7,9 +7,8 @@
  * Sanitize HTML - prevents XSS attacks
  */
 export function sanitizeHTML(text) {
-    const div = document.createElement('div');
-    div.textContent = text; // Auto-escapes HTML entities
-    return div.innerHTML;
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+    return String(text ?? '').replace(/[&<>"']/g, (char) => map[char]);
 }
 
 /**

@@ -240,9 +240,10 @@ Generated legal content is scaffold text only and must be reviewed before use.
             └─────────────┘
 ```
 
-- **EventBus** — Pub/sub between services and UI. Every payload validated.
-- **Contracts** — Schema + rate limits + security rules per event type.
-- **Services** — Business logic, state management, persistence.
+- **EventBus** — Pub/sub between services and UI. Every payload validated; unknown events default-denied when contracts are active.
+- **Contracts** — Core schemas in `src/runtime/Contracts.js`; feature modules register their own contracts via `ModuleManager` on load (rate limits normalized).
+- **Services** — Business logic, state management, persistence (IDB preferred for durable queues/indexes).
+- **Optional features** — `loadOptionalFeatures` parallelizes independent modules; keeps strict order only on real dependency edges.
 - **UI** — Dumb components that subscribe to events and update CSS classes.
 
 ## Modules
@@ -289,7 +290,7 @@ Production behavior:
 - access tokens are memory-only; persistent browser token storage is rejected
 - cookie sessions are the preferred auth strategy
 - OAuth state uses cryptographic randomness and callback state is validated strictly
-- OAuth redirect URIs must be same-origin or explicitly allowlisted
+- production OAuth requires allowlists for redirects and authorization endpoints: `allowedRedirectOrigins` / `allowedRedirectUris`, `allowedAuthorizationOrigins` / `allowedAuthorizationUris` (external authorization URLs must be HTTPS)
 - `window.csma` exposes a small public runtime surface by default
 - EventBus contracts reject unknown keys, oversized values, unsafe URLs, prototype-pollution keys, and unmarked broad public schemas
 - public and user-triggered intents use canonical rate limits: `{ requests, windowMs, scope }`

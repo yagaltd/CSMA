@@ -11,6 +11,14 @@
  * - Keyboard-friendly (collapsible sections)
  */
 
+import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+
+function createSectionArrowIcon() {
+    return createIcon('0 0 12 12', [
+        createSvgElement('path', { d: 'M6 3L10 8H2L6 3Z', fill: 'currentColor' })
+    ], { class: 'csma-config__section-arrow' });
+}
+
 export function createConfigPanel(container, emit, options = {}) {
     const {
         sections = [],
@@ -228,7 +236,10 @@ export function createConfigPanel(container, emit, options = {}) {
         header.className = 'csma-config__section-header';
         header.setAttribute('tabindex', '0');
         header.setAttribute('role', 'button');
-        header.innerHTML = `${section.label} <svg class="csma-config__section-arrow" viewBox="0 0 12 12"><path d="M6 3L10 8H2L6 3Z" fill="currentColor"/></svg>`;
+        const headerText = document.createElement('span');
+        headerText.textContent = section.label;
+        header.appendChild(headerText);
+        header.appendChild(createSectionArrowIcon());
 
         header.addEventListener('click', () => {
             const expanded = sec.getAttribute('aria-expanded') === 'true';
@@ -265,7 +276,7 @@ export function createConfigPanel(container, emit, options = {}) {
     // ─── Render ────────────────────────────────────────
 
     function renderAll() {
-        root.innerHTML = '';
+        clearChildren(root);
         sections.forEach((section) => {
             root.appendChild(buildSection(section));
         });

@@ -18,109 +18,71 @@
 
 export class RateLimiter {
     constructor() {
-        // In-memory storage (cleared on page reload)
         this.limits = new Map();
-
-        // Generate session ID (persists until browser tab closes)
         this.sessionId = this.generateSessionId();
     }
 
-    /**
-     * Generate or retrieve session ID from sessionStorage
-     * @returns {string} Session identifier
-     */
     generateSessionId() {
         const key = 'csma-session-id';
-
-        if (!sessionStorage.getItem(key)) {
-            // Generate cryptographically secure random ID
-            sessionStorage.setItem(key, crypto.randomUUID());
+        try {
+            if (!globalThis.sessionStorage?.getItem(key)) {
+                globalThis.sessionStorage?.setItem(key, crypto.randomUUID());
+            }
+            return globalThis.sessionStorage?.getItem(key) || crypto.randomUUID();
+        } catch {
+            return crypto.randomUUID();
         }
-
-        return sessionStorage.getItem(key);
     }
 
-    /**
-     * Check if request is within rate limits
-     * 
-     * @param {string} key - Unique key for the rate limit (e.g., 'INTENT_SUBMIT-user123')
-     * @param {Object} limits - Rate limit configuration
-     * @param {number} limits.requests - Maximum requests allowed
-     * @param {number} limits.windowMs - Time window in milliseconds
-     * @param {string} limits.scope - Scope label used by EventBus when building keys
-     * @returns {boolean} True if within limits, false if exceeded
-     */
     checkRateLimit(key, limits) {
         const storageKey = `${this.sessionId}-${key}`;
         const now = Date.now();
-
         const windowMs = limits.windowMs ?? limits.window;
-        if (!Number.isFinite(limits.requests) || !Number.isFinite(windowMs)) {
+        const maxRequests = limits.requests;
+
+        if (!Number.isFinite(maxRequests) || !Number.isFinite(windowMs)) {
             throw new Error('Invalid rate limit. Expected { requests, windowMs, scope }.');
         }
 
-        // Get or initialize request history
-        let history = this.limits.get(storageKey) || [];
-
-        // Remove timestamps outside the current window
-        history = history.filter(timestamp =>
-            now - timestamp < windowMs
-        );
-
-        // Check if limit exceeded
-        if (history.length >= limits.requests) {
-            return false; // Rate limit exceeded
+        let bucket = this.limits.get(storageKey);
+        if (!bucket || now - bucket.windowStart >= windowMs) {
+            bucket = { count: 0, windowStart: now, windowMs };
         }
 
-        // Add current request timestamp
-        history.push(now);
-        this.limits.set(storageKey, history);
+        if (bucket.count >= maxRequests) {
+            this.limits.set(storageKey, bucket);
+            return false;
+        }
 
-        return true; // Within rate limits
+        bucket.count += 1;
+        this.limits.set(storageKey, bucket);
+        return true;
     }
 
-    /**
-     * Reset rate limit for a specific key
-     * Useful for testing or manual override
-     * 
-     * @param {string} key - Rate limit key to reset
-     */
     reset(key) {
         const storageKey = `${this.sessionId}-${key}`;
         this.limits.delete(storageKey);
     }
 
-    /**
-     * Clear all rate limits for current session
-     * Use sparingly - primarily for testing
-     */
     resetAll() {
         this.limits.clear();
     }
 
-    /**
-     * Get current rate limit status for debugging
-     * 
-     * @param {string} key - Rate limit key to check
-     * @returns {Object|null} Status object with requestCount and timestamps
-     */
     getStatus(key) {
         const storageKey = `${this.sessionId}-${key}`;
-        const history = this.limits.get(storageKey);
+        const bucket = this.limits.get(storageKey);
 
-        if (!history) {
+        if (!bucket) {
             return null;
         }
 
         return {
             key: storageKey,
-            requestCount: history.length,
-            timestamps: [...history],
-            oldestRequest: new Date(Math.min(...history)).toISOString(),
-            newestRequest: new Date(Math.max(...history)).toISOString()
+            requestCount: bucket.count,
+            windowStart: new Date(bucket.windowStart).toISOString(),
+            windowMs: bucket.windowMs
         };
     }
 }
 
-// Singleton instance
 export const rateLimiter = new RateLimiter();

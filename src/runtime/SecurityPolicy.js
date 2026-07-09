@@ -6,7 +6,9 @@ const DEFAULT_POLICY = {
         tokenStorage: 'memory',
         sessionStorage: 'memory',
         allowedRedirectOrigins: [],
-        allowedRedirectUris: []
+        allowedRedirectUris: [],
+        allowedAuthorizationOrigins: [],
+        allowedAuthorizationUris: []
     },
     forms: {
         autoSave: false,

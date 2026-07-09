@@ -265,7 +265,7 @@ export class SyncTransportService {
 
     _parseSseMessage(event, type) {
         const parsed = JSON.parse(event.data || '{}');
-        return this.guard.parse(JSON.stringify({ type, ...parsed }));
+        return this.guard.parseMessage({ type, ...parsed });
     }
 
     _flushQueue() {

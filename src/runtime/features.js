@@ -28,6 +28,30 @@ function cloneRuntimeSection(value, fallback = {}) {
     }
 }
 
+function ensureCsma(windowRef = globalThis.window) {
+    windowRef.csma = windowRef.csma || {};
+    return windowRef.csma;
+}
+
+async function runFeature(label, fn) {
+    try {
+        await fn();
+    } catch (error) {
+        console.warn(label, error);
+    }
+}
+
+async function initService(service, args) {
+    if (!service?.init) {
+        return undefined;
+    }
+    const result = arguments.length > 1 ? service.init(args) : service.init();
+    if (result != null && typeof result.then === 'function') {
+        return result;
+    }
+    return result;
+}
+
 function initializePageServices(state, {
     pages = [],
     runtimeConfig = {},
@@ -94,6 +118,7 @@ export async function loadOptionalFeatures(state, {
     const networkStatusEnabled = Boolean(FEATURES.NETWORK_STATUS_MODULE || offlineCacheEnabled);
     const syncQueueEnabled = Boolean(FEATURES.SYNC_QUEUE || offlineCacheEnabled);
     const cacheManagerEnabled = Boolean(FEATURES.CACHE_MANAGER || offlineCacheEnabled);
+    const consentEnabled = Boolean(FEATURES.CONSENT_MODULE || FEATURES.ANALYTICS_CONSENT);
 
     state.runtimeConfig = cloneRuntimeSection(runtimeConfig, {});
     state.securityPolicy = securityPolicy;
@@ -105,8 +130,9 @@ export async function loadOptionalFeatures(state, {
         windowRef
     });
 
+    // PWA SW registration (early, sequential)
     if (pwaEnabled) {
-        try {
+        await runFeature('[PWA] Service worker registration failed:', async () => {
             if (!window.Capacitor && !window.Neutralino && 'serviceWorker' in navigator) {
                 await navigator.serviceWorker.register(offlineCacheConfig.swUrl || '/sw.js', {
                     scope: offlineCacheConfig.scope,
@@ -114,13 +140,12 @@ export async function loadOptionalFeatures(state, {
                 });
                 console.log('[PWA] Service worker registered');
             }
-        } catch (error) {
-            console.warn('[PWA] Service worker registration failed:', error);
-        }
+        });
     }
 
+    // Wave A: network-status (required before sync-queue / optimistic-sync)
     if (networkStatusEnabled) {
-        try {
+        await runFeature('[NetworkStatus] Failed to load module:', async () => {
             await moduleManager.loadModule('network-status');
             const networkStatus = serviceManager.get('networkStatus');
             if (networkStatus) {
@@ -133,19 +158,20 @@ export async function loadOptionalFeatures(state, {
                 };
             }
             networkStatus?.init();
-            window.csma = window.csma || {};
-            window.csma.networkStatus = networkStatus;
+            const csma = ensureCsma();
+            csma.networkStatus = networkStatus;
             console.log('[NetworkStatus] Connectivity monitoring enabled');
-        } catch (error) {
-            console.warn('[NetworkStatus] Failed to load module:', error);
-        }
+        });
     }
 
-    if (authEnabled) {
-        try {
+    // Wave B: independent modules (no form / consent / fs / clientNav chain deps)
+    // data-table stays here so it still loads before API_WRAPPER (schema may place
+    // apiWrapper later; parallel does not wait on API — matching prior possible undefined api).
+    await Promise.all([
+        authEnabled && runFeature('[AuthService] Failed to initialize:', async () => {
             await moduleManager.loadModule('auth');
             const authService = serviceManager.get('auth');
-            await authService?.init({
+            await initService(authService, {
                 baseUrl: authConfig.baseUrl || apiBaseUrl,
                 securityPolicy,
                 ...authConfig
@@ -154,19 +180,289 @@ export async function loadOptionalFeatures(state, {
             channelManager.setContextResolver(() => state.authServiceRef?.getUser?.());
             state.authAccessSubscription?.();
             state.authAccessSubscription = eventBus.subscribe('AUTH_SESSION_UPDATED', () => channelManager.reevaluateAccess());
-            window.csma = window.csma || {};
-            window.csma.auth = authService;
+            const csma = ensureCsma();
+            csma.auth = authService;
             console.log('[AuthService] Session management ready');
-        } catch (error) {
-            console.warn('[AuthService] Failed to initialize:', error);
-        }
-    }
+        }),
 
+        FEATURES.MODAL_SYSTEM && runFeature('[ModalSystem] Failed to load module:', async () => {
+            await moduleManager.loadModule('modal-system');
+            const modalService = serviceManager.get('modal');
+            modalService?.init();
+            const csma = ensureCsma();
+            csma.modal = modalService;
+            console.log('[ModalSystem] Modal stack enabled');
+        }),
+
+        FEATURES.CAPTCHA_MODULE && runFeature('[Captcha] Failed to load module:', async () => {
+            await moduleManager.loadModule('captcha');
+            const captcha = serviceManager.get('captcha');
+            captcha?.init({
+                adapter: 'captcha.cap',
+                ...captchaConfig,
+                adapterRegistry: registries.adapters
+            });
+            const csma = ensureCsma();
+            csma.captcha = captcha;
+            console.log('[Captcha] CAPTCHA provider orchestration enabled');
+        }),
+
+        FEATURES.DATA_TABLE_MODULE && runFeature('[DataTable] Failed to load module:', async () => {
+            await moduleManager.loadModule('data-table');
+            const dataTable = serviceManager.get('dataTable');
+            const api = serviceManager.get('api');
+            dataTable?.init({ apiService: api });
+            const csma = ensureCsma();
+            csma.dataTable = dataTable;
+            console.log('[DataTable] Remote table utilities enabled');
+        }),
+
+        FEATURES.SEARCH_MODULE && runFeature('[Search] Failed to load module:', async () => {
+            await moduleManager.loadModule('search');
+            const searchService = serviceManager.get('search');
+            searchService?.init({
+                ...searchConfig,
+                adapterRegistry: registries.adapters
+            });
+            const csma = ensureCsma();
+            csma.search = searchService;
+            console.log('[Search] Tiered search module enabled');
+        }),
+
+        FEATURES.FEATURE_FLAGS && runFeature('[FeatureFlags] Failed to load module:', async () => {
+            await moduleManager.loadModule('feature-flags');
+            const featureFlags = serviceManager.get('featureFlags');
+            featureFlags?.init(featureFlagsConfig);
+            const csma = ensureCsma();
+            csma.featureFlags = featureFlags;
+            console.log('[FeatureFlags] Client feature flags enabled');
+        }),
+
+        FEATURES.CONTENT_PREFETCH && runFeature('[ContentPrefetch] Failed to load module:', async () => {
+            await moduleManager.loadModule('content-prefetch');
+            const contentPrefetch = serviceManager.get('contentPrefetch');
+            contentPrefetch?.init(contentPrefetchConfig);
+            const csma = ensureCsma();
+            csma.contentPrefetch = contentPrefetch;
+            console.log('[ContentPrefetch] Route/content prefetch enabled');
+        }),
+
+        FEATURES.CMS_CONTENT && runFeature('[CMSContent] Failed to load module:', async () => {
+            await moduleManager.loadModule('cms-content');
+            const cmsContent = serviceManager.get('cmsContent');
+            cmsContent?.init(cmsContentConfig);
+            const csma = ensureCsma();
+            csma.cmsContent = cmsContent;
+            console.log('[CMSContent] Structured content loading enabled');
+        }),
+
+        FEATURES.CATALOG_MODULE && runFeature('[Catalog] Failed to load module:', async () => {
+            await moduleManager.loadModule('catalog');
+            const catalog = serviceManager.get('catalog');
+            catalog?.init(catalogConfig);
+            const csma = ensureCsma();
+            csma.catalog = catalog;
+            console.log('[Catalog] Catalog state and filters enabled');
+        }),
+
+        FEATURES.CART_MODULE && runFeature('[Cart] Failed to load module:', async () => {
+            await moduleManager.loadModule('cart');
+            const cart = serviceManager.get('cart');
+            cart?.init(cartConfig);
+            const csma = ensureCsma();
+            csma.cart = cart;
+            console.log('[Cart] Client cart state enabled');
+        }),
+
+        FEATURES.PAYMENT_ADAPTERS && runFeature('[PaymentAdapters] Failed to load module:', async () => {
+            await moduleManager.loadModule('payment-adapters');
+            const paymentAdapters = serviceManager.get('paymentAdapters');
+            paymentAdapters?.init(paymentAdaptersConfig);
+            const csma = ensureCsma();
+            csma.paymentAdapters = paymentAdapters;
+            console.log('[PaymentAdapters] Client payment adapters enabled');
+        }),
+
+        FEATURES.REVIEWS_MODULE && runFeature('[Reviews] Failed to load module:', async () => {
+            await moduleManager.loadModule('reviews');
+            const reviews = serviceManager.get('reviews');
+            reviews?.init(reviewsConfig);
+            const csma = ensureCsma();
+            csma.reviews = reviews;
+            console.log('[Reviews] Review state enabled');
+        }),
+
+        FEATURES.AB_TESTING && runFeature('[ABTesting] Failed to load module:', async () => {
+            await moduleManager.loadModule('ab-testing');
+            const abTesting = serviceManager.get('abTesting');
+            abTesting?.init(abTestingConfig);
+            const csma = ensureCsma();
+            csma.abTesting = abTesting;
+            console.log('[ABTesting] Experiment assignment enabled');
+        }),
+
+        FEATURES.PERMISSIONS_UI && runFeature('[PermissionsUI] Failed to load module:', async () => {
+            await moduleManager.loadModule('permissions-ui');
+            const permissionsUI = serviceManager.get('permissionsUI');
+            permissionsUI?.init(permissionsUiConfig);
+            const csma = ensureCsma();
+            csma.permissionsUI = permissionsUI;
+            console.log('[PermissionsUI] Capability-aware UI state enabled');
+        }),
+
+        FEATURES.CHARTS_MODULE && runFeature('[Charts] Failed to load module:', async () => {
+            await moduleManager.loadModule('charts');
+            const charts = serviceManager.get('charts');
+            charts?.init(chartsConfig);
+            const csma = ensureCsma();
+            csma.charts = charts;
+            console.log('[Charts] Dashboard chart state enabled');
+        }),
+
+        FEATURES.ADMIN_AUDIT_LOG && runFeature('[AdminAuditLog] Failed to load module:', async () => {
+            await moduleManager.loadModule('admin-audit-log');
+            const adminAuditLog = serviceManager.get('adminAuditLog');
+            adminAuditLog?.init(adminAuditLogConfig);
+            const csma = ensureCsma();
+            csma.adminAuditLog = adminAuditLog;
+            console.log('[AdminAuditLog] Audit log UI state enabled');
+        }),
+
+        FEATURES.IMPORT_EXPORT && runFeature('[ImportExport] Failed to load module:', async () => {
+            await moduleManager.loadModule('import-export');
+            const importExport = serviceManager.get('importExport');
+            importExport?.init(importExportConfig);
+            const csma = ensureCsma();
+            csma.importExport = importExport;
+            console.log('[ImportExport] Import/export preview enabled');
+        }),
+
+        FEATURES.COMMENTS_MODULE && runFeature('[Comments] Failed to load module:', async () => {
+            await moduleManager.loadModule('comments');
+            const comments = serviceManager.get('comments');
+            comments?.init(commentsConfig);
+            const csma = ensureCsma();
+            csma.comments = comments;
+            console.log('[Comments] Comment UI state enabled');
+        }),
+
+        FEATURES.CONTENT_WORKFLOW && runFeature('[ContentWorkflow] Failed to load module:', async () => {
+            await moduleManager.loadModule('content-workflow');
+            const contentWorkflow = serviceManager.get('contentWorkflow');
+            contentWorkflow?.init(contentWorkflowConfig);
+            const csma = ensureCsma();
+            csma.contentWorkflow = contentWorkflow;
+            console.log('[ContentWorkflow] Content workflow UI state enabled');
+        }),
+
+        FEATURES.EDGE_SEARCH && runFeature('[EdgeSearch] Failed to load module:', async () => {
+            await moduleManager.loadModule('edge-search');
+            const edgeSearch = serviceManager.get('edgeSearch');
+            edgeSearch?.init(edgeSearchConfig);
+            const csma = ensureCsma();
+            csma.edgeSearch = edgeSearch;
+            console.log('[EdgeSearch] Edge/static search client enabled');
+        }),
+
+        FEATURES.AI_MODULE && runFeature('[AI] Failed to load module:', async () => {
+            await moduleManager.loadModule('ai');
+            const aiService = serviceManager.get('ai');
+            const aiConfig = cloneRuntimeSection(aiConfigBase, {});
+            if (aiConfig.providers?.ssma && !aiConfig.providers.ssma.endpoint) {
+                const queryName = aiConfig.providers.ssma.queryName || 'ai.generate';
+                aiConfig.providers.ssma.endpoint = resolveSsmaHttpEndpoint(`/query/${encodeURIComponent(queryName)}`, undefined, runtimeConfig);
+            }
+            await initService(aiService, aiConfig);
+            const csma = ensureCsma();
+            csma.ai = aiService;
+            console.log('[AI] Multi-provider AI orchestration enabled');
+        }),
+
+        FEATURES.SHARE_MODULE && runFeature('[Share] Failed to load module:', async () => {
+            await moduleManager.loadModule('share');
+            const share = serviceManager.get('share');
+            share?.init(shareConfig);
+            const csma = ensureCsma();
+            csma.share = share;
+            console.log('[Share] Web Share and clipboard fallback enabled');
+        }),
+
+        FEATURES.INDEXEDDB && runFeature('[Storage] Failed to load module:', async () => {
+            await moduleManager.loadModule('storage');
+            const storageService = serviceManager.get('Storage');
+            if (storageService?.init) {
+                await storageService.init({
+                    items: {
+                        keyPath: 'id',
+                        indexes: {
+                            byStatus: 'status',
+                            byPriority: 'priority'
+                        }
+                    }
+                });
+            }
+        }),
+
+        FEATURES.THREAD_MANAGER && runFeature('[ThreadManager] Failed to load:', async () => {
+            const { threadManager } = await import('../runtime/ThreadManager.js');
+            const csma = ensureCsma();
+            csma.threadManager = threadManager;
+            console.log('[ThreadManager] Web Worker management enabled');
+        }),
+
+        FEATURES.ROUTER_MODULE && runFeature('[Router] Failed to load module:', async () => {
+            await moduleManager.loadModule('router');
+            const router = serviceManager.get('router');
+            router?.init({
+                ...(runtimeConfig.router || {}),
+                viewRegistry: registries.views,
+                clientNavigation: pageServices.clientNavigation
+            });
+            pageServices.router = router;
+            const csma = ensureCsma();
+            csma.router = router;
+            console.log('[Router] SPA/hybrid routing enabled');
+        }),
+
+        FEATURES.LOCATION_MODULE && runFeature('[Location] Failed to load module:', async () => {
+            await moduleManager.loadModule('location');
+            const locationService = serviceManager.get('location');
+            locationService?.init({ storageService: window.localStorage && {
+                setItem: (key, value) => localStorage.setItem(key, value)
+            }});
+            const csma = ensureCsma();
+            csma.location = locationService;
+            console.log('[Location] Geolocation tracking enabled');
+        }),
+
+        FEATURES.DATA_AGGREGATOR && runFeature('[DataAggregator] Failed to load:', async () => {
+            const { createDataAggregator } = await import('../services/core/DataAggregator.js');
+            const dataAggregator = createDataAggregator(eventBus, {
+                timeout: 30000,
+                retries: 2,
+                debug: import.meta.env.DEV
+            });
+            serviceManager.register('dataAggregator', dataAggregator);
+            console.log('[DataAggregator] Initialized');
+        }),
+
+        FEATURES.FORM_VALIDATOR && runFeature('[FormValidator] Failed to load:', async () => {
+            const { createFormValidator } = await import('../services/core/FormValidator.js');
+            const formValidator = createFormValidator(eventBus, {
+                debounceDelay: 300,
+                debug: import.meta.env.DEV
+            });
+            serviceManager.register('formValidator', formValidator);
+            console.log('[FormValidator] Initialized');
+        })
+    ].filter(Boolean));
+
+    // Wave C: sync-queue (after network-status)
     if (syncQueueEnabled) {
         if (!networkStatusEnabled) {
             console.warn('[SyncQueue] Requires NETWORK_STATUS_MODULE feature. Skipping load.');
         } else {
-            try {
+            await runFeature('[SyncQueue] Failed to load module:', async () => {
                 await moduleManager.loadModule('sync-queue');
                 const syncQueue = serviceManager.get('syncQueue');
                 const networkStatus = serviceManager.get('networkStatus');
@@ -175,23 +471,22 @@ export async function loadOptionalFeatures(state, {
                     setItem: (key, value) => localStorage.setItem(key, value)
                 };
                 syncQueue?.init({ networkStatusService: networkStatus, storageService });
-                window.csma = window.csma || {};
-                window.csma.syncQueue = syncQueue;
+                const csma = ensureCsma();
+                csma.syncQueue = syncQueue;
                 console.log('[SyncQueue] Offline queue ready');
-            } catch (error) {
-                console.warn('[SyncQueue] Failed to load module:', error);
-            }
+            });
         }
     }
 
+    // Wave D: optimistic-sync (after network; keeps post-sync relative order)
     if (FEATURES.OPTIMISTIC_SYNC) {
-        try {
+        await runFeature('[OptimisticSync] Failed to load module:', async () => {
             await moduleManager.loadModule('optimistic-sync');
             const actionLogService = serviceManager.get('actionLog');
             const optimisticSync = serviceManager.get('optimisticSync');
             const transportService = serviceManager.get('optimisticTransport');
-            await actionLogService?.init();
-            await transportService?.init({
+            await initService(actionLogService);
+            await initService(transportService, {
                 leaderService: serviceManager.get('leader'),
                 endpoint: resolveSsmaWsEndpoint('/optimistic/ws', optimisticSyncConfig.wsEndpoint, runtimeConfig),
                 eventsEndpoint: resolveSsmaHttpEndpoint('/optimistic/events', optimisticSyncConfig.eventsEndpoint, runtimeConfig),
@@ -199,54 +494,23 @@ export async function loadOptionalFeatures(state, {
                 securityPolicy,
                 subprotocol: protocolConfig.subprotocol
             });
-            await optimisticSync?.init({
+            await initService(optimisticSync, {
                 actionLogService,
                 leaderService: serviceManager.get('leader'),
                 networkStatusService: serviceManager.get('networkStatus'),
                 transportService
             });
-            window.csma = window.csma || {};
-            window.csma.optimisticSync = optimisticSync;
-            window.csma.actionLog = actionLogService;
-            window.csma.optimisticTransport = transportService;
+            const csma = ensureCsma();
+            csma.optimisticSync = optimisticSync;
+            csma.actionLog = actionLogService;
+            csma.optimisticTransport = transportService;
             console.log('[OptimisticSync] Optimistic sync enabled');
-        } catch (error) {
-            console.warn('[OptimisticSync] Failed to load module:', error);
-        }
+        });
     }
 
-    if (FEATURES.MODAL_SYSTEM) {
-        try {
-            await moduleManager.loadModule('modal-system');
-            const modalService = serviceManager.get('modal');
-            modalService?.init();
-            window.csma = window.csma || {};
-            window.csma.modal = modalService;
-            console.log('[ModalSystem] Modal stack enabled');
-        } catch (error) {
-            console.warn('[ModalSystem] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.CAPTCHA_MODULE) {
-        try {
-            await moduleManager.loadModule('captcha');
-            const captcha = serviceManager.get('captcha');
-            captcha?.init({
-                adapter: 'captcha.cap',
-                ...captchaConfig,
-                adapterRegistry: registries.adapters
-            });
-            window.csma = window.csma || {};
-            window.csma.captcha = captcha;
-            console.log('[Captcha] CAPTCHA provider orchestration enabled');
-        } catch (error) {
-            console.warn('[Captcha] Failed to load module:', error);
-        }
-    }
-
+    // Wave E: form-management (after captcha may be present; uses syncQueue if loaded)
     if (FEATURES.FORM_MANAGEMENT) {
-        try {
+        await runFeature('[FormManagement] Failed to load module:', async () => {
             await moduleManager.loadModule('form-management');
             const formManager = serviceManager.get('formManager');
             const syncQueue = serviceManager.get('syncQueue');
@@ -263,19 +527,20 @@ export async function loadOptionalFeatures(state, {
                 captchaService: captcha,
                 integrityService: serviceManager.get('integrityService') || serviceManager.get('hmac')
             });
-            window.csma = window.csma || {};
-            window.csma.form = formManager;
+            const csma = ensureCsma();
+            csma.form = formManager;
             console.log('[FormManagement] Form orchestration enabled');
-        } catch (error) {
-            console.warn('[FormManagement] Failed to load module:', error);
-        }
+        });
     }
 
-    if (FEATURES.AUTH_UI_MODULE) {
-        if (!FEATURES.FORM_MANAGEMENT || !authEnabled) {
-            console.warn('[AuthUI] Requires FORM_MANAGEMENT and AUTH_SERVICE. Skipping load.');
-        } else {
-            try {
+    // Wave F: auth-ui + checkout (need form; auth-ui also needs auth)
+    await Promise.all([
+        FEATURES.AUTH_UI_MODULE && (async () => {
+            if (!FEATURES.FORM_MANAGEMENT || !authEnabled) {
+                console.warn('[AuthUI] Requires FORM_MANAGEMENT and AUTH_SERVICE. Skipping load.');
+                return;
+            }
+            await runFeature('[AuthUI] Failed to load module:', async () => {
                 await moduleManager.loadModule('auth-ui');
                 const authUI = serviceManager.get('authUI');
                 const authService = serviceManager.get('auth');
@@ -290,20 +555,18 @@ export async function loadOptionalFeatures(state, {
                     documentRef,
                     config: authUiConfig
                 });
-                window.csma = window.csma || {};
-                window.csma.authUI = authUI;
+                const csma = ensureCsma();
+                csma.authUI = authUI;
                 console.log('[AuthUI] Authentication UI orchestration enabled');
-            } catch (error) {
-                console.warn('[AuthUI] Failed to load module:', error);
-            }
-        }
-    }
+            });
+        })(),
 
-    if (FEATURES.CHECKOUT_MODULE) {
-        if (!FEATURES.FORM_MANAGEMENT) {
-            console.warn('[Checkout] Requires FORM_MANAGEMENT. Skipping load.');
-        } else {
-            try {
+        FEATURES.CHECKOUT_MODULE && (async () => {
+            if (!FEATURES.FORM_MANAGEMENT) {
+                console.warn('[Checkout] Requires FORM_MANAGEMENT. Skipping load.');
+                return;
+            }
+            await runFeature('[Checkout] Failed to load module:', async () => {
                 await moduleManager.loadModule('checkout');
                 const checkout = serviceManager.get('checkout');
                 const formManager = serviceManager.get('formManager');
@@ -319,297 +582,46 @@ export async function loadOptionalFeatures(state, {
                     optimisticSyncService,
                     allowGuestOptimistic: Boolean(checkoutConfig.allowGuestCheckout ?? optimisticSyncConfig.allowGuestCheckout)
                 });
-                window.csma = window.csma || {};
-                window.csma.checkout = checkout;
+                const csma = ensureCsma();
+                csma.checkout = checkout;
                 console.log('[Checkout] Checkout orchestration enabled');
-            } catch (error) {
-                console.warn('[Checkout] Failed to load module:', error);
-            }
-        }
-    }
-
-    if (FEATURES.DATA_TABLE_MODULE) {
-        try {
-            await moduleManager.loadModule('data-table');
-            const dataTable = serviceManager.get('dataTable');
-            const api = serviceManager.get('api');
-            dataTable?.init({ apiService: api });
-            window.csma = window.csma || {};
-            window.csma.dataTable = dataTable;
-            console.log('[DataTable] Remote table utilities enabled');
-        } catch (error) {
-            console.warn('[DataTable] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.SEARCH_MODULE) {
-        try {
-            await moduleManager.loadModule('search');
-            const searchService = serviceManager.get('search');
-            searchService?.init({
-                ...searchConfig,
-                adapterRegistry: registries.adapters
             });
-            window.csma = window.csma || {};
-            window.csma.search = searchService;
-            console.log('[Search] Tiered search module enabled');
-        } catch (error) {
-            console.warn('[Search] Failed to load module:', error);
-        }
-    }
+        })()
+    ].filter(Boolean));
 
-    if (FEATURES.FEATURE_FLAGS) {
-        try {
-            await moduleManager.loadModule('feature-flags');
-            const featureFlags = serviceManager.get('featureFlags');
-            featureFlags?.init(featureFlagsConfig);
-            window.csma = window.csma || {};
-            window.csma.featureFlags = featureFlags;
-            console.log('[FeatureFlags] Client feature flags enabled');
-        } catch (error) {
-            console.warn('[FeatureFlags] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.CONTENT_PREFETCH) {
-        try {
-            await moduleManager.loadModule('content-prefetch');
-            const contentPrefetch = serviceManager.get('contentPrefetch');
-            contentPrefetch?.init(contentPrefetchConfig);
-            window.csma = window.csma || {};
-            window.csma.contentPrefetch = contentPrefetch;
-            console.log('[ContentPrefetch] Route/content prefetch enabled');
-        } catch (error) {
-            console.warn('[ContentPrefetch] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.CMS_CONTENT) {
-        try {
-            await moduleManager.loadModule('cms-content');
-            const cmsContent = serviceManager.get('cmsContent');
-            cmsContent?.init(cmsContentConfig);
-            window.csma = window.csma || {};
-            window.csma.cmsContent = cmsContent;
-            console.log('[CMSContent] Structured content loading enabled');
-        } catch (error) {
-            console.warn('[CMSContent] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.CATALOG_MODULE) {
-        try {
-            await moduleManager.loadModule('catalog');
-            const catalog = serviceManager.get('catalog');
-            catalog?.init(catalogConfig);
-            window.csma = window.csma || {};
-            window.csma.catalog = catalog;
-            console.log('[Catalog] Catalog state and filters enabled');
-        } catch (error) {
-            console.warn('[Catalog] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.CART_MODULE) {
-        try {
-            await moduleManager.loadModule('cart');
-            const cart = serviceManager.get('cart');
-            cart?.init(cartConfig);
-            window.csma = window.csma || {};
-            window.csma.cart = cart;
-            console.log('[Cart] Client cart state enabled');
-        } catch (error) {
-            console.warn('[Cart] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.PAYMENT_ADAPTERS) {
-        try {
-            await moduleManager.loadModule('payment-adapters');
-            const paymentAdapters = serviceManager.get('paymentAdapters');
-            paymentAdapters?.init(paymentAdaptersConfig);
-            window.csma = window.csma || {};
-            window.csma.paymentAdapters = paymentAdapters;
-            console.log('[PaymentAdapters] Client payment adapters enabled');
-        } catch (error) {
-            console.warn('[PaymentAdapters] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.REVIEWS_MODULE) {
-        try {
-            await moduleManager.loadModule('reviews');
-            const reviews = serviceManager.get('reviews');
-            reviews?.init(reviewsConfig);
-            window.csma = window.csma || {};
-            window.csma.reviews = reviews;
-            console.log('[Reviews] Review state enabled');
-        } catch (error) {
-            console.warn('[Reviews] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.AB_TESTING) {
-        try {
-            await moduleManager.loadModule('ab-testing');
-            const abTesting = serviceManager.get('abTesting');
-            abTesting?.init(abTestingConfig);
-            window.csma = window.csma || {};
-            window.csma.abTesting = abTesting;
-            console.log('[ABTesting] Experiment assignment enabled');
-        } catch (error) {
-            console.warn('[ABTesting] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.PERMISSIONS_UI) {
-        try {
-            await moduleManager.loadModule('permissions-ui');
-            const permissionsUI = serviceManager.get('permissionsUI');
-            permissionsUI?.init(permissionsUiConfig);
-            window.csma = window.csma || {};
-            window.csma.permissionsUI = permissionsUI;
-            console.log('[PermissionsUI] Capability-aware UI state enabled');
-        } catch (error) {
-            console.warn('[PermissionsUI] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.CHARTS_MODULE) {
-        try {
-            await moduleManager.loadModule('charts');
-            const charts = serviceManager.get('charts');
-            charts?.init(chartsConfig);
-            window.csma = window.csma || {};
-            window.csma.charts = charts;
-            console.log('[Charts] Dashboard chart state enabled');
-        } catch (error) {
-            console.warn('[Charts] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.ADMIN_AUDIT_LOG) {
-        try {
-            await moduleManager.loadModule('admin-audit-log');
-            const adminAuditLog = serviceManager.get('adminAuditLog');
-            adminAuditLog?.init(adminAuditLogConfig);
-            window.csma = window.csma || {};
-            window.csma.adminAuditLog = adminAuditLog;
-            console.log('[AdminAuditLog] Audit log UI state enabled');
-        } catch (error) {
-            console.warn('[AdminAuditLog] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.IMPORT_EXPORT) {
-        try {
-            await moduleManager.loadModule('import-export');
-            const importExport = serviceManager.get('importExport');
-            importExport?.init(importExportConfig);
-            window.csma = window.csma || {};
-            window.csma.importExport = importExport;
-            console.log('[ImportExport] Import/export preview enabled');
-        } catch (error) {
-            console.warn('[ImportExport] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.COMMENTS_MODULE) {
-        try {
-            await moduleManager.loadModule('comments');
-            const comments = serviceManager.get('comments');
-            comments?.init(commentsConfig);
-            window.csma = window.csma || {};
-            window.csma.comments = comments;
-            console.log('[Comments] Comment UI state enabled');
-        } catch (error) {
-            console.warn('[Comments] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.CONTENT_WORKFLOW) {
-        try {
-            await moduleManager.loadModule('content-workflow');
-            const contentWorkflow = serviceManager.get('contentWorkflow');
-            contentWorkflow?.init(contentWorkflowConfig);
-            window.csma = window.csma || {};
-            window.csma.contentWorkflow = contentWorkflow;
-            console.log('[ContentWorkflow] Content workflow UI state enabled');
-        } catch (error) {
-            console.warn('[ContentWorkflow] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.EDGE_SEARCH) {
-        try {
-            await moduleManager.loadModule('edge-search');
-            const edgeSearch = serviceManager.get('edgeSearch');
-            edgeSearch?.init(edgeSearchConfig);
-            window.csma = window.csma || {};
-            window.csma.edgeSearch = edgeSearch;
-            console.log('[EdgeSearch] Edge/static search client enabled');
-        } catch (error) {
-            console.warn('[EdgeSearch] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.AI_MODULE) {
-        try {
-            await moduleManager.loadModule('ai');
-            const aiService = serviceManager.get('ai');
-            const aiConfig = cloneRuntimeSection(aiConfigBase, {});
-            if (aiConfig.providers?.ssma && !aiConfig.providers.ssma.endpoint) {
-                const queryName = aiConfig.providers.ssma.queryName || 'ai.generate';
-                aiConfig.providers.ssma.endpoint = resolveSsmaHttpEndpoint(`/query/${encodeURIComponent(queryName)}`, undefined, runtimeConfig);
-            }
-            await aiService?.init(aiConfig);
-            window.csma = window.csma || {};
-            window.csma.ai = aiService;
-            console.log('[AI] Multi-provider AI orchestration enabled');
-        } catch (error) {
-            console.warn('[AI] Failed to load module:', error);
-        }
-    }
-
-    const consentEnabled = Boolean(FEATURES.CONSENT_MODULE || FEATURES.ANALYTICS_CONSENT);
+    // Wave G: consent (before notifications / analytics)
     let consentService = null;
-
     if (consentEnabled) {
-        try {
+        await runFeature('[Consent] Failed to load module:', async () => {
             await moduleManager.loadModule('consent');
             consentService = serviceManager.get('consent');
             consentService?.init(consentConfig);
-            window.csma = window.csma || {};
-            window.csma.consent = consentService;
-            window.csma.analyticsConsent = consentService;
-            window.csma.seoAudit = auditPage;
+            const csma = ensureCsma();
+            csma.consent = consentService;
+            csma.analyticsConsent = consentService;
+            csma.seoAudit = auditPage;
             state.consentCleanup?.();
             state.consentCleanup = initConsentUI(consentService, documentRef);
             state.analyticsConsentCleanup = null;
             console.log('[Consent] Consent preferences enabled');
-        } catch (error) {
-            console.warn('[Consent] Failed to load module:', error);
-        }
+        });
     }
 
-    if (FEATURES.NOTIFICATIONS_MODULE) {
-        try {
+    // Wave H: notifications + analytics (receive consentService when present)
+    await Promise.all([
+        FEATURES.NOTIFICATIONS_MODULE && runFeature('[Notifications] Failed to load module:', async () => {
             await moduleManager.loadModule('notifications');
             const notifications = serviceManager.get('notifications');
             notifications?.init({
                 consent: consentService,
                 ...notificationsConfig
             });
-            window.csma = window.csma || {};
-            window.csma.notifications = notifications;
+            const csma = ensureCsma();
+            csma.notifications = notifications;
             console.log('[Notifications] Notification center and browser delivery enabled');
-        } catch (error) {
-            console.warn('[Notifications] Failed to load module:', error);
-        }
-    }
+        }),
 
-    if (FEATURES.ANALYTICS_MODULE) {
-        try {
+        FEATURES.ANALYTICS_MODULE && runFeature('[Analytics] Failed to load module:', async () => {
             await moduleManager.loadModule('analytics');
             const analyticsConfig = cloneRuntimeSection(analyticsConfigBase, {});
             const analyticsService = serviceManager.get('analytics');
@@ -618,53 +630,19 @@ export async function loadOptionalFeatures(state, {
                 endpoint: buildLogEndpoint(analyticsConfig.endpoint, runtimeConfig),
                 ...(consentService ? { consent: consentService } : {})
             });
-            window.csma = window.csma || {};
-            window.csma.analytics = analyticsService;
+            const csma = ensureCsma();
+            csma.analytics = analyticsService;
             if (consentService) {
-                window.csma.analyticsConsent = consentService;
+                csma.analyticsConsent = consentService;
             }
-            window.csma.seoAudit = auditPage;
+            csma.seoAudit = auditPage;
             console.log('[Analytics] Web analytics module enabled');
-        } catch (error) {
-            console.warn('[Analytics] Failed to load module:', error);
-        }
-    }
+        })
+    ].filter(Boolean));
 
-    if (FEATURES.SHARE_MODULE) {
-        try {
-            await moduleManager.loadModule('share');
-            const share = serviceManager.get('share');
-            share?.init(shareConfig);
-            window.csma = window.csma || {};
-            window.csma.share = share;
-            console.log('[Share] Web Share and clipboard fallback enabled');
-        } catch (error) {
-            console.warn('[Share] Failed to load module:', error);
-        }
-    }
-
-    if (FEATURES.INDEXEDDB) {
-        try {
-            await moduleManager.loadModule('storage');
-            const storageService = serviceManager.get('Storage');
-            if (storageService?.init) {
-                await storageService.init({
-                    items: {
-                        keyPath: 'id',
-                        indexes: {
-                            byStatus: 'status',
-                            byPriority: 'priority'
-                        }
-                    }
-                });
-            }
-        } catch (error) {
-            console.warn('[Storage] Failed to load module:', error);
-        }
-    }
-
+    // Wave I: i18n then meta-manager (sequential inside block)
     if (FEATURES.I18N) {
-        try {
+        await runFeature('[i18n] Failed to load module:', async () => {
             await moduleManager.loadModule('i18n');
             const i18nService = serviceManager.get('I18n');
             state.i18nServiceRef = i18nService;
@@ -687,45 +665,15 @@ export async function loadOptionalFeatures(state, {
                 metaManager: state.metaManager,
                 i18nService
             });
-            window.csma = window.csma || {};
-            window.csma.i18n = i18nService;
-            window.csma.metaManagerModule = metaManagerModule;
-        } catch (error) {
-            console.warn('[i18n] Failed to load module:', error);
-        }
+            const csma = ensureCsma();
+            csma.i18n = i18nService;
+            csma.metaManagerModule = metaManagerModule;
+        });
     }
 
-    if (FEATURES.THREAD_MANAGER) {
-        try {
-            const { threadManager } = await import('../runtime/ThreadManager.js');
-            window.csma = window.csma || {};
-            window.csma.threadManager = threadManager;
-            console.log('[ThreadManager] Web Worker management enabled');
-        } catch (error) {
-            console.warn('[ThreadManager] Failed to load:', error);
-        }
-    }
-
-    if (FEATURES.ROUTER_MODULE) {
-        try {
-            await moduleManager.loadModule('router');
-            const router = serviceManager.get('router');
-            router?.init({
-                ...(runtimeConfig.router || {}),
-                viewRegistry: registries.views,
-                clientNavigation: pageServices.clientNavigation
-            });
-            pageServices.router = router;
-            window.csma = window.csma || {};
-            window.csma.router = router;
-            console.log('[Router] SPA/hybrid routing enabled');
-        } catch (error) {
-            console.warn('[Router] Failed to load module:', error);
-        }
-    }
-
+    // Wave J: clientNavigation (after router if present)
     if (FEATURES.CLIENT_NAVIGATION) {
-        try {
+        await runFeature('[ClientNavigation] Failed to initialize:', async () => {
             const router = pageServices.router || serviceManager.get('router');
             const runtimeNavigationConfig = runtimeConfig.clientNavigation || {};
             pageServices.clientNavigation?.init({
@@ -739,16 +687,15 @@ export async function loadOptionalFeatures(state, {
                 windowRef,
                 documentRef
             });
-            window.csma = window.csma || {};
-            window.csma.clientNavigation = pageServices.clientNavigation;
+            const csma = ensureCsma();
+            csma.clientNavigation = pageServices.clientNavigation;
             console.log('[ClientNavigation] History API navigation enabled');
-        } catch (error) {
-            console.warn('[ClientNavigation] Failed to initialize:', error);
-        }
+        });
     }
 
+    // Wave K: file-system then file-upload + media in parallel
     if (FEATURES.FILE_SYSTEM) {
-        try {
+        await runFeature('[FileSystem] Failed to load module:', async () => {
             await moduleManager.loadModule('file-system');
             const fileSystemService = serviceManager.get('fileSystem');
             if (fileSystemService?.configure) {
@@ -757,46 +704,14 @@ export async function loadOptionalFeatures(state, {
                     storageRoot: '/user-files'
                 });
             }
-            await fileSystemService?.init();
-            window.csma = window.csma || {};
-            window.csma.fileSystem = fileSystemService;
+            await initService(fileSystemService);
+            const csma = ensureCsma();
+            csma.fileSystem = fileSystemService;
             console.log('[FileSystem] Hybrid storage enabled');
-        } catch (error) {
-            console.warn('[FileSystem] Failed to load module:', error);
-        }
+        });
     }
 
-    if (FEATURES.FILE_UPLOAD) {
-        try {
-            await moduleManager.loadModule('file-upload');
-            const fileUpload = serviceManager.get('fileUpload');
-            const fileSystemService = serviceManager.get('fileSystem');
-            const syncQueue = serviceManager.get('syncQueue');
-            const networkStatus = serviceManager.get('networkStatus');
-            const captcha = serviceManager.get('captcha');
-            const storageAdapter = window.localStorage && {
-                getItem: (key) => localStorage.getItem(key),
-                setItem: (key, value) => localStorage.setItem(key, value),
-                removeItem: (key) => localStorage.removeItem(key)
-            };
-            await fileUpload?.init({
-                storage: storageAdapter,
-                fileSystem: fileSystemService,
-                syncQueue,
-                networkStatus,
-                captchaService: captcha,
-                ...fileUploadConfig
-            });
-            window.csma = window.csma || {};
-            window.csma.fileUpload = fileUpload;
-            console.log('[FileUpload] Resumable upload utilities enabled');
-        } catch (error) {
-            console.warn('[FileUpload] Failed to load module:', error);
-        }
-    }
-
-    // ─── Media Module (unified) ───────────────────────────
-    // Alias old flags to FEATURES.MEDIA for deprecation window
+    // Media deprecation aliases (before MEDIA load, same as before)
     if (FEATURES.CAMERA_MODULE || FEATURES.MEDIA_CAPTURE || FEATURES.MEDIA_TRANSFORM || FEATURES.IMAGE_OPTIMIZER) {
         if (!FEATURES.MEDIA) {
             const sources = [];
@@ -809,44 +724,51 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    if (FEATURES.MEDIA) {
-        try {
+    await Promise.all([
+        FEATURES.FILE_UPLOAD && runFeature('[FileUpload] Failed to load module:', async () => {
+            await moduleManager.loadModule('file-upload');
+            const fileUpload = serviceManager.get('fileUpload');
+            const fileSystemService = serviceManager.get('fileSystem');
+            const syncQueue = serviceManager.get('syncQueue');
+            const networkStatus = serviceManager.get('networkStatus');
+            const captcha = serviceManager.get('captcha');
+            const storageAdapter = window.localStorage && {
+                getItem: (key) => localStorage.getItem(key),
+                setItem: (key, value) => localStorage.setItem(key, value),
+                removeItem: (key) => localStorage.removeItem(key)
+            };
+            await initService(fileUpload, {
+                storage: storageAdapter,
+                fileSystem: fileSystemService,
+                syncQueue,
+                networkStatus,
+                captchaService: captcha,
+                ...fileUploadConfig
+            });
+            const csma = ensureCsma();
+            csma.fileUpload = fileUpload;
+            console.log('[FileUpload] Resumable upload utilities enabled');
+        }),
+
+        FEATURES.MEDIA && runFeature('[Media] Failed to load module:', async () => {
             await moduleManager.loadModule('media');
             const mediaService = serviceManager.get('media');
             const fileSystemService = serviceManager.get('fileSystem');
             mediaService?.init({ fileSystemService });
-            window.csma = window.csma || {};
-            window.csma.media = mediaService;
+            const csma = ensureCsma();
+            csma.media = mediaService;
             // Legacy aliases for backward compat
-            window.csma.camera = mediaService;
-            window.csma.mediaCapture = mediaService;
-            window.csma.mediaTransform = mediaService;
-            window.csma.imageOptimizer = mediaService;
+            csma.camera = mediaService;
+            csma.mediaCapture = mediaService;
+            csma.mediaTransform = mediaService;
+            csma.imageOptimizer = mediaService;
             console.log('[Media] Photo, video, audio, screen capture + image optimization enabled');
-        } catch (error) {
-            console.warn('[Media] Failed to load module:', error);
-        }
-    }
+        })
+    ].filter(Boolean));
 
-    if (FEATURES.LOCATION_MODULE) {
-        try {
-            await moduleManager.loadModule('location');
-            const locationService = serviceManager.get('location');
-            locationService?.init({ storageService: window.localStorage && {
-                setItem: (key, value) => localStorage.setItem(key, value)
-            }});
-            window.csma = window.csma || {};
-            window.csma.location = locationService;
-            console.log('[Location] Geolocation tracking enabled');
-        } catch (error) {
-            console.warn('[Location] Failed to load module:', error);
-        }
-    }
-
-    // MEDIA_TRANSFORM and IMAGE_OPTIMIZER handled by unified MEDIA module above
-
+    // Wave L: cacheManager (INDEXEDDB may already be loaded; backend is flag-driven)
     if (cacheManagerEnabled) {
-        try {
+        await runFeature('[CacheManager] Failed to load:', async () => {
             const { createCacheManager } = await import('../services/core/CacheManager.js');
             const cacheConfig = cloneRuntimeSection(runtimeConfig.cache, {});
             const cacheManager = createCacheManager(eventBus, {
@@ -857,31 +779,15 @@ export async function loadOptionalFeatures(state, {
             });
             serviceManager.register('cacheManager', cacheManager);
             await cacheManager.init?.();
-            window.csma = window.csma || {};
-            window.csma.cacheManager = cacheManager;
+            const csma = ensureCsma();
+            csma.cacheManager = cacheManager;
             console.log('[CacheManager] Initialized');
-        } catch (error) {
-            console.warn('[CacheManager] Failed to load:', error);
-        }
+        });
     }
 
-    if (FEATURES.DATA_AGGREGATOR) {
-        try {
-            const { createDataAggregator } = await import('../services/core/DataAggregator.js');
-            const dataAggregator = createDataAggregator(eventBus, {
-                timeout: 30000,
-                retries: 2,
-                debug: import.meta.env.DEV
-            });
-            serviceManager.register('dataAggregator', dataAggregator);
-            console.log('[DataAggregator] Initialized');
-        } catch (error) {
-            console.warn('[DataAggregator] Failed to load:', error);
-        }
-    }
-
+    // API wrapper after data-table wave (preserves prior relative timing vs data-table)
     if (FEATURES.API_WRAPPER) {
-        try {
+        await runFeature('[APIWrapper] Failed to load:', async () => {
             const { createAPIWrapper } = await import('../services/core/APIWrapper.js');
             const apiWrapper = createAPIWrapper(eventBus, {
                 baseURL: apiBaseUrl,
@@ -895,23 +801,7 @@ export async function loadOptionalFeatures(state, {
             } else {
                 console.log('[APIWrapper] Initialized →', apiBaseUrl);
             }
-        } catch (error) {
-            console.warn('[APIWrapper] Failed to load:', error);
-        }
-    }
-
-    if (FEATURES.FORM_VALIDATOR) {
-        try {
-            const { createFormValidator } = await import('../services/core/FormValidator.js');
-            const formValidator = createFormValidator(eventBus, {
-                debounceDelay: 300,
-                debug: import.meta.env.DEV
-            });
-            serviceManager.register('formValidator', formValidator);
-            console.log('[FormValidator] Initialized');
-        } catch (error) {
-            console.warn('[FormValidator] Failed to load:', error);
-        }
+        });
     }
 
     if (!securityPolicy.globals?.exposeInternals && window.csma) {

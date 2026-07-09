@@ -29,7 +29,7 @@ describe('notifications center UI', () => {
     const originalNavigator = globalThis.navigator;
 
     beforeEach(() => {
-        document.body.innerHTML = '';
+        document.body.replaceChildren();
         globalThis.Notification = vi.fn(function Notification(title, options) {
             this.title = title;
             this.options = options;

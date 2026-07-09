@@ -1,4 +1,5 @@
 import { RouterService } from './services/RouterService.js';
+import { RouterContracts } from './contracts/router-contracts.js';
 
 export const manifest = {
     id: 'router',
@@ -20,3 +21,5 @@ export const manifest = {
 export const services = {
     router: RouterService
 };
+
+export const contracts = RouterContracts;

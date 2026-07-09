@@ -37,10 +37,22 @@ const DEFAULT_OPTIONS = {
     variant: 'light',
     indexName: 'default',
     persistence: false,
-    storageKey: null
+    storageKey: null,
+    persistDebounceMs: 150
 };
 
+const DB_NAME = 'csma-search';
+const STORE_NAME = 'indexes';
+
+/** Process-local memory fallback shared across adapter instances (tests / no IDB). */
+const memorySnapshots = new Map();
+
 export class FlexSearchAdapter {
+    #persistTimer = null;
+    #idb = null;
+    #idbReady = null;
+    #persistGeneration = 0;
+
     constructor() {
         this.options = { ...DEFAULT_OPTIONS };
         this.config = VARIANT_CONFIG.light;
@@ -56,6 +68,8 @@ export class FlexSearchAdapter {
         this.config = VARIANT_CONFIG[this.options.variant] || VARIANT_CONFIG.light;
         this.documents = new Map();
         this.engine = this.#createIndex();
+        this.#clearPersistTimer();
+        this.#persistGeneration += 1;
 
         if (this.options.persistence) {
             this.#restoreFromStorage();
@@ -71,7 +85,7 @@ export class FlexSearchAdapter {
         const normalized = this.#normalizeContent(content);
         this.engine.add(id, normalized);
         this.documents.set(id, { id, content: normalized });
-        this.#persist();
+        this.#noteDirty();
         return id;
     }
 
@@ -82,7 +96,7 @@ export class FlexSearchAdapter {
         const normalized = this.#normalizeDocument(doc);
         this.engine.add(doc.id, normalized);
         this.documents.set(doc.id, { ...doc });
-        this.#persist();
+        this.#noteDirty();
         return doc.id;
     }
 
@@ -104,13 +118,14 @@ export class FlexSearchAdapter {
     async remove(id) {
         this.engine.remove(id);
         this.documents.delete(id);
-        this.#persist();
+        this.#noteDirty();
     }
 
     async clear() {
         this.engine = this.#createIndex();
         this.documents.clear();
-        this.#persist(true);
+        this.#clearPersistTimer();
+        await this.#persist(true);
     }
 
     search(query, options = {}) {
@@ -157,8 +172,18 @@ export class FlexSearchAdapter {
     }
 
     destroy() {
+        this.#clearPersistTimer();
         this.documents.clear();
         this.engine = this.#createIndex();
+        if (this.#idb) {
+            try {
+                this.#idb.close?.();
+            } catch {
+                // ignore
+            }
+            this.#idb = null;
+            this.#idbReady = null;
+        }
     }
 
     #createIndex() {
@@ -203,43 +228,237 @@ export class FlexSearchAdapter {
         return this.options.storageKey || `csma-search-${this.options.indexName}`;
     }
 
-    #persist(reset = false) {
+    #clearPersistTimer() {
+        if (this.#persistTimer !== null) {
+            clearTimeout(this.#persistTimer);
+            this.#persistTimer = null;
+        }
+    }
+
+    /**
+     * Keep process-memory snapshot in sync immediately so restore works without debounce delay.
+     * Debounce only the durable IDB write (or clear path).
+     */
+    #noteDirty() {
         if (!this.options.persistence) {
             return;
         }
-        if (typeof window === 'undefined' || !window.localStorage) {
+        const key = this.#storageKey();
+        memorySnapshots.set(key, Array.from(this.documents.values()));
+        this.#scheduleDurablePersist();
+    }
+
+    #scheduleDurablePersist() {
+        this.#clearPersistTimer();
+        const delay = Math.max(0, Number(this.options.persistDebounceMs) || 150);
+        const generation = this.#persistGeneration;
+        this.#persistTimer = setTimeout(() => {
+            this.#persistTimer = null;
+            if (generation !== this.#persistGeneration) {
+                return;
+            }
+            this.#persist(false).catch((error) => {
+                console.warn('[FlexSearchAdapter] Failed to persist index', error);
+            });
+        }, delay);
+    }
+
+    async #persist(reset = false) {
+        if (!this.options.persistence && !reset) {
             return;
         }
+
+        const key = this.#storageKey();
         if (reset) {
-            window.localStorage.removeItem(this.#storageKey());
+            memorySnapshots.delete(key);
+            if (typeof window !== 'undefined' && window.localStorage) {
+                try {
+                    window.localStorage.removeItem(key);
+                } catch {
+                    // ignore
+                }
+            }
+            await this.#idbDelete(key);
             return;
         }
-        const snapshot = JSON.stringify(Array.from(this.documents.values()));
-        window.localStorage.setItem(this.#storageKey(), snapshot);
+
+        const documents = Array.from(this.documents.values());
+        memorySnapshots.set(key, documents);
+
+        // Prefer IndexedDB. Avoid localStorage full-snapshot rewrite as primary path.
+        const wrote = await this.#idbPut(key, documents);
+        if (wrote && typeof window !== 'undefined' && window.localStorage) {
+            // Drop any legacy localStorage snapshot after successful IDB write.
+            try {
+                window.localStorage.removeItem(key);
+            } catch {
+                // ignore
+            }
+        }
     }
 
     #restoreFromStorage() {
-        if (typeof window === 'undefined' || !window.localStorage) {
+        const key = this.#storageKey();
+        const fromMemory = memorySnapshots.get(key);
+        if (Array.isArray(fromMemory) && fromMemory.length) {
+            this.#ingestDocuments(fromMemory);
             return;
         }
-        const snapshot = window.localStorage.getItem(this.#storageKey());
-        if (!snapshot) {
+
+        // Legacy localStorage migration (one-time read path).
+        if (typeof window !== 'undefined' && window.localStorage) {
+            try {
+                const snapshot = window.localStorage.getItem(key);
+                if (snapshot) {
+                    const documents = JSON.parse(snapshot);
+                    if (Array.isArray(documents) && documents.length) {
+                        this.#ingestDocuments(documents);
+                        memorySnapshots.set(key, documents);
+                        this.#idbPut(key, documents)
+                            .then((ok) => {
+                                if (ok) {
+                                    try {
+                                        window.localStorage.removeItem(key);
+                                    } catch {
+                                        // ignore
+                                    }
+                                }
+                            })
+                            .catch(() => {});
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.warn('[FlexSearchAdapter] Failed to restore persisted index', error);
+                try {
+                    window.localStorage.removeItem(key);
+                } catch {
+                    // ignore
+                }
+            }
+        }
+
+        // Async IDB restore for subsequent page loads (not available before init returns).
+        this.#idbGet(key)
+            .then((documents) => {
+                if (!Array.isArray(documents) || !documents.length) {
+                    return;
+                }
+                if (this.documents.size > 0) {
+                    return;
+                }
+                memorySnapshots.set(key, documents);
+                this.#ingestDocuments(documents);
+            })
+            .catch(() => {});
+    }
+
+    #ingestDocuments(documents) {
+        documents.forEach((doc) => {
+            if (doc && doc.id) {
+                this.documents.set(doc.id, doc);
+                const text = this.#normalizeDocument(doc) || doc.content || '';
+                this.engine.add(doc.id, text);
+            }
+        });
+    }
+
+    #openDb() {
+        if (typeof indexedDB === 'undefined') {
+            return Promise.resolve(null);
+        }
+        if (this.#idb) {
+            return Promise.resolve(this.#idb);
+        }
+        if (this.#idbReady) {
+            return this.#idbReady;
+        }
+
+        this.#idbReady = new Promise((resolve) => {
+            let request;
+            try {
+                request = indexedDB.open(DB_NAME, 1);
+            } catch {
+                this.#idbReady = null;
+                resolve(null);
+                return;
+            }
+
+            request.onerror = () => {
+                this.#idbReady = null;
+                resolve(null);
+            };
+            request.onsuccess = () => {
+                this.#idb = request.result;
+                resolve(this.#idb);
+            };
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(STORE_NAME)) {
+                    db.createObjectStore(STORE_NAME, { keyPath: 'key' });
+                }
+            };
+        });
+
+        return this.#idbReady;
+    }
+
+    async #idbPut(key, documents) {
+        const db = await this.#openDb();
+        if (!db) {
+            return false;
+        }
+        try {
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                store.put({ key, documents, updatedAt: Date.now() });
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error || new Error('flexsearch idb put failed'));
+                tx.onabort = () => reject(tx.error || new Error('flexsearch idb aborted'));
+            });
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    async #idbGet(key) {
+        const db = await this.#openDb();
+        if (!db) {
+            return null;
+        }
+        try {
+            return await new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const request = store.get(key);
+                request.onerror = () => reject(request.error || new Error('flexsearch idb get failed'));
+                request.onsuccess = () => {
+                    const row = request.result;
+                    resolve(row?.documents || null);
+                };
+            });
+        } catch {
+            return null;
+        }
+    }
+
+    async #idbDelete(key) {
+        const db = await this.#openDb();
+        if (!db) {
             return;
         }
         try {
-            const documents = JSON.parse(snapshot);
-            if (Array.isArray(documents)) {
-                documents.forEach((doc) => {
-                    if (doc && doc.id) {
-                        this.documents.set(doc.id, doc);
-                        const text = this.#normalizeDocument(doc) || doc.content || '';
-                        this.engine.add(doc.id, text);
-                    }
-                });
-            }
-        } catch (error) {
-            console.warn('[FlexSearchAdapter] Failed to restore persisted index', error);
-            window.localStorage.removeItem(this.#storageKey());
+            await new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                store.delete(key);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error || new Error('flexsearch idb delete failed'));
+            });
+        } catch {
+            // ignore
         }
     }
 }

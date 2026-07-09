@@ -13,15 +13,26 @@
  * Contracts: INTENT_TOAST_SHOW, TOAST_SHOWN
  */
 
+import { createIcon, createSvgElement } from '../../../utils/dom.js';
+
 let toastCounter = 0;
 
-// SVG icons (static, safe content)
-const toastIcons = {
-  default: '<svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/></svg>',
-  success: '<svg viewBox="0 0 20 20" fill="#15803d"><path d="M16.707 5.293a1 1 0 010 1.414l-7.364 7.364a1 1 0 01-1.414 0L3.293 9.435a1 1 0 111.414-1.414l3.222 3.222 6.657-6.657a1 1 0 011.414 0z"/></svg>',
-  error: '<svg viewBox="0 0 20 20" fill="#dc2626"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>',
-  warning: '<svg viewBox="0 0 20 20" fill="#a16207"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>'
-};
+function createToastIcon(type = 'default') {
+  if (type === 'success') {
+    return createIcon('0 0 20 20', [createSvgElement('path', { d: 'M16.707 5.293a1 1 0 010 1.414l-7.364 7.364a1 1 0 01-1.414 0L3.293 9.435a1 1 0 111.414-1.414l3.222 3.222 6.657-6.657a1 1 0 011.414 0z' })], { fill: '#15803d' });
+  }
+  if (type === 'error') {
+    return createIcon('0 0 20 20', [createSvgElement('path', { 'fill-rule': 'evenodd', d: 'M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z', 'clip-rule': 'evenodd' })], { fill: '#dc2626' });
+  }
+  if (type === 'warning') {
+    return createIcon('0 0 20 20', [createSvgElement('path', { 'fill-rule': 'evenodd', d: 'M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z', 'clip-rule': 'evenodd' })], { fill: '#a16207' });
+  }
+  return createIcon('0 0 20 20', [createSvgElement('path', { d: 'M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z' })], { fill: 'currentColor' });
+}
+
+function createToastCloseIcon() {
+  return createIcon('0 0 16 16', [createSvgElement('path', { d: 'M12.5 3.5L3.5 12.5M3.5 3.5l9 9', stroke: 'currentColor', 'stroke-width': 2, 'stroke-linecap': 'round' })], { width: 16, height: 16, fill: 'currentColor' });
+}
 
 /**
  * Initialize Toast system with EventBus integration
@@ -103,8 +114,7 @@ function showToast({ type = 'default', title = '', description = '', duration = 
   // Create structure safely (no innerHTML with user data!)
   const iconDiv = document.createElement('div');
   iconDiv.className = 'toast-icon';
-  // ✅ SAFE: Static SVG icons only
-  iconDiv.innerHTML = toastIcons[type] || toastIcons.default;
+  iconDiv.appendChild(createToastIcon(type));
 
   const contentDiv = document.createElement('div');
   contentDiv.className = 'toast-content';
@@ -125,11 +135,7 @@ function showToast({ type = 'default', title = '', description = '', duration = 
   const closeButton = document.createElement('button');
   closeButton.className = 'toast-close';
   closeButton.setAttribute('aria-label', 'Close toast');
-  closeButton.innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M12.5 3.5L3.5 12.5M3.5 3.5l9 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-    `;
+  closeButton.appendChild(createToastCloseIcon());
 
   // Assemble toast
   toast.appendChild(iconDiv);

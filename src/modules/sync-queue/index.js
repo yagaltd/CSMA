@@ -1,4 +1,5 @@
 import { SyncQueueService } from './services/SyncQueueService.js';
+import { SyncQueueContracts } from './contracts/sync-queue-contracts.js';
 
 export const manifest = {
     id: 'sync-queue',
@@ -25,3 +26,5 @@ export function createSyncQueue(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = SyncQueueContracts;

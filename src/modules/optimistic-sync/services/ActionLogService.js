@@ -383,15 +383,7 @@ export class ActionLogService {
         if (typeof indexedDB !== 'undefined') {
             return new IndexedDbActionStore({ dbName: DB_NAME, storeName: STORE_NAME });
         }
-        const storage = this.windowRef?.localStorage || null;
-        if (
-            storage &&
-            typeof storage.getItem === 'function' &&
-            typeof storage.setItem === 'function' &&
-            typeof storage.removeItem === 'function'
-        ) {
-            return new LocalStorageActionStore({ storageKey: this.storageKey, storage });
-        }
+        // Prefer memory over localStorage full-array rewrites when IDB is unavailable.
         return new MemoryActionStore();
     }
 
@@ -473,49 +465,6 @@ class IndexedDbActionStore {
     }
 }
 
-class LocalStorageActionStore {
-    constructor({ storageKey, storage }) {
-        this.storageKey = storageKey;
-        this.storage = storage;
-        this.supportsStorageEvents = true;
-    }
-
-    init() {
-        return Promise.resolve();
-    }
-
-    async getAll() {
-        const raw = this.storage.getItem(this.storageKey);
-        if (!raw) return [];
-        try {
-            return JSON.parse(raw);
-        } catch (error) {
-            console.warn('[ActionLog] Failed to parse localStorage log:', error);
-            return [];
-        }
-    }
-
-    async put(entry) {
-        const items = await this.getAll();
-        const idx = items.findIndex(item => item.id === entry.id);
-        if (idx > -1) {
-            items[idx] = entry;
-        } else {
-            items.push(entry);
-        }
-        this.storage.setItem(this.storageKey, JSON.stringify(items));
-    }
-
-    async delete(id) {
-        const items = await this.getAll();
-        const filtered = items.filter(item => item.id !== id);
-        this.storage.setItem(this.storageKey, JSON.stringify(filtered));
-    }
-
-    async clear() {
-        this.storage.removeItem(this.storageKey);
-    }
-}
 
 class MemoryActionStore {
     constructor() {

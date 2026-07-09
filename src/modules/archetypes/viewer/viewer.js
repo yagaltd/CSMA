@@ -18,6 +18,7 @@
  *   (absent)   — content displayed normally
  */
 
+import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
 
 // ─── HTML Sanitizer ───────────────────────────────────
 
@@ -70,34 +71,27 @@ function safeUrl(value) {
  * Uses a two-pass approach: regex for script/style removal,
  * then DOM parse for attribute stripping.
  */
-function sanitizeHtml(html) {
-    if (!html || typeof html !== 'string') return '';
+function createSanitizedFragment(html) {
+    const fragment = document.createDocumentFragment();
+    if (!html || typeof html !== 'string') return fragment;
 
-    // Pass 1: Remove <script>, <style>, and comment nodes with regex
-    let cleaned = html
+    const cleaned = html
         .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
         .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
         .replace(/<!--[\s\S]*?-->/g, '');
 
-    // Pass 2: Use a temporary DOM to strip dangerous attributes
     try {
-        const template = document.createElement('template');
-        template.innerHTML = cleaned;
-        walkAndSanitize(template.content);
-        cleaned = stripDangerousHtmlAttributes(template.innerHTML);
+        const parsed = new DOMParser().parseFromString(cleaned, 'text/html');
+        walkAndSanitize(parsed.body);
+        while (parsed.body.firstChild) {
+            fragment.appendChild(document.importNode(parsed.body.firstChild, true));
+            parsed.body.firstChild.remove();
+        }
     } catch (_) {
-        // Fallback: if DOM parsing fails, strip all tags and use textContent
-        cleaned = cleaned.replace(/<[^>]*>/g, '');
+        fragment.appendChild(document.createTextNode(cleaned.replace(/<[^>]*>/g, '')));
     }
 
-    return cleaned;
-}
-
-function stripDangerousHtmlAttributes(html) {
-    return html
-        .replace(/\s+on[a-z0-9:_-]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi, '')
-        .replace(/\s+(href|src)\s*=\s*(["'])\s*(?:javascript|data|vbscript):[^"']*\2/gi, '')
-        .replace(/\s+(href|src)\s*=\s*(?:javascript|data|vbscript):[^\s>]*/gi, '');
+    return fragment;
 }
 
 /**
@@ -124,6 +118,21 @@ function walkAndSanitize(root) {
 
         sanitizeElementAttributes(node, tag);
     }
+}
+
+function createViewerEmptyIcon() {
+    return createIcon('0 0 24 24', [
+        createSvgElement('path', { d: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' }),
+        createSvgElement('polyline', { points: '14 2 14 8 20 8' })
+    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+}
+
+function createViewerErrorIcon() {
+    return createIcon('0 0 24 24', [
+        createSvgElement('circle', { cx: 12, cy: 12, r: 10 }),
+        createSvgElement('line', { x1: 12, y1: 8, x2: 12, y2: 12 }),
+        createSvgElement('line', { x1: 12, y1: 16, x2: 12.01, y2: 16 })
+    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
 }
 
 function sanitizeElementAttributes(node, tag) {
@@ -267,7 +276,7 @@ export function createViewer(container, emit, options = {}) {
     // Empty
     const emptyIcon = document.createElement('div');
     emptyIcon.className = 'csma-viewer__state-icon';
-    emptyIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+    emptyIcon.appendChild(createViewerEmptyIcon());
     stateEls.empty.appendChild(emptyIcon);
     const emptyMsg = document.createElement('span');
     emptyMsg.className = 'csma-viewer__state-message';
@@ -277,7 +286,7 @@ export function createViewer(container, emit, options = {}) {
     // Error
     const errorIcon = document.createElement('div');
     errorIcon.className = 'csma-viewer__state-icon';
-    errorIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    errorIcon.appendChild(createViewerErrorIcon());
     stateEls.error.appendChild(errorIcon);
     const errMsg = document.createElement('span');
     errMsg.className = 'csma-viewer__state-message';
@@ -301,7 +310,7 @@ export function createViewer(container, emit, options = {}) {
 
     function renderContent(data) {
         if (customRender) {
-            contentEl.innerHTML = '';
+            clearChildren(contentEl);
             customRender(data, contentEl);
             return;
         }
@@ -326,10 +335,12 @@ export function createViewer(container, emit, options = {}) {
             );
 
         if (shouldRenderMarkdown) {
-            contentEl.innerHTML = sanitizeHtml(parseMarkdown(String(content)));
+            clearChildren(contentEl);
+            contentEl.appendChild(createSanitizedFragment(parseMarkdown(String(content))));
         } else if (typeof content === 'string') {
             if (!forceText && sanitize && looksLikeHtml(content)) {
-                contentEl.innerHTML = sanitizeHtml(content);
+                clearChildren(contentEl);
+                contentEl.appendChild(createSanitizedFragment(content));
             } else {
                 contentEl.textContent = content;
             }

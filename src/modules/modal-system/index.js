@@ -1,4 +1,5 @@
 import { ModalService } from './services/ModalService.js';
+import { ModalSystemContracts } from './contracts/modal-system-contracts.js';
 
 export const manifest = {
     id: 'modal-system',
@@ -26,3 +27,5 @@ export function createModalSystem(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = ModalSystemContracts;

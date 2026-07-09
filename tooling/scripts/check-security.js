@@ -81,26 +81,86 @@ function checkTokenStorage() {
     };
 }
 
-async function checkContracts() {
+async function loadContractCollections() {
+    const collections = [];
     const { Contracts } = await import(pathToFileURL(join(projectRoot, 'src/runtime/Contracts.js')).href);
-    const missingRateLimits = [];
-    const broadPublicSchemas = [];
-    for (const [name, contract] of Object.entries(Contracts)) {
-        if (contract.type !== 'intent') continue;
-        const limits = contract.security?.rateLimits;
-        if (!limits) {
-            missingRateLimits.push(name);
-        }
-        const canonical = Number.isFinite(limits?.requests)
-            ? [limits]
-            : Object.values(limits || {});
-        if (canonical.some((limit) => !Number.isFinite(limit.requests) || !Number.isFinite(limit.windowMs) || !limit.scope)) {
-            missingRateLimits.push(`${name} (non-canonical)`);
-        }
-        if (contract.compliance === 'public' && hasAnyStruct(contract.schema) && !contract.unsafeInternal) {
-            broadPublicSchemas.push(name);
+    collections.push({ source: 'src/runtime/Contracts.js', contracts: Contracts });
+
+    const modulesRoot = join(projectRoot, 'src/modules');
+    for (const entry of fs.readdirSync(modulesRoot, { withFileTypes: true })) {
+        if (!entry.isDirectory()) continue;
+        const contractsDir = join(modulesRoot, entry.name, 'contracts');
+        if (!fs.existsSync(contractsDir)) continue;
+
+        for (const file of fs.readdirSync(contractsDir)) {
+            if (!file.endsWith('-contracts.js')) continue;
+            const relative = relativeFromRoot(join(contractsDir, file));
+            const mod = await import(pathToFileURL(join(contractsDir, file)).href);
+            const record = Object.values(mod).find((value) => value && typeof value === 'object' && !Array.isArray(value));
+            if (!record) continue;
+            collections.push({ source: relative, contracts: record });
         }
     }
+
+    return collections;
+}
+
+function relativeFromRoot(fullPath) {
+    return relative(projectRoot, fullPath);
+}
+
+function normalizeRateLimitsForCheck(rateLimits) {
+    if (!rateLimits) {
+        return { requests: 60, windowMs: 60000, scope: 'session' };
+    }
+    if (Number.isFinite(rateLimits.requests)) {
+        return {
+            requests: rateLimits.requests,
+            windowMs: rateLimits.windowMs ?? rateLimits.window,
+            scope: rateLimits.scope || 'session'
+        };
+    }
+    return Object.fromEntries(Object.entries(rateLimits).map(([name, limits]) => [
+        name,
+        {
+            requests: limits.requests,
+            windowMs: limits.windowMs ?? limits.window,
+            scope: limits.scope || name.replace(/^per/, '').toLowerCase() || 'session'
+        }
+    ]));
+}
+
+function isCanonicalRateLimits(limits) {
+    const entries = Number.isFinite(limits?.requests) ? [limits] : Object.values(limits || {});
+    if (entries.length === 0) return false;
+    return entries.every((limit) => (
+        Number.isFinite(limit?.requests)
+        && Number.isFinite(limit?.windowMs)
+        && Boolean(limit?.scope)
+    ));
+}
+
+async function checkContracts() {
+    const collections = await loadContractCollections();
+    const missingRateLimits = [];
+    const broadPublicSchemas = [];
+
+    for (const { source, contracts } of collections) {
+        for (const [name, contract] of Object.entries(contracts)) {
+            if (!contract || contract.type !== 'intent') continue;
+
+            const label = `${name}@${source}`;
+            const normalized = normalizeRateLimitsForCheck(contract.security?.rateLimits);
+            if (!isCanonicalRateLimits(normalized)) {
+                missingRateLimits.push(label);
+            }
+
+            if (contract.compliance === 'public' && hasAnyStruct(contract.schema) && !contract.unsafeInternal) {
+                broadPublicSchemas.push(label);
+            }
+        }
+    }
+
     return {
         name: 'contracts',
         pass: missingRateLimits.length === 0 && broadPublicSchemas.length === 0,

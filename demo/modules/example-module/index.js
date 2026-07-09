@@ -9,6 +9,8 @@
  */
 
 import { ExampleModuleService } from './services/ExampleModuleService.js';
+import { contract, object, string, number } from '../../../src/runtime/validation/index.js';
+
 
 /**
  * Module Manifest
@@ -98,5 +100,36 @@ export const services = {
  * These can be imported into the main Contracts.js
  */
 export const contracts = {
-    // Example: EXAMPLE_MODULE_EVENT: { ... }
+    EXAMPLE_MODULE_EVENT: contract({
+        version: 1,
+        type: 'event',
+        owner: 'example-module',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Example module command result event',
+        schema: object({
+            id: string(),
+            message: string(),
+            timestamp: number()
+        })
+    }),
+    EXAMPLE_MODULE_VIEW_RENDERED: contract({
+        version: 1,
+        type: 'event',
+        owner: 'example-module',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Example module contributed view render event',
+        schema: object({
+            id: string(),
+            viewId: string(),
+            target: string(),
+            title: string(),
+            message: string(),
+            tone: string(),
+            timestamp: number()
+        })
+    })
 };

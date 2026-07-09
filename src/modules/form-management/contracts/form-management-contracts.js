@@ -1,4 +1,4 @@
-import { object, string, number, optional, enums, boolean, any } from '../../../runtime/validation/index.js';
+import { object, string, number, optional, enums, boolean, any, array } from '../../../runtime/validation/index.js';
 
 const FORM_RATE_LIMIT = { requests: 30, windowMs: 60000, scope: 'session' };
 
@@ -20,7 +20,7 @@ export const FormManagementContracts = {
             initialValues: optional(object()),
             metadata: optional(object()),
             fieldPolicies: optional(object()),
-            sensitiveFields: optional(any()),
+            sensitiveFields: optional(array(string())),
             trustLevel: optional(enums(['local', 'authenticated-network', 'public-network'])),
             persist: optional(boolean()),
             autoSave: optional(boolean()),

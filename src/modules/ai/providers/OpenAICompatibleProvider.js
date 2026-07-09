@@ -29,10 +29,9 @@ function buildMessages(params = {}) {
     return messages;
 }
 
-function buildHeaders(headers = {}, apiKey = '') {
+function buildHeaders(headers = {}) {
     return {
         'Content-Type': JSON_MIME,
-        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
         ...headers
     };
 }
@@ -145,18 +144,13 @@ export class OpenAICompatibleProvider extends AIProvider {
         super();
         this.baseUrl = options.baseUrl || '';
         this.endpoint = options.endpoint || DEFAULT_ENDPOINT;
-        this.apiKey = options.apiKey || '';
         this.model = options.model || options.defaultModel || '';
         this.headers = options.headers || {};
         this.fetchImpl = options.fetch || (typeof fetch !== 'undefined' ? fetch.bind(globalThis) : null);
     }
 
-    setApiKey(apiKey) {
-        this.apiKey = apiKey;
-    }
-
     async isAvailable() {
-        return Boolean(this.fetchImpl && this.baseUrl && this.apiKey && this.model);
+        return Boolean(this.fetchImpl && this.baseUrl && this.model);
     }
 
     get priority() {
@@ -185,7 +179,7 @@ export class OpenAICompatibleProvider extends AIProvider {
             headers: buildHeaders({
                 ...(params.headers || {}),
                 ...this.headers
-            }, params.apiKey || this.apiKey),
+            }),
             body: JSON.stringify({
                 model,
                 messages: buildMessages(params),

@@ -7,6 +7,20 @@ import { EventClassifier } from './EventClassifier.js';
 import { EventAggregator } from './EventAggregator.js';
 import { SecurityScanner } from './SecurityScanner.js';
 
+
+const ANALYTICS_DB_NAME = 'csma-analytics';
+const ANALYTICS_STORE_NAME = 'queue';
+const ANALYTICS_MAX_ITEMS = 1000;
+const ANALYTICS_MAX_BYTES = 512 * 1024;
+
+function estimateBatchBytes(batch) {
+    try {
+        return JSON.stringify(batch).length;
+    } catch {
+        return Array.isArray(batch) ? batch.length * 256 : 256;
+    }
+}
+
 function mergePipelineConfig(config = {}) {
     return {
         classifier: {
@@ -44,6 +58,11 @@ export class AnalyticsService {
         this.analyticsConsent = options.consent || window.csma?.analyticsConsent || null;
         this.runtimeLogConfig = this.normalizeRuntimeLogConfig(options.runtimeLogs || options.collectRuntimeLogs);
         this.runtimeLogUnsubscribe = null;
+        this._durableBatches = [];
+        this._durableBytes = 0;
+        this._idb = null;
+        this._idbReady = null;
+
         this.fetchLaterController = null;
         this.pipelineConfig = mergePipelineConfig(options.pipeline);
         this.classifier = new EventClassifier({
@@ -590,17 +609,148 @@ export class AnalyticsService {
     }
 
     storeBatch(batch) {
-        try {
-            const existing = JSON.parse(localStorage.getItem('analytics') || '[]');
-            existing.push(...batch);
-            if (existing.length > 1000) {
-                existing.splice(0, existing.length - 1000);
-            }
-            localStorage.setItem('analytics', JSON.stringify(existing));
-        } catch {
-            // localStorage may be unavailable.
+        if (!Array.isArray(batch) || batch.length === 0) {
+            return;
+        }
+
+        // Write-only best-effort durable archive — no restore path exists today.
+        this._appendDurableBatch(batch);
+        this._scheduleDurableWrite(batch);
+    }
+
+    _appendDurableBatch(batch) {
+        const bytes = estimateBatchBytes(batch);
+        this._durableBatches.push({
+            id: this.generateBatchId(),
+            storedAt: Date.now(),
+            entries: batch,
+            bytes
+        });
+        this._durableBytes += bytes;
+        this._trimDurableBuffer();
+    }
+
+    _trimDurableBuffer() {
+        while (
+            this._durableBatches.length > ANALYTICS_MAX_ITEMS ||
+            this._durableBytes > ANALYTICS_MAX_BYTES
+        ) {
+            const removed = this._durableBatches.shift();
+            if (!removed) break;
+            this._durableBytes = Math.max(0, this._durableBytes - (removed.bytes || 0));
         }
     }
+
+    _scheduleDurableWrite(batch) {
+        Promise.resolve()
+            .then(() => this._persistDurableBatch(batch))
+            .catch(() => {
+                // Memory buffer remains the fallback; ignore durable write failures.
+            });
+    }
+
+    async _persistDurableBatch(batch) {
+        const db = await this._openAnalyticsDb();
+        if (!db) {
+            return;
+        }
+
+        const record = {
+            id: this.generateBatchId(),
+            storedAt: Date.now(),
+            entries: batch,
+            bytes: estimateBatchBytes(batch)
+        };
+
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(ANALYTICS_STORE_NAME, 'readwrite');
+            const store = tx.objectStore(ANALYTICS_STORE_NAME);
+            store.put(record);
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('analytics idb tx failed'));
+            tx.onabort = () => reject(tx.error || new Error('analytics idb aborted'));
+        });
+
+        await this._enforceIdbBudget(db);
+
+    }
+
+    _openAnalyticsDb() {
+        if (typeof indexedDB === 'undefined') {
+            return Promise.resolve(null);
+        }
+        if (this._idb) {
+            return Promise.resolve(this._idb);
+        }
+        if (this._idbReady) {
+            return this._idbReady;
+        }
+
+        this._idbReady = new Promise((resolve) => {
+            let request;
+            try {
+                request = indexedDB.open(ANALYTICS_DB_NAME, 1);
+            } catch {
+                this._idbReady = null;
+                resolve(null);
+                return;
+            }
+
+            request.onerror = () => {
+                this._idbReady = null;
+                resolve(null);
+            };
+            request.onsuccess = () => {
+                this._idb = request.result;
+                resolve(this._idb);
+            };
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains(ANALYTICS_STORE_NAME)) {
+                    const store = db.createObjectStore(ANALYTICS_STORE_NAME, { keyPath: 'id' });
+                    store.createIndex('storedAt', 'storedAt', { unique: false });
+                }
+            };
+        });
+
+        return this._idbReady;
+    }
+
+    async _enforceIdbBudget(db) {
+        const records = await new Promise((resolve, reject) => {
+            const tx = db.transaction(ANALYTICS_STORE_NAME, 'readonly');
+            const store = tx.objectStore(ANALYTICS_STORE_NAME);
+            const request = store.getAll();
+            request.onerror = () => reject(request.error || new Error('analytics idb getAll failed'));
+            request.onsuccess = () => resolve(request.result || []);
+        });
+
+        if (!records.length) return;
+
+        const sorted = records.slice().sort((a, b) => (a.storedAt || 0) - (b.storedAt || 0));
+        let totalBytes = sorted.reduce((sum, item) => sum + (item.bytes || estimateBatchBytes(item.entries)), 0);
+        const toDelete = [];
+
+        while (sorted.length > ANALYTICS_MAX_ITEMS || totalBytes > ANALYTICS_MAX_BYTES) {
+            const removed = sorted.shift();
+            if (!removed) break;
+            toDelete.push(removed.id);
+            totalBytes = Math.max(0, totalBytes - (removed.bytes || 0));
+        }
+
+        if (!toDelete.length) return;
+
+        await new Promise((resolve, reject) => {
+            const tx = db.transaction(ANALYTICS_STORE_NAME, 'readwrite');
+            const store = tx.objectStore(ANALYTICS_STORE_NAME);
+            for (const id of toDelete) {
+                store.delete(id);
+            }
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error || new Error('analytics idb trim failed'));
+        });
+    }
+
 
     scopeFor(event) {
         if (event.category === 'performance') return 'performance';
@@ -610,7 +760,7 @@ export class AnalyticsService {
     }
 
     isAnalyticsAllowed(scope = 'ui_analytics') {
-        if (!this.analyticsConsent) return true;
+        if (!this.analyticsConsent) return false;
         if (typeof this.analyticsConsent.getConsent === 'function') {
             return this.analyticsConsent.getConsent(scope);
         }

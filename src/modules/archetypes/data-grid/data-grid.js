@@ -20,10 +20,30 @@
  *   (absent)   — normal data display
  */
 
-const SORT_ICON_SVG = `<svg class="csma-datagrid__sort-icon" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-  <path d="M6 1L9 5H3L6 1Z" fill="currentColor"/>
-  <path d="M6 11L3 7H9L6 11Z" fill="currentColor" opacity="0.4"/>
-</svg>`;
+import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+
+function createSortIcon() {
+    return createIcon('0 0 12 12', [
+        createSvgElement('path', { d: 'M6 1L9 5H3L6 1Z', fill: 'currentColor' }),
+        createSvgElement('path', { d: 'M6 11L3 7H9L6 11Z', fill: 'currentColor', opacity: '0.4' })
+    ], { class: 'csma-datagrid__sort-icon' });
+}
+
+function createEmptyIcon() {
+    return createIcon('0 0 24 24', [
+        createSvgElement('rect', { x: 3, y: 3, width: 18, height: 18, rx: 2 }),
+        createSvgElement('line', { x1: 9, y1: 9, x2: 15, y2: 15 }),
+        createSvgElement('line', { x1: 15, y1: 9, x2: 9, y2: 15 })
+    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+}
+
+function createErrorIcon() {
+    return createIcon('0 0 24 24', [
+        createSvgElement('circle', { cx: 12, cy: 12, r: 10 }),
+        createSvgElement('line', { x1: 12, y1: 8, x2: 12, y2: 12 }),
+        createSvgElement('line', { x1: 12, y1: 16, x2: 12.01, y2: 16 })
+    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+}
 
 const DEFAULT_COLUMN_WIDTH = 150;
 const MIN_COLUMN_WIDTH = 48;
@@ -88,7 +108,10 @@ export function createDataGrid(container, emit, options = {}) {
         if (col.sortable !== false) {
             cell.setAttribute('aria-sort', 'none');
             cell.setAttribute('tabindex', '0');
-            cell.innerHTML = `${col.label || col.id} ${SORT_ICON_SVG}`;
+            const label = document.createElement('span');
+            label.textContent = col.label || col.id;
+            cell.appendChild(label);
+            cell.appendChild(createSortIcon());
 
             cell.addEventListener('click', () => handleSort(col.id));
             cell.addEventListener('keydown', (e) => {
@@ -190,7 +213,7 @@ export function createDataGrid(container, emit, options = {}) {
     // Empty
     const emptyIcon = document.createElement('div');
     emptyIcon.className = 'csma-datagrid__state-icon';
-    emptyIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>`;
+    emptyIcon.appendChild(createEmptyIcon());
     stateEls.empty.appendChild(emptyIcon);
     const emptyMsg = document.createElement('span');
     emptyMsg.className = 'csma-datagrid__state-message';
@@ -200,7 +223,7 @@ export function createDataGrid(container, emit, options = {}) {
     // Error
     const errorIcon = document.createElement('div');
     errorIcon.className = 'csma-datagrid__state-icon';
-    errorIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+    errorIcon.appendChild(createErrorIcon());
     stateEls.error.appendChild(errorIcon);
     const errorMsg = document.createElement('span');
     errorMsg.className = 'csma-datagrid__state-message';
@@ -237,7 +260,7 @@ export function createDataGrid(container, emit, options = {}) {
 
     function renderVisibleRows() {
         if (isLoading || error || rows.length === 0) {
-            visibleContainer.innerHTML = '';
+            clearChildren(visibleContainer);
             topSpacer.style.height = '0px';
             bottomSpacer.style.height = '0px';
             return;
@@ -249,7 +272,7 @@ export function createDataGrid(container, emit, options = {}) {
         topSpacer.style.height = (startIndex * rowHeight) + 'px';
         bottomSpacer.style.height = (totalHeight - endIndex * rowHeight) + 'px';
 
-        visibleContainer.innerHTML = '';
+        clearChildren(visibleContainer);
 
         for (let i = startIndex; i < endIndex; i++) {
             const row = rows[i];

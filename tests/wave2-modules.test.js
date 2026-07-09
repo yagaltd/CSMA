@@ -7,14 +7,22 @@ import { CartService } from '../src/modules/cart/index.js';
 import { PaymentAdaptersService } from '../src/modules/payment-adapters/index.js';
 import { ReviewsService } from '../src/modules/reviews/index.js';
 import { AbTestingService } from '../src/modules/ab-testing/index.js';
+import { CartContracts } from '../src/modules/cart/contracts/cart-contracts.js';
+import { PaymentAdaptersContracts } from '../src/modules/payment-adapters/contracts/payment-adapters-contracts.js';
+import { ReviewsContracts } from '../src/modules/reviews/contracts/reviews-contracts.js';
+import { AbTestingContracts } from '../src/modules/ab-testing/contracts/ab-testing-contracts.js';
 
-function bus() { const eventBus = new EventBus(); eventBus.contracts = Contracts; return eventBus; }
+function bus(...moduleContracts) {
+  const eventBus = new EventBus();
+  eventBus.contracts = Object.assign({}, Contracts, ...moduleContracts);
+  return eventBus;
+}
 
 describe('wave 2 frontend modules', () => {
   beforeEach(() => { localStorage.clear(); vi.restoreAllMocks(); });
 
   it('cart manages local optimistic cart state and rejects invalid payload keys', async () => {
-    const eventBus = bus();
+    const eventBus = bus(CartContracts);
     const service = new CartService(eventBus);
     service.init({ currency: 'EUR' });
 
@@ -29,7 +37,7 @@ describe('wave 2 frontend modules', () => {
   });
 
   it('payment-adapters registers client adapters without owning authoritative confirmation', async () => {
-    const eventBus = bus();
+    const eventBus = bus(PaymentAdaptersContracts);
     const service = new PaymentAdaptersService(eventBus);
     service.init({ adapters: [{ id: 'stripe', label: 'Stripe', capabilities: ['redirect'] }] });
 
@@ -43,7 +51,7 @@ describe('wave 2 frontend modules', () => {
   });
 
   it('reviews keeps optimistic review state and summaries client-side', async () => {
-    const eventBus = bus();
+    const eventBus = bus(ReviewsContracts);
     const service = new ReviewsService(eventBus);
     service.init({ reviews: [{ id: 'r1', targetId: 'p1', rating: 5 }] });
 
@@ -56,7 +64,7 @@ describe('wave 2 frontend modules', () => {
   });
 
   it('ab-testing returns no assignment and emits nothing when no experiment is configured', () => {
-    const eventBus = bus();
+    const eventBus = bus(AbTestingContracts);
     const publishSpy = vi.spyOn(eventBus, 'publish');
     const service = new AbTestingService(eventBus);
     service.init({ seed: 'test' });
@@ -69,7 +77,7 @@ describe('wave 2 frontend modules', () => {
   });
 
   it('ab-testing creates deterministic local configured assignments and exposure events', async () => {
-    const eventBus = bus();
+    const eventBus = bus(AbTestingContracts);
     const service = new AbTestingService(eventBus);
     service.init({ seed: 'test', experiments: { hero: { variants: ['a', 'b'] } } });
 

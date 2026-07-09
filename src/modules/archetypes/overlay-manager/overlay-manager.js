@@ -15,6 +15,8 @@
  * - CSMA design tokens for all visual values
  */
 
+import { appendTextOrNode } from '../../../utils/dom.js';
+
 const CLOSE_ICON = '×';
 
 export function createOverlayManager(container, emit, options = {}) {
@@ -122,7 +124,7 @@ export function createOverlayManager(container, emit, options = {}) {
                 const closeBtn = document.createElement('button');
                 closeBtn.className = 'csma-overlay-close';
                 closeBtn.setAttribute('aria-label', 'Close');
-                closeBtn.innerHTML = CLOSE_ICON;
+                closeBtn.textContent = CLOSE_ICON;
                 closeBtn.addEventListener('click', closeTop);
                 header.appendChild(closeBtn);
             }
@@ -133,22 +135,14 @@ export function createOverlayManager(container, emit, options = {}) {
         // Body
         const body = document.createElement('div');
         body.className = 'csma-overlay-body';
-        if (typeof content === 'string') {
-            body.innerHTML = content;
-        } else if (content instanceof Node) {
-            body.appendChild(content);
-        }
+        appendTextOrNode(body, content);
         el.appendChild(body);
 
         // Footer
         if (footer) {
             const footerEl = document.createElement('div');
             footerEl.className = 'csma-overlay-footer';
-            if (typeof footer === 'string') {
-                footerEl.innerHTML = footer;
-            } else if (footer instanceof Node) {
-                footerEl.appendChild(footer);
-            }
+            appendTextOrNode(footerEl, footer);
             el.appendChild(footerEl);
         }
 
@@ -194,7 +188,7 @@ export function createOverlayManager(container, emit, options = {}) {
                 const closeBtn = document.createElement('button');
                 closeBtn.className = 'csma-overlay-close';
                 closeBtn.setAttribute('aria-label', 'Close');
-                closeBtn.innerHTML = CLOSE_ICON;
+                closeBtn.textContent = CLOSE_ICON;
                 closeBtn.addEventListener('click', closeTop);
                 header.appendChild(closeBtn);
             }
@@ -204,11 +198,7 @@ export function createOverlayManager(container, emit, options = {}) {
 
         const body = document.createElement('div');
         body.className = 'csma-overlay-body';
-        if (typeof content === 'string') {
-            body.innerHTML = content;
-        } else if (content instanceof Node) {
-            body.appendChild(content);
-        }
+        appendTextOrNode(body, content);
         el.appendChild(body);
 
         ensureBackdrop();
@@ -243,11 +233,7 @@ export function createOverlayManager(container, emit, options = {}) {
         el.className = 'csma-overlay-popover';
         el.setAttribute('role', 'dialog');
 
-        if (typeof content === 'string') {
-            el.innerHTML = content;
-        } else if (content instanceof Node) {
-            el.appendChild(content);
-        }
+        appendTextOrNode(el, content);
 
         // Position relative to anchor
         document.body.appendChild(el);
@@ -302,7 +288,7 @@ export function createOverlayManager(container, emit, options = {}) {
         const closeBtn = document.createElement('button');
         closeBtn.className = 'csma-overlay-close';
         closeBtn.setAttribute('aria-label', 'Close');
-        closeBtn.innerHTML = CLOSE_ICON;
+        closeBtn.textContent = CLOSE_ICON;
         closeBtn.addEventListener('click', closeTop);
         el.appendChild(closeBtn);
 

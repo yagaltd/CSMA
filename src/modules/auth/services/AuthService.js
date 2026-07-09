@@ -458,6 +458,7 @@ export class AuthService {
         });
 
         const authorizationUrl = response.authorizationUrl || response.url || response.redirectUrl || null;
+        this.#assertAllowedAuthorizationUrl(authorizationUrl);
         const state = response.state || payload.state;
         this.pendingOAuth = { provider, state, redirectUri };
         this.#persistOAuthState(this.pendingOAuth);
@@ -736,6 +737,25 @@ export class AuthService {
         const sameOrigin = globalThis.location?.origin && url.origin === globalThis.location.origin;
         if (!sameOrigin && !allowedOrigins.includes(url.origin) && !allowedUris.includes(url.href)) {
             throw new Error('CSMA production security rejected OAuth redirect URI outside the allowlist.');
+        }
+    }
+
+    #assertAllowedAuthorizationUrl(authorizationUrl) {
+        const profile = this.securityPolicy?.profile || this.options.securityProfile || 'production';
+        if (profile !== 'production' || !authorizationUrl) {
+            return;
+        }
+
+        const url = new URL(authorizationUrl, globalThis.location?.origin || 'http://localhost');
+        const sameOrigin = globalThis.location?.origin && url.origin === globalThis.location.origin;
+        if (!sameOrigin && url.protocol !== 'https:') {
+            throw new Error('CSMA production security requires HTTPS OAuth authorization URLs.');
+        }
+
+        const allowedOrigins = this.securityPolicy?.auth?.allowedAuthorizationOrigins || [];
+        const allowedUris = this.securityPolicy?.auth?.allowedAuthorizationUris || [];
+        if (!sameOrigin && !allowedOrigins.includes(url.origin) && !allowedUris.includes(url.href)) {
+            throw new Error('CSMA production security rejected OAuth authorization URL outside the allowlist.');
         }
     }
 

@@ -3,6 +3,12 @@ import { EventBus } from '../src/runtime/EventBus.js';
 import { Contracts } from '../src/runtime/Contracts.js';
 import { AnalyticsService } from '../src/modules/analytics/services/AnalyticsService.js';
 
+function allowAllConsent() {
+  return {
+    getConsent: vi.fn(() => true)
+  };
+}
+
 describe('AnalyticsService', () => {
   let eventBus;
   let service;
@@ -22,6 +28,19 @@ describe('AnalyticsService', () => {
     delete globalThis.fetchLater;
   });
 
+  it('fails closed when no consent service is available', () => {
+    const denied = service.processTrackedEvent({
+      type: 'event',
+      name: 'consent_required',
+      timestamp: Date.now()
+    });
+
+    expect(service.isAnalyticsAllowed('ui_analytics')).toBe(false);
+    expect(denied).toBeNull();
+    expect(service.analyticsQueue).toHaveLength(0);
+    expect(service.sessionEvents).toHaveLength(0);
+  });
+
   it('does not bridge LOG_ENTRY events unless runtime log collection is explicitly enabled', () => {
     service.init({ endpoint: '/logs/batch', collectRuntimeLogs: false });
 
@@ -37,7 +56,7 @@ describe('AnalyticsService', () => {
   });
 
   it('bridges selected LOG_ENTRY events when explicitly enabled and redacts payloads by default', () => {
-    service.init({ endpoint: '/logs/batch', collectRuntimeLogs: true });
+    service.init({ endpoint: '/logs/batch', collectRuntimeLogs: true, consent: allowAllConsent() });
 
     eventBus.publish('LOG_ENTRY', {
       type: 'error',
@@ -61,7 +80,7 @@ describe('AnalyticsService', () => {
     const fetchLater = vi.fn();
     globalThis.fetchLater = fetchLater;
 
-    service.init({ endpoint: '/logs/batch' });
+    service.init({ endpoint: '/logs/batch', consent: allowAllConsent() });
     service.track('queued_event', { value: 'ok' });
 
     service.flush({ preferDeferred: true });
@@ -75,7 +94,7 @@ describe('AnalyticsService', () => {
     const sendBeacon = vi.fn().mockReturnValue(true);
     vi.stubGlobal('navigator', { ...navigator, sendBeacon, userAgent: 'test', language: 'en' });
 
-    service.init({ endpoint: '/logs/batch' });
+    service.init({ endpoint: '/logs/batch', consent: allowAllConsent() });
     service.track('queued_event', { value: 'ok' });
 
     service.flush({ preferDeferred: true });

@@ -2,9 +2,19 @@
 import { describe, expect, it } from 'vitest';
 import { CapCaptchaAdapter } from '../src/modules/captcha/adapters/CapCaptchaAdapter.js';
 
+function createContactForm() {
+    document.body.replaceChildren();
+    const form = document.createElement('form');
+    form.id = 'contact';
+    const captcha = document.createElement('div');
+    captcha.id = 'captcha';
+    form.appendChild(captcha);
+    document.body.appendChild(form);
+}
+
 describe('CapCaptchaAdapter', () => {
     it('mounts a CAP widget and hidden captchaToken field', async () => {
-        document.body.innerHTML = '<form id="contact"><div id="captcha"></div></form>';
+        createContactForm();
         const adapter = new CapCaptchaAdapter();
         adapter.init({ apiEndpoint: '/cap' });
 
@@ -20,7 +30,7 @@ describe('CapCaptchaAdapter', () => {
     });
 
     it('captures solve event tokens and resets them', async () => {
-        document.body.innerHTML = '<form id="contact"><div id="captcha"></div></form>';
+        createContactForm();
         const adapter = new CapCaptchaAdapter();
         adapter.init({ hiddenFieldName: 'captchaToken' });
         const widget = await adapter.mount({

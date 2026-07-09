@@ -142,7 +142,7 @@ describe('AuthService', () => {
         expect(auth.isAuthenticated()).toBe(true);
     });
 
-    it('starts and completes backend-mediated OAuth without client secrets', async () => {
+    it('accepts an allowlisted backend-mediated OAuth authorization URL and completes callback', async () => {
         const eventBus = new MockEventBus();
         fetch
             .mockResolvedValueOnce({
@@ -167,14 +167,15 @@ describe('AuthService', () => {
             securityPolicy: {
                 profile: 'production',
                 auth: {
-                    allowedRedirectOrigins: ['https://app.example.com']
+                    allowedRedirectOrigins: ['https://app.example.com'],
+                    allowedAuthorizationOrigins: ['https://oauth.example.com'],
                 }
             }
         });
         const started = await auth.startOAuth({ provider: 'google', redirectUri: 'https://app.example.com/auth/callback' });
         const completed = await auth.handleOAuthCallback({ code: 'code-123', state: started.state, provider: 'google' });
 
-        expect(started.authorizationUrl).toContain('oauth.example.com');
+        expect(started.authorizationUrl).toBe('https://oauth.example.com/authorize?state=abc');
         expect(completed.success).toBe(true);
         expect(auth.getUser()).toEqual({ id: 'u-3', name: 'Mina', role: 'user' });
         expect(eventBus.publish).toHaveBeenCalledWith(
@@ -185,6 +186,33 @@ describe('AuthService', () => {
             'AUTH_OAUTH_COMPLETED',
             expect.objectContaining({ provider: 'google' })
         );
+    });
+
+    it('rejects production OAuth authorization URLs outside the allowlist', async () => {
+        const eventBus = new MockEventBus();
+        fetch.mockResolvedValueOnce({
+            ok: true,
+            status: 200,
+            json: async () => ({
+                authorizationUrl: 'https://evil.example/authorize?state=abc',
+                state: 'abc'
+            })
+        });
+
+        const auth = createAuthService(eventBus, {
+            baseUrl: 'https://api.example.com',
+            securityPolicy: {
+                profile: 'production',
+                auth: {
+                    allowedRedirectOrigins: ['https://app.example.com'],
+                    allowedAuthorizationOrigins: ['https://oauth.example.com']
+                }
+            }
+        });
+
+        await expect(auth.startOAuth({ provider: 'google', redirectUri: 'https://app.example.com/auth/callback' }))
+            .rejects.toThrow(/authorization URL outside the allowlist/);
+        expect(eventBus.publish).not.toHaveBeenCalledWith('AUTH_OAUTH_STARTED', expect.anything());
     });
 
     it('rejects OAuth callbacks with mismatched state', async () => {
@@ -202,7 +230,10 @@ describe('AuthService', () => {
             baseUrl: 'https://api.example.com',
             securityPolicy: {
                 profile: 'production',
-                auth: { allowedRedirectOrigins: ['https://app.example.com'] }
+                auth: {
+                    allowedRedirectOrigins: ['https://app.example.com'],
+                    allowedAuthorizationOrigins: ['https://oauth.example.com']
+                }
             }
         });
         await auth.startOAuth({ provider: 'google', redirectUri: 'https://app.example.com/auth/callback' });

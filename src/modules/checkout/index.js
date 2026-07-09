@@ -1,4 +1,5 @@
 import { CheckoutService } from './services/CheckoutService.js';
+import { CheckoutContracts } from './contracts/checkout-contracts.js';
 
 export const manifest = {
     id: 'checkout',
@@ -27,3 +28,5 @@ export function createCheckout(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = CheckoutContracts;

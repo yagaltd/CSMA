@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createOverlayManager } from '../src/modules/archetypes/overlay-manager/overlay-manager.js';
 import { createStatsDashboard } from '../src/modules/archetypes/stats-dashboard/stats-dashboard.js';
 import { createViewer } from '../src/modules/archetypes/viewer/viewer.js';
 
@@ -22,7 +23,7 @@ function renderViewer(data, options = {}) {
 
 describe('stats dashboard cleanup behavior', () => {
   beforeEach(() => {
-    document.body.innerHTML = '';
+    document.body.replaceChildren();
     vi.restoreAllMocks();
   });
 
@@ -83,9 +84,30 @@ describe('stats dashboard cleanup behavior', () => {
   });
 });
 
+describe('overlay manager text-only content behavior', () => {
+  beforeEach(() => {
+    document.body.replaceChildren();
+    vi.restoreAllMocks();
+  });
+
+  it('renders tag-like modal strings as literal text instead of DOM nodes', () => {
+    const literal = '<img src=x onerror=alert(1)>';
+    const manager = createOverlayManager(mount(), vi.fn());
+
+    const { el } = manager.openModal(literal, { title: 'Unsafe content' });
+    const body = el.querySelector('.csma-overlay-body');
+
+    expect(body.textContent).toBe(literal);
+    expect(body.querySelector('img')).toBeNull();
+    expect(document.body.querySelector('img')).toBeNull();
+
+    manager.destroy();
+  });
+});
+
 describe('viewer cleanup sanitization behavior', () => {
   beforeEach(() => {
-    document.body.innerHTML = '';
+    document.body.replaceChildren();
     vi.restoreAllMocks();
   });
 

@@ -7,10 +7,14 @@ import { FeatureFlagsService } from '../src/modules/feature-flags/index.js';
 import { ContentPrefetchService } from '../src/modules/content-prefetch/index.js';
 import { CmsContentService } from '../src/modules/cms-content/index.js';
 import { CatalogService } from '../src/modules/catalog/index.js';
+import { FeatureFlagsContracts } from '../src/modules/feature-flags/contracts/feature-flags-contracts.js';
+import { ContentPrefetchContracts } from '../src/modules/content-prefetch/contracts/content-prefetch-contracts.js';
+import { CmsContentContracts } from '../src/modules/cms-content/contracts/cms-content-contracts.js';
+import { CatalogContracts } from '../src/modules/catalog/contracts/catalog-contracts.js';
 
-function bus() {
+function bus(...moduleContracts) {
   const eventBus = new EventBus();
-  eventBus.contracts = Contracts;
+  eventBus.contracts = Object.assign({}, Contracts, ...moduleContracts);
   return eventBus;
 }
 
@@ -21,7 +25,7 @@ describe('wave 1 frontend modules', () => {
   });
 
   it('feature-flags manages explicit client flags and validates contracts', async () => {
-    const eventBus = bus();
+    const eventBus = bus(FeatureFlagsContracts);
     const service = new FeatureFlagsService(eventBus);
     const changes = [];
     eventBus.subscribe('FEATURE_FLAG_CHANGED', (payload) => changes.push(payload));
@@ -41,7 +45,7 @@ describe('wave 1 frontend modules', () => {
   });
 
   it('content-prefetch loads manifests and caches route resources', async () => {
-    const eventBus = bus();
+    const eventBus = bus(ContentPrefetchContracts);
     const fetcher = vi.fn().mockResolvedValue({ ok: true, headers: { get: () => 'application/json' }, json: async () => ({ title: 'Home' }) });
     const service = new ContentPrefetchService(eventBus);
     service.init({ manifest: { '/': '/content/home.json' }, fetcher });
@@ -57,7 +61,7 @@ describe('wave 1 frontend modules', () => {
   });
 
   it('cms-content normalizes structured documents without rendering unsafe HTML', async () => {
-    const eventBus = bus();
+    const eventBus = bus(CmsContentContracts);
     const service = new CmsContentService(eventBus);
     service.init({ documents: [{ id: 'home', title: 'Home', blocks: [{ type: 'hero', text: 'Hi' }] }] });
 
@@ -71,7 +75,7 @@ describe('wave 1 frontend modules', () => {
   });
 
   it('catalog tracks items, facets, filters, and selection client-side only', async () => {
-    const eventBus = bus();
+    const eventBus = bus(CatalogContracts);
     const service = new CatalogService(eventBus);
     service.init({ items: [
       { id: 'p1', title: 'Bag', type: 'product', categories: ['bags'], availability: 'in-stock' },

@@ -1,4 +1,5 @@
 import { NetworkStatusService } from './services/NetworkStatusService.js';
+import { NetworkStatusContracts } from './contracts/network-status-contracts.js';
 
 export const manifest = {
     id: 'network-status',
@@ -24,3 +25,5 @@ export function createNetworkStatus(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = NetworkStatusContracts;

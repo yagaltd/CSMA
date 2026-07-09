@@ -4,41 +4,6 @@
  * Now using our forked validation library!
  */
 import { object, string, number, boolean, enums, optional, size, array, any } from './validation/index.js';
-import { FileSystemContracts } from '../modules/file-system/contracts/file-system-contracts.js';
-import { MediaContracts } from '../modules/media/contracts/media-contracts.js';
-import { LocationContracts } from '../modules/location/contracts/location-contracts.js';
-// media-transform and image-optimizer contracts merged into MediaContracts
-import { NetworkStatusContracts } from '../modules/network-status/contracts/network-status-contracts.js';
-import { SyncQueueContracts } from '../modules/sync-queue/contracts/sync-queue-contracts.js';
-import { FormManagementContracts } from '../modules/form-management/contracts/form-management-contracts.js';
-import { ModalSystemContracts } from '../modules/modal-system/contracts/modal-system-contracts.js';
-import { DataTableContracts } from '../modules/data-table/contracts/data-table-contracts.js';
-import { CheckoutContracts } from '../modules/checkout/contracts/checkout-contracts.js';
-import { SearchContracts } from '../modules/search/contracts/search-contracts.js';
-import { AIContracts } from '../modules/ai/contracts/ai-contracts.js';
-import { AnalyticsContracts } from '../modules/analytics/contracts/analytics-contracts.js';
-import { ConsentContracts } from '../modules/consent/contracts/consent-contracts.js';
-import { AuthContracts } from '../modules/auth/contracts/auth-contracts.js';
-import { NotificationsContracts } from '../modules/notifications/contracts/notifications-contracts.js';
-import { ShareContracts } from '../modules/share/contracts/share-contracts.js';
-import { FileUploadContracts } from '../modules/file-upload/contracts/file-upload-contracts.js';
-import { RouterContracts } from '../modules/router/contracts/router-contracts.js';
-import { CaptchaContracts } from '../modules/captcha/contracts/captcha-contracts.js';
-import { FeatureFlagsContracts } from '../modules/feature-flags/contracts/feature-flags-contracts.js';
-import { ContentPrefetchContracts } from '../modules/content-prefetch/contracts/content-prefetch-contracts.js';
-import { CmsContentContracts } from '../modules/cms-content/contracts/cms-content-contracts.js';
-import { CatalogContracts } from '../modules/catalog/contracts/catalog-contracts.js';
-import { CartContracts } from '../modules/cart/contracts/cart-contracts.js';
-import { PaymentAdaptersContracts } from '../modules/payment-adapters/contracts/payment-adapters-contracts.js';
-import { ReviewsContracts } from '../modules/reviews/contracts/reviews-contracts.js';
-import { AbTestingContracts } from '../modules/ab-testing/contracts/ab-testing-contracts.js';
-import { PermissionsUIContracts } from '../modules/permissions-ui/contracts/permissions-ui-contracts.js';
-import { ChartsContracts } from '../modules/charts/contracts/charts-contracts.js';
-import { AdminAuditLogContracts } from '../modules/admin-audit-log/contracts/admin-audit-log-contracts.js';
-import { ImportExportContracts } from '../modules/import-export/contracts/import-export-contracts.js';
-import { CommentsContracts } from '../modules/comments/contracts/comments-contracts.js';
-import { ContentWorkflowContracts } from '../modules/content-workflow/contracts/content-workflow-contracts.js';
-import { EdgeSearchContracts } from '../modules/edge-search/contracts/edge-search-contracts.js';
 
 /**
  * Helper function for creating contracts with full ECCA metadata
@@ -1593,64 +1558,6 @@ const CoreContracts = {
     },
 };
 
-const mergedContracts = {
-    ...CoreContracts,
-    ...FileSystemContracts,
-    ...MediaContracts,
-    ...LocationContracts,
-    // MediaTransform + ImageOptimizer merged into MediaContracts above
-    ...NetworkStatusContracts,
-    ...SyncQueueContracts,
-    ...FormManagementContracts,
-    ...ModalSystemContracts,
-    ...DataTableContracts,
-    ...CheckoutContracts,
-    ...SearchContracts,
-    ...AIContracts,
-
-    ...ConsentContracts,
-    ...AnalyticsContracts,
-    ...AuthContracts,
-    ...NotificationsContracts,
-    ...ShareContracts,
-    ...FileUploadContracts,
-    ...RouterContracts,
-    ...CaptchaContracts,
-    ...FeatureFlagsContracts,
-    ...ContentPrefetchContracts,
-    ...CmsContentContracts,
-    ...CatalogContracts,
-    ...CartContracts,
-    ...PaymentAdaptersContracts,
-    ...ReviewsContracts,
-    ...AbTestingContracts,
-    ...PermissionsUIContracts,
-    ...ChartsContracts,
-    ...AdminAuditLogContracts,
-    ...ImportExportContracts,
-    ...CommentsContracts,
-    ...ContentWorkflowContracts,
-    ...EdgeSearchContracts,
-
-    // Developer Logs
-    LOG_ENTRY: {
-        version: 1,
-        type: 'event',
-        owner: 'log-accumulator',
-        lifecycle: 'active',
-        stability: 'stable',
-        compliance: 'internal',
-        description: 'Developer debug log entry',
-
-        schema: object({
-            type: string(),
-            data: any(),
-            sessionId: optional(string()),
-            timestamp: number()
-        })
-    }
-};
-
 function normalizeRateLimits(rateLimits) {
     if (!rateLimits) return null;
     if (Number.isFinite(rateLimits.requests)) {
@@ -1670,7 +1577,11 @@ function normalizeRateLimits(rateLimits) {
     ]));
 }
 
-export const Contracts = Object.fromEntries(Object.entries(mergedContracts).map(([name, contractValue]) => {
+/**
+ * Core contracts only. Feature modules register their own contracts via
+ * ModuleManager.registerContracts when loaded (module index `contracts` export).
+ */
+export const Contracts = Object.fromEntries(Object.entries(CoreContracts).map(([name, contractValue]) => {
     if (contractValue?.type !== 'intent') {
         return [name, contractValue];
     }

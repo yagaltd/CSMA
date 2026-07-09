@@ -8,6 +8,25 @@ const REGISTRY_KEY_BY_CONTRIBUTION = {
     views: 'views'
 };
 
+function normalizeContractRateLimits(rateLimits) {
+    if (!rateLimits) return null;
+    if (Number.isFinite(rateLimits.requests)) {
+        return {
+            requests: rateLimits.requests,
+            windowMs: rateLimits.windowMs ?? rateLimits.window,
+            scope: rateLimits.scope || 'session'
+        };
+    }
+    return Object.fromEntries(Object.entries(rateLimits).map(([name, limits]) => [
+        name,
+        {
+            requests: limits.requests,
+            windowMs: limits.windowMs ?? limits.window,
+            scope: limits.scope || name.replace(/^per/, '').toLowerCase() || 'session'
+        }
+    ]));
+}
+
 /**
  * ModuleManager - Loads feature modules dynamically
  *
@@ -35,6 +54,7 @@ export class ModuleManager {
         }
 
         const serviceNames = [];
+        let contractNames = [];
         let manifest = null;
 
         try {
@@ -58,13 +78,15 @@ export class ModuleManager {
                 serviceNames.push(serviceName);
             }
 
+            contractNames = this.registerContracts(normalized.contracts);
             this.registerContributions(manifest);
 
             // Track loaded module
             this.modules.set(moduleId, {
                 manifest,
                 status: 'loaded',
-                serviceNames
+                serviceNames,
+                contractNames
             });
 
             // Publish event
@@ -79,7 +101,7 @@ export class ModuleManager {
             console.log(`[ModuleManager] ✓ ${manifest.name} loaded`);
             return this.modules.get(moduleId);
         } catch (error) {
-            await this.rollbackLoad(moduleId, manifest, serviceNames);
+            await this.rollbackLoad(moduleId, manifest, serviceNames, contractNames);
             console.error(`[ModuleManager] Failed to load ${moduleId}:`, error);
             throw error;
         }
@@ -114,6 +136,8 @@ export class ModuleManager {
         }
 
         this.unregisterContributions(module.manifest);
+        this.unregisterContracts(module.contractNames || []);
+
 
         const serviceNames = (module.serviceNames || []).slice().reverse();
         for (const serviceName of serviceNames) {
@@ -135,6 +159,37 @@ export class ModuleManager {
         for (const moduleId of Array.from(this.modules.keys()).reverse()) {
             await this.unloadModule(moduleId);
         }
+    }
+
+    registerContracts(contracts = {}) {
+        const entries = Object.entries(contracts || {});
+        if (entries.length === 0) {
+            return [];
+        }
+
+        if (!this.eventBus.contracts) {
+            this.eventBus.contracts = {};
+        }
+
+        entries.forEach(([name, contractValue]) => {
+            if (contractValue?.type === 'intent') {
+                const security = {
+                    ...(contractValue.security || {}),
+                    rateLimits: normalizeContractRateLimits(contractValue.security?.rateLimits)
+                        || { requests: 60, windowMs: 60000, scope: 'session' }
+                };
+                this.eventBus.contracts[name] = { ...contractValue, security };
+            } else {
+                this.eventBus.contracts[name] = contractValue;
+            }
+        });
+        return entries.map(([name]) => name);
+    }
+
+    unregisterContracts(contractNames = []) {
+        contractNames.forEach((name) => {
+            delete this.eventBus.contracts?.[name];
+        });
     }
 
     registerContributions(manifest) {
@@ -171,10 +226,11 @@ export class ModuleManager {
         }, {});
     }
 
-    async rollbackLoad(moduleId, manifest, serviceNames) {
+    async rollbackLoad(moduleId, manifest, serviceNames, contractNames = []) {
         if (manifest) {
             this.unregisterContributions(manifest);
         }
+            this.unregisterContracts(contractNames);
 
         for (const serviceName of [...serviceNames].reverse()) {
             try {

@@ -3,6 +3,7 @@ import { CoreSearchService } from './services/CoreSearchService.js';
 import { EnhancedSearchService } from './services/EnhancedSearchService.js';
 import { AISearchService } from './services/AISearchService.js';
 import { FlexSearchAdapter } from './adapters/FlexSearchAdapter.js';
+import { SearchContracts } from './contracts/search-contracts.js';
 
 export const manifest = {
     id: 'search',
@@ -43,3 +44,5 @@ export const services = {
 };
 
 export { createSearchService, SearchModuleService, CoreSearchService, EnhancedSearchService, AISearchService, FlexSearchAdapter };
+
+export const contracts = SearchContracts;

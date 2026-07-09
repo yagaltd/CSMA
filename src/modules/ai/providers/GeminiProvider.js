@@ -1,24 +1,20 @@
 import { AIProvider } from './AIProvider.js';
 
-const BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const DEFAULT_BASE_URL = '/ai/gemini/models';
 const DEFAULT_MODEL = 'gemini-2.5-flash-lite';
 const JSON_MIME = 'application/json';
 
 export class GeminiProvider extends AIProvider {
     constructor(options = {}) {
         super();
-        this.apiKey = options.apiKey || null;
+        this.baseUrl = options.baseUrl || DEFAULT_BASE_URL;
         this.model = options.model || DEFAULT_MODEL;
         this.fetchImpl = options.fetch || (typeof fetch !== 'undefined' ? fetch.bind(globalThis) : null);
         this.fileSizeLimit = options.fileSizeLimit || 18.5 * 1024 * 1024; // ~18.5MB inline limit
     }
 
-    setApiKey(key) {
-        this.apiKey = key;
-    }
-
     async isAvailable() {
-        return Boolean(this.apiKey && this.fetchImpl);
+        return Boolean(this.baseUrl && this.fetchImpl);
     }
 
     get priority() {
@@ -36,7 +32,7 @@ export class GeminiProvider extends AIProvider {
     }
 
     async generateText(params = {}) {
-        await this._requireApiKey();
+        this._requireProxy();
         const body = this._buildTextRequest(params);
         const data = await this._request('generateContent', body, params);
         const text = this._extractText(data);
@@ -60,7 +56,7 @@ export class GeminiProvider extends AIProvider {
     }
 
     async classify(text, options = {}) {
-        await this._requireApiKey();
+        this._requireProxy();
         const classificationPrompt = this._buildClassificationPrompt(text, options);
         const body = {
             contents: [{
@@ -87,7 +83,7 @@ export class GeminiProvider extends AIProvider {
     }
 
     async transcribe(input, options = {}) {
-        await this._requireApiKey();
+        this._requireProxy();
 
         const blob = await this._toBlob(input);
         if (!blob) {
@@ -191,7 +187,7 @@ export class GeminiProvider extends AIProvider {
             throw new Error('Fetch API is not available in this environment');
         }
 
-        const url = `${BASE_URL}/${this.model}:${operation}?key=${this.apiKey}`;
+        const url = `${String(this.baseUrl).replace(/\/$/, '')}/${this.model}:${operation}`;
         const response = await this.fetchImpl(url, {
             method: 'POST',
             headers: { 'Content-Type': JSON_MIME },
@@ -258,9 +254,9 @@ export class GeminiProvider extends AIProvider {
         return null;
     }
 
-    async _requireApiKey() {
-        if (!this.apiKey) {
-            throw new Error('GeminiProvider requires an API key');
+    _requireProxy() {
+        if (!this.baseUrl) {
+            throw new Error('GeminiProvider requires a backend proxy baseUrl');
         }
     }
 

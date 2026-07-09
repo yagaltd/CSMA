@@ -7,14 +7,22 @@ import { PermissionsUIService } from '../src/modules/permissions-ui/index.js';
 import { ChartsService } from '../src/modules/charts/index.js';
 import { AdminAuditLogService } from '../src/modules/admin-audit-log/index.js';
 import { ImportExportService } from '../src/modules/import-export/index.js';
+import { PermissionsUIContracts } from '../src/modules/permissions-ui/contracts/permissions-ui-contracts.js';
+import { ChartsContracts } from '../src/modules/charts/contracts/charts-contracts.js';
+import { AdminAuditLogContracts } from '../src/modules/admin-audit-log/contracts/admin-audit-log-contracts.js';
+import { ImportExportContracts } from '../src/modules/import-export/contracts/import-export-contracts.js';
 
-function bus() { const eventBus = new EventBus(); eventBus.contracts = Contracts; return eventBus; }
+function bus(...moduleContracts) {
+  const eventBus = new EventBus();
+  eventBus.contracts = Object.assign({}, Contracts, ...moduleContracts);
+  return eventBus;
+}
 
 describe('wave 3 frontend modules', () => {
   beforeEach(() => { vi.restoreAllMocks(); });
 
   it('permissions-ui tracks client capabilities without authorizing backend actions', async () => {
-    const eventBus = bus();
+    const eventBus = bus(PermissionsUIContracts);
     const service = new PermissionsUIService(eventBus);
     service.init({ roles: ['admin'], capabilities: ['orders:view'], rules: [{ key: 'orders', roles: ['admin'], capabilities: ['orders:view'] }] });
 
@@ -27,7 +35,7 @@ describe('wave 3 frontend modules', () => {
   });
 
   it('charts registers adapters and stores chart datasets', async () => {
-    const eventBus = bus();
+    const eventBus = bus(ChartsContracts);
     const service = new ChartsService(eventBus);
     service.init();
     service.registerAdapter({ id: 'svg', label: 'SVG' });
@@ -42,7 +50,7 @@ describe('wave 3 frontend modules', () => {
   });
 
   it('admin-audit-log filters and exports immutable audit display data', async () => {
-    const eventBus = bus();
+    const eventBus = bus(AdminAuditLogContracts);
     const service = new AdminAuditLogService(eventBus);
     service.init({ entries: [
       { id: 'a1', actorId: 'u1', action: 'create', resource: 'order', severity: 'info' },
@@ -60,7 +68,7 @@ describe('wave 3 frontend modules', () => {
   });
 
   it('import-export previews JSON/CSV client-side and prepares export payloads', async () => {
-    const eventBus = bus();
+    const eventBus = bus(ImportExportContracts);
     const service = new ImportExportService(eventBus);
     service.init();
 

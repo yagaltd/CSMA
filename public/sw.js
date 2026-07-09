@@ -1,20 +1,12 @@
-const DEFAULT_CACHE_NAME = 'csma-offline-cache-v1';
+const DEFAULT_CACHE_NAME = 'csma-offline-cache-v2';
 const DEFAULT_SHELL_PATH = '/index.html';
 const SAFE_PREFIXES = [
-    '/',
-    '/index.html',
-    '/assets/',
-    '/src/',
-    '/style/',
-    '/ui/',
-    '/modules/'
+    '/assets/'
 ];
 const SAFE_EXTENSIONS = [
     '.js',
     '.mjs',
     '.css',
-    '.html',
-    '.json',
     '.svg',
     '.png',
     '.jpg',
@@ -24,8 +16,7 @@ const SAFE_EXTENSIONS = [
     '.ico',
     '.woff',
     '.woff2',
-    '.ttf',
-    '.map'
+    '.ttf'
 ];
 const BLOCKED_PREFIXES = [
     '/api/',
@@ -82,11 +73,8 @@ function isAllowlistedPath(pathname) {
         return true;
     }
 
-    if (SAFE_PREFIXES.slice(1).some(prefix => pathname.startsWith(prefix))) {
-        return true;
-    }
-
-    return SAFE_EXTENSIONS.some(extension => pathname.endsWith(extension));
+    const hasSafePrefix = SAFE_PREFIXES.some(prefix => pathname.startsWith(prefix));
+    return hasSafePrefix && SAFE_EXTENSIONS.some(extension => pathname.endsWith(extension));
 }
 
 export function shouldHandleRequest(request, {

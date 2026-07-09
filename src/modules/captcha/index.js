@@ -29,3 +29,5 @@ export const services = {
 };
 
 export { CaptchaModuleService, CapCaptchaAdapter, CaptchaContracts };
+
+export const contracts = CaptchaContracts;

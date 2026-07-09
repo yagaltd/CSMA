@@ -1,4 +1,5 @@
 import { LocationService } from './services/LocationService.js';
+import { LocationContracts } from './contracts/location-contracts.js';
 
 export const manifest = {
     id: 'location',
@@ -28,3 +29,5 @@ export function createLocation(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = LocationContracts;

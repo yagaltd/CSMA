@@ -13,6 +13,8 @@
  * - Keyboard-friendly (Enter to submit)
  */
 
+import { clearChildren } from '../../../utils/dom.js';
+
 const DRAFT_PREFIX = 'csma.editor.draft.';
 
 export function createEditor(container, emit, options = {}) {
@@ -230,7 +232,7 @@ export function createEditor(container, emit, options = {}) {
     const fieldRefs = {};
 
     function renderFields() {
-        fieldsContainer.innerHTML = '';
+        clearChildren(fieldsContainer);
         fieldRefs.length = 0;
 
         fields.forEach((field) => {

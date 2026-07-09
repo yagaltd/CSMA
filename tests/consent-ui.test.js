@@ -16,7 +16,14 @@ describe('consent UI', () => {
 
     beforeEach(() => {
         localStorage.clear();
-        document.body.innerHTML = '<button type="button" data-consent-open>Privacy</button><p data-consent-status></p>';
+        document.body.replaceChildren();
+        const openButton = document.createElement('button');
+        openButton.type = 'button';
+        openButton.dataset.consentOpen = '';
+        openButton.textContent = 'Privacy';
+        const status = document.createElement('p');
+        status.dataset.consentStatus = '';
+        document.body.append(openButton, status);
         service = new ConsentService(createEventBus()).init();
     });
 

@@ -143,16 +143,17 @@ describe('service worker offline cache strategy', () => {
         vi.restoreAllMocks();
     });
 
-    it('allows only same-origin GET requests on the allowlist', () => {
+    it('allows only same-origin GET requests for the shell and public assets', () => {
         const options = { origin: 'https://example.com' };
 
-        expect(shouldHandleRequest(createRequest('https://example.com/src/app.js'), options)).toBe(true);
+        expect(shouldHandleRequest(createRequest('https://example.com/assets/app.js'), options)).toBe(true);
+        expect(shouldHandleRequest(createRequest('https://example.com/src/foo.js'), options)).toBe(false);
         expect(shouldHandleRequest(createRequest('https://example.com/api/items'), options)).toBe(false);
         expect(shouldHandleRequest(createRequest('https://example.com/forms/draft'), options)).toBe(false);
         expect(shouldHandleRequest(createRequest('https://example.com/optimistic/events'), options)).toBe(false);
-        expect(shouldHandleRequest(createRequest('https://other.example/src/app.js'), options)).toBe(false);
-        expect(shouldHandleRequest(createRequest('https://example.com/src/app.js', { method: 'POST' }), options)).toBe(false);
-        expect(shouldHandleRequest(createRequest('https://example.com/src/app.js', { authorization: 'Bearer token' }), options)).toBe(false);
+        expect(shouldHandleRequest(createRequest('https://other.example/assets/app.js'), options)).toBe(false);
+        expect(shouldHandleRequest(createRequest('https://example.com/assets/app.js', { method: 'POST' }), options)).toBe(false);
+        expect(shouldHandleRequest(createRequest('https://example.com/assets/app.js', { authorization: 'Bearer token' }), options)).toBe(false);
     });
 
     it('rejects opaque and no-store responses from the cache', () => {
@@ -165,7 +166,7 @@ describe('service worker offline cache strategy', () => {
     it('serves cached assets first and falls back to the app shell when navigation fetch fails', async () => {
         const cache = new FakeCache();
         const shellUrl = 'https://example.com/index.html';
-        const assetUrl = 'https://example.com/src/app.js';
+        const assetUrl = 'https://example.com/assets/app.js';
         cache.store.set(assetUrl, createResponse('cached asset'));
         cache.store.set(shellUrl, createResponse('cached shell'));
 

@@ -2,6 +2,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import EventBus from '../src/runtime/EventBus.js';
 import { Contracts } from '../src/runtime/Contracts.js';
+import { RouterContracts } from '../src/modules/router/contracts/router-contracts.js';
 import { RouterService } from '../src/modules/router/services/RouterService.js';
 import { createRuntimeState } from '../src/runtime/bootstrap.js';
 import { loadOptionalFeatures } from '../src/runtime/features.js';
@@ -9,7 +10,7 @@ import { loadOptionalFeatures } from '../src/runtime/features.js';
 describe('RouterService', () => {
     it('matches dynamic params and renders through the configured renderer', async () => {
         const eventBus = new EventBus();
-        eventBus.contracts = Contracts;
+        eventBus.contracts = Object.assign({}, Contracts, RouterContracts);
         const router = new RouterService(eventBus);
         const render = vi.fn();
 
@@ -34,7 +35,7 @@ describe('RouterService', () => {
 
     it('supports beforeEach blocking and not-found fallback', async () => {
         const eventBus = new EventBus();
-        eventBus.contracts = Contracts;
+        eventBus.contracts = Object.assign({}, Contracts, RouterContracts);
         const router = new RouterService(eventBus);
         const render = vi.fn();
         const blockedEvents = [];

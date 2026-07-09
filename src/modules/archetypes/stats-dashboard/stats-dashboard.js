@@ -13,11 +13,17 @@
  * - CSMA design tokens for all visual values
  */
 
-const TREND_ICONS = {
-    up:   '<svg viewBox="0 0 12 12" fill="none"><path d="M6 2L10 7H2L6 2Z" fill="currentColor"/></svg>',
-    down: '<svg viewBox="0 0 12 12" fill="none"><path d="M6 10L2 5H10L6 10Z" fill="currentColor"/></svg>',
-    neutral: '<svg viewBox="0 0 12 12" fill="none"><rect x="2" y="5" width="8" height="2" rx="1" fill="currentColor"/></svg>',
-};
+import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+
+function createTrendIcon(direction) {
+    if (direction === 'up') {
+        return createIcon('0 0 12 12', [createSvgElement('path', { d: 'M6 2L10 7H2L6 2Z', fill: 'currentColor' })]);
+    }
+    if (direction === 'down') {
+        return createIcon('0 0 12 12', [createSvgElement('path', { d: 'M6 10L2 5H10L6 10Z', fill: 'currentColor' })]);
+    }
+    return createIcon('0 0 12 12', [createSvgElement('rect', { x: 2, y: 5, width: 8, height: 2, rx: 1, fill: 'currentColor' })]);
+}
 
 const FORMATTERS = {
     number: (v) => Number(v).toLocaleString(),
@@ -132,7 +138,8 @@ export function createStatsDashboard(container, emit, options = {}) {
                 trend.className = 'csma-stats__card-trend';
                 const dir = data.trend > 0 ? 'up' : data.trend < 0 ? 'down' : 'neutral';
                 trend.dataset.direction = dir;
-                trend.innerHTML = `${TREND_ICONS[dir]} ${Math.abs(data.trend)}%`;
+                trend.appendChild(createTrendIcon(dir));
+                trend.appendChild(document.createTextNode(` ${Math.abs(data.trend)}%`));
                 card.appendChild(trend);
             }
         }
@@ -170,7 +177,7 @@ export function createStatsDashboard(container, emit, options = {}) {
     let chartsBuilt = false;
 
     function renderCards() {
-        grid.innerHTML = '';
+        clearChildren(grid);
         cards.forEach((cardDef) => {
             const data = cardData[cardDef.id];
             grid.appendChild(buildCard(cardDef, data));
@@ -179,7 +186,7 @@ export function createStatsDashboard(container, emit, options = {}) {
 
     function renderChartsDOM() {
         if (chartsBuilt) return;
-        chartsEl.innerHTML = '';
+        clearChildren(chartsEl);
         charts.forEach((chartDef) => {
             chartsEl.appendChild(buildChart(chartDef));
         });

@@ -1,4 +1,5 @@
 import { FileSystemService } from './services/FileSystem.js';
+import { FileSystemContracts } from './contracts/file-system-contracts.js';
 
 export const manifest = {
     id: 'file-system',
@@ -20,3 +21,5 @@ export function createFileSystem(eventBus, options = {}) {
     service.ready = service.init();
     return service;
 }
+
+export const contracts = FileSystemContracts;

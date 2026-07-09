@@ -1,4 +1,5 @@
 import { MediaService } from './services/MediaService.js';
+import { MediaContracts } from './contracts/media-contracts.js';
 
 export const manifest = {
     id: 'media',
@@ -53,3 +54,5 @@ export function createMedia(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = MediaContracts;

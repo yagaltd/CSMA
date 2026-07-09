@@ -7,9 +7,18 @@ function createService() {
   return new AIUIComposerService(new EventBus());
 }
 
+function createMountPoint(name) {
+  const mount = document.createElement('div');
+  mount.dataset.mount = name;
+  return mount;
+}
+
 function createDocument() {
-  // Minimal document with a mount-point anchor
-  document.body.innerHTML = '<div id="app"><div data-mount="ai-results"></div></div>';
+  document.body.replaceChildren();
+  const app = document.createElement('div');
+  app.id = 'app';
+  app.appendChild(createMountPoint('ai-results'));
+  document.body.appendChild(app);
   return document;
 }
 
@@ -105,12 +114,12 @@ describe('AI UI — mount points (root target)', () => {
   });
 
   it('supports multiple mount points in the same document', () => {
-    document.body.innerHTML = `
-      <div id="app">
-        <div data-mount="ai-chat"></div>
-        <div data-mount="ai-sidebar"></div>
-      </div>
-    `;
+    document.body.replaceChildren();
+    const app = document.createElement('div');
+    app.id = 'app';
+    app.appendChild(createMountPoint('ai-chat'));
+    app.appendChild(createMountPoint('ai-sidebar'));
+    document.body.appendChild(app);
 
     const service = createService();
 

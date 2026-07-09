@@ -124,6 +124,7 @@ describe('Contribution registries', () => {
       const exampleDef = await import('../demo/modules/example-module/index.js');
       const { validateModuleDefinition } = await import('../src/runtime/ModuleManifest.js');
       const normalized = validateModuleDefinition('example-module', exampleDef);
+      runtime.moduleManager.registerContracts(normalized.contracts);
       for (const [serviceName, ServiceClass] of Object.entries(normalized.services)) {
         runtime.serviceManager.register(serviceName, new ServiceClass(runtime.eventBus), { moduleId: 'example-module', version: normalized.manifest.version });
       }
@@ -158,6 +159,7 @@ describe('Contribution registries', () => {
       const exampleDef = await import('../demo/modules/example-module/index.js');
       const { validateModuleDefinition } = await import('../src/runtime/ModuleManifest.js');
       const normalized = validateModuleDefinition('example-module', exampleDef);
+      runtime.moduleManager.registerContracts(normalized.contracts);
       for (const [serviceName, ServiceClass] of Object.entries(normalized.services)) {
         runtime.serviceManager.register(serviceName, new ServiceClass(runtime.eventBus), { moduleId: 'example-module', version: normalized.manifest.version });
       }
@@ -183,6 +185,7 @@ describe('Contribution registries', () => {
       const exampleDef = await import('../demo/modules/example-module/index.js');
       const { validateModuleDefinition } = await import('../src/runtime/ModuleManifest.js');
       const normalized = validateModuleDefinition('example-module', exampleDef);
+      runtime.moduleManager.registerContracts(normalized.contracts);
       for (const [serviceName, ServiceClass] of Object.entries(normalized.services)) {
         runtime.serviceManager.register(serviceName, new ServiceClass(runtime.eventBus), { moduleId: 'example-module', version: normalized.manifest.version });
       }
@@ -213,6 +216,7 @@ describe('Contribution registries', () => {
       const exampleDef = await import('../demo/modules/example-module/index.js');
       const { validateModuleDefinition } = await import('../src/runtime/ModuleManifest.js');
       const normalized = validateModuleDefinition('example-module', exampleDef);
+      runtime.moduleManager.registerContracts(normalized.contracts);
       for (const [serviceName, ServiceClass] of Object.entries(normalized.services)) {
         runtime.serviceManager.register(serviceName, new ServiceClass(runtime.eventBus), { moduleId: 'example-module', version: normalized.manifest.version });
       }
@@ -245,6 +249,7 @@ describe('Contribution registries', () => {
       const exampleDef = await import('../demo/modules/example-module/index.js');
       const { validateModuleDefinition } = await import('../src/runtime/ModuleManifest.js');
       const normalized = validateModuleDefinition('example-module', exampleDef);
+      runtime.moduleManager.registerContracts(normalized.contracts);
       for (const [serviceName, ServiceClass] of Object.entries(normalized.services)) {
         runtime.serviceManager.register(serviceName, new ServiceClass(runtime.eventBus), { moduleId: 'example-module', version: normalized.manifest.version });
       }

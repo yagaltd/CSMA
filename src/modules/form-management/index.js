@@ -1,4 +1,5 @@
 import { FormManagementService } from './services/FormManagementService.js';
+import { FormManagementContracts } from './contracts/form-management-contracts.js';
 
 export const manifest = {
     id: 'form-management',
@@ -29,3 +30,5 @@ export function createFormManagement(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = FormManagementContracts;

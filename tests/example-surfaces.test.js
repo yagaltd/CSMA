@@ -27,11 +27,11 @@ describe('demo surface quality', () => {
 
   it('avoids full list rebuilds during render updates', () => {
     expect(todoJs).toContain('syncTodoList(');
-    expect(todoJs).not.toContain("list.innerHTML = '';");
+    expect(todoJs).not.toContain('replace markup via HTML parsing');
   });
 
   it('uses textContent for user data', () => {
     expect(todoJs).toContain('.textContent');
-    expect(todoJs).not.toContain('.innerHTML');
+    expect(todoJs).not.toContain('innerHTML');
   });
 });

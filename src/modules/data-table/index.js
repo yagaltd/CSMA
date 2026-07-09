@@ -1,4 +1,5 @@
 import { DataTableService } from './services/DataTableService.js';
+import { DataTableContracts } from './contracts/data-table-contracts.js';
 
 export const manifest = {
     id: 'data-table',
@@ -26,3 +27,5 @@ export function createDataTable(eventBus, options = {}) {
     service.init(options);
     return service;
 }
+
+export const contracts = DataTableContracts;
