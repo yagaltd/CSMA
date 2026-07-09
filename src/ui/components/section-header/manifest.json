@@ -1,0 +1,34 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "section-header", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": [] },
+  "metadata": { "description": "Settings section title with optional description subtitle" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "section-header",
+    "title": "Section Header",
+    "category": "Layout",
+    "preferred": true,
+    "summary": "Section title with a muted description line for settings panels",
+    "template": "<header class=\"section-header\"><h2 class=\"section-header__title\">Theme</h2><p class=\"section-header__desc\">Appearance & color scheme</p></header>",
+    "propsSchema": { "title": "string", "description": "string" },
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": [] } },
+    "allowedChildren": [],
+    "render": {
+      "kind": "element",
+      "tag": "header",
+      "className": "section-header",
+      "attributes": {},
+      "children": [
+        { "tag": "h2", "className": "section-header__title", "textProp": "title" },
+        { "tag": "p", "className": "section-header__desc", "textProp": "description" }
+      ],
+      "template": "<header class=\"section-header\"><h2 class=\"section-header__title\">Theme</h2><p class=\"section-header__desc\">Appearance</p></header>"
+    },
+    "behavior": { "role": "container", "events": [], "targetActions": [], "intentMap": {}, "fieldValue": null, "eventTargetSelector": ".section-header" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [".section-header__title"], "description": [".section-header__desc"], "label": [] }
+  }
+}

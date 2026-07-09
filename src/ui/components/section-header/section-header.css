@@ -1,0 +1,20 @@
+/* CSMA Component — Section Header */
+
+.section-header {
+  margin-bottom: var(--space-md);
+}
+
+.section-header__title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  letter-spacing: 0.02em;
+  margin: 0 0 2px 0;
+}
+
+.section-header__desc {
+  font-size: var(--font-size-xs);
+  color: var(--foreground-muted);
+  line-height: var(--line-height-body);
+  margin: 0;
+}

@@ -15,8 +15,10 @@ dist/
 # Testing
 coverage/
 output/
+tests/browser/output/
 
 # Build artifacts
+demo/dist/
 *.tsbuildinfo
 .turbo/
 

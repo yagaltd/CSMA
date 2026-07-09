@@ -1,0 +1,54 @@
+/* CSMA Component — Toggle Card */
+
+.toggle-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 3.5rem;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+  color: var(--foreground-muted);
+  cursor: pointer;
+  appearance: none;
+  font: inherit;
+  transition: border-color var(--motion-duration-fast) var(--ease-out-quart),
+    background var(--motion-duration-fast) var(--ease-out-quart),
+    color var(--motion-duration-fast) var(--ease-out-quart);
+}
+
+.toggle-card:hover {
+  border-color: var(--primary);
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--primary) 5%, var(--surface-muted));
+}
+
+.toggle-card[data-state="active"] {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+}
+
+.toggle-card[data-state="active"]:hover {
+  background: color-mix(in srgb, var(--primary) 18%, var(--surface));
+}
+
+.toggle-card:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+.toggle-card__preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.toggle-card__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}

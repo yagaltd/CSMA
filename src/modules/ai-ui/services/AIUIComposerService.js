@@ -4,37 +4,85 @@ const MAX_TEXT_LENGTH = 1000;
 const MAX_CHILDREN_PER_SLOT = 50;
 const MAX_COMPOSITION_DEPTH = 8;
 const SAFE_TAGS = new Set([
+  // ── Layout ──
   'article',
-  'button',
   'div',
   'footer',
   'header',
-  'h2',
-  'input',
-  'label',
-  'p',
   'section',
-  'span'
+  'main',
+  'aside',
+  'nav',
+  'details',
+  'summary',
+
+  // ── Headings (complete set — viewer archetype needs h1–h6) ──
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+
+  // ── Text semantics (viewer renders rich content) ──
+  'p', 'span',
+  'time', 'mark', 'abbr',
+  'code', 'pre', 'kbd', 'samp', 'var',
+  'blockquote', 'cite', 'q',
+
+  // ── Lists (viewer uses ul/ol/li) ──
+  'ul', 'ol', 'li',
+  'dl', 'dt', 'dd',
+
+  // ── Tables (viewer renders tabular data) ──
+  'table', 'thead', 'tbody', 'tfoot',
+  'tr', 'td', 'th',
+  'caption', 'col', 'colgroup',
+
+  // ── Form elements (editor-builder, config-panel, settings) ──
+  'input',
+  'textarea',
+  'select', 'option', 'optgroup',
+  'label',
+  'fieldset', 'legend',
+  'datalist', 'output',
+  'progress', 'meter',
+
+  // ── Interactive ──
+  'button',
+  'dialog',
+
+  // ── Media (media-browser, viewer, overlay-manager) ──
+  'img',
+  'figure', 'figcaption',
+  'picture', 'source',
+  'video', 'audio',
 ]);
 const SAFE_ATTRIBUTES = new Set([
   'aria-label',
+  'aria-hidden',
   'autocomplete',
+  'checked',
   'class',
+  'cols',
   'data-aiui-id',
   'data-disabled',
+  'data-group',
   'data-shape',
   'data-size',
+  'data-slot',
   'data-state',
   'data-theme-active',
   'data-theme-toggle',
   'data-tone',
   'data-variant',
+  'disabled',
   'for',
   'href',
   'id',
+  'max',
+  'min',
   'name',
   'placeholder',
+  'role',
+  'rows',
   'src',
+  'step',
   'type',
   'value'
 ]);
@@ -46,7 +94,8 @@ const KNOWN_STATE_ATTRS = new Set([
   'data-size',
   'data-shape',
   'data-disabled',
-  'data-theme-active'
+  'data-theme-active',
+  'data-group',
 ]);
 
 function isPlainObject(value) {

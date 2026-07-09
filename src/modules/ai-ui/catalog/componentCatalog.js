@@ -345,6 +345,149 @@ export const componentCatalog = {
       "template": "<article class=\"card\"><header class=\"card__header\"><h2 class=\"card__title\">Title</h2><p class=\"card__description\">Description</p></header><div class=\"card__body\"></div><footer class=\"card__footer\"></footer></article>"
     }
   },
+  "code-editor": {
+    "id": "code-editor",
+    "owner": "core",
+    "alias": "code-editor",
+    "title": "Code Editor",
+    "category": "Forms",
+    "type": "I",
+    "path": "src/ui/components/code-editor",
+    "manifestPath": "src/ui/components/code-editor/manifest.json",
+    "preferred": true,
+    "summary": "Monospace textarea for editing configuration files like TOML or JSON",
+    "propsSchema": {
+      "value": "string",
+      "placeholder": "string",
+      "rows": "string",
+      "name": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "input",
+      "events": [
+        "input",
+        "change"
+      ],
+      "targetActions": [],
+      "intentMap": {
+        "change": "settings:save-config"
+      },
+      "fieldValue": "value",
+      "eventTargetSelector": ".code-editor"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": []
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<textarea class=\"code-editor\" rows=\"20\" placeholder=\"[shell]\\ntheme = \\\"dark\\\"\\n\"></textarea>",
+    "render": {
+      "kind": "element",
+      "tag": "textarea",
+      "className": "code-editor",
+      "attributes": {
+        "rows": {
+          "prop": "rows",
+          "fallback": "20"
+        },
+        "placeholder": {
+          "prop": "placeholder"
+        },
+        "name": {
+          "prop": "name"
+        }
+      },
+      "textProp": "value",
+      "template": "<textarea class=\"code-editor\" rows=\"20\"></textarea>"
+    }
+  },
+  "color-token-list": {
+    "id": "color-token-list",
+    "owner": "core",
+    "alias": "color-token-list",
+    "title": "Color Token List",
+    "category": "Forms",
+    "type": "I",
+    "path": "src/ui/components/color-token-list",
+    "manifestPath": "src/ui/components/color-token-list/manifest.json",
+    "preferred": true,
+    "summary": "Editable list of color tokens with name, swatch preview, and hex value",
+    "propsSchema": {},
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": [
+          "swatch"
+        ]
+      }
+    },
+    "allowedChildren": [
+      "swatch"
+    ],
+    "behavior": {
+      "role": "container",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".color-token-list"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": [
+        ".color-token-list__name"
+      ]
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": [
+        "swatch"
+      ]
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"color-token-list\"><div class=\"color-token-list__row\"><span class=\"color-token-list__name\">background</span><div class=\"color-token-list__swatch\"></div><span class=\"color-token-list__value\">#0e0e12</span></div></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "color-token-list",
+      "attributes": {},
+      "children": [],
+      "template": "<div class=\"color-token-list\"></div>"
+    }
+  },
   "field": {
     "id": "field",
     "owner": "core",
@@ -557,6 +700,574 @@ export const componentCatalog = {
       "template": "<input class=\"input\" type=\"email\" name=\"email\" placeholder=\"name@company.com\" autocomplete=\"email\" />"
     }
   },
+  "radio-group": {
+    "id": "radio-group",
+    "owner": "core",
+    "alias": "radio-group",
+    "title": "Radio Group",
+    "category": "Forms",
+    "type": "I",
+    "path": "src/ui/components/radio-group",
+    "manifestPath": "src/ui/components/radio-group/manifest.json",
+    "preferred": true,
+    "summary": "Mutually exclusive option selector rendered as a grid of cards or radio inputs",
+    "propsSchema": {
+      "label": "string",
+      "name": "string",
+      "value": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": [
+          "radio-option",
+          "toggle-card"
+        ]
+      }
+    },
+    "allowedChildren": [
+      "radio-option",
+      "toggle-card"
+    ],
+    "behavior": {
+      "role": "container",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".radio-group"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [
+        ".radio-group__label"
+      ],
+      "description": [],
+      "label": [
+        ".radio-group__label"
+      ]
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": [
+        "radio-option"
+      ]
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"radio-group\" role=\"radiogroup\"></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "radio-group",
+      "attributes": {
+        "role": "radiogroup",
+        "data-group": {
+          "prop": "name"
+        }
+      },
+      "children": [
+        {
+          "tag": "span",
+          "className": "radio-group__label",
+          "textProp": "label"
+        }
+      ],
+      "template": "<div class=\"radio-group\" role=\"radiogroup\"><span class=\"radio-group__label\">Options</span></div>"
+    }
+  },
+  "radio-option": {
+    "id": "radio-option",
+    "owner": "core",
+    "alias": "radio-option",
+    "title": "Radio Option",
+    "category": "Forms",
+    "type": "I",
+    "path": "src/ui/components/radio-option",
+    "manifestPath": "src/ui/components/radio-option/manifest.json",
+    "preferred": true,
+    "summary": "Single radio input paired with a label",
+    "propsSchema": {
+      "label": "string",
+      "value": "string",
+      "name": "string",
+      "checked": "string",
+      "state": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "option",
+      "events": [
+        "click"
+      ],
+      "targetActions": [],
+      "intentMap": {
+        "click": "settings:select"
+      },
+      "fieldValue": null,
+      "eventTargetSelector": ".radio-option"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": [
+        ".radio-option__label"
+      ]
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<label class=\"radio-option\"><input type=\"radio\" name=\"group\" value=\"opt1\" /><span class=\"radio-option__label\">Option 1</span></label>",
+    "render": {
+      "kind": "element",
+      "tag": "label",
+      "className": "radio-option",
+      "attributes": {
+        "data-state": {
+          "prop": "state"
+        }
+      },
+      "children": [
+        {
+          "tag": "input",
+          "className": "radio-option__input",
+          "attributes": {
+            "type": "radio",
+            "name": {
+              "prop": "name"
+            },
+            "value": {
+              "prop": "value"
+            },
+            "checked": {
+              "prop": "checked"
+            }
+          }
+        },
+        {
+          "tag": "span",
+          "className": "radio-option__label",
+          "textProp": "label"
+        }
+      ],
+      "template": "<label class=\"radio-option\"><input type=\"radio\" name=\"group\" value=\"opt1\" /><span class=\"radio-option__label\">Option 1</span></label>"
+    }
+  },
+  "section-header": {
+    "id": "section-header",
+    "owner": "core",
+    "alias": "section-header",
+    "title": "Section Header",
+    "category": "Layout",
+    "type": "I",
+    "path": "src/ui/components/section-header",
+    "manifestPath": "src/ui/components/section-header/manifest.json",
+    "preferred": true,
+    "summary": "Section title with a muted description line for settings panels",
+    "propsSchema": {
+      "title": "string",
+      "description": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "container",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".section-header"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [
+        ".section-header__title"
+      ],
+      "description": [
+        ".section-header__desc"
+      ],
+      "label": []
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<header class=\"section-header\"><h2 class=\"section-header__title\">Theme</h2><p class=\"section-header__desc\">Appearance & color scheme</p></header>",
+    "render": {
+      "kind": "element",
+      "tag": "header",
+      "className": "section-header",
+      "attributes": {},
+      "children": [
+        {
+          "tag": "h2",
+          "className": "section-header__title",
+          "textProp": "title"
+        },
+        {
+          "tag": "p",
+          "className": "section-header__desc",
+          "textProp": "description"
+        }
+      ],
+      "template": "<header class=\"section-header\"><h2 class=\"section-header__title\">Theme</h2><p class=\"section-header__desc\">Appearance</p></header>"
+    }
+  },
+  "shortcut-list": {
+    "id": "shortcut-list",
+    "owner": "core",
+    "alias": "shortcut-list",
+    "title": "Shortcut List",
+    "category": "Layout",
+    "type": "I",
+    "path": "src/ui/components/shortcut-list",
+    "manifestPath": "src/ui/components/shortcut-list/manifest.json",
+    "preferred": true,
+    "summary": "Container for keyboard shortcut reference entries",
+    "propsSchema": {},
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": [
+          "shortcut-row"
+        ]
+      }
+    },
+    "allowedChildren": [
+      "shortcut-row"
+    ],
+    "behavior": {
+      "role": "container",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".shortcut-list"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": []
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": [
+        "shortcut-row"
+      ]
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"shortcut-list\"></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "shortcut-list",
+      "attributes": {},
+      "children": [],
+      "template": "<div class=\"shortcut-list\"></div>"
+    }
+  },
+  "shortcut-row": {
+    "id": "shortcut-row",
+    "owner": "core",
+    "alias": "shortcut-row",
+    "title": "Shortcut Row",
+    "category": "Layout",
+    "type": "I",
+    "path": "src/ui/components/shortcut-row",
+    "manifestPath": "src/ui/components/shortcut-row/manifest.json",
+    "preferred": true,
+    "summary": "One keyboard shortcut entry with key binding and description",
+    "propsSchema": {
+      "key": "string",
+      "description": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "node",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".shortcut-row"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [
+        ".shortcut-row__key"
+      ],
+      "description": [
+        ".shortcut-row__desc"
+      ],
+      "label": [
+        ".shortcut-row__key"
+      ]
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"shortcut-row\"><span class=\"shortcut-row__key\">Shift+A</span><span class=\"shortcut-row__desc\">Swap theme</span></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "shortcut-row",
+      "attributes": {},
+      "children": [
+        {
+          "tag": "span",
+          "className": "shortcut-row__key",
+          "textProp": "key"
+        },
+        {
+          "tag": "span",
+          "className": "shortcut-row__desc",
+          "textProp": "description"
+        }
+      ],
+      "template": "<div class=\"shortcut-row\"><span class=\"shortcut-row__key\">Shift+A</span><span class=\"shortcut-row__desc\">Swap theme</span></div>"
+    }
+  },
+  "slider": {
+    "id": "slider",
+    "owner": "core",
+    "alias": "slider",
+    "title": "Slider",
+    "category": "Forms",
+    "type": "I",
+    "path": "src/ui/components/slider",
+    "manifestPath": "src/ui/components/slider/manifest.json",
+    "preferred": true,
+    "summary": "Range input paired with a label and numeric value readout",
+    "propsSchema": {
+      "label": "string",
+      "value": "string",
+      "min": "string",
+      "max": "string",
+      "step": "string",
+      "name": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "input",
+      "events": [
+        "input",
+        "change"
+      ],
+      "targetActions": [],
+      "intentMap": {
+        "input": "settings:slider"
+      },
+      "fieldValue": "value",
+      "eventTargetSelector": ".slider__input"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [
+        ".slider__label"
+      ],
+      "description": [],
+      "label": [
+        ".slider__label"
+      ]
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"slider\"><label class=\"slider__label\">Gap</label><input type=\"range\" class=\"slider__input\" min=\"0\" max=\"12\" value=\"4\" /><span class=\"slider__value\">4px</span></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "slider",
+      "attributes": {},
+      "children": [
+        {
+          "tag": "label",
+          "className": "slider__label",
+          "textProp": "label"
+        },
+        {
+          "tag": "input",
+          "className": "slider__input",
+          "attributes": {
+            "type": "range",
+            "min": {
+              "prop": "min"
+            },
+            "max": {
+              "prop": "max"
+            },
+            "step": {
+              "prop": "step"
+            },
+            "value": {
+              "prop": "value"
+            },
+            "name": {
+              "prop": "name"
+            }
+          }
+        },
+        {
+          "tag": "span",
+          "className": "slider__value",
+          "textProp": "value"
+        }
+      ],
+      "template": "<div class=\"slider\"><label class=\"slider__label\">Gap</label><input type=\"range\" class=\"slider__input\" min=\"0\" max=\"12\" value=\"4\" /><span class=\"slider__value\">4px</span></div>"
+    }
+  },
+  "swatch": {
+    "id": "swatch",
+    "owner": "core",
+    "alias": "swatch",
+    "title": "Swatch",
+    "category": "Visual",
+    "type": "I",
+    "path": "src/ui/components/swatch",
+    "manifestPath": "src/ui/components/swatch/manifest.json",
+    "preferred": true,
+    "summary": "Color preview block for theme and color palette display",
+    "propsSchema": {
+      "name": "string",
+      "variant": "string",
+      "state": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "node",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".swatch"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": true,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": []
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"swatch\" data-variant=\"dark\"></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "swatch",
+      "attributes": {
+        "data-variant": {
+          "prop": "variant"
+        },
+        "data-state": {
+          "prop": "state"
+        }
+      },
+      "children": [],
+      "template": "<div class=\"swatch\" data-variant=\"dark\"></div>"
+    }
+  },
   "theme-toggle": {
     "id": "theme-toggle",
     "owner": "core",
@@ -728,6 +1439,168 @@ export const componentCatalog = {
     "render": {
       "kind": "template",
       "template": "<!-- Toasts are created dynamically via EventBus -->\neventBus.publish('INTENT_TOAST_SHOW', {\n    type: 'success',\n    title: 'Deployment succeeded',\n    description: 'The runtime bootstrap completed without contract violations.',\n    duration: 2800,\n    timestamp: Date.now()\n});"
+    }
+  },
+  "toggle-card": {
+    "id": "toggle-card",
+    "owner": "core",
+    "alias": "toggle-card",
+    "title": "Toggle Card",
+    "category": "Interactive",
+    "type": "I",
+    "path": "src/ui/components/toggle-card",
+    "manifestPath": "src/ui/components/toggle-card/manifest.json",
+    "preferred": true,
+    "summary": "Card-style button that can be selected/deselected, with an optional preview slot",
+    "propsSchema": {
+      "label": "string",
+      "group": "string",
+      "value": "string",
+      "state": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": [
+          "swatch"
+        ]
+      }
+    },
+    "allowedChildren": [
+      "swatch"
+    ],
+    "behavior": {
+      "role": "trigger",
+      "events": [
+        "click"
+      ],
+      "targetActions": [],
+      "intentMap": {
+        "click": "settings:select"
+      },
+      "fieldValue": null,
+      "eventTargetSelector": ".toggle-card"
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": [
+        ".toggle-card__label"
+      ]
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": [
+        "swatch"
+      ]
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<button class=\"toggle-card\" data-state=\"inactive\"><span class=\"toggle-card__label\">Option</span></button>",
+    "render": {
+      "kind": "button",
+      "tag": "button",
+      "className": "toggle-card",
+      "attributes": {
+        "type": "button",
+        "data-state": {
+          "prop": "state",
+          "fallback": "inactive"
+        },
+        "data-group": {
+          "prop": "group"
+        }
+      },
+      "children": [
+        {
+          "tag": "div",
+          "className": "toggle-card__preview",
+          "slot": "default"
+        },
+        {
+          "tag": "span",
+          "className": "toggle-card__label",
+          "textProp": "label"
+        }
+      ],
+      "template": "<button class=\"toggle-card\" data-state=\"inactive\"><div class=\"toggle-card__preview\"></div><span class=\"toggle-card__label\">Option</span></button>"
+    }
+  },
+  "toggle-grid": {
+    "id": "toggle-grid",
+    "owner": "core",
+    "alias": "toggle-grid",
+    "title": "Toggle Grid",
+    "category": "Layout",
+    "type": "I",
+    "path": "src/ui/components/toggle-grid",
+    "manifestPath": "src/ui/components/toggle-grid/manifest.json",
+    "preferred": true,
+    "summary": "Responsive grid container for card-style toggle options",
+    "propsSchema": {
+      "columns": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": [
+          "toggle-card",
+          "radio-option"
+        ]
+      }
+    },
+    "allowedChildren": [
+      "toggle-card",
+      "radio-option"
+    ],
+    "behavior": {
+      "role": "container",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".toggle-grid"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": []
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": [
+        "toggle-card",
+        "radio-option"
+      ]
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"toggle-grid\" style=\"grid-template-columns:repeat(2,1fr)\"></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "toggle-grid",
+      "attributes": {},
+      "children": [],
+      "template": "<div class=\"toggle-grid\"></div>"
     }
   }
 };

@@ -1,0 +1,31 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "toggle-grid", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": ["toggle-card", "radio-option"] },
+  "metadata": { "description": "Grid container for arranging toggle-card or radio-option children in columns" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "toggle-grid",
+    "title": "Toggle Grid",
+    "category": "Layout",
+    "preferred": true,
+    "summary": "Responsive grid container for card-style toggle options",
+    "template": "<div class=\"toggle-grid\" style=\"grid-template-columns:repeat(2,1fr)\"></div>",
+    "propsSchema": { "columns": "string" },
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": ["toggle-card", "radio-option"] } },
+    "allowedChildren": ["toggle-card", "radio-option"],
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "toggle-grid",
+      "attributes": {},
+      "children": [],
+      "template": "<div class=\"toggle-grid\"></div>"
+    },
+    "behavior": { "role": "container", "events": [], "targetActions": [], "intentMap": {}, "fieldValue": null, "eventTargetSelector": ".toggle-grid" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [], "description": [], "label": [] }
+  }
+}

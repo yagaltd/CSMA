@@ -1,0 +1,49 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "radio-option", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": [] },
+  "metadata": { "description": "Single radio input with label for use inside radio-group" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "radio-option",
+    "title": "Radio Option",
+    "category": "Forms",
+    "preferred": true,
+    "summary": "Single radio input paired with a label",
+    "template": "<label class=\"radio-option\"><input type=\"radio\" name=\"group\" value=\"opt1\" /><span class=\"radio-option__label\">Option 1</span></label>",
+    "propsSchema": { "label": "string", "value": "string", "name": "string", "checked": "string", "state": "string" },
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": [] } },
+    "allowedChildren": [],
+    "render": {
+      "kind": "element",
+      "tag": "label",
+      "className": "radio-option",
+      "attributes": {
+        "data-state": { "prop": "state" }
+      },
+      "children": [
+        {
+          "tag": "input",
+          "className": "radio-option__input",
+          "attributes": {
+            "type": "radio",
+            "name": { "prop": "name" },
+            "value": { "prop": "value" },
+            "checked": { "prop": "checked" }
+          }
+        },
+        {
+          "tag": "span",
+          "className": "radio-option__label",
+          "textProp": "label"
+        }
+      ],
+      "template": "<label class=\"radio-option\"><input type=\"radio\" name=\"group\" value=\"opt1\" /><span class=\"radio-option__label\">Option 1</span></label>"
+    },
+    "behavior": { "role": "option", "events": ["click"], "targetActions": [], "intentMap": { "click": "settings:select" }, "fieldValue": null, "eventTargetSelector": ".radio-option" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [], "description": [], "label": [".radio-option__label"] }
+  }
+}

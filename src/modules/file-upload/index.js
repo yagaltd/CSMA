@@ -35,3 +35,8 @@ export const contracts = FileUploadContracts;
 
 export { FileUploadService, createFileUploadService };
 
+// Module-scoped UI — composite views, not framework primitives.
+// Consumers import from the module barrel instead of reaching into ui/.
+export { createFileUploadDropZone } from './ui/drop-zone.js';
+export { createFileUploadList } from './ui/file-list.js';
+

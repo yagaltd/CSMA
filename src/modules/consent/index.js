@@ -31,3 +31,7 @@ export const services = {
 };
 
 export const contracts = ConsentContracts;
+
+// Module-scoped UI — composite view, not a framework primitive.
+// Consumers import from the module barrel instead of reaching into ui/.
+export { initConsentUI } from './ui/consent-ui.js';

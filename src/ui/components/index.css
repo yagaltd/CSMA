@@ -10,3 +10,16 @@
 @import './input/input.css';
 @import './toast/toast.css';
 @import './theme-toggle/theme-toggle.css';
+
+/* Settings primitives */
+@import './radio-group/radio-group.css';
+@import './radio-option/radio-option.css';
+@import './toggle-card/toggle-card.css';
+@import './toggle-grid/toggle-grid.css';
+@import './slider/slider.css';
+@import './section-header/section-header.css';
+@import './shortcut-list/shortcut-list.css';
+@import './shortcut-row/shortcut-row.css';
+@import './code-editor/code-editor.css';
+@import './swatch/swatch.css';
+@import './color-token-list/color-token-list.css';

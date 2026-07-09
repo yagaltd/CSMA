@@ -142,7 +142,7 @@ export function initToastSystem(eventBus) {
 
 | Type | Name | Init Pattern | When to Use |
 |------|------|--------------|-------------|
-| I | Pure CSS | None | Static visuals (Badge, Button) |
+| I | Pure CSS | None | Static visuals (Badge, Button, Toggle-Card, Slider) |
 | II | Self-Contained | `init[Name]System(eventBus)` | Simple interactions (Toast) |
 
 ### Type I -- Pure CSS
@@ -151,10 +151,20 @@ Only CSS. Uses `data-*` attributes for variants and states. No JS needed.
 
 ```
 button/
-  button.css
+  manifest.json    # AIUI catalog entry (propsSchema, slots, render, behavior)
+  button.css        # Component styles using design tokens
+  button.demo.html  # Optional showcase template
 ```
 
 Reference: `src/ui/components/button/button.css`
+
+Each Type I component has a `manifest.json` with an `aiUi` block that defines:
+
+- `propsSchema` — allowed string props (e.g. `label`, `value`, `state`)
+- `slots` — named child containers with `selector` + `allowedChildren`
+- `render` — DOM tag, className, attributes, children, `textProp`
+- `behavior` — role, events, `intentMap` (e.g. `{"click": "settings:select"}`)
+- `style` — `surfaceAware`, `supportsVariant/Size/Tone`
 
 ### Type II -- EventBus-Driven
 
@@ -162,11 +172,29 @@ CSS + JS. JS exports `init[Name]System(eventBus)` returning a cleanup function.
 
 ```
 toast/
+  manifest.json
   toast.css
-  toast.js
+  toast.js          # initToastSystem(eventBus) → cleanup function
 ```
 
 Reference: `src/ui/components/toast/toast.js`
+
+### AIUI Composer Service
+
+The `src/modules/ai-ui/` module provides `AIUIComposerService` — a secure
+DOM composition engine that:
+
+- **Catalog**: 18 registered components (7 original + 11 settings primitives).
+  Auto-generated from `manifest.json` files via `npm run generate-ai-ui-catalog`.
+- **Ops**: `mount`, `unmount`, `clear`, `reorder`, `updateProps`, `setState`,
+  `setText` — all validated before DOM mutation.
+- **SAFE_TAGS**: 54 whitelisted HTML tags (layout, forms, tables, media, text
+  semantics). Never allows `script`, `iframe`, `style`, `svg`, `canvas`, etc.
+- **Intent system**: manifest `behavior.intentMap` maps DOM events to CSMA
+  intents (e.g. `click → settings:select`). The controller subscribes and
+  emits ops — the component itself never touches DOM directly.
+
+To create a new Type I component, see the `csma-component-creation` skill.
 
 ## EventBus Patterns
 

@@ -1,0 +1,34 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "shortcut-row", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": [] },
+  "metadata": { "description": "Single keyboard shortcut entry showing key binding and description" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "shortcut-row",
+    "title": "Shortcut Row",
+    "category": "Layout",
+    "preferred": true,
+    "summary": "One keyboard shortcut entry with key binding and description",
+    "template": "<div class=\"shortcut-row\"><span class=\"shortcut-row__key\">Shift+A</span><span class=\"shortcut-row__desc\">Swap theme</span></div>",
+    "propsSchema": { "key": "string", "description": "string" },
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": [] } },
+    "allowedChildren": [],
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "shortcut-row",
+      "attributes": {},
+      "children": [
+        { "tag": "span", "className": "shortcut-row__key", "textProp": "key" },
+        { "tag": "span", "className": "shortcut-row__desc", "textProp": "description" }
+      ],
+      "template": "<div class=\"shortcut-row\"><span class=\"shortcut-row__key\">Shift+A</span><span class=\"shortcut-row__desc\">Swap theme</span></div>"
+    },
+    "behavior": { "role": "node", "events": [], "targetActions": [], "intentMap": {}, "fieldValue": null, "eventTargetSelector": ".shortcut-row" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [".shortcut-row__key"], "description": [".shortcut-row__desc"], "label": [".shortcut-row__key"] }
+  }
+}

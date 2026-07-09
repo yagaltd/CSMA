@@ -1,0 +1,42 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "radio-group", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": ["radio-option"] },
+  "metadata": { "description": "Container for mutually exclusive selectable options" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "radio-group",
+    "title": "Radio Group",
+    "category": "Forms",
+    "preferred": true,
+    "summary": "Mutually exclusive option selector rendered as a grid of cards or radio inputs",
+    "template": "<div class=\"radio-group\" role=\"radiogroup\"></div>",
+    "propsSchema": { "label": "string", "name": "string", "value": "string" },
+    "defaultSlot": "default",
+    "slots": {
+      "default": { "selector": ":root", "allowedChildren": ["radio-option", "toggle-card"] }
+    },
+    "allowedChildren": ["radio-option", "toggle-card"],
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "radio-group",
+      "attributes": {
+        "role": "radiogroup",
+        "data-group": { "prop": "name" }
+      },
+      "children": [
+        {
+          "tag": "span",
+          "className": "radio-group__label",
+          "textProp": "label"
+        }
+      ],
+      "template": "<div class=\"radio-group\" role=\"radiogroup\"><span class=\"radio-group__label\">Options</span></div>"
+    },
+    "behavior": { "role": "container", "events": [], "targetActions": [], "intentMap": {}, "fieldValue": null, "eventTargetSelector": ".radio-group" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [".radio-group__label"], "description": [], "label": [".radio-group__label"] }
+  }
+}

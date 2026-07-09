@@ -1,0 +1,35 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "code-editor", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": [] },
+  "metadata": { "description": "Textarea-based code editor for TOML, JSON, or other text configuration" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "code-editor",
+    "title": "Code Editor",
+    "category": "Forms",
+    "preferred": true,
+    "summary": "Monospace textarea for editing configuration files like TOML or JSON",
+    "template": "<textarea class=\"code-editor\" rows=\"20\" placeholder=\"[shell]\\ntheme = \\\"dark\\\"\\n\"></textarea>",
+    "propsSchema": { "value": "string", "placeholder": "string", "rows": "string", "name": "string" },
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": [] } },
+    "allowedChildren": [],
+    "render": {
+      "kind": "element",
+      "tag": "textarea",
+      "className": "code-editor",
+      "attributes": {
+        "rows": { "prop": "rows", "fallback": "20" },
+        "placeholder": { "prop": "placeholder" },
+        "name": { "prop": "name" }
+      },
+      "textProp": "value",
+      "template": "<textarea class=\"code-editor\" rows=\"20\"></textarea>"
+    },
+    "behavior": { "role": "input", "events": ["input", "change"], "targetActions": [], "intentMap": { "change": "settings:save-config" }, "fieldValue": "value", "eventTargetSelector": ".code-editor" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [], "description": [], "label": [] }
+  }
+}

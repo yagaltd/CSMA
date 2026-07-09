@@ -64,8 +64,9 @@ this showcase inspection is required; CSS output alone is not a substitute.
 | Path | What it is |
 |------|-----------|
 | `src/runtime/` | EventBus, Contracts, ModuleManager, ServiceManager, Router, RateLimiter |
-| `src/modules/` | 20 feature modules — auth, storage, sync, camera, form-management, search... |
-| `src/ui/components/` | Token-driven CSS primitives — Badge, Button, Toast, Card, Input, Field |
+| `src/modules/` | 30+ feature modules — auth, storage, sync, camera, form-management, search, file-upload, consent... |
+| `src/ui/components/` | 18 token-driven CSS primitives — Badge, Button, Card, Field, Input, Toast, Theme-Toggle + 11 settings primitives (Radio-Group, Toggle-Card, Slider, Section-Header, Shortcut-List, Code-Editor, Swatch, etc.) |
+| `src/modules/ai-ui/` | AIUI Composer Service — secure component catalog, mount/unmount/setState ops, SAFE_TAGS whitelist (54 tags), intent-based behavior contracts |
 | `src/style/design-tokens.json` | CSMA base token seed (DTCG format) |
 | `src/style/token-overrides.json` | Project and brand token patches |
 | `demo/` | Todo-based reference app showing CSMA components, theme switching, runtime events, and a few module examples |

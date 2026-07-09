@@ -1,0 +1,46 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "slider", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": [] },
+  "metadata": { "description": "Range input with label and live value display" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "slider",
+    "title": "Slider",
+    "category": "Forms",
+    "preferred": true,
+    "summary": "Range input paired with a label and numeric value readout",
+    "template": "<div class=\"slider\"><label class=\"slider__label\">Gap</label><input type=\"range\" class=\"slider__input\" min=\"0\" max=\"12\" value=\"4\" /><span class=\"slider__value\">4px</span></div>",
+    "propsSchema": { "label": "string", "value": "string", "min": "string", "max": "string", "step": "string", "name": "string" },
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": [] } },
+    "allowedChildren": [],
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "slider",
+      "attributes": {},
+      "children": [
+        { "tag": "label", "className": "slider__label", "textProp": "label" },
+        {
+          "tag": "input",
+          "className": "slider__input",
+          "attributes": {
+            "type": "range",
+            "min": { "prop": "min" },
+            "max": { "prop": "max" },
+            "step": { "prop": "step" },
+            "value": { "prop": "value" },
+            "name": { "prop": "name" }
+          }
+        },
+        { "tag": "span", "className": "slider__value", "textProp": "value" }
+      ],
+      "template": "<div class=\"slider\"><label class=\"slider__label\">Gap</label><input type=\"range\" class=\"slider__input\" min=\"0\" max=\"12\" value=\"4\" /><span class=\"slider__value\">4px</span></div>"
+    },
+    "behavior": { "role": "input", "events": ["input", "change"], "targetActions": [], "intentMap": { "input": "settings:slider" }, "fieldValue": "value", "eventTargetSelector": ".slider__input" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [".slider__label"], "description": [], "label": [".slider__label"] }
+  }
+}

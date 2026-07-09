@@ -1,0 +1,28 @@
+/* CSMA Component — Shortcut Row */
+
+.shortcut-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: background var(--motion-duration-fast) var(--ease-out-quart);
+}
+
+.shortcut-row:hover {
+  background: var(--surface-muted);
+}
+
+.shortcut-row__key {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--primary);
+  white-space: nowrap;
+  min-width: 8rem;
+  flex-shrink: 0;
+}
+
+.shortcut-row__desc {
+  font-size: var(--font-size-sm);
+  color: var(--foreground-muted);
+}

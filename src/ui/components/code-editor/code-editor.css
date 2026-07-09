@@ -1,0 +1,28 @@
+/* CSMA Component — Code Editor */
+
+.code-editor {
+  width: 100%;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+  background: var(--surface-muted);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  resize: vertical;
+  min-height: 8rem;
+  transition: border-color var(--motion-duration-fast) var(--ease-out-quart),
+    box-shadow var(--motion-duration-fast) var(--ease-out-quart);
+}
+
+.code-editor:focus-visible {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+.code-editor::placeholder {
+  color: var(--foreground-muted);
+  opacity: var(--opacity-muted);
+}

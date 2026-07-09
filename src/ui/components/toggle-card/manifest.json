@@ -1,0 +1,38 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "toggle-card", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": ["swatch"] },
+  "metadata": { "description": "Card-style selectable toggle button with label and optional preview slot" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "toggle-card",
+    "title": "Toggle Card",
+    "category": "Interactive",
+    "preferred": true,
+    "summary": "Card-style button that can be selected/deselected, with an optional preview slot",
+    "template": "<button class=\"toggle-card\" data-state=\"inactive\"><span class=\"toggle-card__label\">Option</span></button>",
+    "propsSchema": { "label": "string", "group": "string", "value": "string", "state": "string" },
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": ["swatch"] } },
+    "allowedChildren": ["swatch"],
+    "render": {
+      "kind": "button",
+      "tag": "button",
+      "className": "toggle-card",
+      "attributes": {
+        "type": "button",
+        "data-state": { "prop": "state", "fallback": "inactive" },
+        "data-group": { "prop": "group" }
+      },
+      "children": [
+        { "tag": "div", "className": "toggle-card__preview", "slot": "default" },
+        { "tag": "span", "className": "toggle-card__label", "textProp": "label" }
+      ],
+      "template": "<button class=\"toggle-card\" data-state=\"inactive\"><div class=\"toggle-card__preview\"></div><span class=\"toggle-card__label\">Option</span></button>"
+    },
+    "behavior": { "role": "trigger", "events": ["click"], "targetActions": [], "intentMap": { "click": "settings:select" }, "fieldValue": null, "eventTargetSelector": ".toggle-card" },
+    "style": { "surfaceAware": true, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [], "description": [], "label": [".toggle-card__label"] }
+  }
+}

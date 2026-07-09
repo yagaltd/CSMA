@@ -1,0 +1,34 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "swatch", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": [] },
+  "metadata": { "description": "Color preview block for theme swatches" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "swatch",
+    "title": "Swatch",
+    "category": "Visual",
+    "preferred": true,
+    "summary": "Color preview block for theme and color palette display",
+    "template": "<div class=\"swatch\" data-variant=\"dark\"></div>",
+    "propsSchema": { "name": "string", "variant": "string", "state": "string" },
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": [] } },
+    "allowedChildren": [],
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "swatch",
+      "attributes": {
+        "data-variant": { "prop": "variant" },
+        "data-state": { "prop": "state" }
+      },
+      "children": [],
+      "template": "<div class=\"swatch\" data-variant=\"dark\"></div>"
+    },
+    "behavior": { "role": "node", "events": [], "targetActions": [], "intentMap": {}, "fieldValue": null, "eventTargetSelector": ".swatch" },
+    "style": { "surfaceAware": false, "supportsVariant": true, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [], "description": [], "label": [] }
+  }
+}

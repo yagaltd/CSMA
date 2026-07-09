@@ -1,0 +1,44 @@
+/* CSMA Component — Radio Option */
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+  cursor: pointer;
+  transition: border-color var(--motion-duration-fast) var(--ease-out-quart),
+    background var(--motion-duration-fast) var(--ease-out-quart);
+}
+
+.radio-option:hover {
+  border-color: var(--primary);
+}
+
+.radio-option[data-state="active"] {
+  border-color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+}
+
+.radio-option__input {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color var(--motion-duration-fast) var(--ease-out-quart);
+}
+
+.radio-option__input:checked {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 3px var(--primary);
+}
+
+.radio-option__label {
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+}

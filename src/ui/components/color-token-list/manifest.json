@@ -1,0 +1,31 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "color-token-list", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": ["swatch"] },
+  "metadata": { "description": "List of design token name + hex value pairs for theme editing" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "color-token-list",
+    "title": "Color Token List",
+    "category": "Forms",
+    "preferred": true,
+    "summary": "Editable list of color tokens with name, swatch preview, and hex value",
+    "template": "<div class=\"color-token-list\"><div class=\"color-token-list__row\"><span class=\"color-token-list__name\">background</span><div class=\"color-token-list__swatch\"></div><span class=\"color-token-list__value\">#0e0e12</span></div></div>",
+    "propsSchema": {},
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": ["swatch"] } },
+    "allowedChildren": ["swatch"],
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "color-token-list",
+      "attributes": {},
+      "children": [],
+      "template": "<div class=\"color-token-list\"></div>"
+    },
+    "behavior": { "role": "container", "events": [], "targetActions": [], "intentMap": {}, "fieldValue": null, "eventTargetSelector": ".color-token-list" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [], "description": [], "label": [".color-token-list__name"] }
+  }
+}

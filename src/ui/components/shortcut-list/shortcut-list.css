@@ -1,0 +1,7 @@
+/* CSMA Component — Shortcut List */
+
+.shortcut-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}

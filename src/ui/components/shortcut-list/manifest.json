@@ -1,0 +1,31 @@
+{
+  "eccac": { "version": "1.0.0", "spec": "1.0.0" },
+  "component": { "name": "shortcut-list", "type": "I", "owner": "ui-service", "lifecycle": "active", "stability": "stable" },
+  "contracts": { "published": [], "subscribed": [] },
+  "dependencies": { "runtime": [], "components": ["shortcut-row"] },
+  "metadata": { "description": "Container for a list of keyboard shortcut reference rows" },
+  "aiUi": {
+    "enabled": true,
+    "alias": "shortcut-list",
+    "title": "Shortcut List",
+    "category": "Layout",
+    "preferred": true,
+    "summary": "Container for keyboard shortcut reference entries",
+    "template": "<div class=\"shortcut-list\"></div>",
+    "propsSchema": {},
+    "defaultSlot": "default",
+    "slots": { "default": { "selector": ":root", "allowedChildren": ["shortcut-row"] } },
+    "allowedChildren": ["shortcut-row"],
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "shortcut-list",
+      "attributes": {},
+      "children": [],
+      "template": "<div class=\"shortcut-list\"></div>"
+    },
+    "behavior": { "role": "container", "events": [], "targetActions": [], "intentMap": {}, "fieldValue": null, "eventTargetSelector": ".shortcut-list" },
+    "style": { "surfaceAware": false, "supportsVariant": false, "supportsSize": false, "supportsTone": false },
+    "textTargets": { "title": [], "description": [], "label": [] }
+  }
+}

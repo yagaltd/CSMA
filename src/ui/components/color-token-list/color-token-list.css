@@ -1,0 +1,41 @@
+/* CSMA Component — Color Token List */
+
+.color-token-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.color-token-list__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  transition: background var(--motion-duration-fast) var(--ease-out-quart);
+}
+
+.color-token-list__row:hover {
+  background: var(--surface-muted);
+}
+
+.color-token-list__name {
+  font-size: var(--font-size-sm);
+  color: var(--foreground-muted);
+  min-width: 8rem;
+  flex-shrink: 0;
+}
+
+.color-token-list__swatch {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.color-token-list__value {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  color: var(--foreground);
+}
