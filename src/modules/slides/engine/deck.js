@@ -235,9 +235,14 @@ export function mountDeck(container, service, eventBus, opts = {}) {
         if (service.isPresenter) {
             cleanups.push(initPresenter(deck, eventBus, service));
         } else {
-            cleanups.push(initDock(deck, eventBus, service));
-            cleanups.push(initRail(deck, eventBus, service));
-            cleanups.push(initGrid(deck, eventBus, service));
+            // Chrome overlays (dock / rail / grid) are position:fixed and must
+            // escape .deck's containing block (.deck has position:fixed +
+            // overflow:hidden, which some browsers treat as the containing
+            // block for fixed descendants, clipping overlays). Append to body.
+            const chromeHost = doc.body || deck;
+            cleanups.push(initDock(chromeHost, eventBus, service));
+            cleanups.push(initRail(chromeHost, eventBus, service));
+            cleanups.push(initGrid(chromeHost, eventBus, service));
         }
     }
 
