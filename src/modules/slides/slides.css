@@ -1,0 +1,213 @@
+/* Slides Module — Slide Scaffold + Build Animation + Transitions
+ *
+ * Token-only. No raw values, no new tokens (per plan §9.3).
+ * Layered above base.css and typeset.css.
+ */
+
+/* ── Deck container ─────────────────────────────────────────────── */
+.deck {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-family-base, system-ui, sans-serif);
+}
+
+/* Presenter mode un-fixes the deck so it can scroll vertically */
+.deck[data-presenter="true"] {
+  position: relative;
+  overflow: auto;
+}
+
+/* ── Slide stage ────────────────────────────────────────────────── */
+.slide-stage {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3xl);
+  box-sizing: border-box;
+}
+
+/* ── Slide ──────────────────────────────────────────────────────── */
+.slide {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.slide.center {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Container inside slide — constrains prose width */
+.slide > .slide-container {
+  width: 100%;
+  max-width: var(--layout-container-wide);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.slide.center > .slide-container {
+  align-items: center;
+}
+
+/* ── Typography atoms ───────────────────────────────────────────── */
+.slide .kicker {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--foreground-muted);
+}
+
+.slide .display {
+  margin: 0;
+  font-size: clamp(2.5rem, 7vw, 6rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.slide .headline {
+  margin: 0;
+  font-size: clamp(1.875rem, 4.4vw, 3.25rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+.slide .lead {
+  margin: 0;
+  font-size: clamp(1.125rem, 1.8vw, 1.5rem);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.5;
+  color: var(--foreground-muted);
+}
+
+.slide .subhead {
+  margin: 0;
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  font-weight: var(--font-weight-regular);
+  color: var(--foreground-muted);
+}
+
+.slide .body {
+  margin: 0;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+.slide .foot {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  color: var(--foreground-muted);
+}
+
+.slide .accent-text {
+  color: var(--primary);
+}
+
+/* ── Build reveal — the bolt-slides signature ───────────────────── */
+.build {
+  transition:
+    opacity var(--motion-duration-normal) var(--ease-out-quart),
+    transform var(--motion-duration-slow) var(--ease-out-quint),
+    filter var(--motion-duration-slow) var(--ease-out-quint);
+}
+
+.build[data-visible="false"] {
+  opacity: 0;
+  transform: translateY(16px);
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+.build[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* ── Slide transitions ──────────────────────────────────────────── */
+.slide-stage[data-transition="enter left"] .slide,
+.slide-stage[data-transition="enter right"] .slide {
+  animation-duration: var(--motion-duration-slow);
+  animation-timing-function: var(--ease-out-quint);
+  animation-fill-mode: both;
+}
+
+.slide-stage[data-transition="enter left"] .slide {
+  animation-name: slide-enter-right;
+}
+.slide-stage[data-transition="enter right"] .slide {
+  animation-name: slide-enter-left;
+}
+
+@keyframes slide-enter-right {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slide-enter-left {
+  from { transform: translateX(-40px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .build,
+  .slide-stage[data-transition] .slide {
+    transition: none;
+    animation: none;
+  }
+  .build[data-visible="false"] {
+    opacity: 0;
+    transform: none;
+    filter: none;
+  }
+  .build[data-visible="true"] {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+/* ── Annotator overlay ──────────────────────────────────────────── */
+.slide-annotator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: var(--z-overlay);
+}
+
+.slide-annotator[data-active="true"] {
+  pointer-events: auto;
+  cursor: crosshair;
+}
+
+.slide-annotation {
+  stroke: currentColor;
+  fill: none;
+}
+
+.slide-annotation[data-color="currentColor"] {
+  color: var(--primary);
+}
+
+/* ── Fallback layout ────────────────────────────────────────────── */
+.slide[data-layout="fallback"] {
+  background: var(--surface-muted);
+}

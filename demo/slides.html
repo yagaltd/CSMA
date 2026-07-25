@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSMA Slides — Demo Deck</title>
+
+  <!-- CSMA core (tokens + base) -->
+  <link rel="stylesheet" href="../src/generated/tokens.css">
+  <link rel="stylesheet" href="../src/style/base.css">
+  <link rel="stylesheet" href="../src/style/foundation/layout.css">
+  <link rel="stylesheet" href="../src/style/foundation/motion.css">
+
+  <!-- Slides module CSS -->
+  <link rel="stylesheet" href="../src/modules/slides/slides.css">
+  <link rel="stylesheet" href="../src/modules/slides/dock.css">
+  <link rel="stylesheet" href="../src/modules/slides/layouts.css">
+  <link rel="stylesheet" href="../src/modules/slides/print.css">
+</head>
+<body>
+  <div id="deck-root"></div>
+
+  <!-- Demo deck config — exercises every workhorse layout + a couple specialty ones -->
+  <script>
+    window.__DECK_CONFIG__ = {
+      title: 'CSMA Slides — Demo',
+      theme: { mode: 'dark' },
+      slides: [
+        { type: 'cover', kicker: 'Demo Deck', title: 'CSMA Slides',
+          subtitle: 'A headless presentation engine for CSMA apps.',
+          foot: 'Wave 2-E' },
+        { type: 'big-number', kicker: 'One headline',
+          value: { number: 24, suffix: '' },
+          caption: 'layout factories ship in v1.',
+          foot: 'See SKILL.md §3 for the selection rules.' },
+        { type: 'stat-grid', kicker: 'Traction', title: 'By the numbers.',
+          stats: [
+            { value: { number: 842, suffix: '' }, label: 'Tests passing', caption: 'baseline + slides' },
+            { value: { number: 0, suffix: '' }, label: 'New npm deps', caption: 'pure vanilla JS' },
+            { value: { number: 100, suffix: '%' }, label: 'Token-driven CSS', caption: 'no raw values' }
+          ] },
+        { type: 'steps', kicker: 'How it works', title: 'Three steps to a deck.',
+          items: [
+            { title: 'Author', body: 'Write a single deck.json with one slide object per slide.' },
+            { title: 'Theme', body: 'Patch tokens via token-overrides.json. The slides module reads them.' },
+            { title: 'Present', body: 'Set window.__DECK_CONFIG__ and call mountDeck.' }
+          ] },
+        { type: 'quote', text: 'Reactive UI without a framework, a security boundary without a backend.',
+          name: 'CSMA manifesto', role: 'architecture skill' },
+        { type: 'comparison', kicker: 'Why this exists', title: 'Slides vs. bolt-slides.',
+          cols: ['', 'CSMA Slides', 'bolt-slides'],
+          highlight: 1,
+          rows: [
+            { label: 'Framework', values: ['Vanilla JS', 'React'] },
+            { label: 'Animation', values: ['CSS + data-*', 'framer-motion'] },
+            { label: 'Sync', values: ['CrossTabLeader', 'custom BroadcastChannel'] },
+            { label: 'Security', values: [true, false] }
+          ] },
+        { type: 'cta', title: 'Ship a deck.', subtitle: 'Read SKILL.md → write deck.json → mountDeck' }
+      ]
+    };
+  </script>
+
+  <!-- Bootstrap CSMA runtime + slides module -->
+  <script type="module">
+    import { EventBus } from '../src/runtime/EventBus.js';
+    import { SlideDeckService, mountDeck } from '../src/modules/slides/index.js';
+
+    const eventBus = new EventBus();
+    // Register slides contracts so validation passes
+    const { SlidesContracts } = await import('../src/modules/slides/index.js');
+    eventBus.contracts = SlidesContracts;
+
+    const service = new SlideDeckService(eventBus);
+    service.init();
+
+    mountDeck(document.getElementById('deck-root'), service, eventBus);
+
+    // Expose for debugging
+    window.deck = { service, eventBus };
+  </script>
+</body>
+</html>
