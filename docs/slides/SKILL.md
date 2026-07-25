@@ -16,6 +16,29 @@ everything needed: layout selection rules, JSON config schema, writing
 discipline, theme surface, and the build/present loop. Slides are written as a
 single `deck.json` config — the agent never writes JS, CSS, or HTML for slides.
 
+## Architecture context (read once)
+
+Slides sit in CSMA's **layered rendering model**:
+
+```
+LAYER 3  SlideDeckService   next / prev / build / presenter — owns navigation
+LAYER 2  Slide layouts       cover, bento, stat-grid, …  (24 factories)
+LAYER 1  aiui composer       mount / unmount / setState   ← rendering pipeline
+LAYER 0  CSMA components     button, card, badge, branch-node, …
+```
+
+The deck **state machine** (Layer 3) is slide-specific and stays. The
+**layouts** (Layer 2) currently build DOM directly via an `el()` helper.
+They are being migrated to compose through aiui (Layer 1) so any aiui
+surface — comments, video, charts, mindmap — can embed inside any slide.
+
+See `docs/architecture/aiui-unification.md` for the full migration plan
+(Phase 1 done, Phase 2 = slides layouts as aiui compositions, Phase 3 =
+archetypes + deprecate `el()`).
+
+For authoring purposes nothing changes today: agents still write JSON, the
+slides runtime still mounts layouts. The migration is internal.
+
 ## 0. Required reading chain
 
 Load these CSMA docs before authoring:

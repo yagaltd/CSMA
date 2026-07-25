@@ -65,6 +65,9 @@ edit `src/style/design-tokens.json` directly; patch via
 | Layout recipes, spatial patterns | `docs/patterns/SKILL.md` |
 | Modern CSS features, browser compat, JS→CSS migration | `docs/css/SKILL.md` |
 | Rigor selection (tests, transitions) | `docs/rigor/SKILL.md` |
+| Presentation / slide deck authoring (deck.json) | `docs/slides/SKILL.md` |
+| Prose typography for markdown / LLM output / rich text | `docs/typeset/SKILL.md` |
+| aiui rendering layers, module surfaces, mountSurface contract, Phase 2/3 migration | `docs/architecture/aiui-unification.md` |
 
 ## Layouts and Pages
 
