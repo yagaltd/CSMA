@@ -1,9 +1,9 @@
 const SUPPORTED_TYPES = new Set(['lww-register', 'g-counter', 'pn-counter']);
 
 export class CrdtReducerRegistry {
-    constructor(eventBus, { actionLogService = null, actorId = 'local', maxTrackedEntries = 5000 } = {}) {
+    constructor(eventBus, { historyService = null, actorId = 'local', maxTrackedEntries = 5000 } = {}) {
         this.eventBus = eventBus;
-        this.actionLog = actionLogService;
+        this.history = historyService;
         this.actorId = actorId;
         this.maxTrackedEntries = maxTrackedEntries;
         this.intentConfigs = new Map();
@@ -341,8 +341,8 @@ export class CrdtReducerRegistry {
     }
 
     _primeFromHistory(intentName) {
-        if (!this.actionLog?.getAll) return;
-        const entries = this.actionLog.getAll().filter((entry) => entry.intent === intentName);
+        if (!this.history?.getAll) return;
+        const entries = this.history.getAll().filter((entry) => entry.intent === intentName);
         for (const entry of entries) {
             this.applyEntry(entry, { source: 'log-prime', force: true });
         }

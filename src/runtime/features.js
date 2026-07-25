@@ -490,14 +490,25 @@ export async function loadOptionalFeatures(state, {
         }
     }
 
-    // Wave D: optimistic-sync (after network; keeps post-sync relative order)
+    // Wave D: history + optimistic-sync (history must load first; keeps post-sync relative order)
+    const historyEnabled = Boolean(FEATURES.HISTORY || FEATURES.OPTIMISTIC_SYNC || FEATURES.SYNC_QUEUE);
+    if (historyEnabled) {
+        await runFeature('[History] Failed to load module:', async () => {
+            await moduleManager.loadModule('history');
+            const historyService = serviceManager.get('history');
+            await initService(historyService);
+            const csma = ensureCsma();
+            csma.history = historyService;
+            console.log('[History] Operation log enabled');
+        });
+    }
+
     if (FEATURES.OPTIMISTIC_SYNC) {
         await runFeature('[OptimisticSync] Failed to load module:', async () => {
             await moduleManager.loadModule('optimistic-sync');
-            const actionLogService = serviceManager.get('actionLog');
+            const historyService = serviceManager.get('history');
             const optimisticSync = serviceManager.get('optimisticSync');
             const transportService = serviceManager.get('optimisticTransport');
-            await initService(actionLogService);
             await initService(transportService, {
                 leaderService: serviceManager.get('leader'),
                 endpoint: resolveSsmaWsEndpoint('/optimistic/ws', optimisticSyncConfig.wsEndpoint, runtimeConfig),
@@ -507,14 +518,14 @@ export async function loadOptionalFeatures(state, {
                 subprotocol: protocolConfig.subprotocol
             });
             await initService(optimisticSync, {
-                actionLogService,
+                historyService,
                 leaderService: serviceManager.get('leader'),
                 networkStatusService: serviceManager.get('networkStatus'),
                 transportService
             });
             const csma = ensureCsma();
             csma.optimisticSync = optimisticSync;
-            csma.actionLog = actionLogService;
+            csma.history = historyService;
             csma.optimisticTransport = transportService;
             console.log('[OptimisticSync] Optimistic sync enabled');
         });

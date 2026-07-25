@@ -1,9 +1,11 @@
 import { CrdtReducerRegistry } from './CrdtReducerRegistry.js';
+import { SyncStateTracker } from './SyncStateTracker.js';
 
 export class OptimisticSyncService {
     constructor(eventBus) {
         this.eventBus = eventBus;
-        this.actionLog = null;
+        this.history = null;
+        this.syncState = null;
         this.leaderService = null;
         this.networkStatus = null;
         this.transport = null;
@@ -28,16 +30,17 @@ export class OptimisticSyncService {
         this.handleProxyStorageEvent = this.handleProxyStorageEvent.bind(this);
     }
 
-    async init({ actionLogService, leaderService, networkStatusService, transportService } = {}) {
+    async init({ historyService, leaderService, networkStatusService, transportService } = {}) {
         if (this.initialized) {
             this.destroy();
         }
         this.initialized = true;
 
-        if (!actionLogService) {
-            throw new Error('[OptimisticSync] ActionLogService is required.');
+        if (!historyService) {
+            throw new Error('[OptimisticSync] historyService is required.');
         }
-        this.actionLog = actionLogService;
+        this.history = historyService;
+        this.syncState = new SyncStateTracker({ history: this.history, eventBus: this.eventBus });
         this.leaderService = leaderService || window?.csma?.leader || null;
         this.networkStatus = networkStatusService || null;
         this.transport = transportService || null;
@@ -45,7 +48,7 @@ export class OptimisticSyncService {
         this.tabId = this.leaderService?.getTabId?.() || this.tabId;
         this.isLeader = this.leaderService?.isLeader?.() ?? true;
         this.crdtRegistry = new CrdtReducerRegistry(this.eventBus, {
-            actionLogService: this.actionLog,
+            historyService: this.history,
             actorId: this.tabId
         });
         if (typeof BroadcastChannel !== 'undefined') {
@@ -97,9 +100,9 @@ export class OptimisticSyncService {
             const undo = this._resolveUndo(handlers.prepareUndo, payload, intentName);
             const metaExtras = this.crdtRegistry?.buildMeta(intentName, payload, {
                 actorId: this.tabId,
-                clock: this.actionLog?.clock
+                clock: this.history?.clock
             }) || {};
-            const entry = this.actionLog.record(intentName, payload, {
+            const entry = this.history.record(intentName, payload, {
                 channels,
                 undo,
                 actor: metaExtras.actor,
@@ -107,6 +110,10 @@ export class OptimisticSyncService {
                 actionCreator: metaExtras.actionCreator,
                 crdt: metaExtras.crdt
             });
+            // Bridge: history publishes HISTORY_OP_RECORDED; re-emit under the
+            // legacy event name so CrdtReducerRegistry and other existing
+            // subscribers continue to fire without modification.
+            this.eventBus?.publish?.('OPTIMISTIC_ACTION_RECORDED', { entry });
 
             try {
                 handlers.applyLocal?.(payload, entry);
@@ -145,7 +152,7 @@ export class OptimisticSyncService {
 
         this.processing = true;
         try {
-            const pending = this.actionLog.getPending();
+            const pending = this.syncState.getPending();
             for (const entry of pending) {
                 const handlers = this.intents.get(entry.intent) || {};
                 const flushFn = handlers.flush || (this.transport ? ((_, e) => this._transportFlush(e)) : null);
@@ -161,7 +168,7 @@ export class OptimisticSyncService {
                         if (result && typeof result === 'object') {
                             entry.meta = { ...entry.meta, serverVersion: result.version ?? entry.meta.serverVersion };
                         }
-                        this.actionLog.markAcked(entry.id);
+                        this.syncState.markAcked(entry.id);
                         handlers.onAck?.(result ?? entry.payload, entry);
                     } catch (error) {
                         const resolution = await this._handleConflict(error, entry, handlers);
@@ -175,7 +182,7 @@ export class OptimisticSyncService {
 
                         handlers.onError?.(error, entry);
                         const isTerminal = handlers.terminalFailure?.(error, entry) === true;
-                        this.actionLog.markFailed(entry.id, error, { terminal: isTerminal });
+                        this.syncState.markFailed(entry.id, error, { terminal: isTerminal });
                         if (!isTerminal && handlers.retryDelayMs) {
                             await this._delay(handlers.retryDelayMs);
                             shouldRetry = true;
@@ -219,14 +226,19 @@ export class OptimisticSyncService {
         if (data.type !== 'intent-proxy' || !data.entry) {
             return;
         }
-        if (this.actionLog?.hasEntry?.(data.entry.id)) {
+        if (this.history?.hasEntry?.(data.entry.id)) {
             if (this.leaderService?.isLeader?.()) {
                 this._scheduleFlush();
             }
             return;
         }
         try {
-            await this.actionLog?.ingest?.(data.entry, { emit: false });
+            const ingested = await this.history?.ingest?.(data.entry, { emit: false });
+            // Bridge: re-emit under legacy event name so CrdtReducerRegistry's
+            // OPTIMISTIC_ACTION_INGESTED subscription continues to fire.
+            if (ingested) {
+                this.eventBus?.publish?.('OPTIMISTIC_ACTION_INGESTED', { entry: ingested });
+            }
             if (this.leaderService?.isLeader?.()) {
                 this._scheduleFlush();
             }
@@ -387,12 +399,12 @@ export class OptimisticSyncService {
                 return null;
             }
             if (resolution.drop === true) {
-                this.actionLog.markAcked(entry.id);
+                this.syncState.markAcked(entry.id);
                 this.eventBus?.publish('OPTIMISTIC_ACTION_DROPPED', { entry, reason: 'conflict-drop' });
                 return 'drop';
             }
             if (resolution.retryPayload) {
-                this.actionLog.updatePayload(entry.id, resolution.retryPayload);
+                this.syncState.updatePayload(entry.id, resolution.retryPayload);
                 entry.meta.conflicts = (entry.meta.conflicts || 0) + 1;
                 if (resolution.delayMs) {
                     await this._delay(resolution.delayMs);
@@ -437,7 +449,9 @@ export class OptimisticSyncService {
         this.crdtRegistry = null;
         this.processing = false;
         this.flushScheduled = false;
-        this.actionLog = null;
+        this.syncState?.reset?.();
+        this.syncState = null;
+        this.history = null;
         this.leaderService = null;
         this.networkStatus = null;
         this.transport = null;
