@@ -84,6 +84,14 @@
     border-radius: var(--radius-sm, 4px);
     border: 1px solid transparent;
     transition: border-color var(--transition-fast, 120ms) var(--easing-out-quart, ease-out);
+    color: var(--foreground, #111827);
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.ve-text-property:empty::before {
+    content: attr(placeholder);
+    color: var(--color-text-tertiary, #9ca3af);
 }
 
 .ve-text-property[data-state="editing"]:focus {
@@ -368,4 +376,38 @@
 [data-theme="contrast"] .ve-caret {
     animation: none;
     opacity: 1;
+}
+
+/* ===================================================================
+ * Annotation Highlights
+ * =================================================================== */
+
+.ve-annotation-dot {
+    pointer-events: all;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.ve-annotation-dot:hover {
+    transform: translateY(-50%) scale(1.5) !important;
+}
+
+.ve-annotation-document-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #6b7280;
+    z-index: 2;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.ve-annotation-document-badge:hover {
+    border-color: #f59e0b;
+    color: #b45309;
 }

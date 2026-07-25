@@ -1,0 +1,92 @@
+/* Demo-specific layout styles */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background: #f9fafb;
+    color: #111827;
+}
+
+.demo-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--color-surface, #fff);
+    border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.demo-header h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.demo-status {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.demo-status--connected {
+    background: var(--color-green-100, #dcfce7);
+    color: var(--color-green-700, #15803d);
+}
+
+.demo-status--connecting,
+.demo-status--idle {
+    background: var(--color-amber-100, #fef3c7);
+    color: var(--color-amber-700, #b45309);
+}
+
+.demo-status--disconnected {
+    background: var(--color-red-100, #fee2e2);
+    color: var(--color-red-700, #b91c1c);
+}
+
+.demo-main {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.demo-editor {
+    position: relative;
+    min-height: 500px;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.demo-editor [contenteditable] {
+    outline: none;
+    min-height: 1.5em;
+    padding: 4px 8px;
+    color: #111827;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.demo-editor [contenteditable]:focus {
+    background: #f9fafb;
+    border-radius: 4px;
+}
+
+.demo-editor [contenteditable]:empty::before {
+    content: 'Start typing...';
+    color: #9ca3af;
+}
+
+.ve-editor-surface-wrapper {
+    position: relative;
+    min-height: inherit;
+}

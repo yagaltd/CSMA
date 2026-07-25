@@ -40,9 +40,13 @@ export class NodeRendererRegistry {
      * @param {object} ctx — { session, eventBus, editorId, editable, _cleanups }
      */
     renderNode(container, node, ctx) {
+        // Ensure node ID is set on container (safety net for custom renderers)
+        if (node.id) {
+            container.setAttribute('data-node-id', node.id);
+        }
+
         // Try specific renderer first
         let renderer = this._renderers.get(node.type);
-
         // Fall back to kind-based default renderer
         if (!renderer) {
             const kind = ctx.session.schema[node.type]?.kind;

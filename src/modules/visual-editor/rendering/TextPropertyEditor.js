@@ -27,6 +27,7 @@ export function initTextPropertyEditor(container, session, path, options = {}) {
 
     el.className = 've-text-property';
     el.setAttribute('data-property-path', path.join(','));
+    el.setAttribute('data-path', path.join('.'));
     el.setAttribute('contenteditable', String(editable));
     el.setAttribute('data-state', 'editing');
 

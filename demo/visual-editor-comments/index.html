@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSMA — Visual Editor Comments Sync Demo</title>
+    <link rel="stylesheet" href="../../src/generated/tokens.css">
+    <link rel="stylesheet" href="../../src/modules/visual-editor/rendering/rendering.css">
+    <link rel="stylesheet" href="../../src/modules/visual-editor/ui/comment-sidebar.css">
+    <link rel="stylesheet" href="demo-comments.css">
+</head>
+    <style>
+        /* Force light theme for demo — overrides any token/dark-mode variables */
+        html, body, #app, .demo-main, .demo-editor,
+        .ve-editor-surface, .ve-document-root, .ve-node,
+        .ve-node-array-container, .ve-text-property {
+            background: #ffffff !important;
+            color: #111827 !important;
+        }
+        .ve-text-property {
+            padding: 8px 12px !important;
+            margin: 2px 0 !important;
+            border-radius: 4px !important;
+            font-size: 15px !important;
+            line-height: 1.6 !important;
+        }
+        .ve-text-property:focus {
+            background: #f0f4ff !important;
+            outline: 2px solid #3b82f6 !important;
+            outline-offset: -2px !important;
+        }
+    </style>
+<body>
+    <div id="app">
+        <header class="demo-header">
+            <h1>Visual Editor — Annotation Comments Sync</h1>
+            <div id="connection-status" class="demo-status demo-status--connecting">
+                Connecting...
+            </div>
+        </header>
+        <main class="demo-main">
+            <div id="editor-container" class="demo-editor"></div>
+            <div id="sidebar-container"></div>
+        </main>
+    </div>
+
+    <script type="module">
+        // ── CSMA Runtime ───────────────────────────────────────────────
+        import { EventBus } from '../../src/runtime/EventBus.js';
+        import { ServiceManager } from '../../src/runtime/ServiceManager.js';
+        import { ModuleManager } from '../../src/runtime/ModuleManager.js';
+        import { CrossTabLeader } from '../../src/runtime/CrossTabLeader.js';
+
+        import { EditorSessionService } from '../../src/modules/visual-editor/services/EditorSessionService.js';
+        import { defineDocumentSchema } from '../../src/modules/visual-editor/engine/DocumentSchema.js';
+        import { createDocument } from '../../src/modules/visual-editor/engine/DocumentModel.js';
+        import { ANNOTATION_COMMENT_SCHEMA } from '../../src/modules/visual-editor/engine/AnnotationSchema.js';
+        import { AnnotationCommentService } from '../../src/modules/visual-editor/services/AnnotationCommentService.js';
+        import { initEditorSurface, initEditorToolbar, initCommentSidebar, initAnnotationHighlights } from '../../src/modules/visual-editor/index.js';
+
+        // ── Config ─────────────────────────────────────────────────────
+        const RELAY_WS = 'ws://localhost:9090';
+        const EDITOR_ID = 'demo-editor';
+        const USER_ID = 'user:' + Math.random().toString(36).slice(2, 8);
+
+        // ── Bootstrap runtime ──────────────────────────────────────────
+        const eventBus = new EventBus();
+        // No contracts — demo bypasses production security for simplicity
+
+        const serviceManager = new ServiceManager(eventBus);
+        const leader = new CrossTabLeader(eventBus);
+        leader.init();
+
+        const registries = {
+            commands: { register: () => {}, get: () => {}, getAll: () => [] },
+            navigation: { register: () => {}, get: () => {}, getAll: () => [] },
+            panels: { register: () => {}, get: () => {}, getAll: () => [] },
+            adapters: { register: () => {}, get: () => {}, getAll: () => [] },
+            views: { register: () => {}, get: () => {}, getAll: () => [] }
+        };
+        const moduleManager = new ModuleManager(eventBus, serviceManager, registries);
+
+        // Register visual-editor services
+        const editorSession = new EditorSessionService(eventBus, moduleManager);
+        serviceManager.register('editorSession', editorSession, {
+            version: '1.0.0',
+            description: 'Visual editor session'
+        });
+
+        // ── Demo Sync Relay Bridge ─────────────────────────────────────
+        const statusEl = document.getElementById('connection-status');
+        let ws = null;
+        let incomingFromRemote = false;
+        let commentService = null;
+
+        function connectRelay() {
+            try {
+                ws = new WebSocket(RELAY_WS);
+            } catch (err) {
+                setStatus('disconnected', 'WS unavailable');
+                return;
+            }
+
+            ws.onopen = () => setStatus('connected', 'Connected');
+            ws.onclose = () => setStatus('disconnected', 'Disconnected');
+            ws.onerror = () => setStatus('disconnected', 'Connection error');
+
+            ws.onmessage = (ev) => {
+                try {
+                    const msg = JSON.parse(ev.data);
+                    if (msg.source === USER_ID) return; // skip echo
+
+                    incomingFromRemote = true;
+                    switch (msg.type) {
+                        case 'COMMENT_ADDED':
+                            console.log('[demo] Received remote COMMENT_ADDED, applying locally');
+                            if (commentService && msg.payload) {
+                                try {
+                                    commentService.addComment(
+                                        msg.payload.anchor || { type: 'document' },
+                                        msg.payload.payload || msg.payload
+                                    );
+                                    console.log('[demo] Remote comment applied successfully');
+                                } catch (e) {
+                                    console.error('[demo] Failed to apply remote comment:', e);
+                                }
+                            }
+                            break;
+                        case 'COMMENT_RESOLVED':
+                            console.log('[demo] Received remote COMMENT_RESOLVED');
+                            if (commentService && msg.payload?.commentId) {
+                                try {
+                                    commentService.resolveComment(msg.payload.commentId);
+                                } catch (e) {
+                                    console.error('[demo] Failed to apply remote resolve:', e);
+                                }
+                            }
+                            break;
+                        case 'COMMENT_REOPENED':
+                            console.log('[demo] Received remote COMMENT_REOPENED');
+                            if (commentService && msg.payload?.commentId) {
+                                try {
+                                    commentService.reopenComment(msg.payload.commentId);
+                                } catch (e) {
+                                    console.error('[demo] Failed to apply remote reopen:', e);
+                                }
+                            }
+                            break;
+                        case 'COMMENT_UPDATED':
+                            console.log('[demo] Received remote COMMENT_UPDATED');
+                            if (commentService && msg.payload?.commentId && msg.payload?.payload?.body) {
+                                try {
+                                    commentService.editComment(msg.payload.commentId, msg.payload.payload.body);
+                                } catch (e) {
+                                    console.error('[demo] Failed to apply remote edit:', e);
+                                }
+                            }
+                            break;
+                    }
+                } finally {
+                    incomingFromRemote = false;
+                }
+            };
+        }
+
+        function setStatus(cls, text) {
+            if (statusEl) {
+                statusEl.className = `demo-status demo-status--${cls}`;
+                statusEl.textContent = text;
+            }
+        }
+        function sendToRelay(type, payload) {
+            const wsExists = !!ws;
+            const wsOpen = ws && ws.readyState === WebSocket.OPEN;
+            console.log('[demo] sendToRelay called:', type, 'ws:', wsExists, 'open:', wsOpen, '!incoming:', !incomingFromRemote);
+            if (wsExists && wsOpen && !incomingFromRemote) {
+                const msg = JSON.stringify({ type, payload, source: USER_ID });
+                console.log('[demo] SENDING to relay:', msg.slice(0, 100));
+                ws.send(msg);
+            } else {
+                console.warn('[demo] NOT sending — ws:', wsExists, 'open:', wsOpen, '!incoming:', !incomingFromRemote);
+            }
+        }
+
+        // ── Wire outgoing comment events → WebSocket ────────────────────
+        const outboundEvents = [
+            ['ANNOTATION_COMMENT_ADDED', 'COMMENT_ADDED'],
+            ['ANNOTATION_COMMENT_UPDATED', 'COMMENT_UPDATED'],
+            ['ANNOTATION_COMMENT_RESOLVED', 'COMMENT_RESOLVED'],
+            ['ANNOTATION_COMMENT_REOPENED', 'COMMENT_REOPENED'],
+        ];
+
+        const relaySubs = outboundEvents.map(([event, wsType]) =>
+            eventBus.subscribe(event, (payload) => {
+                console.log('[demo] Outgoing event:', event, '→ relay type:', wsType);
+                sendToRelay(wsType, payload);
+            })
+        );
+
+        // ── Documents & Schema ──────────────────────────────────────────
+        const docSchema = defineDocumentSchema({
+            page: {
+                kind: 'document',
+                properties: {
+                    title: { type: 'text' },
+                    body: { type: 'node_array', node_types: ['paragraph'] }
+                }
+            },
+            paragraph: {
+                kind: 'block',
+                properties: {
+                    content: { type: 'text' }
+                }
+            },
+            ...ANNOTATION_COMMENT_SCHEMA,
+            comment: { kind: 'annotation', properties: {} }
+        });
+
+        const doc = createDocument('page_1', {
+            page_1: {
+                id: 'page_1',
+                type: 'page',
+                title: { content: 'Demo Document', marks: [], annotations: [] },
+                body: { nodes: ['p1', 'p2', 'p3'], marks: [], annotations: [] }
+            },
+            p1: {
+                id: 'p1',
+                type: 'paragraph',
+                content: {
+                    content: 'Welcome to the visual editor comment sync demo. Select text and add a comment.',
+                    marks: [],
+                    annotations: []
+                }
+            },
+            p2: {
+                id: 'p2',
+                type: 'paragraph',
+                content: {
+                    content: 'This is a second paragraph. Open another browser tab to see comments sync in real time.',
+                    marks: [],
+                    annotations: []
+                }
+            },
+            p3: {
+                id: 'p3',
+                type: 'paragraph',
+                content: {
+                    content: 'Comments you add here will appear on the other tab via the WebSocket relay.',
+                    marks: [],
+                    annotations: []
+                }
+            }
+        }, docSchema);
+
+        // ── Initialize ──────────────────────────────────────────────────
+        async function init() {
+            // Init editor session
+            await editorSession.init({ editorId: EDITOR_ID, schema: docSchema, doc });
+
+            commentService = new AnnotationCommentService(eventBus, editorSession);
+            commentService.init({ editorId: EDITOR_ID, currentUserId: USER_ID });
+
+            // ── Wire @mentions ─────────────────────────────────────────
+            const { MentionBridge } = await import('../../src/modules/mentions/services/MentionBridge.js');
+            const mentionBridge = new MentionBridge(eventBus);
+            mentionBridge.init();
+
+            // Listen for MENTION_DETECTED events from comments
+            eventBus.subscribe('MENTION_DETECTED', (ev) => {
+                console.log('[demo] Mention detected:', ev.mentions?.map(m => m.raw));
+            });
+
+            // Listen for AI task completion
+            eventBus.subscribe('MENTION_AI_TASK_COMPLETED', (ev) => {
+                if (ev.response) {
+                    console.log('[demo] AI response:', ev.response.slice(0, 100));
+                    if (commentService && ev.sourceId) {
+                        try {
+                            commentService.addComment(
+                                { type: 'document' },
+                                {
+                                    body: ev.response,
+                                    author: { id: 'ai', name: 'AI Assistant' },
+                                    thread_reply_to: ev.sourceId
+                                }
+                            );
+                        } catch (e) {
+                            console.warn('[demo] Failed to post AI reply:', e.message);
+                        }
+                    }
+                } else if (ev.error) {
+                    console.warn('[demo] AI task failed:', ev.error);
+                }
+            });
+
+            // Mount editor surface
+            const container = document.getElementById('editor-container');
+
+            // Create a surface wrapper so EditorSurface.clearContainer() doesn't destroy
+            // the highlights overlay — each component gets its own container.
+            const surfaceWrapper = document.createElement('div');
+            surfaceWrapper.className = 've-editor-surface-wrapper';
+            container.appendChild(surfaceWrapper);
+
+            // Mount editor surface
+            initEditorSurface(eventBus, surfaceWrapper, { session: editorSession, editorId: EDITOR_ID });
+
+            // Mount annotation highlights on the editor-container (not the surface wrapper)
+            const highlights = initAnnotationHighlights(EDITOR_ID, editorSession, eventBus, commentService);
+            highlights.mount(container);
+
+            // Sidebar on its own container
+            const sidebarContainer = document.getElementById('sidebar-container');
+            const sidebar = initCommentSidebar(eventBus, commentService);
+            sidebar.mount(sidebarContainer);
+
+            // Toolbar hidden for comment-focused demo (undo/redo/B/I/etc are for text editing)
+            // initEditorToolbar(container, editorSession, eventBus, EDITOR_ID);
+
+            // Connect relay
+            connectRelay();
+
+            console.log(`[demo] Visual editor comments sync ready (user: ${USER_ID})`);
+            console.log('[demo] Open another browser tab to the same URL to see sync');
+        }
+
+        init().catch(err => {
+            console.error('[demo] Init failed:', err);
+            setStatus('disconnected', 'Error: ' + err.message);
+        });
+    </script>
+</body>
+</html>

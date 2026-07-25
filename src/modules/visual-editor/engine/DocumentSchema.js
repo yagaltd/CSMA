@@ -53,7 +53,8 @@ export const NODE_KINDS = ['document', 'block', 'text', 'mark', 'annotation'];
 export const PROPERTY_TYPES = [
     'string', 'number', 'boolean', 'integer', 'datetime',
     'string_array', 'number_array', 'boolean_array', 'integer_array',
-    'text', 'node', 'node_array'
+    'text', 'node', 'node_array',
+    'array', 'object'
 ];
 
 /**

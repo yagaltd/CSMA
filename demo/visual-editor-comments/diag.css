@@ -1,0 +1,19 @@
+// Quick diagnostic: override ALL backgrounds and text colors on the demo page
+const style = document.createElement('style');
+style.textContent = `
+  body, html, #app, .demo-main, .demo-editor, .ve-editor-surface, .ve-document-root,
+  .ve-node, .ve-node-array-container, .ve-text-property, [contenteditable] {
+    background: #ffffff !important;
+    color: #111827 !important;
+  }
+  .ve-text-property {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #e5e7eb !important;
+    margin: 4px 0 !important;
+    padding: 8px !important;
+    border-radius: 4px !important;
+  }
+`;
+document.head.appendChild(style);
+console.log('Diagnostic CSS injected — page should be white with visible text');

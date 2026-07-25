@@ -11,7 +11,7 @@ const DEFAULT_OPTIONS = {
     maxPreviewChars: 250_000,
 };
 
-const TEXT_NAME_RE = /\.(txt|md|json|js|mjs|cjs|ts|tsx|jsx|css|html|htm|toml|yml|yaml|xml|svg|rs|go|py|sh|bash|zsh|env|gitignore|dockerfile|makefile|mdx|vue|svelte)$/i;
+const TEXT_NAME_RE = /\.(txt|md|json|js|mjs|cjs|ts|tsx|jsx|css|html|htm|toml|yml|yaml|xml|rs|go|py|sh|bash|zsh|env|gitignore|dockerfile|makefile|mdx|vue|svelte)$/i;
 
 function pathKey(path) {
     return path.join('/');
@@ -472,7 +472,7 @@ export class FileExplorerService {
         if (!handle) throw new Error('File handle unavailable');
 
         const file = await this.local.readFile(handle);
-        const mimeType = file.mimeType || file.type || entry.mimeType || '';
+        let mimeType = file.mimeType || file.type || entry.mimeType || '';
         const size = Number.isFinite(file.size) ? file.size : file.blob?.size ?? entry.size ?? null;
         let text = null;
         let truncated = false;
@@ -483,8 +483,21 @@ export class FileExplorerService {
             text = truncated ? rawText.slice(0, this.options.maxPreviewChars) : rawText;
         }
         let blobUrl = null;
-        if (file.blob && !text && (mimeType.startsWith('image/') || mimeType === 'application/pdf' || mimeType.includes('/pdf') || entry.name.toLowerCase().endsWith('.pdf'))) {
-            blobUrl = URL.createObjectURL(file.blob);
+        if (file.blob && !text && (mimeType.startsWith('image/') || mimeType === 'application/pdf' || mimeType.includes('/pdf') || entry.name.toLowerCase().endsWith('.pdf') || entry.name.toLowerCase().endsWith('.svg'))) {
+            // Ensure the blob URL carries the correct MIME type so the browser
+            // can render it natively. The File System Access API may return
+            // 'application/octet-stream' for files whose type isn't registered
+            // with the OS, which breaks <img> and <iframe> rendering.
+            const lowerName = entry.name.toLowerCase();
+            let blobForUrl = file.blob;
+            if (lowerName.endsWith('.svg') && !mimeType.startsWith('image/')) {
+                blobForUrl = new Blob([file.blob], { type: 'image/svg+xml' });
+                mimeType = 'image/svg+xml';
+            } else if (lowerName.endsWith('.pdf') && mimeType !== 'application/pdf' && !mimeType.includes('/pdf')) {
+                blobForUrl = new Blob([file.blob], { type: 'application/pdf' });
+                mimeType = 'application/pdf';
+            }
+            blobUrl = URL.createObjectURL(blobForUrl);
             this._blobUrls.push(blobUrl);
         }
         return {

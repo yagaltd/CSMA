@@ -104,8 +104,10 @@ export function validateNode(node, schema, all_nodes, { require_references = tru
  * @throws {Error}
  */
 function validatePropertyValue(node_id, node_type, prop_name, prop_def, value, schema, all_nodes, require_references) {
-    const type = prop_def.type;
+    // Nullable properties may be null regardless of their declared type.
+    if (value === null && prop_def.nullable) return;
 
+    const type = prop_def.type;
     switch (type) {
         case 'string':
             if (typeof value !== 'string') {
@@ -234,6 +236,22 @@ function validatePropertyValue(node_id, node_type, prop_name, prop_def, value, s
 
         case 'node_array':
             validateNodeArrayValue(node_id, node_type, prop_name, value, prop_def, schema, all_nodes, require_references);
+            break;
+
+        case 'array':
+            if (!Array.isArray(value)) {
+                throw new Error(
+                    `Node "${node_id}" property "${prop_name}" must be an array, got ${typeof value}`
+                );
+            }
+            break;
+
+        case 'object':
+            if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+                throw new Error(
+                    `Node "${node_id}" property "${prop_name}" must be an object, got ${typeof value}`
+                );
+            }
             break;
 
         default:

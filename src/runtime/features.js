@@ -390,6 +390,17 @@ export async function loadOptionalFeatures(state, {
             console.log('[AI] Multi-provider AI orchestration enabled');
         }),
 
+        FEATURES.MENTIONS && runFeature('[Mentions] Failed to load module:', async () => {
+            await moduleManager.loadModule('mentions');
+            const mentionBridge = serviceManager.get('mentionBridge');
+            mentionBridge?.init({ aiService: serviceManager.get('ai') });
+            const csma = ensureCsma();
+            csma.mentionParser = serviceManager.get('mentionParser');
+            csma.mentionResolver = serviceManager.get('mentionResolver');
+            csma.mentionBridge = mentionBridge;
+            console.log('[Mentions] @mention parsing and AI bridge enabled');
+        }),
+
         FEATURES.SHARE_MODULE && runFeature('[Share] Failed to load module:', async () => {
             await moduleManager.loadModule('share');
             const share = serviceManager.get('share');

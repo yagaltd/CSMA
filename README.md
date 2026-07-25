@@ -342,3 +342,63 @@ needed for Chrome, Firefox, Safari, Edge.
 ## License
 
 MIT
+
+## Annotation Comments
+
+The visual-editor supports anchored annotation comments on text ranges, block
+nodes, and the document root. Comments sync across users via CRDT intents
+(optimistic-sync module).
+
+### Architecture
+
+- `services/AnnotationCommentService.js` — CRUD + EventBus events
+- `rendering/AnnotationHighlights.js` — Gutter markers, text highlights, pins
+- `ui/CommentSidebar.js` — Filterable sidebar drawer
+- `services/AnnotationCommentSync.js` — CRDT sync bridge
+- `services/AnnotationCommentCrdt.js` — LWW intent registration
+
+### Usage
+
+```js
+import { AnnotationCommentService } from './services/AnnotationCommentService.js';
+import { initAnnotationHighlights } from './rendering/AnnotationHighlights.js';
+import { initCommentSidebar } from './ui/CommentSidebar.js';
+
+const commentService = new AnnotationCommentService(eventBus, editorSession);
+commentService.init({ editorId: 'my-editor', currentUserId: 'user:alice' });
+
+// Add a text-range comment
+commentService.addComment(
+  { type: 'text', path: ['page', 'content'], start_offset: 0, end_offset: 5 },
+  { body: 'Fix this headline' }
+);
+
+// Add a node-level comment
+commentService.addComment(
+  { type: 'node', node_path: ['page', 'body', 'slide-2'] },
+  { body: 'This chart needs a source' }
+);
+
+// Add a document-level comment
+commentService.addComment(
+  { type: 'document' },
+  { body: 'Overall feedback' }
+);
+
+// Query
+const openComments = commentService.getComments({ status: 'open' });
+const stats = commentService.getStats(); // { total, open, resolved, assignedToMe }
+```
+
+### Integration with mentions
+
+Comments with `@ai` mentions trigger agent generation via the mentions module:
+
+```js
+commentService.addComment(
+  { type: 'text', path: ['page', 'content'], start_offset: 0, end_offset: 5 },
+  { body: '@ai fix this paragraph to match the Q4 numbers' }
+);
+// → MENTION_DETECTED event → MentionBridge → AIService.generateText()
+// → AI response posted as reply comment
+```

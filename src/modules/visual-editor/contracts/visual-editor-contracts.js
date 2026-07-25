@@ -220,5 +220,219 @@ export const VisualEditorContracts = {
             code: optional(string()),
             timestamp: number()
         })
-    }
+    },
+
+    // ===================================================================
+    // Annotation Comment Intents
+    // ===================================================================
+
+    /**
+     * Add an annotation comment.
+     */
+    INTENT_ANNOTATION_COMMENT_ADD: {
+        version: 1,
+        type: 'intent',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 30, windowMs: 60000, scope: 'session' } },
+        description: 'Add an annotation comment',
+        schema: object({
+            editorId: string(),
+            anchor: object({
+                type: string(),
+                path: optional(array()),
+                start_offset: optional(number()),
+                end_offset: optional(number()),
+                node_path: optional(array())
+            }),
+            payload: object({
+                author: optional(object()),
+                body: string(),
+                assigned_to: optional(object()),
+                thread_reply_to: optional(string())
+            })
+        })
+    },
+
+    /**
+     * Resolve an annotation comment.
+     */
+    INTENT_ANNOTATION_COMMENT_RESOLVE: {
+        version: 1,
+        type: 'intent',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 30, windowMs: 60000, scope: 'session' } },
+        description: 'Resolve an annotation comment',
+        schema: object({
+            editorId: string(),
+            commentId: string()
+        })
+    },
+
+    /**
+     * Reopen an annotation comment.
+     */
+    INTENT_ANNOTATION_COMMENT_REOPEN: {
+        version: 1,
+        type: 'intent',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 30, windowMs: 60000, scope: 'session' } },
+        description: 'Reopen an annotation comment',
+        schema: object({
+            editorId: string(),
+            commentId: string()
+        })
+    },
+
+    /**
+     * Edit annotation comment body.
+     */
+    INTENT_ANNOTATION_COMMENT_EDIT: {
+        version: 1,
+        type: 'intent',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 30, windowMs: 60000, scope: 'session' } },
+        description: 'Edit annotation comment body',
+        schema: object({
+            editorId: string(),
+            commentId: string(),
+            body: string()
+        })
+    },
+
+    /**
+     * Reply to an annotation comment.
+     */
+    INTENT_ANNOTATION_COMMENT_REPLY: {
+        version: 1,
+        type: 'intent',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 30, windowMs: 60000, scope: 'session' } },
+        description: 'Reply to an annotation comment',
+        schema: object({
+            editorId: string(),
+            commentId: string(),
+            body: string(),
+            author: optional(object())
+        })
+    },
+
+    // ===================================================================
+    // Annotation Comment Events
+    // ===================================================================
+
+    /**
+     * Annotation comment added.
+     */
+    ANNOTATION_COMMENT_ADDED: {
+        version: 1,
+        type: 'event',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 120, windowMs: 60000, scope: 'session' } },
+        description: 'Annotation comment added',
+        schema: object({
+            editorId: string(),
+            commentId: string(),
+            anchor: object(),
+            payload: object(),
+            timestamp: number()
+        })
+    },
+
+    /**
+     * Annotation comment updated.
+     */
+    ANNOTATION_COMMENT_UPDATED: {
+        version: 1,
+        type: 'event',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 120, windowMs: 60000, scope: 'session' } },
+        description: 'Annotation comment updated',
+        schema: object({
+            editorId: string(),
+            commentId: string(),
+            payload: object(),
+            deleted: optional(boolean()),
+            timestamp: number()
+        })
+    },
+
+    /**
+     * Annotation comment resolved.
+     */
+    ANNOTATION_COMMENT_RESOLVED: {
+        version: 1,
+        type: 'event',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 120, windowMs: 60000, scope: 'session' } },
+        description: 'Annotation comment resolved',
+        schema: object({
+            editorId: string(),
+            commentId: string(),
+            payload: object(),
+            timestamp: number()
+        })
+    },
+
+    /**
+     * Annotation comment reopened.
+     */
+    ANNOTATION_COMMENT_REOPENED: {
+        version: 1,
+        type: 'event',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 120, windowMs: 60000, scope: 'session' } },
+        description: 'Annotation comment reopened',
+        schema: object({
+            editorId: string(),
+            commentId: string(),
+            payload: object(),
+            timestamp: number()
+        })
+    },
+
+    /**
+     * Annotation comments bulk loaded.
+     */
+    ANNOTATION_COMMENTS_LOADED: {
+        version: 1,
+        type: 'event',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        security: { rateLimits: { requests: 120, windowMs: 60000, scope: 'session' } },
+        description: 'Annotation comments bulk loaded',
+        schema: object({
+            editorId: string(),
+            comments: array(any()),
+            timestamp: number()
+        })
+    },
 };

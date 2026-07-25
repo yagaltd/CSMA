@@ -1,5 +1,8 @@
 import { EditorSessionService } from './services/EditorSessionService.js';
 import { VisualEditorContracts } from './contracts/visual-editor-contracts.js';
+import { AnnotationCommentService } from './services/AnnotationCommentService.js';
+import { AnnotationCommentSync } from './services/AnnotationCommentSync.js';
+import { registerAnnotationCommentCrdts } from './services/AnnotationCommentCrdt.js';
 
 export const manifest = {
     id: 'visual-editor',
@@ -7,7 +10,7 @@ export const manifest = {
     version: '1.0.0',
     description: 'Structured content editor with typed nodes, transactions, and undo/redo',
     dependencies: [],
-    services: ['editorSession'],
+    services: ['editorSession', 'annotationComment'],
     contracts: Object.keys(VisualEditorContracts),
     contributes: {
         commands: [],
@@ -18,10 +21,13 @@ export const manifest = {
     }
 };
 
-export const services = { editorSession: EditorSessionService };
+export const services = { editorSession: EditorSessionService, annotationComment: AnnotationCommentService };
 export const contracts = VisualEditorContracts;
 
 export { EditorSessionService };
+export { AnnotationCommentService };
+export { AnnotationCommentSync };
+export { registerAnnotationCommentCrdts };
 export { VisualEditorContracts };
 
 // Re-export engine for direct use
@@ -29,6 +35,10 @@ export { defineDocumentSchema, validateDocumentSchema } from './engine/DocumentS
 export { createDocument, validateDocument, docGet, docInspect } from './engine/DocumentModel.js';
 export { fillNodeDefaults, fillDocumentDefaults, getPropertyDefault } from './engine/DocumentDefaults.js';
 export { validateNode, isIdValid, validateConfigComponents } from './engine/NodeValidator.js';
+// Re-export annotation operations and schemas
+export { addAnnotation, removeAnnotation, addNodeAnnotation, addDocumentAnnotation } from './engine/AnnotationOps.js';
+export { ANNOTATION_COMMENT_SCHEMA } from './engine/AnnotationSchema.js';
+
 export { SELECTION_TYPES, validateSelection, getSelectionRange, isSelectionCollapsed } from './engine/SelectionModel.js';
 
 // Re-export rendering components for consumers
@@ -39,7 +49,9 @@ export { initNodeArrayContainer } from './rendering/NodeArrayContainer.js';
 export { initSelectionOverlay } from './rendering/SelectionOverlay.js';
 export { createNodeGapInserter } from './rendering/NodeGapInserter.js';
 export { initEditorToolbar } from './ui/EditorToolbar.js';
+export { initCommentSidebar } from './ui/CommentSidebar.js';
 
+export { initAnnotationHighlights } from './rendering/AnnotationHighlights.js';
 // Re-export commands
 export { CommandRegistry } from './commands/CommandRegistry.js';
 export { KeyMapper, defineDefaultKeymap } from './input/KeyMapper.js';
