@@ -1,0 +1,65 @@
+/* Slides Module — Print CSS
+ *
+ * Each slide becomes its own PDF page when printed. Chrome is hidden.
+ * Build elements all reveal at print time so the static export shows every
+ * click step.
+ */
+
+@media print {
+  /* Reset the fixed full-viewport container */
+  .deck {
+    position: static;
+    overflow: visible;
+    background: white !important;
+    color: black !important;
+  }
+
+  .slide-stage {
+    padding: 0;
+  }
+
+  /* Each slide is its own page */
+  .slide {
+    page-break-after: always;
+    break-after: page;
+    height: 100vh;
+    color: black !important;
+  }
+  .slide:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  /* Reveal all build steps in print */
+  .build[data-visible="false"] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    pointer-events: auto !important;
+  }
+
+  /* Hide chrome */
+  .noir-dock,
+  .slide-rail,
+  .slide-grid,
+  .presenter-overlay,
+  .slide-annotator {
+    display: none !important;
+  }
+
+  /* Surface token colors as black-on-white for legibility */
+  .slide *,
+  .slide {
+    color: black !important;
+    background: white !important;
+    border-color: #ccc !important;
+  }
+  .slide .accent-text,
+  .slide .stat-value,
+  .slide .big-number-value,
+  .slide .step-num,
+  .slide .globe-stat-value,
+  .slide .timeline-time {
+    color: #444 !important;
+  }
+}

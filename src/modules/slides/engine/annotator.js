@@ -1,0 +1,151 @@
+/**
+ * annotator.js — SVG freehand drawing overlay.
+ *
+ * Mounted inside the slide-stage when `drawing=true` (UI_STATE_CHANGED).
+ * Listens to pointer events on the SVG, publishes INTENT_ANNOTATION_STROKE
+ * intents with point arrays. Reads ANNOTATION_UPDATED to render persisted
+ * strokes.
+ *
+ * Type II: subscribes to events, publishes intents. No direct service mutation.
+ * Pure SVG construction — no inline styles for stroke colors (uses data-color
+ * attribute + CSS rule). Returns a cleanup function.
+ */
+
+const DEFAULT_COLOR = 'currentColor';
+const DEFAULT_WIDTH = 3;
+
+/**
+ * Mount the annotator overlay on a container.
+ *
+ * @param {HTMLElement} container — the slide-stage element
+ * @param {object} eventBus
+ * @param {object} service — SlideDeckService (for current slide index)
+ * @returns {() => void} cleanup function
+ */
+export function initAnnotator(container, eventBus, service) {
+    if (!container || !eventBus) return () => {};
+    const doc = container.ownerDocument || (typeof document !== 'undefined' ? document : null);
+    if (!doc) return () => {};
+
+    const svg = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'slide-annotator');
+    svg.setAttribute('data-active', 'false');
+    svg.setAttribute('aria-hidden', 'true');
+    container.appendChild(svg);
+
+    let currentStroke = null;
+    let currentPath = null;
+    const subs = [];
+
+    // Render persisted strokes when ANNOTATION_UPDATED fires.
+    const renderAll = (strokes) => {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        for (const stroke of (strokes || [])) {
+            svg.appendChild(buildPath(stroke));
+        }
+    };
+
+    subs.push(eventBus.subscribe('ANNOTATION_UPDATED', (payload) => {
+        const idx = service?.index;
+        if (Number.isFinite(idx) && payload?.slide !== idx) return;
+        renderAll(payload?.strokes);
+    }));
+
+    // Reflect drawing state from UI_STATE_CHANGED.
+    subs.push(eventBus.subscribe('UI_STATE_CHANGED', (payload) => {
+        svg.dataset.active = payload?.drawing ? 'true' : 'false';
+    }));
+
+    // Pointer capture → live stroke preview → commit on pointerup.
+    const onPointerDown = (e) => {
+        if (svg.dataset.active !== 'true') return;
+        e.preventDefault();
+        const pt = toLocalPoint(svg, e);
+        currentStroke = {
+            points: [pt],
+            color: DEFAULT_COLOR,
+            width: DEFAULT_WIDTH
+        };
+        currentPath = buildPath(currentStroke);
+        svg.appendChild(currentPath);
+        try { svg.setPointerCapture(e.pointerId); } catch { /* noop */ }
+    };
+
+    const onPointerMove = (e) => {
+        if (!currentStroke || !currentPath) return;
+        e.preventDefault();
+        const pt = toLocalPoint(svg, e);
+        currentStroke.points.push(pt);
+        currentPath.setAttribute('d', toPathData(currentStroke.points));
+    };
+
+    const onPointerUp = (e) => {
+        if (!currentStroke) return;
+        e.preventDefault();
+        const committed = currentStroke;
+        currentStroke = null;
+        currentPath = null;
+        try { svg.releasePointerCapture(e.pointerId); } catch { /* noop */ }
+        if (committed.points.length > 1 && service && Number.isFinite(service.index)) {
+            eventBus.publish('INTENT_ANNOTATION_STROKE', {
+                slide: service.index,
+                points: committed.points,
+                color: committed.color,
+                width: committed.width
+            });
+        }
+    };
+
+    svg.addEventListener('pointerdown', onPointerDown);
+    svg.addEventListener('pointermove', onPointerMove);
+    svg.addEventListener('pointerup', onPointerUp);
+    svg.addEventListener('pointercancel', onPointerUp);
+
+    // Initial render of current slide's persisted strokes.
+    if (service && typeof service.getAnnotations === 'function') {
+        renderAll(service.getAnnotations(service.index));
+    }
+
+    return () => {
+        subs.forEach((unsub) => unsub && unsub());
+        svg.removeEventListener('pointerdown', onPointerDown);
+        svg.removeEventListener('pointermove', onPointerMove);
+        svg.removeEventListener('pointerup', onPointerUp);
+        svg.removeEventListener('pointercancel', onPointerUp);
+        if (svg.parentNode) svg.parentNode.removeChild(svg);
+    };
+}
+
+function buildPath(stroke) {
+    const doc = typeof document !== 'undefined' ? document : null;
+    if (!doc) return null;
+    const path = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('class', 'slide-annotation');
+    path.setAttribute('data-color', stroke.color || DEFAULT_COLOR);
+    path.setAttribute('stroke-width', String(stroke.width || DEFAULT_WIDTH));
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-linecap', 'round');
+    path.setAttribute('stroke-linejoin', 'round');
+    path.setAttribute('d', toPathData(stroke.points || []));
+    return path;
+}
+
+function toPathData(points) {
+    if (!Array.isArray(points) || points.length === 0) return '';
+    if (points.length === 1) {
+        return 'M' + points[0].x + ',' + points[0].y + ' l0.1,0.1';
+    }
+    let d = 'M' + points[0].x + ',' + points[0].y;
+    for (let i = 1; i < points.length; i++) {
+        d += ' L' + points[i].x + ',' + points[i].y;
+    }
+    return d;
+}
+
+function toLocalPoint(svg, e) {
+    const rect = svg.getBoundingClientRect();
+    return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    };
+}
