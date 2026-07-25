@@ -190,17 +190,88 @@ Reference: `src/ui/components/toast/toast.js`
 The `src/modules/ai-ui/` module provides `AIUIComposerService` — a secure
 DOM composition engine that:
 
-- **Catalog**: 18 registered components (7 original + 11 settings primitives).
-  Auto-generated from `manifest.json` files via `npm run generate-ai-ui-catalog`.
+- **Catalog**: primitives in `src/ui/components/*/manifest.json` PLUS module
+  surfaces in `src/modules/*/aiui/*.json`. Auto-generated via
+  `npm run generate-ai-ui-catalog`. Two scan roots, one merged catalog.
 - **Ops**: `mount`, `unmount`, `clear`, `reorder`, `updateProps`, `setState`,
   `setText` — all validated before DOM mutation.
-- **SAFE_TAGS**: 54 whitelisted HTML tags (layout, forms, tables, media, text
-  semantics). Never allows `script`, `iframe`, `style`, `svg`, `canvas`, etc.
+- **SAFE_TAGS**: layout, forms, tables, media, text semantics, AND drawing
+  tags (`canvas`, `svg`, `path`, `g`, `line`, `circle`, `rect`, `polyline`,
+  `polygon`). Never allows `script`, `iframe`, `style`, `object`, `embed`.
+- **Module surfaces**: a catalog entry with `component.moduleId` resolves via
+  `serviceManager.get(moduleId).mountSurface(surfaceId, container, props)`. See
+  the Layered Rendering Architecture section below.
 - **Intent system**: manifest `behavior.intentMap` maps DOM events to CSMA
   intents (e.g. `click → settings:select`). The controller subscribes and
   emits ops — the component itself never touches DOM directly.
 
 To create a new Type I component, see the `csma-component-creation` skill.
+
+### Layered Rendering Architecture
+
+CSMA renders through a strict layer cake. Each layer composes the layer
+immediately below — no skipping:
+
+```
+LAYER 4  APPLICATIONS         slide-deck app · mindmap app · dashboard app
+LAYER 3  NARRATIVE MACHINES   SlideDeckService (next / prev / build / presenter)
+LAYER 2  PRECOMPOSED LAYOUTS  archetypes (data-grid, stats-dashboard, …) +
+                             slide layouts (cover, bento, stat-grid, …)
+LAYER 1  SECURE COMPOSITION   aiui (mount / unmount / setState on catalog)
+LAYER 0  PRIMITIVES           CSMA components (button, card, badge, field, …)
+```
+
+**What belongs where**
+
+| Concern | Layer | Owner |
+|---------|-------|-------|
+| Button, card, badge, input rendering | 0 | `src/ui/components/` |
+| `mount` / `unmount` / `setState` ops, SAFE_TAGS, catalog | 1 | `src/modules/ai-ui/` |
+| A precomposed grid of stat cards | 2 | archetypes (compose via aiui) |
+| A slide layout (`cover`, `bento`, `split`) | 2 | slide layouts (compose via aiui) |
+| `next()` / `prev()` / build steps / cross-tab sync | 3 | `SlideDeckService` (slides module) |
+| A whole deck with dock + rail + grid | 4 | the slides app composition |
+
+The layer-3 state machine (advance, build, presenter mode) is **not** a
+composition problem. aiui has no concept of "advance to next slide". Keeping
+`SlideDeckService` is correct; layouts compose through aiui underneath it.
+
+**`mountSurface` contract** (Layer 1 ↔ module services)
+
+Any module that wants to be embeddable via aiui — so it can appear inside a
+slide, a dashboard tile, a mindmap sidebar, anywhere — MUST expose:
+
+```javascript
+class SomeService {
+  /**
+   * @param {string} surfaceId   matches a manifest in src/modules/<module>/aiui/
+   * @param {HTMLElement} container
+   * @param {object} props       declared in the surface manifest's aiUi.props
+   * @returns {() => void} cleanupFn  called when aiui unmounts the surface
+   */
+  mountSurface(surfaceId, container, props) { /* … */ }
+}
+```
+
+The composer resolves `spec: { component: '<surfaceId>' }` by reading the
+catalog entry's `component.moduleId`, calling `serviceManager.get(moduleId)`,
+then `mountSurface(surfaceId, container, props)`. The returned cleanup fn is
+invoked on unmount. If the module isn't loaded, the composer throws a clear
+error the agent can handle.
+
+**Currently registered module surfaces**: `comments-thread`, `chart-display`,
+`mindmap-canvas`, `video-player` (forward-declared).
+
+**Why unify on aiui for Layer 1**
+
+1. Single mental model — agents learn aiui once, compose anything.
+2. Mix-and-match content — a slide embeds comments, charts, mindmap, video.
+3. Streaming-ready — progressive mount/unmount for live-built UI.
+4. One security boundary — every composition passes the same SAFE filter.
+5. One extension point — new module registers a manifest + `mountSurface`.
+
+Migration is **incremental**, not big-bang. The current status of the
+unification initiative lives in `docs/roadmap.md` (search: *aiui Unification*).
 
 ## EventBus Patterns
 

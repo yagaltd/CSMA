@@ -636,3 +636,51 @@ adapter, or an application-specific service.
    webhook-aware UI recipes.
 7. **Media and collaboration examples**: SSMA-backed media ingress and
    optimistic collaboration reference flows.
+
+## aiui Unification Initiative
+
+Consolidating CSMA on a single rendering pipeline (aiui at Layer 1). The
+target architecture and `mountSurface` contract live in
+`docs/architecture/SKILL.md` § *Layered Rendering Architecture*. This section
+tracks phase status.
+
+### Phase 1 — Module surfaces join the catalog (DONE, commit `cd43883`)
+
+Catalog generator extended to scan `src/modules/*/aiui/*.json` in addition
+to `src/ui/components/*/manifest.json`. `AIUIComposerService` gained
+`canvas`/`svg`/`path`/`g`/`line`/`circle`/`rect`/`polyline`/`polygon` in
+`SAFE_TAGS` and a new `render.kind: 'module'` path that resolves via
+`serviceManager.get(moduleId).mountSurface(...)`. Four surfaces registered:
+`comments-thread`, `chart-display`, `mindmap-canvas` (live); `video-player`
+(forward-declared, module body pending). `ServiceManager.register` now
+injects itself into services exposing `setServiceManager`. 12 new tests in
+`tests/ai-ui/module-surfaces.test.js`. 1188/1188 green.
+
+### Phase 2 — Slides layouts become aiui compositions (planned)
+
+Each of the 24 slide layout factories in `src/modules/slides/layouts/`
+re-expressed as an aiui composition spec. `SlideDeckService` unchanged
+(keeps `next`/`prev`/`build`/cross-tab sync/presenter). Public `deck.json`
+schema unchanged. The `el()` helper in `_shared.js` is deprecated for new
+layouts. Result: any aiui surface (comments, video, charts, mindmap) can
+embed inside any slide. Scope estimate: ~3–5 days, run as a modular wave.
+
+### Phase 3 — Archetypes migrate, `el()` removed (planned)
+
+`src/modules/archetypes/*` (data-grid, stats-dashboard, config-panel,
+editor-builder, media-browser, nav-tabs, overlay-manager, viewer)
+re-expressed as aiui compositions. Slides chrome (dock, rail, grid,
+presenter) becomes aiui components. The `el()` helper is removed. New
+convention documented: all Layer-2 patterns compose via aiui; raw DOM
+factories forbidden in `src/modules/*/layouts/` and `src/modules/archetypes/`.
+Scope estimate: ~1 week, long-tail across multiple waves.
+
+### Open questions (resolve in their respective phase)
+
+1. **Layout composition DSL** (Phase 2): agents author raw aiui op arrays,
+   or do we add a higher-level `compose()` sugar? Lean: sugar.
+2. **Streaming partial slides** (Phase 2): pre-render all build states or
+   stream via aiui as the user clicks? Lean: pre-render for v1.
+3. **Default chart adapter** (Phase 2): ship a default chart.js adapter in
+   `src/modules/charts/adapters/`, or leave adapter registration to the app?
+   Lean: leave to app, document in a new `docs/charts/SKILL.md`.
