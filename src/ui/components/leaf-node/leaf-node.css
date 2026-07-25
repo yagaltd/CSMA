@@ -1,0 +1,70 @@
+/* CSMA Component — Leaf Node (mindmap)
+ * Visual state via data-status / data-bottleneck. No inline styles.
+ */
+
+.leaf-node {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-xs);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-body);
+  color: var(--foreground);
+}
+
+.leaf-node__status {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  background: transparent;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+/* status → checkbox glyph + color */
+.leaf-node[data-status="pending"]     .leaf-node__status::before { content: ""; }
+.leaf-node[data-status="in_progress"] .leaf-node__status::before { content: "•"; color: var(--primary, var(--accent)); animation: leaf-spin 1.2s linear infinite; }
+.leaf-node[data-status="done"]        .leaf-node__status::before { content: "✓"; color: var(--success, var(--accent)); }
+.leaf-node[data-status="blocked"]     .leaf-node__status::before { content: "!"; color: var(--destructive, var(--accent)); }
+.leaf-node[data-status="failed"]      .leaf-node__status::before { content: "✕"; color: var(--destructive, var(--accent)); }
+
+.leaf-node[data-status="done"] .leaf-node__status {
+  background: color-mix(in srgb, var(--success, var(--accent)) 20%, transparent);
+  border-color: var(--success, var(--accent));
+}
+
+@keyframes leaf-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.leaf-node__topic {
+  flex: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.leaf-node[data-status="done"] .leaf-node__topic {
+  color: var(--foreground-muted, var(--foreground));
+  text-decoration: line-through;
+}
+
+.leaf-node[data-status="failed"] .leaf-node__topic {
+  color: var(--destructive, var(--accent));
+}
+
+/* bottleneck pill (optional, present only when set) */
+.leaf-node[data-bottleneck="blocking"]::after,
+.leaf-node[data-bottleneck="risky"]::after {
+  content: attr(data-bottleneck);
+  font-size: var(--font-size-xs);
+  padding: 0 var(--space-xs);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--destructive, var(--accent)) 15%, transparent);
+  color: var(--destructive, var(--accent));
+  text-transform: lowercase;
+}

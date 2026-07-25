@@ -114,6 +114,137 @@ export const componentCatalog = {
       "template": "<span class=\"badge\" data-variant=\"soft-primary\">Primary</span>\n<span class=\"badge\" data-variant=\"soft-success\">Success</span>\n<span class=\"badge\" data-variant=\"soft-warning\">Warning</span>\n<span class=\"badge\" data-variant=\"soft-danger\">Danger</span>\n<span class=\"badge\" data-variant=\"soft-info\">Info</span>"
     }
   },
+  "branch-node": {
+    "id": "branch-node",
+    "owner": "core",
+    "alias": "branch-node",
+    "title": "Branch Node",
+    "category": "Mindmap",
+    "type": "I",
+    "path": "src/ui/components/branch-node",
+    "manifestPath": "src/ui/components/branch-node/manifest.json",
+    "preferred": true,
+    "summary": "Displays a branch heading with status, tag, and child leaves",
+    "propsSchema": {
+      "topic": "string",
+      "status": "string",
+      "tag": "string",
+      "collapsed": "boolean",
+      "childCount": "number",
+      "doneCount": "number"
+    },
+    "defaultSlot": "leaves",
+    "slots": {
+      "leaves": {
+        "selector": ".branch-node__leaves",
+        "allowedChildren": [
+          "leaf-node"
+        ]
+      }
+    },
+    "allowedChildren": [
+      "leaf-node"
+    ],
+    "behavior": {
+      "role": "container",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".branch-node"
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "topic": [
+        ".branch-node__topic"
+      ],
+      "tag": [
+        ".branch-node__tag"
+      ],
+      "count": [
+        ".branch-node__count"
+      ]
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": [
+        "leaf-node",
+        "connector-line"
+      ]
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"branch-node\" data-status=\"pending\" data-tag=\"module\"><div class=\"branch-node__header\"><span class=\"branch-node__status\"></span><span class=\"branch-node__topic\">Topic</span><span class=\"branch-node__tag\">module</span><button class=\"branch-node__collapse\" aria-label=\"Collapse\" type=\"button\"></button></div><div class=\"branch-node__leaves\" data-slot=\"leaves\"></div><div class=\"branch-node__actions\"><span class=\"branch-node__count\">0/0</span></div></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "branch-node",
+      "attributes": {
+        "data-status": {
+          "prop": "status"
+        },
+        "data-tag": {
+          "prop": "tag"
+        },
+        "data-collapsed": {
+          "prop": "collapsed"
+        }
+      },
+      "children": [
+        {
+          "tag": "div",
+          "className": "branch-node__header",
+          "children": [
+            {
+              "tag": "span",
+              "className": "branch-node__status"
+            },
+            {
+              "tag": "span",
+              "className": "branch-node__topic",
+              "textProp": "topic"
+            },
+            {
+              "tag": "span",
+              "className": "branch-node__tag",
+              "textProp": "tag"
+            },
+            {
+              "tag": "button",
+              "className": "branch-node__collapse",
+              "attributes": {
+                "aria-label": "Collapse",
+                "type": "button"
+              }
+            }
+          ]
+        },
+        {
+          "tag": "div",
+          "className": "branch-node__leaves",
+          "slot": "leaves"
+        },
+        {
+          "tag": "div",
+          "className": "branch-node__actions",
+          "children": [
+            {
+              "tag": "span",
+              "className": "branch-node__count"
+            }
+          ]
+        }
+      ],
+      "template": "<div class=\"branch-node\" data-status=\"pending\" data-tag=\"module\"><div class=\"branch-node__header\"><span class=\"branch-node__status\"></span><span class=\"branch-node__topic\">Topic</span><span class=\"branch-node__tag\">module</span><button class=\"branch-node__collapse\" aria-label=\"Collapse\" type=\"button\"></button></div><div class=\"branch-node__leaves\" data-slot=\"leaves\"></div><div class=\"branch-node__actions\"><span class=\"branch-node__count\">0/0</span></div></div>"
+    }
+  },
   "button": {
     "id": "button",
     "owner": "core",
@@ -488,6 +619,73 @@ export const componentCatalog = {
       "template": "<div class=\"color-token-list\"></div>"
     }
   },
+  "connector-line": {
+    "id": "connector-line",
+    "owner": "core",
+    "alias": "connector-line",
+    "title": "Connector Line",
+    "category": "Mindmap",
+    "type": "I",
+    "path": "src/ui/components/connector-line",
+    "manifestPath": "src/ui/components/connector-line/manifest.json",
+    "preferred": true,
+    "summary": "SVG path between parent and child nodes, styled by data-status",
+    "propsSchema": {
+      "d": "string",
+      "status": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "decoration",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".connector-line"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": []
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<path class=\"connector-line\" data-status=\"pending\" d=\"\" />",
+    "render": {
+      "kind": "svg",
+      "tag": "path",
+      "className": "connector-line",
+      "attributes": {
+        "d": {
+          "prop": "d"
+        },
+        "data-status": {
+          "prop": "status"
+        }
+      },
+      "children": [],
+      "template": "<path class=\"connector-line\" data-status=\"pending\" d=\"\" />"
+    }
+  },
   "field": {
     "id": "field",
     "owner": "core",
@@ -698,6 +896,88 @@ export const componentCatalog = {
         }
       },
       "template": "<input class=\"input\" type=\"email\" name=\"email\" placeholder=\"name@company.com\" autocomplete=\"email\" />"
+    }
+  },
+  "leaf-node": {
+    "id": "leaf-node",
+    "owner": "core",
+    "alias": "leaf-node",
+    "title": "Leaf Node",
+    "category": "Mindmap",
+    "type": "I",
+    "path": "src/ui/components/leaf-node",
+    "manifestPath": "src/ui/components/leaf-node/manifest.json",
+    "preferred": true,
+    "summary": "Displays a leaf with status checkbox, topic, optional spec link, and bottleneck tag",
+    "propsSchema": {
+      "topic": "string",
+      "status": "string",
+      "bottleneck": "string",
+      "specPath": "string",
+      "note": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "leaf",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".leaf-node"
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": [
+        ".leaf-node__topic"
+      ]
+    },
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "template": "<div class=\"leaf-node\" data-status=\"pending\" data-bottleneck=\"standard\"><span class=\"leaf-node__status\"></span><span class=\"leaf-node__topic\">Topic</span></div>",
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "leaf-node",
+      "attributes": {
+        "data-status": {
+          "prop": "status"
+        },
+        "data-bottleneck": {
+          "prop": "bottleneck"
+        }
+      },
+      "children": [
+        {
+          "tag": "span",
+          "className": "leaf-node__status"
+        },
+        {
+          "tag": "span",
+          "className": "leaf-node__topic",
+          "textProp": "topic"
+        }
+      ],
+      "template": "<div class=\"leaf-node\" data-status=\"pending\" data-bottleneck=\"standard\"><span class=\"leaf-node__status\"></span><span class=\"leaf-node__topic\">Topic</span></div>"
     }
   },
   "radio-group": {

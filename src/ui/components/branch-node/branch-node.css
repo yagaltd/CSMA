@@ -1,0 +1,115 @@
+/* CSMA Component — Branch Node (mindmap)
+ * Visual state via data-status / data-tag. No inline styles.
+ */
+
+.branch-node {
+  display: flex;
+  flex-direction: column;
+  min-width: 12rem;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md, var(--card-radius, 8px));
+  border-inline-start-width: 3px;
+  transition: border-color var(--duration-fast, 120ms) ease, opacity var(--duration-fast, 120ms) ease;
+}
+
+/* status → left border accent (token-driven) */
+.branch-node[data-status="pending"]     { border-inline-start-color: var(--border); }
+.branch-node[data-status="in_progress"] { border-inline-start-color: var(--primary, var(--accent)); }
+.branch-node[data-status="done"]        { border-inline-start-color: var(--success, var(--accent)); opacity: 0.6; }
+.branch-node[data-status="blocked"]     { border-inline-start-color: var(--destructive, var(--accent)); }
+.branch-node[data-status="abandoned"]   { border-inline-start-color: var(--border); opacity: 0.5; text-decoration: line-through; }
+
+/* subtle pulse for in_progress */
+.branch-node[data-status="in_progress"] {
+  animation: branch-node-pulse 2s ease-in-out infinite;
+}
+@keyframes branch-node-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50%      { box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary, var(--accent)) 35%, transparent); }
+}
+
+.branch-node__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.branch-node__status {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.branch-node[data-status="in_progress"] .branch-node__status { background: var(--primary, var(--accent)); }
+.branch-node[data-status="done"]        .branch-node__status { background: var(--success, var(--accent)); }
+.branch-node[data-status="blocked"]     .branch-node__status { background: var(--destructive, var(--accent)); }
+
+.branch-node__topic {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-heading);
+  flex: 1;
+}
+
+.branch-node__tag {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 0 var(--space-xs);
+  border-radius: var(--radius-sm, 4px);
+  background: color-mix(in srgb, var(--foreground-muted, var(--foreground)) 12%, transparent);
+  color: var(--foreground-muted, var(--foreground));
+  text-transform: lowercase;
+}
+
+.branch-node__collapse {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: none;
+  background: transparent;
+  color: var(--foreground-muted, var(--foreground));
+  cursor: pointer;
+  font-size: 0.75rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.branch-node__collapse::before { content: "▾"; }
+.branch-node[data-collapsed="true"] .branch-node__collapse::before { content: "▸"; }
+.branch-node__collapse:hover { color: var(--foreground); }
+
+.branch-node__leaves {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+  padding-inline-start: var(--space-sm);
+}
+.branch-node[data-collapsed="true"] .branch-node__leaves {
+  display: none;
+}
+
+.branch-node__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--foreground-muted, var(--foreground));
+}
+
+.branch-node__count {
+  font-variant-numeric: tabular-nums;
+}
+
+/* collapsed badge shows child count */
+.branch-node[data-collapsed="true"]::after {
+  content: attr(data-child-count) " items";
+  font-size: var(--font-size-xs);
+  color: var(--foreground-muted, var(--foreground));
+  margin-inline-start: var(--space-sm);
+}
