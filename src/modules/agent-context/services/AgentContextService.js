@@ -411,7 +411,12 @@ export class AgentContextService {
 
     _onHistoryOp(payload) {
         if (!payload || this._subscriptions.size === 0) return;
-        const touchedStore = payload.store || payload.intent || null;
+        // Canonical history payload is { entry }. Store routing lives inside
+        // entry.meta.store (modules that want agent-context routing pass
+        // `meta: { store: 'X' }` to history.record). Falls back to entry.intent.
+        const entry = payload.entry;
+        if (!entry) return;
+        const touchedStore = entry.meta?.store || entry.intent || null;
         for (const sub of this._subscriptions.values()) {
             if (sub.store !== '*' && sub.store !== touchedStore) continue;
             // Re-serialize and deliver. Best-effort — failures are swallowed.

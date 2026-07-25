@@ -20,9 +20,9 @@ export const HistoryContracts = {
         lifecycle: 'active',
         stability: 'stable',
         compliance: 'public',
-        description: 'Published when a new entry is appended to the history log. Carries the full entry when published by HistoryService; subscribers may also see store/intent routing hints when published by bridge layers (e.g. optimistic-sync) or mocked in tests.'
+        description: 'Published when a new entry is appended to the history log. Carries the full entry. Store routing for subscribers (e.g. agent-context) lives inside entry.meta.store, falling back to entry.intent.'
     }, object({
-        entry: optional(object({
+        entry: object({
             id: string(),
             intent: string(),
             payload: optional(any()),
@@ -32,9 +32,7 @@ export const HistoryContracts = {
             createdAt: number(),
             updatedAt: number(),
             meta: optional(object())
-        })),
-        store: optional(string()),
-        intent: optional(string())
+        })
     })),
 
     HISTORY_OP_UNDONE: contract({

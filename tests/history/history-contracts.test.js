@@ -25,15 +25,14 @@ describe('history contracts', () => {
         expect(events).toHaveLength(1);
     });
 
-    it('accepts a minimal store-routing shape on HISTORY_OP_RECORDED', () => {
-        // agent-context and other consumers may publish a routing hint without
-        // the full entry object. The contract must accept this for testing
-        // and bridging scenarios.
-        const events = [];
-        eventBus.subscribe('HISTORY_OP_RECORDED', (p) => events.push(p));
-        expect(() => eventBus.publish('HISTORY_OP_RECORDED', { store: 'maps' }))
-            .not.toThrow();
-        expect(events).toHaveLength(1);
+    it('silently drops HISTORY_OP_RECORDED with missing entry (tightened contract)', () => {
+        // Tightened: entry is required. Bare routing hints without an entry
+        // are rejected. Modules that want agent-context routing pass
+        // `meta: { store }` inside the entry to history.record().
+        const delivered = [];
+        eventBus.subscribe('HISTORY_OP_RECORDED', (p) => delivered.push(p));
+        eventBus.publish('HISTORY_OP_RECORDED', { store: 'maps' });
+        expect(delivered).toHaveLength(0);
     });
 
     it('accepts HISTORY_OP_UNDONE payload', () => {

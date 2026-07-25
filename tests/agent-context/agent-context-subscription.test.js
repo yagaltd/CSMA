@@ -8,8 +8,9 @@ import { AgentContextContracts } from '../../src/modules/agent-context/contracts
 import { object, string, optional, any } from '../../src/runtime/validation/index.js';
 
 // History module ships its own HISTORY_OP_RECORDED contract in production.
-// For these tests we register a permissive stub so eventBus.publish does not
-// silently drop the event as an unknown-event security violation.
+// For these tests we register a stub matching the tightened canonical shape
+// (entry required, store routing inside entry.meta.store) so eventBus.publish
+// does not silently drop the event as an unknown-event security violation.
 const HISTORY_OP_RECORDED_STUB = {
     version: 1,
     type: 'event',
@@ -19,11 +20,18 @@ const HISTORY_OP_RECORDED_STUB = {
     compliance: 'public',
     description: 'test stub for history op recorded',
     schema: object({
-        store: optional(string()),
-        intent: optional(string()),
-        entry: optional(any())
+        entry: object({
+            id: string(),
+            intent: string(),
+            meta: optional(any())
+        })
     })
 };
+
+// Helper: build a canonical history event with a store routing hint.
+function historyEvent(store, intent = 'test:op') {
+    return { entry: { id: `evt-${Math.random().toString(36).slice(2)}`, intent, meta: { store } } };
+}
 
 function buildSubscriptionCore() {
     const eventBus = new EventBus();
@@ -79,7 +87,7 @@ describe('AgentContextService subscription', () => {
         );
 
         // Publish a fake history event for the matching store.
-        eventBus.publish('HISTORY_OP_RECORDED', { store: 'maps', intent: 'mindmap:addNode' });
+        eventBus.publish('HISTORY_OP_RECORDED', historyEvent('maps', 'mindmap:addNode'));
 
         // Allow async get() to resolve.
         await new Promise((resolve) => setTimeout(resolve, 10));
@@ -104,7 +112,7 @@ describe('AgentContextService subscription', () => {
 
         unsubscribe();
 
-        eventBus.publish('HISTORY_OP_RECORDED', { store: 'maps' });
+        eventBus.publish('HISTORY_OP_RECORDED', historyEvent('maps'));
         await new Promise((resolve) => setTimeout(resolve, 10));
 
         expect(calls.length).toBe(0);
@@ -121,7 +129,7 @@ describe('AgentContextService subscription', () => {
             (response) => calls.push(response)
         );
 
-        eventBus.publish('HISTORY_OP_RECORDED', { store: 'anything' });
+        eventBus.publish('HISTORY_OP_RECORDED', historyEvent('anything'));
         await new Promise((resolve) => setTimeout(resolve, 10));
 
         expect(calls.length).toBeGreaterThanOrEqual(1);
@@ -139,7 +147,7 @@ describe('AgentContextService subscription', () => {
             (response) => calls.push(response)
         );
 
-        eventBus.publish('HISTORY_OP_RECORDED', { store: 'cart' });
+        eventBus.publish('HISTORY_OP_RECORDED', historyEvent('cart'));
         await new Promise((resolve) => setTimeout(resolve, 10));
 
         expect(calls.length).toBe(0);
