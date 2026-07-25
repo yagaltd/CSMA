@@ -1,0 +1,65 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "chart-display",
+    "type": "II",
+    "owner": "charts",
+    "moduleId": "charts",
+    "surfaceId": "chart-display",
+    "lifecycle": "stable",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": ["charts"],
+    "components": []
+  },
+  "metadata": {
+    "description": "Embeddable chart surface backed by ChartsService"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "chart-display",
+    "title": "Chart Display",
+    "category": "Module Surface",
+    "preferred": false,
+    "summary": "Mountable chart that delegates rendering to ChartsService.mountSurface",
+    "propsSchema": {
+      "adapterId": "string",
+      "data": "object",
+      "options": "object"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "module-surface",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {}
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {},
+    "render": {
+      "kind": "module",
+      "tag": "div",
+      "className": "aiui-surface aiui-surface--chart-display"
+    }
+  }
+}

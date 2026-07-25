@@ -1,7 +1,9 @@
 /**
  * Generated AI UI component catalog.
  *
- * Source: src/ui/components/[component]/manifest.json
+ * Sources:
+ *   - src/ui/components/[component]/manifest.json      (UI primitives)
+ *   - src/modules/[module]/aiui/*.json                 (module surfaces)
  * Do not edit manually. Run `npm run generate-ai-ui-catalog`.
  */
 
@@ -13,6 +15,8 @@ export const componentCatalog = {
     "title": "Badge",
     "category": "CSS-Only",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "badge",
     "path": "src/ui/components/badge",
     "manifestPath": "src/ui/components/badge/manifest.json",
     "preferred": true,
@@ -121,6 +125,8 @@ export const componentCatalog = {
     "title": "Branch Node",
     "category": "Mindmap",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "branch-node",
     "path": "src/ui/components/branch-node",
     "manifestPath": "src/ui/components/branch-node/manifest.json",
     "preferred": true,
@@ -252,6 +258,8 @@ export const componentCatalog = {
     "title": "Button",
     "category": "Interactive",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "button",
     "path": "src/ui/components/button",
     "manifestPath": "src/ui/components/button/manifest.json",
     "preferred": true,
@@ -365,6 +373,8 @@ export const componentCatalog = {
     "title": "Card",
     "category": "Layout",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "card",
     "path": "src/ui/components/card",
     "manifestPath": "src/ui/components/card/manifest.json",
     "preferred": true,
@@ -476,6 +486,61 @@ export const componentCatalog = {
       "template": "<article class=\"card\"><header class=\"card__header\"><h2 class=\"card__title\">Title</h2><p class=\"card__description\">Description</p></header><div class=\"card__body\"></div><footer class=\"card__footer\"></footer></article>"
     }
   },
+  "chart-display": {
+    "id": "chart-display",
+    "owner": "charts",
+    "alias": "chart-display",
+    "title": "Chart Display",
+    "category": "Module Surface",
+    "type": "II",
+    "moduleId": "charts",
+    "surfaceId": "chart-display",
+    "path": "src/modules/charts/aiui",
+    "manifestPath": "src/modules/charts/aiui/manifest.json",
+    "preferred": false,
+    "summary": "Mountable chart that delegates rendering to ChartsService.mountSurface",
+    "propsSchema": {
+      "adapterId": "string",
+      "data": "object",
+      "options": "object"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "module-surface",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {}
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {},
+    "dependencies": {
+      "runtime": [
+        "charts"
+      ],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "render": {
+      "kind": "module",
+      "tag": "div",
+      "className": "aiui-surface aiui-surface--chart-display"
+    }
+  },
   "code-editor": {
     "id": "code-editor",
     "owner": "core",
@@ -483,6 +548,8 @@ export const componentCatalog = {
     "title": "Code Editor",
     "category": "Forms",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "code-editor",
     "path": "src/ui/components/code-editor",
     "manifestPath": "src/ui/components/code-editor/manifest.json",
     "preferred": true,
@@ -561,6 +628,8 @@ export const componentCatalog = {
     "title": "Color Token List",
     "category": "Forms",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "color-token-list",
     "path": "src/ui/components/color-token-list",
     "manifestPath": "src/ui/components/color-token-list/manifest.json",
     "preferred": true,
@@ -619,6 +688,60 @@ export const componentCatalog = {
       "template": "<div class=\"color-token-list\"></div>"
     }
   },
+  "comments-thread": {
+    "id": "comments-thread",
+    "owner": "comments",
+    "alias": "comments-thread",
+    "title": "Comments Thread",
+    "category": "Module Surface",
+    "type": "II",
+    "moduleId": "comments",
+    "surfaceId": "comments-thread",
+    "path": "src/modules/comments/aiui",
+    "manifestPath": "src/modules/comments/aiui/manifest.json",
+    "preferred": false,
+    "summary": "Mountable comments thread that delegates rendering to CommentsService.mountSurface",
+    "propsSchema": {
+      "threadId": "string",
+      "focusCommentId": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "module-surface",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {}
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {},
+    "dependencies": {
+      "runtime": [
+        "comments"
+      ],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "render": {
+      "kind": "module",
+      "tag": "div",
+      "className": "aiui-surface aiui-surface--comments-thread"
+    }
+  },
   "connector-line": {
     "id": "connector-line",
     "owner": "core",
@@ -626,6 +749,8 @@ export const componentCatalog = {
     "title": "Connector Line",
     "category": "Mindmap",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "connector-line",
     "path": "src/ui/components/connector-line",
     "manifestPath": "src/ui/components/connector-line/manifest.json",
     "preferred": true,
@@ -693,6 +818,8 @@ export const componentCatalog = {
     "title": "Field",
     "category": "Forms",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "field",
     "path": "src/ui/components/field",
     "manifestPath": "src/ui/components/field/manifest.json",
     "preferred": true,
@@ -802,6 +929,8 @@ export const componentCatalog = {
     "title": "Input",
     "category": "Forms",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "input",
     "path": "src/ui/components/input",
     "manifestPath": "src/ui/components/input/manifest.json",
     "preferred": true,
@@ -905,6 +1034,8 @@ export const componentCatalog = {
     "title": "Leaf Node",
     "category": "Mindmap",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "leaf-node",
     "path": "src/ui/components/leaf-node",
     "manifestPath": "src/ui/components/leaf-node/manifest.json",
     "preferred": true,
@@ -980,6 +1111,60 @@ export const componentCatalog = {
       "template": "<div class=\"leaf-node\" data-status=\"pending\" data-bottleneck=\"standard\"><span class=\"leaf-node__status\"></span><span class=\"leaf-node__topic\">Topic</span></div>"
     }
   },
+  "mindmap-canvas": {
+    "id": "mindmap-canvas",
+    "owner": "mindmap",
+    "alias": "mindmap-canvas",
+    "title": "Mindmap Canvas",
+    "category": "Module Surface",
+    "type": "II",
+    "moduleId": "mindmap",
+    "surfaceId": "mindmap-canvas",
+    "path": "src/modules/mindmap/aiui",
+    "manifestPath": "src/modules/mindmap/aiui/manifest.json",
+    "preferred": false,
+    "summary": "Mountable mindmap canvas that delegates rendering to MindmapService.mountSurface",
+    "propsSchema": {
+      "mapId": "string",
+      "readOnly": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "module-surface",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {}
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {},
+    "dependencies": {
+      "runtime": [
+        "mindmap"
+      ],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "render": {
+      "kind": "module",
+      "tag": "div",
+      "className": "aiui-surface aiui-surface--mindmap-canvas"
+    }
+  },
   "radio-group": {
     "id": "radio-group",
     "owner": "core",
@@ -987,6 +1172,8 @@ export const componentCatalog = {
     "title": "Radio Group",
     "category": "Forms",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "radio-group",
     "path": "src/ui/components/radio-group",
     "manifestPath": "src/ui/components/radio-group/manifest.json",
     "preferred": true,
@@ -1071,6 +1258,8 @@ export const componentCatalog = {
     "title": "Radio Option",
     "category": "Forms",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "radio-option",
     "path": "src/ui/components/radio-option",
     "manifestPath": "src/ui/components/radio-option/manifest.json",
     "preferred": true,
@@ -1166,6 +1355,8 @@ export const componentCatalog = {
     "title": "Section Header",
     "category": "Layout",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "section-header",
     "path": "src/ui/components/section-header",
     "manifestPath": "src/ui/components/section-header/manifest.json",
     "preferred": true,
@@ -1241,6 +1432,8 @@ export const componentCatalog = {
     "title": "Shortcut List",
     "category": "Layout",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "shortcut-list",
     "path": "src/ui/components/shortcut-list",
     "manifestPath": "src/ui/components/shortcut-list/manifest.json",
     "preferred": true,
@@ -1304,6 +1497,8 @@ export const componentCatalog = {
     "title": "Shortcut Row",
     "category": "Layout",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "shortcut-row",
     "path": "src/ui/components/shortcut-row",
     "manifestPath": "src/ui/components/shortcut-row/manifest.json",
     "preferred": true,
@@ -1381,6 +1576,8 @@ export const componentCatalog = {
     "title": "Slider",
     "category": "Forms",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "slider",
     "path": "src/ui/components/slider",
     "manifestPath": "src/ui/components/slider/manifest.json",
     "preferred": true,
@@ -1487,6 +1684,8 @@ export const componentCatalog = {
     "title": "Swatch",
     "category": "Visual",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "swatch",
     "path": "src/ui/components/swatch",
     "manifestPath": "src/ui/components/swatch/manifest.json",
     "preferred": true,
@@ -1555,6 +1754,8 @@ export const componentCatalog = {
     "title": "Theme Toggle",
     "category": "CSS-Only",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "theme-toggle",
     "path": "src/ui/components/theme-toggle",
     "manifestPath": "src/ui/components/theme-toggle/manifest.json",
     "preferred": false,
@@ -1628,6 +1829,8 @@ export const componentCatalog = {
     "title": "Toast",
     "category": "Interactive",
     "type": "II",
+    "moduleId": null,
+    "surfaceId": "toast",
     "path": "src/ui/components/toast",
     "manifestPath": "src/ui/components/toast/manifest.json",
     "preferred": false,
@@ -1728,6 +1931,8 @@ export const componentCatalog = {
     "title": "Toggle Card",
     "category": "Interactive",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "toggle-card",
     "path": "src/ui/components/toggle-card",
     "manifestPath": "src/ui/components/toggle-card/manifest.json",
     "preferred": true,
@@ -1822,6 +2027,8 @@ export const componentCatalog = {
     "title": "Toggle Grid",
     "category": "Layout",
     "type": "I",
+    "moduleId": null,
+    "surfaceId": "toggle-grid",
     "path": "src/ui/components/toggle-grid",
     "manifestPath": "src/ui/components/toggle-grid/manifest.json",
     "preferred": true,
@@ -1881,6 +2088,62 @@ export const componentCatalog = {
       "attributes": {},
       "children": [],
       "template": "<div class=\"toggle-grid\"></div>"
+    }
+  },
+  "video-player": {
+    "id": "video-player",
+    "owner": "video",
+    "alias": "video-player",
+    "title": "Video Player",
+    "category": "Module Surface",
+    "type": "II",
+    "moduleId": "video",
+    "surfaceId": "video-player",
+    "path": "src/modules/video/aiui",
+    "manifestPath": "src/modules/video/aiui/manifest.json",
+    "preferred": false,
+    "summary": "Mountable video player. Delegates to VideoCompositionService.mountSurface once the video module ships.",
+    "propsSchema": {
+      "src": "string",
+      "poster": "string",
+      "muted": "string",
+      "autoplay": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "module-surface",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {}
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {},
+    "dependencies": {
+      "runtime": [
+        "video"
+      ],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "render": {
+      "kind": "module",
+      "tag": "div",
+      "className": "aiui-surface aiui-surface--video-player"
     }
   }
 };

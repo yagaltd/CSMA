@@ -3,6 +3,9 @@ import { componentCatalog as generatedCatalog } from '../catalog/componentCatalo
 const MAX_TEXT_LENGTH = 1000;
 const MAX_CHILDREN_PER_SLOT = 50;
 const MAX_COMPOSITION_DEPTH = 8;
+// Module surfaces receive structured props (objects/arrays for data/options).
+// Cap serialized size to keep payloads bounded.
+const MAX_STRUCTURED_PROP_LENGTH = 20000;
 const SAFE_TAGS = new Set([
   // ── Layout ──
   'article',
@@ -52,6 +55,13 @@ const SAFE_TAGS = new Set([
   'figure', 'figcaption',
   'picture', 'source',
   'video', 'audio',
+
+  // ── Graphics (chart canvas + mindmap svg connectors) ──
+  // NOTE: script/iframe/object/embed are intentionally excluded (security).
+  'canvas',
+  'svg', 'path', 'g',
+  'line', 'circle', 'rect',
+  'polyline', 'polygon',
 ]);
 const SAFE_ATTRIBUTES = new Set([
   'aria-label',
@@ -139,8 +149,9 @@ function ownerFromPayload(payload) {
 }
 
 export class AIUIComposerService {
-  constructor(eventBus) {
+  constructor(eventBus, serviceManager = null) {
     this.eventBus = eventBus;
+    this.serviceManager = serviceManager;
     this.catalog = new Map();
     this.ownerIndex = new Map();
     this.liveNodes = new Map();
@@ -158,6 +169,25 @@ export class AIUIComposerService {
         this.unregisterOwner(ownerFromPayload(payload));
       }));
     }
+  }
+
+  /**
+   * Inject the shared ServiceManager used to resolve module-owned aiui
+   * surfaces (render.kind === 'module'). Modules expose surfaces via
+   * `src/modules/<module>/aiui/manifest.json`; each declares
+   * `component.moduleId`. The composer resolves the owning module's service
+   * through `serviceManager.get(moduleId)` and mounts it by calling the
+   * service's `mountSurface(surfaceId, container, props)` method.
+   *
+   * Runtime contract (modules that expose aiui surfaces MUST implement):
+   *   service.mountSurface(surfaceId: string, container: HTMLElement,
+   *                        props: object) → cleanupFn: Function
+   *
+   * The returned cleanup function is invoked when the surface is unmounted
+   * (via applyOp 'unmount' or composer cleanup).
+   */
+  setServiceManager(serviceManager) {
+    this.serviceManager = serviceManager;
   }
 
   getCatalog() {
@@ -283,10 +313,21 @@ export class AIUIComposerService {
       throw new Error(`Unknown prop(s) for "${definition.id}": ${unknownProps.join(', ')}`);
     }
 
+    const isModuleSurface = this._isModuleSurface(definition);
+
     return Object.fromEntries(Object.entries(props).map(([key, value]) => {
       if (value === null || value === undefined) {
         return [key, value];
       }
+
+      // Module surfaces pass structured props (data/options/objects) straight
+      // to a service method rather than stamping DOM attributes, so the
+      // DOM-oriented string/URL guards do not apply. Bounds + type still do.
+      if (isModuleSurface) {
+        this._validateStructuredProp(key, value, definition.id);
+        return [key, value];
+      }
+
       if (typeof value !== 'string') {
         throw new Error(`Prop "${key}" for "${definition.id}" must be a string`);
       }
@@ -298,6 +339,26 @@ export class AIUIComposerService {
       }
       return [key, value];
     }));
+  }
+
+  _isModuleSurface(definition) {
+    return definition?.render?.kind === 'module';
+  }
+
+  _validateStructuredProp(key, value, componentId) {
+    const type = typeof value;
+    if (type === 'function' || type === 'symbol') {
+      throw new Error(`Prop "${key}" for "${componentId}" has an unsupported type (${type})`);
+    }
+    let serialized;
+    try {
+      serialized = JSON.stringify(value);
+    } catch {
+      throw new Error(`Prop "${key}" for "${componentId}" must be JSON-serializable`);
+    }
+    if (serialized && serialized.length > MAX_STRUCTURED_PROP_LENGTH) {
+      throw new Error(`Prop "${key}" for "${componentId}" exceeds ${MAX_STRUCTURED_PROP_LENGTH} characters`);
+    }
   }
 
   normalizeSlots(definition, slots, { depth, parent }) {
@@ -336,11 +397,14 @@ export class AIUIComposerService {
   }
 
   isRenderable(definition) {
-    return ['element', 'button'].includes(definition.render?.kind);
+    return ['element', 'button', 'module'].includes(definition.render?.kind);
   }
 
   renderNode(spec, { documentRef, depth, parent }) {
     const definition = this.catalog.get(spec.component);
+    if (definition.render?.kind === 'module') {
+      return this.renderModuleSurface(definition, spec, { documentRef });
+    }
     const root = this.createElementFromRender(definition.render, spec.props, { documentRef });
     const slotTargets = new Map();
 
@@ -357,6 +421,52 @@ export class AIUIComposerService {
     }
 
     return root;
+  }
+
+  /**
+   * Render a module-owned aiui surface (render.kind === 'module').
+   *
+   * Creates a container element and delegates mounting to the owning module's
+   * service via `mountSurface(surfaceId, container, props) → cleanupFn`. The
+   * cleanup function is stashed on the container so the live-node unmount path
+   * can invoke it.
+   */
+  renderModuleSurface(definition, spec, { documentRef }) {
+    const container = documentRef.createElement('div');
+    container.setAttribute('data-aiui-surface', definition.id);
+    if (definition.render?.className) {
+      container.className = definition.render.className;
+    }
+
+    const moduleId = definition.moduleId;
+    const surfaceId = definition.surfaceId || definition.id;
+    const cleanup = this.mountModuleSurface(moduleId, surfaceId, container, spec.props || {});
+    if (typeof cleanup === 'function') {
+      container.__aiuiSurfaceCleanup = cleanup;
+    }
+    return container;
+  }
+
+  /**
+   * Resolve and mount a module surface, returning the service's cleanup fn.
+   * Throws clear, agent-handleable errors when the module is absent or does
+   * not implement the mountSurface contract.
+   */
+  mountModuleSurface(moduleId, surfaceId, container, props) {
+    if (!this.serviceManager) {
+      throw new Error(`AI UI module surface "${surfaceId}" cannot mount: the composer has no serviceManager (call setServiceManager or pass one to the constructor)`);
+    }
+    if (!moduleId) {
+      throw new Error(`AI UI module surface "${surfaceId}" has no moduleId; cannot resolve its owning service`);
+    }
+    const service = this.serviceManager.get ? this.serviceManager.get(moduleId) : this.serviceManager[moduleId];
+    if (!service) {
+      throw new Error(`AI UI module surface "${surfaceId}" requires module "${moduleId}", which is not loaded`);
+    }
+    if (typeof service.mountSurface !== 'function') {
+      throw new Error(`Module "${moduleId}" does not expose mountSurface(surfaceId, container, props) — cannot mount surface "${surfaceId}"`);
+    }
+    return service.mountSurface(surfaceId, container, props);
   }
 
   renderChildren(children, target, props, slots, context) {
@@ -678,9 +788,15 @@ export class AIUIComposerService {
     if (!isPlainObject(op.props)) throw new Error('updateProps op requires a "props" object');
     const node = this.liveNodes.get(op.id);
     const allowedProps = new Set(Object.keys(node.definition.propsSchema || {}));
+    const isModuleSurface = this._isModuleSurface(node.definition);
     for (const key of Object.keys(op.props)) {
       if (!allowedProps.has(key)) throw new Error(`Unknown prop "${key}" for "${node.definition.id}"`);
       const value = op.props[key];
+      if (value === null || value === undefined) continue;
+      if (isModuleSurface) {
+        this._validateStructuredProp(key, value, node.definition.id);
+        continue;
+      }
       if (typeof value !== 'string') throw new Error(`Prop "${key}" must be a string`);
       if (value.length > MAX_TEXT_LENGTH) throw new Error(`Prop "${key}" exceeds max length`);
       if (/(url|href|src)$/i.test(key) && !this.isSafeUrl(value)) {
@@ -725,7 +841,8 @@ export class AIUIComposerService {
       props: { ...(op.spec.props || {}) },
       parentId: op.parent || null,
       slot: op.slot || null,
-      children: new Map()
+      children: new Map(),
+      surfaceCleanup: typeof element.__aiuiSurfaceCleanup === 'function' ? element.__aiuiSurfaceCleanup : null
     };
 
     if (op.parent && op.slot) {
@@ -883,6 +1000,13 @@ export class AIUIComposerService {
       for (const child of [...children]) {
         this._unmountRecursive(child.id);
       }
+    }
+    // Tear down module-surface resources before detaching the DOM node.
+    if (node.surfaceCleanup) {
+      try {
+        node.surfaceCleanup();
+      } catch { /* surface cleanup is best-effort */ }
+      node.surfaceCleanup = null;
     }
     node.element.remove();
     if (node.parentId) {

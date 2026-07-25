@@ -31,6 +31,14 @@ class ServiceManager {
             service.setEventBus(this.eventBus);
         }
 
+        // Services that own module aiui surfaces (render.kind === 'module')
+        // need to resolve sibling module services by id. Inject the shared
+        // ServiceManager into any service that declares a setter, mirroring
+        // the setEventBus convention above.
+        if (service && typeof service.setServiceManager === 'function') {
+            service.setServiceManager(this);
+        }
+
         const context = {
             service,
             metadata: {

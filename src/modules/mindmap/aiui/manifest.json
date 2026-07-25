@@ -1,0 +1,64 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "mindmap-canvas",
+    "type": "II",
+    "owner": "mindmap",
+    "moduleId": "mindmap",
+    "surfaceId": "mindmap-canvas",
+    "lifecycle": "stable",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": ["mindmap"],
+    "components": []
+  },
+  "metadata": {
+    "description": "Embeddable mindmap canvas surface backed by MindmapService"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "mindmap-canvas",
+    "title": "Mindmap Canvas",
+    "category": "Module Surface",
+    "preferred": false,
+    "summary": "Mountable mindmap canvas that delegates rendering to MindmapService.mountSurface",
+    "propsSchema": {
+      "mapId": "string",
+      "readOnly": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "module-surface",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {}
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {},
+    "render": {
+      "kind": "module",
+      "tag": "div",
+      "className": "aiui-surface aiui-surface--mindmap-canvas"
+    }
+  }
+}

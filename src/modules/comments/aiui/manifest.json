@@ -1,0 +1,64 @@
+{
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  },
+  "component": {
+    "name": "comments-thread",
+    "type": "II",
+    "owner": "comments",
+    "moduleId": "comments",
+    "surfaceId": "comments-thread",
+    "lifecycle": "stable",
+    "stability": "stable"
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": ["comments"],
+    "components": []
+  },
+  "metadata": {
+    "description": "Embeddable comments thread surface backed by CommentsService"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "comments-thread",
+    "title": "Comments Thread",
+    "category": "Module Surface",
+    "preferred": false,
+    "summary": "Mountable comments thread that delegates rendering to CommentsService.mountSurface",
+    "propsSchema": {
+      "threadId": "string",
+      "focusCommentId": "string"
+    },
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
+    "allowedChildren": [],
+    "behavior": {
+      "role": "module-surface",
+      "events": [],
+      "targetActions": [],
+      "intentMap": {}
+    },
+    "style": {
+      "surfaceAware": true,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {},
+    "render": {
+      "kind": "module",
+      "tag": "div",
+      "className": "aiui-surface aiui-surface--comments-thread"
+    }
+  }
+}

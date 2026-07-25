@@ -12,4 +12,50 @@ export class CommentsService {
     normalize(comment) { return { id: String(comment.id || `comment-${++this.sequence}`), threadId: String(comment.threadId || ''), authorId: comment.authorId || '', body: comment.body || '', status: comment.status || 'published', labels: comment.labels || [], timestamp: comment.timestamp || Date.now(), data: comment.data || {} }; }
     getComments(threadId) { return [...this.comments.values()].filter((comment) => !threadId || comment.threadId === threadId); }
     publish() { this.eventBus?.publish?.('COMMENTS_UPDATED', { items: this.getComments(), data: { pending: this.pending.size }, timestamp: Date.now() }); }
+
+    /**
+     * Mount an aiui surface into a container element.
+     *
+     * Runtime contract for module aiui surfaces:
+     *   mountSurface(surfaceId, container, props) → cleanupFn
+     *
+     * Supported surfaces:
+     *   - 'comments-thread' — renders the comments for `props.threadId`, with
+     *     optional `props.focusCommentId` highlighting.
+     *
+     * Returns a cleanup function that empties the container.
+     */
+    mountSurface(surfaceId, container, props = {}) {
+        if (surfaceId !== 'comments-thread') {
+            throw new Error(`CommentsService.mountSurface: unknown surface "${surfaceId}"`);
+        }
+        const doc = container.ownerDocument || globalThis.document;
+
+        const renderThread = () => {
+            container.replaceChildren();
+            const thread = this.getComments(props.threadId || undefined);
+            for (const comment of thread) {
+                const item = doc.createElement('article');
+                item.className = 'comments-thread__item';
+                item.dataset.commentId = comment.id;
+                item.dataset.status = comment.status || 'published';
+                if (props.focusCommentId && comment.id === String(props.focusCommentId)) {
+                    item.setAttribute('data-focused', '');
+                }
+                const body = doc.createElement('p');
+                body.className = 'comments-thread__body';
+                body.textContent = comment.body || '';
+                item.append(body);
+                container.append(item);
+            }
+        };
+
+        renderThread();
+        const off = this.eventBus?.subscribe?.('COMMENTS_UPDATED', renderThread);
+
+        return () => {
+            if (typeof off === 'function') off();
+            container.replaceChildren();
+        };
+    }
 }

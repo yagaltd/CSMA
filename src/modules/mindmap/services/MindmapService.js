@@ -86,6 +86,16 @@ function makeLeaf(topic, meta = {}) {
 }
 
 export class MindmapService {
+  static SURFACE_CSS = `
+.mm-canvas { position: relative; width: 100%; height: 100%; min-height: 320px; overflow: hidden; outline: none; user-select: none; background: var(--mindmap-canvas-bg, #fafafa); }
+.mm-surface-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.mm-surface-nodes { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.mm-node { position: absolute; box-sizing: border-box; padding: 4px 10px; border-radius: 6px; font-size: 13px; line-height: 1.4; white-space: nowrap; border: 1px solid var(--border, #d0d0d0); border-left-width: 3px; background: var(--surface, #fff); color: var(--foreground, #222); }
+.mm-node[data-kind="root"] { font-weight: 700; border-width: 2px; border-color: var(--accent, #4f90f2); }
+.mm-connector { fill: none; stroke: var(--border, #bbb); stroke-width: 2; stroke-linecap: round; }
+.mm-canvas[data-read-only] { pointer-events: none; }
+`;
+
   constructor(eventBus) {
     this.eventBus = eventBus;
     this.store = null;
@@ -786,6 +796,89 @@ export class MindmapService {
       out.push({ link, d });
     }
     return out;
+  }
+
+  // ─── aiui surface mounting ──────────────────────────────────────
+
+  /**
+   * Mount an aiui surface into a container element.
+   *
+   * Runtime contract for module aiui surfaces:
+   *   mountSurface(surfaceId, container, props) → cleanupFn
+   *
+   * Supported surfaces:
+   *   - 'mindmap-canvas' — renders the map identified by `props.mapId` (or the
+   *     active map) as an absolutely-positioned node layer plus an SVG
+   *     connector layer, mirroring demo/mindmap.html. `props.readOnly` stamps
+   *     a `data-read-only` attribute and disables pointer interaction.
+   *
+   * Returns a cleanup function that empties the container and unsubscribes
+   * from structure-change events.
+   */
+  mountSurface(surfaceId, container, props = {}) {
+    if (surfaceId !== 'mindmap-canvas') {
+      throw new Error(`MindmapService.mountSurface: unknown surface "${surfaceId}"`);
+    }
+    const doc = container.ownerDocument || globalThis.document;
+    const readOnly = props.readOnly === true || props.readOnly === 'true';
+
+    const canvas = doc.createElement('div');
+    canvas.className = 'mm-canvas';
+    canvas.setAttribute('data-surface', 'mindmap-canvas');
+    if (readOnly) canvas.setAttribute('data-read-only', '');
+    const style = doc.createElement('style');
+    style.textContent = MindmapService.SURFACE_CSS;
+    const svgLayer = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svgLayer.setAttribute('class', 'mm-surface-svg');
+    svgLayer.setAttribute('overflow', 'visible');
+    const nodeLayer = doc.createElement('div');
+    nodeLayer.className = 'mm-surface-nodes';
+    canvas.append(style, svgLayer, nodeLayer);
+    container.append(canvas);
+
+    const topicOf = (id) => {
+      const node = this.findNode(id, { mapId: props.mapId });
+      return node ? node.topic : null;
+    };
+
+    const render = () => {
+      const mapId = props.mapId || this._activeMapId;
+      const { nodes } = this.layout(mapId);
+      const paths = this.connectorPaths(mapId);
+      nodeLayer.replaceChildren();
+      svgLayer.replaceChildren();
+      for (const n of nodes) {
+        const el = doc.createElement('div');
+        el.className = 'mm-node';
+        el.dataset.nodeId = n.id;
+        el.dataset.kind = n.kind;
+        el.dataset.status = n.status || 'pending';
+        el.style.left = `${n.x}px`;
+        el.style.top = `${n.y}px`;
+        el.style.width = `${n.w}px`;
+        el.style.minHeight = `${n.h}px`;
+        const topic = topicOf(n.id);
+        el.textContent = topic != null ? topic : n.kind;
+        nodeLayer.append(el);
+      }
+      for (const { d, link } of paths) {
+        const p = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', d);
+        p.setAttribute('data-link-kind', link.kind);
+        const child = nodes.find((x) => x.id === link.to);
+        if (child) p.setAttribute('data-status', child.status);
+        p.classList.add('mm-connector');
+        svgLayer.append(p);
+      }
+    };
+
+    render();
+    const off = this.eventBus?.subscribe?.('MINDMAP_STRUCTURE_CHANGED', render);
+
+    return () => {
+      if (typeof off === 'function') off();
+      container.replaceChildren();
+    };
   }
 }
 

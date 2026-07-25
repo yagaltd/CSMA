@@ -8,4 +8,66 @@ export class ChartsService {
     getData(id) { return this.datasets.get(String(id)) || null; }
     formatNumber(value, options = {}) { return new Intl.NumberFormat(options.locale || 'en', options).format(Number(value || 0)); }
     clear() { this.datasets.clear(); this.eventBus?.publish?.('CHARTS_UPDATED', { data: { datasets: [] }, timestamp: Date.now() }); }
+
+    /**
+     * Render a dataset into a target element using a registered adapter.
+     *
+     * @param {HTMLElement} target - Element to render into.
+     * @param {Object} data - Dataset payload (id/type/points/summary).
+     * @param {Object} [options] - Render options; `options.adapterId` selects
+     *   the adapter, otherwise the first registered adapter is used.
+     * @returns {HTMLElement|null} The rendered node, or null if no adapter.
+     */
+    render(target, data = {}, options = {}) {
+        const adapterId = options.adapterId || data?.adapterId || this.adapters.keys().next().value;
+        const adapter = this.adapters.get(adapterId);
+        if (!adapter || typeof adapter.render !== 'function') {
+            return null;
+        }
+        if (data?.id) this.setData(data.id, data);
+        return adapter.render(target, data, options);
+    }
+
+    /**
+     * Mount an aiui surface into a container element.
+     *
+     * Runtime contract for module aiui surfaces:
+     *   mountSurface(surfaceId, container, props) → cleanupFn
+     *
+     * Supported surfaces:
+     *   - 'chart-display' — renders `props.data` (a dataset payload) using the
+     *     adapter named by `props.adapterId` (falls back to the first
+     *     registered adapter). `props.options` forward render options.
+     *
+     * Returns a cleanup function that empties the container.
+     */
+    mountSurface(surfaceId, container, props = {}) {
+        if (surfaceId !== 'chart-display') {
+            throw new Error(`ChartsService.mountSurface: unknown surface "${surfaceId}"`);
+        }
+        const data = props.data || null;
+        const options = { ...(props.options || {}) };
+        if (props.adapterId) options.adapterId = props.adapterId;
+
+        const renderChart = () => {
+            const doc = container.ownerDocument || globalThis.document;
+            container.replaceChildren();
+            const stage = doc.createElement('canvas');
+            stage.className = 'chart-display__stage';
+            container.append(stage);
+            const rendered = this.render(stage, data, options);
+            // Adapters may return their own node; prefer it when provided.
+            if (rendered && rendered !== stage) {
+                stage.replaceWith(rendered);
+            }
+        };
+
+        renderChart();
+        const off = this.eventBus?.subscribe?.('CHARTS_UPDATED', renderChart);
+
+        return () => {
+            if (typeof off === 'function') off();
+            container.replaceChildren();
+        };
+    }
 }
