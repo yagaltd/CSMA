@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>mindmap — demo</title>
+  <link rel="stylesheet" href="/src/generated/tokens.css" />
+  <link rel="stylesheet" href="/src/ui/components/index.css" />
+  <style>
+    body { font-family: var(--font-sans); background: var(--background); color: var(--foreground); margin: 0; padding: var(--space-lg); }
+    h1 { font-size: var(--font-size-xl); margin: 0 0 var(--space-md); }
+    .toolbar { display: flex; gap: var(--space-sm); margin-bottom: var(--space-md); flex-wrap: wrap; }
+    .toolbar button, .toolbar select { padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm, 4px); border: 1px solid var(--border); background: var(--surface); color: var(--foreground); cursor: pointer; font: inherit; }
+    .canvas { position: relative; width: 100%; height: 70vh; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-md, 8px); background: var(--surface); }
+    .canvas svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+    .node-layer { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+    .node-layer > * { position: absolute; }
+    .status-line { font-family: var(--font-mono, monospace); font-size: var(--font-size-xs); color: var(--foreground-muted, var(--foreground)); white-space: pre-wrap; min-height: 6rem; padding: var(--space-sm); background: color-mix(in srgb, var(--surface) 50%, var(--background)); border: 1px solid var(--border); border-radius: var(--radius-sm, 4px); margin-top: var(--space-md); }
+  </style>
+</head>
+<body>
+  <h1>mindmap — demo</h1>
+  <div class="toolbar">
+    <button id="new-map">+ new map</button>
+    <select id="map-select"></select>
+    <button id="add-branch">+ branch to root</button>
+    <button id="add-leaf">+ leaf to first branch</button>
+    <button id="mark-done">mark first leaf done</button>
+    <button id="collapse">toggle first branch collapse</button>
+    <button id="undo">undo</button>
+    <button id="redo">redo</button>
+    <button id="show-md">render markdown</button>
+  </div>
+  <div class="canvas">
+    <svg id="connector-layer"></svg>
+    <div id="node-layer" class="node-layer"></div>
+  </div>
+  <pre class="status-line" id="status">Loading runtime…</pre>
+
+  <script type="module">
+    import { MindmapService } from '/src/modules/mindmap/services/MindmapService.js';
+    import { HistoryService } from '/src/modules/history/services/HistoryService.js';
+
+    const eventBus = { _subs: new Map(),
+      subscribe(n, fn) { if (!this._subs.has(n)) this._subs.set(n, []); this._subs.get(n).push(fn); },
+      unsubscribe() {}, publish(n, p) { (this._subs.get(n) || []).forEach((fn) => fn(p)); }
+    };
+
+    const memoryStore = { init: async () => {}, getAll: async () => [], put: async () => {}, clear: async () => {} };
+    const history = new HistoryService(eventBus);
+    await history.init({ store: memoryStore });
+
+    const svc = new MindmapService(eventBus);
+    svc.init({ storage: null, history });
+
+    const nodeLayer = document.getElementById('node-layer');
+    const connectorLayer = document.getElementById('connector-layer');
+    const statusEl = document.getElementById('status');
+    const mapSelect = document.getElementById('map-select');
+
+    let activeMap = null;
+
+    function render() {
+      if (!activeMap) return;
+      const { nodes } = svc.layout(activeMap);
+      const paths = svc.connectorPaths(activeMap);
+      nodeLayer.innerHTML = '';
+      connectorLayer.innerHTML = '';
+      for (const n of nodes) {
+        const el = document.createElement('div');
+        const isRoot = n.kind === 'root';
+        el.className = isRoot ? 'branch-node' : (n.kind === 'leaf' ? 'leaf-node' : 'branch-node');
+        el.dataset.status = n.status;
+        el.dataset.nodeId = n.id;
+        el.style.left = `${n.x}px`;
+        el.style.top = `${n.y}px`;
+        el.style.width = `${n.w}px`;
+        el.textContent = nodeTopic(n.id) || n.kind;
+        nodeLayer.appendChild(el);
+      }
+      for (const { d, link } of paths) {
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('class', 'connector-line');
+        p.setAttribute('d', d);
+        const child = nodes.find((x) => x.id === link.to);
+        if (child) p.setAttribute('data-status', child.status);
+        connectorLayer.appendChild(p);
+      }
+    }
+
+    function nodeTopic(id) {
+      const n = svc.findNode(id);
+      return n ? n.topic : null;
+    }
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+
+    async function refreshMapList() {
+      const maps = await svc.listMaps();
+      mapSelect.innerHTML = maps.map((m) => `<option value="${m.id}">${m.name}</option>`).join('');
+      if (maps.length > 0 && !activeMap) {
+        activeMap = maps[0].id;
+        mapSelect.value = activeMap;
+        render();
+      }
+    }
+
+    document.getElementById('new-map').addEventListener('click', async () => {
+      const name = `Map ${Date.now() % 1000}`;
+      activeMap = await svc.createMap(name);
+      await refreshMapList();
+      mapSelect.value = activeMap;
+      render();
+      setStatus(`created map ${name}`);
+    });
+
+    mapSelect.addEventListener('change', () => {
+      activeMap = mapSelect.value;
+      render();
+    });
+
+    document.getElementById('add-branch').addEventListener('click', async () => {
+      const root = svc._getMap(activeMap).root;
+      await svc.addBranch(root.id, `branch-${Date.now() % 1000}`, { tag: 'phase' });
+      render();
+      setStatus('added branch');
+    });
+
+    document.getElementById('add-leaf').addEventListener('click', async () => {
+      const root = svc._getMap(activeMap).root;
+      const firstBranch = root.children.find((c) => c.schemaType === 'mindmap/branch');
+      if (!firstBranch) return setStatus('no branch yet');
+      await svc.addLeaf(firstBranch.id, `leaf-${Date.now() % 1000}`);
+      render();
+      setStatus('added leaf');
+    });
+
+    document.getElementById('mark-done').addEventListener('click', async () => {
+      const root = svc._getMap(activeMap).root;
+      const firstLeaf = root.children.flatMap((b) => b.children || []).find((c) => c.schemaType === 'mindmap/leaf');
+      if (!firstLeaf) return setStatus('no leaf yet');
+      await svc.updateStatus(firstLeaf.id, 'done');
+      render();
+      setStatus('marked done');
+    });
+
+    document.getElementById('collapse').addEventListener('click', async () => {
+      const root = svc._getMap(activeMap).root;
+      const firstBranch = root.children.find((c) => c.schemaType === 'mindmap/branch');
+      if (!firstBranch) return setStatus('no branch yet');
+      await svc.collapse(firstBranch.id, firstBranch.expanded);
+      render();
+      setStatus('toggled collapse');
+    });
+
+    document.getElementById('undo').addEventListener('click', async () => {
+      await svc.undo();
+      render();
+      setStatus('undo');
+    });
+    document.getElementById('redo').addEventListener('click', async () => {
+      await svc.redo();
+      render();
+      setStatus('redo');
+    });
+
+    document.getElementById('show-md').addEventListener('click', () => {
+      setStatus(svc.toMarkdown(activeMap) || '(empty)');
+    });
+
+    // Seed an initial map.
+    (async () => {
+      activeMap = await svc.createMap('Sample map');
+      const root = svc._getMap(activeMap).root;
+      const b1 = await svc.addBranch(root.id, 'e2e-test', { tag: 'phase' });
+      await svc.addLeaf(b1.id, 'init + plan + delegate verified');
+      await svc.addLeaf(b1.id, 'scout: recon');
+      const b2 = await svc.addBranch(root.id, 'docs', { tag: 'module' });
+      await svc.addLeaf(b2.id, 'write readme');
+      await refreshMapList();
+      render();
+      setStatus('ready. Click toolbar buttons to mutate.');
+    })();
+  </script>
+</body>
+</html>

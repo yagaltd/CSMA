@@ -1,0 +1,45 @@
+mind-elixir-core — https://github.com/SSShooter/mind-elixir-core
+
+Copyright (c) SSShooter and contributors.
+
+Licensed under the MIT License (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the
+License at:
+
+    https://github.com/SSShooter/mind-elixir-core/blob/master/LICENSE
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+────────────────────────────────────────────────────────────────────────
+
+CSMA mindmap module — attribution
+
+The following files in this module are derived from mind-elixir-core:
+
+  src/modules/mindmap/services/ConnectorGeometry.js
+    Faithful ES-port of `src/utils/generateBranch.ts` (main() and sub()
+    SVG path generators). Direction model (LHS / RHS / DOWN), quadratic
+    and cubic Bézier control points, rounded-vertical orthogonal
+    connector for top-down layout are preserved verbatim (modulo syntax).
+
+  src/modules/mindmap/services/LayoutEngine.js
+    Inspired by mind-elixir's tree-direction model (`LEFT | RIGHT | SIDE`
+    constants, left/right balance assignment in `layout.ts`) but
+    reimplemented as pure functions returning absolute rectangles. The
+    upstream relies on CSS-driven positioning of `me-*` custom elements;
+    no such function exists in mind-elixir to port verbatim. The
+    direction assignment at the root and the `--node-gap-x` gap knob are
+    preserved concepts.
+
+Upstream commit at time of port: v5.15.0-beta.1.

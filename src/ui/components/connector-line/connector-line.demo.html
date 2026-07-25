@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>connector-line — demo</title>
+  <link rel="stylesheet" href="../../../generated/tokens.css" />
+  <link rel="stylesheet" href="../index.css" />
+  <link rel="stylesheet" href="connector-line.css" />
+  <style>
+    .demo-svg { width: 100%; height: 12rem; overflow: visible; }
+  </style>
+</head>
+<body>
+  <main class="demo-canvas">
+    <h1>connector-line demo</h1>
+    <svg class="demo-svg" viewBox="0 0 480 200" preserveAspectRatio="xMinYMin meet">
+      <!-- pending -->
+      <path class="connector-line" data-status="pending"
+            d="M 40 40 Q 120 40 200 40" />
+      <!-- in_progress -->
+      <path class="connector-line" data-status="in_progress"
+            d="M 40 80 Q 120 80 200 80" />
+      <!-- done -->
+      <path class="connector-line" data-status="done"
+            d="M 40 120 Q 120 120 200 120" />
+      <!-- blocked -->
+      <path class="connector-line" data-status="blocked"
+            d="M 40 160 Q 120 160 200 160" />
+      <!-- abandoned (dashed) -->
+      <path class="connector-line" data-status="abandoned"
+            d="M 240 40 C 280 40 320 80 360 80 H 440" />
+    </svg>
+  </main>
+</body>
+</html>

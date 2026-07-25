@@ -1,0 +1,30 @@
+/* CSMA Component — Connector Line (mindmap)
+ * SVG path styling. Stroke color via data-status. No inline styles.
+ */
+
+.connector-line {
+  stroke: var(--border);
+  stroke-width: 2;
+  fill: none;
+  transition: stroke var(--duration-fast, 120ms) ease, opacity var(--duration-fast, 120ms) ease;
+}
+
+.connector-line[data-status="in_progress"] {
+  stroke: var(--primary, var(--accent));
+}
+
+.connector-line[data-status="done"] {
+  stroke: var(--success, var(--accent));
+  opacity: 0.4;
+}
+
+.connector-line[data-status="blocked"],
+.connector-line[data-status="failed"] {
+  stroke: var(--destructive, var(--accent));
+}
+
+.connector-line[data-status="abandoned"] {
+  stroke: var(--border);
+  opacity: 0.4;
+  stroke-dasharray: 4 4;
+}

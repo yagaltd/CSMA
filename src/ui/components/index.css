@@ -23,3 +23,8 @@
 @import './code-editor/code-editor.css';
 @import './swatch/swatch.css';
 @import './color-token-list/color-token-list.css';
+
+/* Mindmap primitives */
+@import './branch-node/branch-node.css';
+@import './leaf-node/leaf-node.css';
+@import './connector-line/connector-line.css';

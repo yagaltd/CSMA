@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>leaf-node — demo</title>
+  <link rel="stylesheet" href="../../../generated/tokens.css" />
+  <link rel="stylesheet" href="../index.css" />
+  <link rel="stylesheet" href="leaf-node.css" />
+</head>
+<body>
+  <main class="demo-canvas">
+    <h1>leaf-node demo</h1>
+    <section>
+      <h2>pending</h2>
+      <div class="leaf-node" data-status="pending" data-bottleneck="standard">
+        <span class="leaf-node__status"></span>
+        <span class="leaf-node__topic">test /morphmap-review</span>
+      </div>
+    </section>
+    <section>
+      <h2>in_progress</h2>
+      <div class="leaf-node" data-status="in_progress" data-bottleneck="standard">
+        <span class="leaf-node__status"></span>
+        <span class="leaf-node__topic">scout: recon</span>
+      </div>
+    </section>
+    <section>
+      <h2>done</h2>
+      <div class="leaf-node" data-status="done" data-bottleneck="standard">
+        <span class="leaf-node__status"></span>
+        <span class="leaf-node__topic">init + plan + delegate verified</span>
+      </div>
+    </section>
+    <section>
+      <h2>blocked + risky</h2>
+      <div class="leaf-node" data-status="blocked" data-bottleneck="risky">
+        <span class="leaf-node__status"></span>
+        <span class="leaf-node__topic">waiting on auth token refresh</span>
+      </div>
+    </section>
+    <section>
+      <h2>failed + blocking</h2>
+      <div class="leaf-node" data-status="failed" data-bottleneck="blocking">
+        <span class="leaf-node__status"></span>
+        <span class="leaf-node__topic">test /morphmap-review</span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
