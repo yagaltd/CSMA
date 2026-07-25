@@ -80,11 +80,18 @@
   color: var(--primary);
 }
 
-/* Mobile: stack tools under nav cluster */
+/* Mobile: stack tools under nav cluster; enlarge touch targets */
 @media (max-width: 480px) {
   .noir-dock {
     flex-direction: column;
     gap: var(--space-xs);
+    bottom: var(--space-md);
+    padding: var(--space-xs) var(--space-sm);
+    max-width: calc(100vw - var(--space-xl));
+  }
+  .noir-dock .dock-btn {
+    width: var(--layout-touch-target);
+    height: var(--layout-touch-target);
   }
   .noir-dock .dock-tools {
     padding-inline-start: 0;
@@ -92,6 +99,20 @@
     border-inline-start: none;
     border-top: 1px solid var(--border);
     padding-top: var(--space-xs);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Touch devices (coarse pointer): drop hover-only affordances */
+@media (pointer: coarse) {
+  .noir-dock .dock-btn:hover {
+    background: transparent;
+    color: var(--foreground-muted);
+  }
+  .noir-dock .dock-btn:focus-visible {
+    background: var(--accent);
+    color: var(--accent-foreground);
   }
 }
 

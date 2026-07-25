@@ -6,10 +6,23 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 0 var(--space-xs);
+  padding: var(--space-2xs, 2px) var(--space-xs);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-body);
   color: var(--foreground);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
+  border-radius: var(--radius-sm, 4px);
+  transition:
+    background var(--duration-fast, 120ms) ease,
+    border-color var(--duration-fast, 120ms) ease;
+}
+
+@media (hover: hover) {
+  .leaf-node:hover {
+    background: var(--surface);
+    border-color: var(--primary, var(--accent));
+  }
 }
 
 .leaf-node__status {

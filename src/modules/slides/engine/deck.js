@@ -186,6 +186,45 @@ export function mountDeck(container, service, eventBus, opts = {}) {
     win.addEventListener('keydown', onKey);
     cleanups.push(() => win.removeEventListener('keydown', onKey));
 
+    // ─── Touch swipe (mobile) ─────────────────────────────────────
+    // Mirrors ArrowLeft / ArrowRight. Horizontal swipe → slide nav.
+    // Vertical scroll and small drags are ignored. Pointer events cover
+    // mouse + touch + pen uniformly.
+    const SWIPE_THRESHOLD_PX = 50;
+    const SWIPE_MAX_VERTICAL_PX = 75;
+    let pointerStartX = null;
+    let pointerStartY = null;
+    let pointerActive = false;
+
+    const onPointerDown = (e) => {
+        // Ignore touches that begin on an interactive control (dock, rail,
+        // grid, presenter inputs, annotator SVG).
+        if (e.target.closest?.('button, a, input, textarea, select, [contenteditable="true"], .noir-dock, .slide-rail, .slide-grid, .annotator-overlay')) return;
+        pointerStartX = e.clientX;
+        pointerStartY = e.clientY;
+        pointerActive = true;
+    };
+    const onPointerUp = (e) => {
+        if (!pointerActive) return;
+        pointerActive = false;
+        const dx = e.clientX - pointerStartX;
+        const dy = e.clientY - pointerStartY;
+        if (Math.abs(dx) < SWIPE_THRESHOLD_PX) return;          // too short
+        if (Math.abs(dy) > SWIPE_MAX_VERTICAL_PX) return;        // mostly vertical scroll
+        const intent = dx < 0 ? 'INTENT_SLIDE_NEXT' : 'INTENT_SLIDE_PREV';
+        eventBus.publish(intent, { timestamp: Date.now(), source: 'swipe' });
+    };
+    const onPointerCancel = () => { pointerActive = false; };
+
+    stage.addEventListener('pointerdown', onPointerDown);
+    win.addEventListener('pointerup', onPointerUp);
+    win.addEventListener('pointercancel', onPointerCancel);
+    cleanups.push(() => {
+        stage.removeEventListener('pointerdown', onPointerDown);
+        win.removeEventListener('pointerup', onPointerUp);
+        win.removeEventListener('pointercancel', onPointerCancel);
+    });
+
     // ─── Initial render ──────────────────────────────────────────
 
     renderCurrentSlide(false);

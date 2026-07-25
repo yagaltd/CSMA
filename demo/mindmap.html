@@ -71,6 +71,7 @@
         const isRoot = n.kind === 'root';
         el.className = isRoot ? 'branch-node' : (n.kind === 'leaf' ? 'leaf-node' : 'branch-node');
         el.dataset.status = n.status;
+        el.dataset.kind = n.kind;
         el.dataset.nodeId = n.id;
         el.style.left = `${n.x}px`;
         el.style.top = `${n.y}px`;
@@ -82,6 +83,7 @@
         const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         p.setAttribute('class', 'connector-line');
         p.setAttribute('d', d);
+        p.setAttribute('data-link-kind', link.kind);
         const child = nodes.find((x) => x.id === link.to);
         if (child) p.setAttribute('data-status', child.status);
         connectorLayer.appendChild(p);
