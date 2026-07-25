@@ -15,7 +15,7 @@
  */
 
 import { el } from '../layouts/_shared.js';
-import { renderSlide } from '../layouts/index.js';
+import { buildSlide } from '../layouts/index.js';
 import { animateSlideTransition } from './transitions.js';
 import { initAnnotator } from './annotator.js';
 import { initDock } from '../chrome/dock.js';
@@ -76,6 +76,7 @@ export function mountDeck(container, service, eventBus, opts = {}) {
 
     const cleanups = [];
     let currentSlideEl = null;
+    let currentSlideCleanup = () => {};
     let countUpCleanup = () => {};
     let buildBindings = [];
 
@@ -83,14 +84,24 @@ export function mountDeck(container, service, eventBus, opts = {}) {
 
     const renderCurrentSlide = (animated = false, direction = 'next') => {
         const config = service.getCurrentSlide();
-        const newEl = renderSlide(config);
+        // Phase 2.0: layouts may return a spec tree (mounted via the aiui
+        // composer) OR a DOM Node (back-compat for the not-yet-converted
+        // layouts). buildSlide() resolves both and returns a teardown fn that
+        // unmounts any embedded aiui surfaces. The back-compat DOM branch is
+        // TEMPORARY — it is removed once all 24 layouts emit spec trees.
+        const built = buildSlide(config, { composer: opts.composer });
+        const newEl = built.element;
+        const newCleanup = built.cleanup;
         if (!newEl) return;
 
         const attach = () => {
+            // Tear down the previous slide's mounted surfaces before swapping.
+            currentSlideCleanup();
             if (currentSlideEl && currentSlideEl.parentNode) {
                 currentSlideEl.parentNode.removeChild(currentSlideEl);
             }
             currentSlideEl = newEl;
+            currentSlideCleanup = newCleanup;
             stage.appendChild(newEl);
             postMount(newEl, service.index);
         };
@@ -256,6 +267,8 @@ export function mountDeck(container, service, eventBus, opts = {}) {
         for (const unbind of buildBindings) unbind && unbind();
         buildBindings = [];
         countUpCleanup();
+        currentSlideCleanup();
+        currentSlideCleanup = () => {};
         cleanups.forEach((fn) => fn && fn());
         cleanups.length = 0;
         if (currentSlideEl && currentSlideEl.parentNode) {

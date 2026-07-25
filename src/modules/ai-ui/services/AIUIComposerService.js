@@ -268,6 +268,190 @@ export class AIUIComposerService {
     return this.renderNode(normalized, { documentRef, depth: 0, parent: null });
   }
 
+  // ────────────────────────────────────────────────────────────────
+  // mountTree — mount a mixed spec tree (raw HTML nodes + catalog
+  // component references) into a target. This is the Layer-1 entry point
+  // used by Layer-2 slide layouts (and, in Phase 3, archetypes) so that any
+  // aiui surface (comments, video, charts, mindmap) can be embedded inside
+  // any layout alongside raw HTML structure.
+  //
+  // Spec node shapes (a tree may mix all of them):
+  //   Raw element : { tag, attrs?, text?, children?: SpecNode[] }
+  //                 attrs may include `class` and any `data-*` key.
+  //   Component   : { component, props?, slot?: { [name]: SpecNode[] } }
+  //                 resolved via the same catalog path as applyOp 'mount'.
+  //   Text node   : { text }  OR a bare string
+  //   DOM passthrough: an actual Node (back-compat for unconverted
+  //                 sub-layouts embedded inside a spec tree)
+  //   null/false  : skipped
+  //
+  // Security: tags validated against SAFE_TAGS, attributes against
+  // SAFE_ATTRIBUTES ∪ `data-*` (inert), event-handler attributes (`on*`)
+  // rejected, URL attributes (href/src) URL-validated, text length capped,
+  // depth capped — same primitives as the catalog applyOp path.
+  //
+  // @returns {{ root: HTMLElement|null, cleanup: () => void }}
+  //          `cleanup` unmounts the root and invokes every nested
+  //          module-surface cleanup collected during the walk.
+  // ────────────────────────────────────────────────────────────────
+  mountTree(tree, target = null, { documentRef = globalThis.document } = {}) {
+    if (!documentRef?.createElement || !documentRef?.createTextNode) {
+      throw new Error('mountTree requires a DOM document');
+    }
+    const cleanups = [];
+    const root = this._mountSpecNode(tree, { documentRef, depth: 0, cleanups });
+
+    if (target && root) {
+      target.append(root);
+    }
+
+    const cleanup = () => {
+      // Run module-surface teardowns first, then detach the root.
+      for (const fn of cleanups.splice(0)) {
+        try { fn(); } catch { /* surface cleanup is best-effort */ }
+      }
+      if (root && root.parentNode) {
+        root.parentNode.removeChild(root);
+      }
+    };
+
+    return { root, cleanup };
+  }
+
+  _mountSpecNode(node, ctx) {
+    if (node === null || node === undefined || node === false) return null;
+
+    if (typeof node === 'string') {
+      return ctx.documentRef.createTextNode(node);
+    }
+
+    // DOM Node passthrough — lets an unconverted sub-layout (which still
+    // returns DOM) be embedded inside a spec tree during the migration.
+    if (typeof Node !== 'undefined' && node instanceof Node) {
+      return node;
+    }
+
+    if (Array.isArray(node)) {
+      const fragment = ctx.documentRef.createDocumentFragment();
+      for (const child of node) {
+        const mounted = this._mountSpecNode(child, { ...ctx, depth: ctx.depth + 1 });
+        if (mounted) fragment.append(mounted);
+      }
+      return fragment;
+    }
+
+    if (!isPlainObject(node)) {
+      throw new Error('mountTree node must be an object, string, Node, or null');
+    }
+
+    if (typeof node.component === 'string') {
+      return this._mountComponentNode(node, ctx);
+    }
+
+    if (typeof node.tag === 'string') {
+      return this._mountElementNode(node, ctx);
+    }
+
+    if (typeof node.text === 'string') {
+      return ctx.documentRef.createTextNode(node.text);
+    }
+
+    throw new Error('mountTree node must have a "tag", "component", or "text" property');
+  }
+
+  _mountElementNode(node, ctx) {
+    if (ctx.depth > MAX_COMPOSITION_DEPTH) {
+      throw new Error('mountTree composition is too deeply nested');
+    }
+    const { tag } = node;
+    if (!SAFE_TAGS.has(tag)) {
+      throw new Error(`Unsafe tag "${tag}" in mountTree`);
+    }
+
+    const element = ctx.documentRef.createElement(tag);
+    const attrs = isPlainObject(node.attrs) ? node.attrs : {};
+
+    for (const [name, value] of Object.entries(attrs)) {
+      if (value === undefined || value === null || value === false) continue;
+      if (typeof value !== 'string' && typeof value !== 'number' && typeof value !== 'boolean') {
+        throw new Error(`Attribute "${name}" must resolve to a string`);
+      }
+      if (/^on/i.test(name)) {
+        throw new Error(`Unsafe attribute "${name}" in mountTree`);
+      }
+      // data-* attributes are inert (never executed) and are required for
+      // layout state, so they are permitted alongside the SAFE_ATTRIBUTES
+      // whitelist. This matches the existing el() helper's dataset freedom.
+      const isDataAttr = name.startsWith('data-');
+      if (!SAFE_ATTRIBUTES.has(name) && !isDataAttr) {
+        throw new Error(`Unsafe attribute "${name}" in mountTree`);
+      }
+      const strVal = String(value);
+      if (strVal.length > MAX_TEXT_LENGTH) {
+        throw new Error(`Attribute "${name}" exceeds ${MAX_TEXT_LENGTH} characters`);
+      }
+      if (URL_ATTRIBUTES.has(name) && !this.isSafeUrl(strVal)) {
+        throw new Error(`Unsafe URL rejected for attribute "${name}"`);
+      }
+      element.setAttribute(name, strVal);
+    }
+
+    if (typeof node.text === 'string') {
+      element.textContent = node.text;
+    }
+
+    if (Array.isArray(node.children)) {
+      for (const child of node.children) {
+        const childEl = this._mountSpecNode(child, { ...ctx, depth: ctx.depth + 1 });
+        if (childEl) element.append(childEl);
+      }
+    }
+
+    return element;
+  }
+
+  _mountComponentNode(node, ctx) {
+    if (ctx.depth > MAX_COMPOSITION_DEPTH) {
+      throw new Error('mountTree composition is too deeply nested');
+    }
+    const spec = { component: node.component };
+    if (isPlainObject(node.props)) spec.props = node.props;
+    // Render the catalog shell via the SAME validated path as applyOp 'mount'
+    // (normalizeSpec → renderNode). No slots here; slot children are mounted
+    // below so they may be raw HTML spec nodes, not just catalog components.
+    const normalized = this.normalizeSpec(spec);
+    const rendered = this.renderNode(normalized, {
+      documentRef: ctx.documentRef,
+      depth: ctx.depth,
+      parent: null
+    });
+
+    // Collect module-surface teardown so mountTree's cleanup can invoke it.
+    if (typeof rendered.__aiuiSurfaceCleanup === 'function') {
+      ctx.cleanups.push(rendered.__aiuiSurfaceCleanup);
+      delete rendered.__aiuiSurfaceCleanup;
+    }
+
+    if (isPlainObject(node.slot)) {
+      const definition = this.catalog.get(node.component);
+      const slotDefinitions = definition?.slots || {};
+      for (const [slotName, children] of Object.entries(node.slot)) {
+        if (!Array.isArray(children)) continue;
+        const selector = slotDefinitions[slotName]?.selector;
+        const slotTarget = selector && selector !== ':root'
+          ? rendered.querySelector(selector)
+          : rendered;
+        if (!slotTarget) continue;
+        for (const child of children) {
+          const childEl = this._mountSpecNode(child, { ...ctx, depth: ctx.depth + 1 });
+          if (childEl) slotTarget.append(childEl);
+        }
+      }
+    }
+
+    return rendered;
+  }
+
   normalizeSpec(spec, { depth = 0, parent = null, slotName = null } = {}) {
     if (depth > MAX_COMPOSITION_DEPTH) {
       throw new Error('AI UI composition is too deeply nested');

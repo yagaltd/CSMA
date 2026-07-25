@@ -1,4 +1,4 @@
-import { el, createSlideShell, createKicker, createHeading, createBody, container } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specBody, specContainer } from './_shared.js';
 import { createCodeWindowSlide } from './code-window.js';
 import { createBrowserFrameSlide } from './browser-frame.js';
 
@@ -8,47 +8,54 @@ import { createBrowserFrameSlide } from './browser-frame.js';
  * Config: `{ kicker?, title, body?, media, flip?, center=false }`
  * `media` is an embedded config: `{ type, ... }` where type can be
  * 'image', 'code-window', 'browser-frame', 'panel', 'globe', 'chart'.
+ *
+ * Emits a SPEC TREE (Phase 2.0). `renderMedia` may return a DOM Node for the
+ * not-yet-converted 'code-window' / 'browser-frame' types — `mountTree`
+ * accepts DOM Node passthrough inside a spec tree, so the migration is
+ * incremental.
  */
 export function createSplitSlide(config = {}) {
-    const slide = createSlideShell('split', { center: false });
-    if (config.flip) slide.dataset.flip = 'true';
+    const dataset = { layout: 'split' };
+    if (config.flip) dataset.flip = 'true';
 
-    const text = el('div', { className: 'split-text', children: [
-        createKicker(config.kicker),
-        createHeading(config.title),
-        createBody(config.body)
-    ].filter(Boolean) });
+    const text = spec('div', { className: 'split-text', children: [
+        specKicker(config.kicker),
+        specHeading(config.title),
+        specBody(config.body)
+    ] });
 
-    const media = el('div', { className: 'split-media' });
     const mediaEl = renderMedia(config.media);
-    if (mediaEl) media.appendChild(mediaEl);
+    const media = spec('div', { className: 'split-media', children: mediaEl ? [mediaEl] : [] });
 
     const inner = config.flip
-        ? container([media, text])
-        : container([text, media]);
-    slide.appendChild(inner);
-    return slide;
+        ? specContainer([media, text])
+        : specContainer([text, media]);
+
+    return spec('div', { className: 'slide', dataset, children: [inner] });
 }
 
 /**
  * Render an embedded media panel based on its `type` field.
  * Exported for reuse by other layouts (spotlight, bento tile media).
+ *
+ * Returns either a spec node (image/panel/globe/chart) or a DOM Node
+ * (code-window/browser-frame, still DOM-based until Phase 2.1).
  */
 export function renderMedia(mediaConfig) {
     if (!mediaConfig || typeof mediaConfig !== 'object') return null;
     switch (mediaConfig.type) {
         case 'image':
-            return el('div', { className: 'media-image', dataset: { src: mediaConfig.src || '' } });
+            return spec('div', { className: 'media-image', dataset: { src: mediaConfig.src || '' } });
         case 'code-window':
             return createCodeWindowSlide(mediaConfig);
         case 'browser-frame':
             return createBrowserFrameSlide(mediaConfig);
         case 'panel':
-            return el('div', { className: 'media-panel', dataset: { color: mediaConfig.color || 'primary' } });
+            return spec('div', { className: 'media-panel', dataset: { color: mediaConfig.color || 'primary' } });
         case 'globe':
-            return el('div', { className: 'media-globe', dataset: { layout: 'globe' } });
+            return spec('div', { className: 'media-globe', dataset: { layout: 'globe' } });
         case 'chart':
-            return el('div', { className: 'media-chart', dataset: { chartType: mediaConfig.chartType || 'bar' } });
+            return spec('div', { className: 'media-chart', dataset: { chartType: mediaConfig.chartType || 'bar' } });
         default:
             return null;
     }

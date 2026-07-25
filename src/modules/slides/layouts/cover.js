@@ -1,26 +1,28 @@
-import { el, createSlideShell, createKicker, createTitleWithAccent, createFoot, container } from './_shared.js';
+import { spec, specShell, specKicker, specTitleWithAccent, specFoot } from './_shared.js';
 
 /**
  * cover — opening slide. Always the first slide. Full-viewport with optional
  * background image under a scrim. Center-aligned by default.
  *
  * Config: `{ kicker, title, subtitle, foot?, image?, center=true }`
+ *
+ * Emits a SPEC TREE (Phase 2.0). deck.js mounts it via the aiui composer's
+ * `mountTree()`. To embed any aiui surface inside this layout, drop a
+ * `component('comments-thread', { threadId })` (or similar) node anywhere in
+ * the tree.
  */
 export function createCoverSlide(config = {}) {
-    const slide = createSlideShell('cover', { center: true });
+    const children = [];
     if (config.image) {
-        const bg = el('div', { className: 'cover-bg' });
-        bg.dataset.image = 'present';
         // Actual image rendered via CSS background-image (set by data-attr →
         // CSS rule, never as inline style). Caller may set CSS in slides.css.
-        slide.appendChild(bg);
+        children.push(spec('div', { className: 'cover-bg', dataset: { image: 'present' } }));
     }
-    const inner = el('div', { className: 'cover-inner', children: [
-        createKicker(config.kicker),
-        createTitleWithAccent(config.title, { level: 'h1', className: 'display' }),
-        config.subtitle ? el('p', { className: 'subhead', text: String(config.subtitle) }) : null,
-        createFoot(config.foot)
-    ].filter(Boolean) });
-    slide.appendChild(inner);
-    return slide;
+    children.push(spec('div', { className: 'cover-inner', children: [
+        specKicker(config.kicker),
+        specTitleWithAccent(config.title, { level: 'h1', className: 'display' }),
+        config.subtitle ? spec('p', { className: 'subhead', text: String(config.subtitle) }) : null,
+        specFoot(config.foot)
+    ] }));
+    return specShell('cover', { center: true }, children);
 }

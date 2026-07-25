@@ -1,4 +1,4 @@
-import { el, createSlideShell, createKicker, createFoot, container } from './_shared.js';
+import { spec, specShell, specKicker, specFoot } from './_shared.js';
 import { mountCountUp } from '../ui/count-up.js';
 
 /**
@@ -6,22 +6,23 @@ import { mountCountUp } from '../ui/count-up.js';
  * At most one per deck — two giant numbers cancel each other (per §12.5).
  *
  * Config: `{ kicker?, value: figureSpec, caption, foot?, center=true }`
+ *
+ * Emits a SPEC TREE (Phase 2.0).
  */
 export function createBigNumberSlide(config = {}) {
-    const slide = createSlideShell('big-number', { center: true });
+    const valueEl = spec('p', {
+        className: 'big-number-value',
+        dataset: { figure: JSON.stringify(config.value || {}) }
+    });
 
-    const valueEl = el('p', { className: 'big-number-value' });
-    valueEl.dataset.figure = JSON.stringify(config.value || {});
-
-    const inner = el('div', { className: 'big-number-inner', children: [
-        createKicker(config.kicker),
+    const inner = spec('div', { className: 'big-number-inner', children: [
+        specKicker(config.kicker),
         valueEl,
-        config.caption ? el('p', { className: 'lead', text: String(config.caption) }) : null,
-        createFoot(config.foot)
-    ].filter(Boolean) });
+        config.caption ? spec('p', { className: 'lead', text: String(config.caption) }) : null,
+        specFoot(config.foot)
+    ] });
 
-    slide.appendChild(inner);
-    return slide;
+    return specShell('big-number', { center: true }, [inner]);
 }
 
 export function wireBigNumberCountUp(slideEl, opts = {}) {
