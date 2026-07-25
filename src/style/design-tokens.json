@@ -397,19 +397,39 @@
       "easing": {
         "$type": "cubicBezier",
         "outQuart": {
-          "$value": [0.25, 1, 0.5, 1],
+          "$value": [
+            0.25,
+            1,
+            0.5,
+            1
+          ],
           "$type": "cubicBezier"
         },
         "outQuint": {
-          "$value": [0.22, 1, 0.36, 1],
+          "$value": [
+            0.22,
+            1,
+            0.36,
+            1
+          ],
           "$type": "cubicBezier"
         },
         "outExpo": {
-          "$value": [0.16, 1, 0.3, 1],
+          "$value": [
+            0.16,
+            1,
+            0.3,
+            1
+          ],
           "$type": "cubicBezier"
         },
         "inOutSoft": {
-          "$value": [0.45, 0, 0.2, 1],
+          "$value": [
+            0.45,
+            0,
+            0.2,
+            1
+          ],
           "$type": "cubicBezier"
         }
       }
@@ -779,6 +799,84 @@
         },
         "$type": "dimension"
       }
+    },
+    "mindmap": {
+      "nodeBg": {
+        "$value": "var(--surface)",
+        "$type": "color"
+      },
+      "nodeBorder": {
+        "$value": "var(--border)",
+        "$type": "color"
+      },
+      "nodeRadius": {
+        "$value": "{primitives.radius.md}",
+        "$type": "dimension"
+      },
+      "nodePaddingX": {
+        "$value": "{primitives.spacing.md}",
+        "$type": "dimension"
+      },
+      "nodePaddingY": {
+        "$value": "{primitives.spacing.sm}",
+        "$type": "dimension"
+      },
+      "nodeFontSize": {
+        "$value": "{primitives.typography.fontSize.base}",
+        "$type": "dimension"
+      },
+      "rootBg": {
+        "$value": "var(--primary)",
+        "$type": "color"
+      },
+      "rootColor": {
+        "$value": "var(--primary-foreground)",
+        "$type": "color"
+      },
+      "rootFontSize": {
+        "$value": "{primitives.typography.fontSize.lg}",
+        "$type": "dimension"
+      },
+      "connectorStroke": {
+        "$value": "var(--border)",
+        "$type": "color"
+      },
+      "connectorWidth": {
+        "$value": "2",
+        "$type": "dimension"
+      },
+      "connectorDone": {
+        "$value": "var(--success)",
+        "$type": "color"
+      },
+      "selectionOutline": {
+        "$value": "var(--primary)",
+        "$type": "color"
+      },
+      "selectionWidth": {
+        "$value": "2px",
+        "$type": "dimension"
+      },
+      "expanderSize": {
+        "$value": "1.25rem",
+        "$type": "dimension"
+      },
+      "expanderColor": {
+        "$value": "var(--foreground-muted)",
+        "$type": "color"
+      },
+      "ghostOpacity": {
+        "$value": "0.5",
+        "$type": "number"
+      },
+      "insertPreviewColor": {
+        "$value": "var(--primary)",
+        "$type": "color"
+      },
+      "canvasBg": {
+        "$value": "var(--background)",
+        "$type": "color"
+      }
     }
   },
   "themes": {
@@ -787,7 +885,11 @@
         "background": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.975, 0.004, 248.0]
+            "components": [
+              0.975,
+              0.004,
+              248
+            ]
           },
           "$description": "Page background",
           "$type": "color"
@@ -795,14 +897,22 @@
         "backgroundMuted": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.954, 0.008, 248.0]
+            "components": [
+              0.954,
+              0.008,
+              248
+            ]
           },
           "$type": "color"
         },
         "surface": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [1.0, 0.001, 248.0]
+            "components": [
+              1,
+              0.001,
+              248
+            ]
           },
           "$description": "Card/panel background",
           "$type": "color"
@@ -810,133 +920,209 @@
         "surfaceMuted": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.974, 0.007, 248.0]
+            "components": [
+              0.974,
+              0.007,
+              248
+            ]
           },
           "$type": "color"
         },
         "foreground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.215, 0.018, 252.0]
+            "components": [
+              0.215,
+              0.018,
+              252
+            ]
           },
           "$type": "color"
         },
         "foregroundMuted": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.5, 0.015, 248.0]
+            "components": [
+              0.5,
+              0.015,
+              248
+            ]
           },
           "$type": "color"
         },
         "border": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.88, 0.008, 248.0]
+            "components": [
+              0.88,
+              0.008,
+              248
+            ]
           },
           "$type": "color"
         },
         "primary": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.29, 0.04, 260.0]
+            "components": [
+              0.29,
+              0.04,
+              260
+            ]
           },
           "$type": "color"
         },
         "primaryForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.98, 0.005, 248.0]
+            "components": [
+              0.98,
+              0.005,
+              248
+            ]
           },
           "$type": "color"
         },
         "secondary": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.969, 0.007, 248.0]
+            "components": [
+              0.969,
+              0.007,
+              248
+            ]
           },
           "$type": "color"
         },
         "secondaryForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.29, 0.04, 260.0]
+            "components": [
+              0.29,
+              0.04,
+              260
+            ]
           },
           "$type": "color"
         },
         "accent": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.961, 0.01, 235.0]
+            "components": [
+              0.961,
+              0.01,
+              235
+            ]
           },
           "$type": "color"
         },
         "accentForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.29, 0.04, 260.0]
+            "components": [
+              0.29,
+              0.04,
+              260
+            ]
           },
           "$type": "color"
         },
         "destructive": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.58, 0.17, 25.0]
+            "components": [
+              0.58,
+              0.17,
+              25
+            ]
           },
           "$type": "color"
         },
         "destructiveForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.98, 0.005, 248.0]
+            "components": [
+              0.98,
+              0.005,
+              248
+            ]
           },
           "$type": "color"
         },
         "warning": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.75, 0.16, 75.0]
+            "components": [
+              0.75,
+              0.16,
+              75
+            ]
           },
           "$type": "color"
         },
         "warningForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.28, 0.04, 75.0]
+            "components": [
+              0.28,
+              0.04,
+              75
+            ]
           },
           "$type": "color"
         },
         "success": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.55, 0.17, 155.0]
+            "components": [
+              0.55,
+              0.17,
+              155
+            ]
           },
           "$type": "color"
         },
         "successForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.25, 0.04, 155.0]
+            "components": [
+              0.25,
+              0.04,
+              155
+            ]
           },
           "$type": "color"
         },
         "info": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.5, 0.16, 260.0]
+            "components": [
+              0.5,
+              0.16,
+              260
+            ]
           },
           "$type": "color"
         },
         "infoForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.98, 0.005, 248.0]
+            "components": [
+              0.98,
+              0.005,
+              248
+            ]
           },
           "$type": "color"
         },
         "overlay": {
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.058824, 0.090196, 0.164706],
+            "components": [
+              0.058824,
+              0.090196,
+              0.164706
+            ],
             "alpha": 0.55
           },
           "$description": "Backdrop behind modals and overlays",
@@ -953,21 +1139,33 @@
         "background": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.182, 0.01, 255.0]
+            "components": [
+              0.182,
+              0.01,
+              255
+            ]
           },
           "$type": "color"
         },
         "backgroundMuted": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.242, 0.012, 255.0]
+            "components": [
+              0.242,
+              0.012,
+              255
+            ]
           },
           "$type": "color"
         },
         "surface": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.23, 0.01, 255.0]
+            "components": [
+              0.23,
+              0.01,
+              255
+            ]
           },
           "$description": "Elevated above background",
           "$type": "color"
@@ -975,35 +1173,55 @@
         "surfaceMuted": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.275, 0.012, 255.0]
+            "components": [
+              0.275,
+              0.012,
+              255
+            ]
           },
           "$type": "color"
         },
         "foreground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.968, 0.004, 255.0]
+            "components": [
+              0.968,
+              0.004,
+              255
+            ]
           },
           "$type": "color"
         },
         "foregroundMuted": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.74, 0.012, 252.0]
+            "components": [
+              0.74,
+              0.012,
+              252
+            ]
           },
           "$type": "color"
         },
         "border": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.32, 0.012, 255.0]
+            "components": [
+              0.32,
+              0.012,
+              255
+            ]
           },
           "$type": "color"
         },
         "primary": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.93, 0.004, 255.0]
+            "components": [
+              0.93,
+              0.004,
+              255
+            ]
           },
           "$description": "Light blue in dark mode",
           "$type": "color"
@@ -1011,98 +1229,154 @@
         "primaryForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.15, 0.02, 255.0]
+            "components": [
+              0.15,
+              0.02,
+              255
+            ]
           },
           "$type": "color"
         },
         "secondary": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.255, 0.012, 255.0]
+            "components": [
+              0.255,
+              0.012,
+              255
+            ]
           },
           "$type": "color"
         },
         "secondaryForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.93, 0.004, 255.0]
+            "components": [
+              0.93,
+              0.004,
+              255
+            ]
           },
           "$type": "color"
         },
         "accent": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.285, 0.015, 236.0]
+            "components": [
+              0.285,
+              0.015,
+              236
+            ]
           },
           "$type": "color"
         },
         "accentForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.93, 0.004, 255.0]
+            "components": [
+              0.93,
+              0.004,
+              255
+            ]
           },
           "$type": "color"
         },
         "destructive": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.62, 0.17, 25.0]
+            "components": [
+              0.62,
+              0.17,
+              25
+            ]
           },
           "$type": "color"
         },
         "destructiveForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.98, 0.005, 248.0]
+            "components": [
+              0.98,
+              0.005,
+              248
+            ]
           },
           "$type": "color"
         },
         "warning": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.78, 0.14, 75.0]
+            "components": [
+              0.78,
+              0.14,
+              75
+            ]
           },
           "$type": "color"
         },
         "warningForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.28, 0.04, 75.0]
+            "components": [
+              0.28,
+              0.04,
+              75
+            ]
           },
           "$type": "color"
         },
         "success": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.6, 0.15, 155.0]
+            "components": [
+              0.6,
+              0.15,
+              155
+            ]
           },
           "$type": "color"
         },
         "successForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.25, 0.04, 155.0]
+            "components": [
+              0.25,
+              0.04,
+              155
+            ]
           },
           "$type": "color"
         },
         "info": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.58, 0.14, 260.0]
+            "components": [
+              0.58,
+              0.14,
+              260
+            ]
           },
           "$type": "color"
         },
         "infoForeground": {
           "$value": {
             "colorSpace": "oklch",
-            "components": [0.98, 0.005, 248.0]
+            "components": [
+              0.98,
+              0.005,
+              248
+            ]
           },
           "$type": "color"
         },
         "overlay": {
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.007843, 0.023529, 0.090196],
+            "components": [
+              0.007843,
+              0.023529,
+              0.090196
+            ],
             "alpha": 0.75
           },
           "$description": "Backdrop behind modals and carousels",
@@ -1126,7 +1400,11 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.141176, 0.156863, 0.231373]
+            "components": [
+              0.141176,
+              0.156863,
+              0.231373
+            ]
           },
           "$description": "Storm base background"
         },
@@ -1134,7 +1412,11 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.121569, 0.137255, 0.207843]
+            "components": [
+              0.121569,
+              0.137255,
+              0.207843
+            ]
           },
           "$description": "Sidebar, panels"
         },
@@ -1142,7 +1424,11 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.117647, 0.12549, 0.188235]
+            "components": [
+              0.117647,
+              0.12549,
+              0.188235
+            ]
           },
           "$description": "Slightly elevated above background"
         },
@@ -1150,7 +1436,11 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.160784, 0.180392, 0.258824]
+            "components": [
+              0.160784,
+              0.180392,
+              0.258824
+            ]
           },
           "$description": "Hover and selection backgrounds"
         },
@@ -1158,7 +1448,11 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.752941, 0.792157, 0.960784]
+            "components": [
+              0.752941,
+              0.792157,
+              0.960784
+            ]
           },
           "$description": "Primary text"
         },
@@ -1166,7 +1460,11 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.501961, 0.537255, 0.701961]
+            "components": [
+              0.501961,
+              0.537255,
+              0.701961
+            ]
           },
           "$description": "Secondary/muted text"
         },
@@ -1174,7 +1472,11 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.160784, 0.180392, 0.258824]
+            "components": [
+              0.160784,
+              0.180392,
+              0.258824
+            ]
           },
           "$description": "Borders and dividers"
         },
@@ -1182,7 +1484,11 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.478431, 0.635294, 0.968627]
+            "components": [
+              0.478431,
+              0.635294,
+              0.968627
+            ]
           },
           "$description": "Storm iconic blue"
         },
@@ -1190,28 +1496,44 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.121569, 0.137255, 0.207843]
+            "components": [
+              0.121569,
+              0.137255,
+              0.207843
+            ]
           }
         },
         "secondary": {
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.160784, 0.180392, 0.258824]
+            "components": [
+              0.160784,
+              0.180392,
+              0.258824
+            ]
           }
         },
         "secondaryForeground": {
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.662745, 0.694118, 0.839216]
+            "components": [
+              0.662745,
+              0.694118,
+              0.839216
+            ]
           }
         },
         "accent": {
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.176471, 0.247059, 0.462745]
+            "components": [
+              0.176471,
+              0.247059,
+              0.462745
+            ]
           },
           "$description": "Blue-tinted accent surface"
         },
@@ -1219,14 +1541,22 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.478431, 0.635294, 0.968627]
+            "components": [
+              0.478431,
+              0.635294,
+              0.968627
+            ]
           }
         },
         "destructive": {
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.968627, 0.462745, 0.556863]
+            "components": [
+              0.968627,
+              0.462745,
+              0.556863
+            ]
           },
           "$description": "Error/danger red"
         },
@@ -1234,14 +1564,22 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.121569, 0.137255, 0.207843]
+            "components": [
+              0.121569,
+              0.137255,
+              0.207843
+            ]
           }
         },
         "warning": {
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.878431, 0.686275, 0.407843]
+            "components": [
+              0.878431,
+              0.686275,
+              0.407843
+            ]
           },
           "$description": "Warning yellow"
         },
@@ -1249,14 +1587,22 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.121569, 0.137255, 0.207843]
+            "components": [
+              0.121569,
+              0.137255,
+              0.207843
+            ]
           }
         },
         "success": {
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.45098, 0.854902, 0.792157]
+            "components": [
+              0.45098,
+              0.854902,
+              0.792157
+            ]
           },
           "$description": "Success teal"
         },
@@ -1264,14 +1610,22 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.121569, 0.137255, 0.207843]
+            "components": [
+              0.121569,
+              0.137255,
+              0.207843
+            ]
           }
         },
         "info": {
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.490196, 0.811765, 1.0]
+            "components": [
+              0.490196,
+              0.811765,
+              1
+            ]
           },
           "$description": "Info cyan"
         },
@@ -1279,14 +1633,22 @@
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.121569, 0.137255, 0.207843]
+            "components": [
+              0.121569,
+              0.137255,
+              0.207843
+            ]
           }
         },
         "overlay": {
           "$type": "color",
           "$value": {
             "colorSpace": "srgb",
-            "components": [0.05098, 0.066667, 0.090196],
+            "components": [
+              0.05098,
+              0.066667,
+              0.090196
+            ],
             "alpha": 0.75
           },
           "$description": "Backdrop behind modals"
@@ -1294,32 +1656,255 @@
       }
     },
     "contrast": {
-      "$extensions": { "com.csma.colorScheme": "dark" },
+      "$extensions": {
+        "com.csma.colorScheme": "dark"
+      },
       "$description": "High contrast accessibility theme",
       "colors": {
         "$type": "color",
-        "background":          { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.05, 0.01, 0] } },
-        "backgroundMuted":     { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.08, 0.008, 0] } },
-        "surface":             { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.07, 0.005, 0] } },
-        "surfaceMuted":        { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.11, 0.008, 0] } },
-        "foreground":          { "$type": "color", "$value": { "colorSpace": "oklch", "components": [1.0, 0, 0] } },
-        "foregroundMuted":     { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.94, 0.004, 0] } },
-        "border":              { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.3, 0.01, 0] } },
-        "primary":             { "$type": "color", "$value": { "colorSpace": "oklch", "components": [1.0, 0, 0] } },
-        "primaryForeground":   { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.05, 0.01, 0] } },
-        "secondary":           { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.12, 0.008, 0] } },
-        "secondaryForeground": { "$type": "color", "$value": { "colorSpace": "oklch", "components": [1.0, 0, 0] } },
-        "accent":              { "$type": "color", "$value": { "colorSpace": "oklch", "components": [1.0, 0.16, 75] } },
-        "accentForeground":    { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.05, 0.01, 0] } },
-        "destructive":         { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.7, 0.2, 25] } },
-        "destructiveForeground": { "$type": "color", "$value": { "colorSpace": "oklch", "components": [1.0, 0, 0] } },
-        "warning":             { "$type": "color", "$value": { "colorSpace": "oklch", "components": [1.0, 0.16, 75] } },
-        "warningForeground":   { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.05, 0.01, 0] } },
-        "success":             { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.9, 0.2, 155] } },
-        "successForeground":   { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.05, 0.01, 0] } },
-        "info":                { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.9, 0.16, 260] } },
-        "infoForeground":      { "$type": "color", "$value": { "colorSpace": "oklch", "components": [0.05, 0.01, 0] } },
-        "overlay":             { "$type": "color", "$value": { "colorSpace": "srgb", "components": [0, 0, 0], "alpha": 0.75 } }
+        "background": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.05,
+              0.01,
+              0
+            ]
+          }
+        },
+        "backgroundMuted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.08,
+              0.008,
+              0
+            ]
+          }
+        },
+        "surface": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.07,
+              0.005,
+              0
+            ]
+          }
+        },
+        "surfaceMuted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.11,
+              0.008,
+              0
+            ]
+          }
+        },
+        "foreground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0,
+              0
+            ]
+          }
+        },
+        "foregroundMuted": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.94,
+              0.004,
+              0
+            ]
+          }
+        },
+        "border": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.3,
+              0.01,
+              0
+            ]
+          }
+        },
+        "primary": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0,
+              0
+            ]
+          }
+        },
+        "primaryForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.05,
+              0.01,
+              0
+            ]
+          }
+        },
+        "secondary": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.12,
+              0.008,
+              0
+            ]
+          }
+        },
+        "secondaryForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0,
+              0
+            ]
+          }
+        },
+        "accent": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.16,
+              75
+            ]
+          }
+        },
+        "accentForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.05,
+              0.01,
+              0
+            ]
+          }
+        },
+        "destructive": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.2,
+              25
+            ]
+          }
+        },
+        "destructiveForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0,
+              0
+            ]
+          }
+        },
+        "warning": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              1,
+              0.16,
+              75
+            ]
+          }
+        },
+        "warningForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.05,
+              0.01,
+              0
+            ]
+          }
+        },
+        "success": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.9,
+              0.2,
+              155
+            ]
+          }
+        },
+        "successForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.05,
+              0.01,
+              0
+            ]
+          }
+        },
+        "info": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.9,
+              0.16,
+              260
+            ]
+          }
+        },
+        "infoForeground": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.05,
+              0.01,
+              0
+            ]
+          }
+        },
+        "overlay": {
+          "$type": "color",
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0.75
+          }
+        }
       }
     }
   }

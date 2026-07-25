@@ -1,8 +1,9 @@
 # Plan — `mindmap` module
 
-> Status: planning (replaces the older `README.md` design, which is
-> archived at the bottom of this file). Order: **3 of 3** (after
-> `history` and `agent-context`).
+> Status: building — phases 1–3, 7–8 complete. Phases 10–19 define the
+> interactive surface (click, keyboard, drag, pan/zoom, context menu).
+> Gap analysis vs mind-elixir-core completed 2025-07-25.
+> Order: **3 of 3** (after `history` and `agent-context`).
 
 ## Goal
 
@@ -52,7 +53,7 @@ bottom of this file under **Archived design (superseded)**.
 ```
 src/modules/mindmap/
 ├── plan.md                              ← this file
-├── README.md                            ← written at end of phase 7
+├── README.md                            ← written at end of phase 20
 ├── index.js                             ← manifest + service export + serializers
 ├── contracts/
 │   └── mindmap-contracts.js             ← MINDMAP_* event schemas
@@ -62,11 +63,17 @@ src/modules/mindmap/
 │   ├── LayoutEngine.js                  ← ported from mind-elixir layout.ts
 │   ├── ConnectorGeometry.js             ← ported from svg.ts + generateBranch.ts
 │   ├── MarkdownCodec.js                 ← NodeObj tree ↔ markdown (context only)
-│   └── Search.js                        ← in-map filter / fuzzy match
+│   ├── Search.js                        ← in-map filter / fuzzy match
+│   ├── KeyboardHandler.js               ← keydown → service calls (phase 11)
+│   └── ViewportController.js            ← pan/zoom transform state (phase 13)
 ├── serializers/
 │   ├── toMarkdown.js                    ← registered with agent-context
 │   ├── toAscii.js
 │   └── toMinimalJson.js
+├── ui/
+│   └── ContextMenu.js                   ← right-click menu (phase 17)
+├── i18n/
+│   └── mindmap-en.json                  ← English labels (phase 18)
 └── vendor/
     └── MIND_ELIXIR_LICENSE              ← MIT, attribution for the port
 
@@ -293,18 +300,17 @@ the DOM contains one new branch-node element with correct
 ops, undo to start, redo to end, tree matches original. Collapse events
 round-trip.
 
-### Phase 6 — Drag-drop reorder
+### Phase 6 — Drag-drop reorder (SUPERSEDED — see Phase 14)
 
-1. Implement HTML5 drag-drop on `branch-node` / `leaf-node` (CSMA already
-   has drag infra in `runtime`; reuse where possible).
-2. On drop, call `moveNode` → history record + `MINDMAP_NODE_MOVED` event
-   → layout recompute.
-3. Validate drop targets (leaf cannot accept children; root has special
-   rules).
+> **Note (2025-07-25):** The original plan assumed HTML5 drag-drop on
+> individual elements. After reviewing mind-elixir-core's
+> `nodeDraggable.ts`, the correct approach is pointer-event-driven drag
+> with a ghost element, insert-preview indicators, and edge auto-scroll.
+> Phase 14 below replaces this phase entirely.
 
-**Test:** `tests/mindmap/drag-drop.test.js` — simulated drag events over
-jsdom; assert `moveNode` called with correct args; invalid drops are
-rejected.
+1. ~~Implement HTML5 drag-drop on `branch-node` / `leaf-node`~~ —
+   **replaced** by pointer-event drag in Phase 14.
+2. ~~On drop, call `moveNode`~~ — kept, but trigger is pointer-up on ghost.
 
 ### Phase 7 — Multi-map + search
 
@@ -329,29 +335,382 @@ combinations, empty result handling.
 tags. Filter test: `filter: { status: ['blocked'] }` returns only
 matching branches/leaves.
 
-### Phase 9 — Demo page + finalize
+### Phase 9 — Demo page (v1, partial)
 
-1. `demo/mindmap.html` — standalone page with sample MorphMap data, all
-   features exercisable.
-2. Write `mindmap/README.md` (concise — supersedes this plan).
-3. Update `docs/architecture/SKILL.md` and `docs/patterns/SKILL.md` with
-   mindmap as a worked example of history + agent-context + ai-ui
-   composition.
-4. Mark plan complete; archive this file as `plan.v1.md`.
+1. ✅ `demo/mindmap.html` — standalone page with sample MorphMap data.
+2. ⬜ Write `mindmap/README.md` (concise — supersedes this plan).
+3. ⬜ Update `docs/architecture/SKILL.md` and `docs/patterns/SKILL.md`.
+
+> **Note (2025-07-25):** The demo page is a debug harness — buttons
+> exercise the service layer, but the canvas has zero interactive
+> behaviour (no click, no keyboard, no drag, no pan/zoom). Phases 10–19
+> add the interaction surface. Phase 20 ships the final demo v2.
+
+---
+
+## Interaction layer (phases 10–19)
+
+> These phases fill the gap identified in the 2025-07-25 comparison
+> with mind-elixir-core. CSMA provides reusable infra (EventBus,
+> Contracts, History, i18n, design tokens, overlay-manager) and a
+> proven keyboard pattern (visual-editor KeyMapper). The canvas
+> interaction layer — pointer events, drag, pan/zoom, context menu —
+> is entirely new code.
+
+### Phase 10 — Click selection + double-click edit + inline editing
+
+**Motivation:** mind-elixir-core `mouse.ts` → `handlePointerDown`,
+`handleDoubleClick`, `nodeOperation.ts` → `beginEdit`. The demo has
+no way to select a node by clicking it or edit its text in place.
+
+1. Add `selected` data attribute to branch-node / leaf-node CSS
+   (outline + accent colour from design tokens).
+2. Single-click on a node → clear previous selection, set `data-selected`
+   on the clicked element, fire `MINDMAP_NODE_SELECTED` event.
+3. Ctrl/Cmd-click → toggle selection (multi-select). Publish
+   `MINDMAP_NODES_SELECTED` with array of selected node IDs.
+4. Double-click on a selected node → open inline edit:
+   - Replace node text with a contentEditable span or input.
+   - Enter or blur commits → call `updateNode(nodeId, { topic })`.
+   - Escape cancels → restore original text.
+5. Click on empty canvas area → clear selection.
+
+**New service methods:** none (UI-only behaviour, uses existing
+`updateNode`).
+
+**New contracts:**
+```js
+MINDMAP_NODE_SELECTED     // { mapId, nodeId }
+MINDMAP_NODES_SELECTED    // { mapId, nodeIds: string[] }
+MINDMAP_SELECTION_CLEARED // { mapId }
+MINDMAP_NODE_EDIT_START   // { mapId, nodeId }
+MINDMAP_NODE_EDIT_END     // { mapId, nodeId, committed: boolean }
+```
+
+**Test:** `tests/mindmap/selection.test.js` — click selects, ctrl-click
+multi-selects, canvas click clears, double-click opens editor, Enter
+commits, Escape cancels.
+
+### Phase 11 — Keyboard navigation + shortcuts
+
+**Motivation:** mind-elixir-core `plugin/keypress.ts` — full keyboard
+control. CSMA has the `KeyMapper.js` pattern from visual-editor to
+reuse, but the key handlers themselves are mindmap-specific.
+
+1. Create `services/KeyboardHandler.js` — a class that attaches
+   `keydown` on the canvas container and dispatches to service calls.
+   Follow the `KeyMapper` pattern (normalize Mod key, defineKeymap).
+2. Default keymap:
+
+| Key | Action |
+|-----|--------|
+| ArrowUp / ArrowDown | Move selection to prev/next sibling |
+| ArrowLeft / ArrowRight | Move selection to parent / first child |
+| Enter | Insert sibling after selected node |
+| Shift+Enter | Insert sibling before selected node |
+| Ctrl/Cmd+Enter | Insert parent (wrap selected) |
+| Tab | Add child to selected node |
+| Delete / Backspace | Remove selected node(s) |
+| F1 | Center map (toCenter) |
+| F2 | Begin inline edit on selected node |
+| Ctrl/Cmd+Z | Undo |
+| Ctrl/Cmd+Y / Ctrl+Shift+Z | Redo |
+| Ctrl/Cmd+C | Copy selected nodes to clipboard |
+| Ctrl/Cmd+X | Cut selected nodes |
+| Ctrl/Cmd+V | Paste as children of selected node |
+| Ctrl/Cmd+= | Zoom in |
+| Ctrl/Cmd+- | Zoom out |
+| Ctrl/Cmd+0 | Reset zoom to 1.0 |
+| Ctrl/Cmd+K then Ctrl+0 | Collapse all branches |
+| Ctrl/Cmd+K then Ctrl+= | Expand all branches |
+| Ctrl/Cmd+K then 1–9 | Expand to depth N |
+| Ctrl+ArrowLeft/Right | Switch to left-only / right-only layout |
+| Ctrl+ArrowUp | Switch to side (both) layout |
+| Ctrl+ArrowDown | Switch to top-down layout |
+| Alt+ArrowUp / PageUp | Move selected node up (reorder) |
+| Alt+ArrowDown / PageDown | Move selected node down (reorder) |
+
+3. Keyboard handler publishes a `MINDMAP_KEYBOARD_SHORTCUT` event for
+   debugging / extensibility.
+4. Handler is disabled when inline editing is active (pass-through).
+
+**New service methods needed:**
+```js
+insertSibling(nodeId, position)  // 'before' | 'after'
+insertParent(nodeId)             // wrap node in new parent
+moveUp(nodeId)                   // reorder sibling up
+moveDown(nodeId)                 // reorder sibling down
+copyNodes(nodeIds)               // deep-clone to clipboard stash
+pasteNodes(nodeIds, parentId)    // paste stashed nodes
+```
+
+**Test:** `tests/mindmap/keyboard.test.js` — dispatch synthetic
+KeyboardEvents, assert correct service method called.
+
+### Phase 12 — Box/marquee selection + Ctrl multi-select
+
+**Motivation:** mind-elixir-core `plugin/selection.ts` (uses viselect
+library). Selecting multiple nodes at once is essential for batch
+operations (delete, move, copy, summary).
+
+1. Integrate `viselect` (same library mind-elixir uses, ~10 KB) or
+   implement a minimal box-select (~60 lines):
+   - Pointer-down on canvas background → track pointer-move → draw
+     selection rectangle.
+   - On pointer-up, find all node elements intersecting the rectangle.
+   - Select them (set `data-selected`, publish `MINDMAP_NODES_SELECTED`).
+   - With Ctrl/Cmd held, add to existing selection; without, replace.
+2. No new service methods needed. Purely UI behaviour.
+3. Selection rectangle styled via design tokens (semi-transparent
+   accent background, accent border).
+
+**Test:** `tests/mindmap/box-select.test.js` — simulate pointer events
+over jsdom, assert correct nodes selected.
+
+### Phase 13 — Pan + zoom
+
+**Motivation:** mind-elixir-core `mouse.ts` (panHelper),
+`interact.ts` (scale, move, toCenter), `plugin/keypress.ts`
+(handleWheelZoom). The demo has static `overflow: auto` —
+unacceptable for a real mindmap.
+
+1. Wrap the node layer in a transform group (CSS `transform:
+   translate(x, y) scale(s)` on the `.node-layer` element). SVG
+   connector layer gets the same transform.
+2. Pan:
+   - Mouse wheel (without Ctrl) → `move(-deltaX, -deltaY)`.
+   - Shift+wheel → horizontal pan only.
+   - Space + mouse drag → grab-pan (change cursor to `grab`/`grabbing`).
+   - Touch drag (single finger) → pan.
+3. Zoom:
+   - Ctrl+wheel → cursor-centered scale with min/max limits (0.2–1.4).
+     Math: `scale(newScale, {x: cursorX, y: cursorY})` keeps the point
+     under the cursor fixed.
+   - Two-finger pinch on touch → zoom (track distance change).
+   - Toolbar buttons or keyboard for step zoom.
+4. `toCenter()` — reset transform to center the root node in the
+   viewport.
+5. `scaleFit()` — auto-scale so all nodes are visible.
+
+**New module:** `services/ViewportController.js` — manages transform
+state (tx, ty, scale), exposes `move`, `scale`, `toCenter`,
+`scaleFit`, `scrollIntoView(nodeId)`. Publishes `MINDMAP_VIEWPORT_CHANGED`
+event with debounced throttling (16 ms).
+
+**New contracts:**
+```js
+MINDMAP_VIEWPORT_CHANGED  // { mapId, tx, ty, scale }
+```
+
+**Test:** `tests/mindmap/viewport.test.js` — set scale, assert transform
+string; pan by delta, assert cumulative position; toCenter re-centers
+root.
+
+### Phase 14 — Pointer-event drag-drop with ghost + insert preview
+
+**Motivation:** mind-elixir-core `plugin/nodeDraggable.ts` (~300 lines).
+HTML5 drag-drop (original Phase 6) is wrong for mindmaps — it can't do
+insert-preview (before/after/in indicators) or edge auto-scroll. This
+phase replaces Phase 6 entirely.
+
+1. On pointer-down on a selected node → record start position.
+2. If pointer moves > 5px (drag threshold) → enter drag mode:
+   - Create a ghost element (clone of dragged node, semi-transparent,
+     follows cursor).
+   - Dragged nodes get `opacity: 0.5`.
+   - On pointer-move, hit-test (`document.elementFromPoint` with y
+     offset) to find potential drop target.
+   - Drop target classification:
+     - Cursor near top of target → `before` (insert as previous sibling).
+     - Cursor near bottom of target → `after` (insert as next sibling).
+     - Cursor in middle of target → `in` (insert as child).
+     - Top-down layout: left edge = `before`, right edge = `after`,
+       centre = `in`.
+   - Show insert preview indicator (coloured line at insert position).
+   - Edge auto-scroll: if cursor within 50px of canvas edge, pan in
+     that direction at 20 px/100ms.
+3. On pointer-up with valid target → call `moveNodeBefore`,
+   `moveNodeAfter`, or `moveNodeIn` on MindmapService.
+4. On Escape or pointer-cancel → cancel drag, restore opacity, remove
+   ghost.
+5. Multi-node drag: if multiple nodes are selected, drag all as a group.
+
+**New service methods:**
+```js
+moveNodeBefore(nodeIds, targetId)  // move as previous sibling
+moveNodeAfter(nodeIds, targetId)   // move as next sibling
+moveNodeIn(nodeIds, targetId)      // move as children
+```
+These wrap the existing `moveNode` with position semantics.
+
+**Test:** `tests/mindmap/drag-drop.test.js` — simulate pointer events,
+assert correct service call for before/after/in. Assert invalid drops
+(leaf as target for "in", self-drop, descendant-drop) are rejected.
+
+### Phase 15 — Insert sibling / insert parent / move up-down
+
+**Motivation:** mind-elixir-core `nodeOperation.ts` — insertSibling,
+insertParent, moveUpNode, moveDownNode. These are service-level
+gaps; the keyboard handler and context menu depend on them.
+
+1. **`insertSibling(nodeId, position)`** — create new node, insert
+   before or after `nodeId` in parent's `children` array. Record to
+   history. Fire `MINDMAP_NODE_ADDED`.
+2. **`insertParent(nodeId)`** — create new branch, replace `nodeId` in
+   its parent's children with the new branch, move `nodeId` as child
+   of the new branch. Record to history. Fire `MINDMAP_STRUCTURE_CHANGED`.
+3. **`moveUp(nodeId)` / `moveDown(nodeId)`** — swap `nodeId` with its
+   previous/next sibling in the parent's `children` array. Record to
+   history. Fire `MINDMAP_NODE_MOVED`.
+
+**Test:** `tests/mindmap/sibling-parent-ops.test.js` — insert sibling
+correct position, insert parent wraps correctly, move up/down swaps.
+
+### Phase 16 — Copy/paste nodes
+
+**Motivation:** mind-elixir-core `plugin/keypress.ts` →
+handleSetNodesClip. Clipboard operations are essential for power users.
+
+1. **Copy:** On Ctrl+C with selected nodes, deep-clone the selected
+   node trees (refresh UUIDs), serialize to JSON with a magic marker
+   (`"MIND-ELIXIR-WAIT-COPY"` → use CSMA-specific marker), write to
+   `navigator.clipboard.writeText()`.
+2. **Cut:** Copy + delete selected nodes.
+3. **Paste:** On Ctrl+V with a selected target node, read clipboard,
+   detect the magic marker, parse node trees, call `addBranch` or
+   `addLeaf` for each under the target. If no magic marker, fire a
+   `MINDMAP_PASTE_EXTERNAL` event for optional `pasteHandler` callback.
+4. In-memory clipboard stash as fallback for environments where
+   `navigator.clipboard` is unavailable.
+
+**New service methods:**
+```js
+copyNodes(nodeIds)               // returns deep-cloned trees
+pasteNodes(trees, parentId)      // inserts cloned trees under parent
+```
+
+**Test:** `tests/mindmap/copy-paste.test.js` — copy two nodes, paste
+under another, assert tree shape. Cut removes originals.
+
+### Phase 17 — Context menu
+
+**Motivation:** mind-elixir-core `plugin/contextMenu.ts`. CSMA has no
+generic context menu module — this is new. Provides discoverability
+for right-click users.
+
+1. Create `ui/ContextMenu.js` — a reusable class that:
+   - Renders a `<ul>` positioned absolutely at the click point.
+   - Supports `disabled` class on menu items (e.g., root node can't
+     be removed or moved up).
+   - Auto-dismisses on click outside, Escape, or after an action.
+   - Positions within viewport bounds (if menu would overflow, flip
+     to the other side).
+2. Default menu items (use CSMA i18n for labels):
+
+| Item | Action | Disabled for root? |
+|------|--------|--------------------|
+| Add child | `addChild(selectedNode)` | No |
+| Add parent | `insertParent(selectedNode)` | Yes |
+| Add sibling (after) | `insertSibling(selectedNode, 'after')` | Yes |
+| Remove node | `removeNode(selectedNode)` | Yes |
+| Focus mode | `focusNode(selectedNode)` | Yes |
+| Cancel focus | `cancelFocus()` | — |
+| Move up | `moveUp(selectedNode)` | Yes |
+| Move down | `moveDown(selectedNode)` | Yes |
+| Summary | `createSummary(selectedNodes)` (future) | — |
+
+3. Wire to `container.oncontextmenu` → `preventDefault()` → show menu.
+4. Publish `MINDMAP_CONTEXT_MENU_OPEN` / `_CLOSE` events.
+
+**New dependency:** `i18n` module (already in CSMA) for menu labels.
+
+**Test:** `tests/mindmap/context-menu.test.js` — right-click on node
+shows menu, click "Add child" calls `addChild`, menu dismisses.
+Root node has disabled items.
+
+### Phase 18 — Theme + i18n wiring
+
+**Motivation:** mind-elixir-core has light/dark theme auto-detection
+and 18 languages. CSMA already has `i18n` module and design tokens
+for light/dark. Wire them into mindmap-specific labels and CSS.
+
+1. Define mindmap-specific token overrides in
+   `src/style/token-overrides.json` (mindmap node colours, connector
+   stroke, selection outline, ghost opacity, expander colour).
+2. Support `data-theme="light|dark"` on the canvas container;
+   default to `prefers-color-scheme`.
+3. Mindmap labels (context menu, toolbar tooltips, status messages)
+   go through CSMA's `I18n` service. Load a `mindmap` translation
+   bundle in `init()`.
+
+**New file:** `i18n/mindmap-en.json` — English labels. Other locales
+deferred (CSMA i18n has 18+ but mindmap only needs en for v1).
+
+**Test:** `tests/mindmap/theme-i18n.test.js` — toggling theme changes
+CSS custom properties; locale change updates context menu labels.
+
+### Phase 19 — Global layout direction + toolbar
+
+**Motivation:** mind-elixir-core `interact.ts` (initLeft/Right/Side/
+Down). The service already stores per-node `direction`, but there's
+no global toggle. The toolbar gives quick access.
+
+1. `MindmapService` new methods:
+   ```js
+   setLayoutDirection(direction)  // 0=left, 1=right, 2=side, 3=down
+   getLayoutDirection()           // returns current global direction
+   ```
+   Sets a map-level `layoutDirection` property. When switching layout,
+   iterates all root children and sets their `direction` field, then
+   fires `MINDMAP_STRUCTURE_CHANGED` so the renderer re-lays-out.
+2. Toolbar UI: four buttons (left layout, right layout, side layout,
+   top-down layout) using SVG icons (reuse mind-elixir's icons or
+   CSMA's icon system). Positioned in the canvas corner, visible only
+   on hover (like mind-elixir).
+3. Also add: zoom in/out buttons, center button, fullscreen toggle
+   (reuse overlay-manager pattern for fullscreen).
+
+**Test:** `tests/mindmap/layout-direction.test.js` — switch to side
+layout, assert root children split left/right; switch to top-down,
+assert all children direction=3.
+
+### Phase 20 — Demo page v2 (final)
+
+1. Rewrite `demo/mindmap.html` as a full interactive mindmap:
+   - All phases 10–19 integrated.
+   - Sample MorphMap data preloaded.
+   - Status line shows selected node path + keyboard shortcut hints.
+   - Toolbar visible on canvas hover.
+2. Write `mindmap/README.md` — concise user-facing docs.
+3. Update `docs/architecture/SKILL.md` and `docs/patterns/SKILL.md`
+   with mindmap as a worked example of CSMA module composition.
+4. Run `npm run check:design` and `npm run check:responsive`.
+5. Mark plan complete; archive this file as `plan.v1.md`.
 
 ## Tests
 
 `tests/mindmap/`:
 
-- `layout-engine.test.js`
-- `connector-geometry.test.js`
-- `mindmap-service.test.js`
-- `render.test.js`
-- `undo-redo.test.js`
-- `drag-drop.test.js`
-- `search.test.js`
-- `markdown-codec.test.js`
-- `contracts-test.js` (validates every `MINDMAP_*` payload shape)
+| Phase | Test file | Status |
+|-------|-----------|--------|
+| 1 | `layout-engine.test.js` | ✅ |
+| 1 | `connector-geometry.test.js` | ✅ |
+| 3 | `mindmap-service.test.js` | ✅ |
+| 4 | `render.test.js` | ⬜ |
+| 5 | `undo-redo.test.js` | ✅ |
+| 7 | `search.test.js` | ✅ |
+| 8 | `markdown-codec.test.js` | ✅ |
+| 8 | `contracts-test.js` | ✅ |
+| 10 | `selection.test.js` | ⬜ |
+| 11 | `keyboard.test.js` | ⬜ |
+| 12 | `box-select.test.js` | ⬜ |
+| 13 | `viewport.test.js` | ⬜ |
+| 14 | `drag-drop.test.js` | ⬜ |
+| 15 | `sibling-parent-ops.test.js` | ⬜ |
+| 16 | `copy-paste.test.js` | ⬜ |
+| 17 | `context-menu.test.js` | ⬜ |
+| 18 | `theme-i18n.test.js` | ⬜ |
+| 19 | `layout-direction.test.js` | ⬜ |
 
 Property-based via `fast-check`:
 
@@ -368,8 +727,13 @@ Property-based via `fast-check`:
 - Real-time multi-user collaboration (needs leader election + CRDT
   merge, deferred).
 - Image / SVG / PDF export (can be added as a separate module later).
-- Mobile touch interactions beyond collapse/expand (drag-drop will use
-  pointer events; full touch UX is a v2 concern).
+- Summaries (bracket grouping of consecutive siblings) — deferred to v2.
+- Focus mode (drill-into-branch as temp root) — deferred to v2.
+- Markdown / KaTeX rich-text rendering in nodes — deferred to v2.
+- Branch style variants (straight, underline) — deferred to v2.
+- Mobile-optimised touch UX — pointer events support basic touch;
+  dedicated mobile gestures (long-press to drag, mobile multi-select
+  toggle) are v2.
 
 ## Open questions
 

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://csma.dev/schemas/i18n.json",
+  "locale": "en",
+  "module": "mindmap",
+  "description": "English labels for the mindmap module context menu, toolbar, and status messages.",
+  "translations": {
+    "mindmap.menu.addChild": "Add child",
+    "mindmap.menu.addParent": "Add parent",
+    "mindmap.menu.addSibling": "Add sibling",
+    "mindmap.menu.removeNode": "Remove node",
+    "mindmap.menu.focus": "Focus Mode",
+    "mindmap.menu.cancelFocus": "Cancel Focus Mode",
+    "mindmap.menu.moveUp": "Move up",
+    "mindmap.menu.moveDown": "Move down",
+    "mindmap.menu.summary": "Summary",
+
+    "mindmap.toolbar.layoutLeft": "Layout left",
+    "mindmap.toolbar.layoutRight": "Layout right",
+    "mindmap.toolbar.layoutSide": "Layout both sides",
+    "mindmap.toolbar.layoutDown": "Layout top-down",
+    "mindmap.toolbar.zoomIn": "Zoom in",
+    "mindmap.toolbar.zoomOut": "Zoom out",
+    "mindmap.toolbar.center": "Center map",
+    "mindmap.toolbar.fullscreen": "Fullscreen",
+
+    "mindmap.status.selected": "{count} node(s) selected",
+    "mindmap.status.none": "No selection",
+
+    "mindmap.kb.help": "Tab: add child  |  Enter: add sibling  |  Del: remove  |  Arrows: navigate  |  Ctrl+Z: undo  |  Space+drag: pan  |  Ctrl+wheel: zoom"
+  }
+}

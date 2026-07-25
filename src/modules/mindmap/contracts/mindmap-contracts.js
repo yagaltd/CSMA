@@ -129,5 +129,72 @@ export const MindmapContracts = {
     description: 'Published when a map is deleted'
   }, object({
     mapId: string()
+  })),
+
+  // ── Phase 10 — Selection & inline editing ────────────────────────
+
+  MINDMAP_NODE_SELECTED: contract({
+    version: 1,
+    type: 'event',
+    owner: 'mindmap',
+    lifecycle: 'active',
+    stability: 'stable',
+    compliance: 'public',
+    description: 'Published when a single node is selected'
+  }, object({
+    mapId: string(),
+    nodeId: string()
+  })),
+
+  MINDMAP_NODES_SELECTED: contract({
+    version: 1,
+    type: 'event',
+    owner: 'mindmap',
+    lifecycle: 'active',
+    stability: 'stable',
+    compliance: 'public',
+    description: 'Published when the selection set changes (multi-select)'
+  }, object({
+    mapId: string(),
+    nodeIds: array(string())
+  })),
+
+  MINDMAP_SELECTION_CLEARED: contract({
+    version: 1,
+    type: 'event',
+    owner: 'mindmap',
+    lifecycle: 'active',
+    stability: 'stable',
+    compliance: 'public',
+    description: 'Published when the selection is cleared (canvas click, etc.)'
+  }, object({
+    mapId: string()
+  })),
+
+  MINDMAP_NODE_EDIT_START: contract({
+    version: 1,
+    type: 'event',
+    owner: 'mindmap',
+    lifecycle: 'active',
+    stability: 'stable',
+    compliance: 'public',
+    description: 'Published when inline editing begins on a node'
+  }, object({
+    mapId: string(),
+    nodeId: string()
+  })),
+
+  MINDMAP_NODE_EDIT_END: contract({
+    version: 1,
+    type: 'event',
+    owner: 'mindmap',
+    lifecycle: 'active',
+    stability: 'stable',
+    compliance: 'public',
+    description: 'Published when inline editing ends (committed or cancelled)'
+  }, object({
+    mapId: string(),
+    nodeId: string(),
+    committed: any()
   }))
 };

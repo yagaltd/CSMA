@@ -1,1 +1,47 @@
-{}
+{
+  "components.mindmap.nodeBg.$value": "var(--surface)",
+  "components.mindmap.nodeBg.$type": "color",
+  "components.mindmap.nodeBorder.$value": "var(--border)",
+  "components.mindmap.nodeBorder.$type": "color",
+  "components.mindmap.nodeRadius.$value": "{primitives.radius.md}",
+  "components.mindmap.nodeRadius.$type": "dimension",
+  "components.mindmap.nodePaddingX.$value": "{primitives.spacing.md}",
+  "components.mindmap.nodePaddingX.$type": "dimension",
+  "components.mindmap.nodePaddingY.$value": "{primitives.spacing.sm}",
+  "components.mindmap.nodePaddingY.$type": "dimension",
+  "components.mindmap.nodeFontSize.$value": "{primitives.typography.fontSize.base}",
+  "components.mindmap.nodeFontSize.$type": "dimension",
+
+  "components.mindmap.rootBg.$value": "var(--primary)",
+  "components.mindmap.rootBg.$type": "color",
+  "components.mindmap.rootColor.$value": "var(--primary-foreground)",
+  "components.mindmap.rootColor.$type": "color",
+  "components.mindmap.rootFontSize.$value": "{primitives.typography.fontSize.lg}",
+  "components.mindmap.rootFontSize.$type": "dimension",
+
+  "components.mindmap.connectorStroke.$value": "var(--border)",
+  "components.mindmap.connectorStroke.$type": "color",
+  "components.mindmap.connectorWidth.$value": "2",
+  "components.mindmap.connectorWidth.$type": "dimension",
+  "components.mindmap.connectorDone.$value": "var(--success)",
+  "components.mindmap.connectorDone.$type": "color",
+
+  "components.mindmap.selectionOutline.$value": "var(--primary)",
+  "components.mindmap.selectionOutline.$type": "color",
+  "components.mindmap.selectionWidth.$value": "2px",
+  "components.mindmap.selectionWidth.$type": "dimension",
+
+  "components.mindmap.expanderSize.$value": "1.25rem",
+  "components.mindmap.expanderSize.$type": "dimension",
+  "components.mindmap.expanderColor.$value": "var(--foreground-muted)",
+  "components.mindmap.expanderColor.$type": "color",
+
+  "components.mindmap.ghostOpacity.$value": "0.5",
+  "components.mindmap.ghostOpacity.$type": "number",
+
+  "components.mindmap.insertPreviewColor.$value": "var(--primary)",
+  "components.mindmap.insertPreviewColor.$type": "color",
+
+  "components.mindmap.canvasBg.$value": "var(--background)",
+  "components.mindmap.canvasBg.$type": "color"
+}

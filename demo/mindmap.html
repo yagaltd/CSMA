@@ -3,186 +3,553 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>mindmap — demo</title>
+  <title>mindmap — demo v2</title>
   <link rel="stylesheet" href="/src/generated/tokens.css" />
-  <link rel="stylesheet" href="/src/ui/components/index.css" />
   <style>
-    body { font-family: var(--font-sans); background: var(--background); color: var(--foreground); margin: 0; padding: var(--space-lg); }
-    h1 { font-size: var(--font-size-xl); margin: 0 0 var(--space-md); }
-    .toolbar { display: flex; gap: var(--space-sm); margin-bottom: var(--space-md); flex-wrap: wrap; }
-    .toolbar button, .toolbar select { padding: var(--space-xs) var(--space-sm); border-radius: var(--radius-sm, 4px); border: 1px solid var(--border); background: var(--surface); color: var(--foreground); cursor: pointer; font: inherit; }
-    .canvas { position: relative; width: 100%; height: 70vh; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius-md, 8px); background: var(--surface); }
-    .canvas svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-    .node-layer { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
-    .node-layer > * { position: absolute; }
-    .status-line { font-family: var(--font-mono, monospace); font-size: var(--font-size-xs); color: var(--foreground-muted, var(--foreground)); white-space: pre-wrap; min-height: 6rem; padding: var(--space-sm); background: color-mix(in srgb, var(--surface) 50%, var(--background)); border: 1px solid var(--border); border-radius: var(--radius-sm, 4px); margin-top: var(--space-md); }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; background: #f5f5f5; color: #222; margin: 0; padding: 16px; }
+    h1 { font-size: 1.25rem; margin: 0 0 12px; }
+    .toolbar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+    .toolbar button, .toolbar select { padding: 4px 10px; border-radius: 4px; border: 1px solid #ccc; background: #fff; color: #222; cursor: pointer; font: inherit; font-size: 13px; }
+    .canvas {
+      position: relative; width: 100%; height: 70vh; overflow: hidden;
+      border: 1px solid #ccc; border-radius: 8px; background: #fafafa;
+      outline: none; user-select: none; touch-action: none;
+    }
+    .map-canvas { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+    .canvas svg { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; }
+    .node-layer { position: absolute; top: 0; left: 0; }
+    .mm-node {
+      position: absolute; cursor: pointer; box-sizing: border-box;
+      padding: 6px 14px; border-radius: 6px;
+      font-size: 14px; line-height: 1.5;
+      border: 1px solid #d0d0d0; background: #fff; color: #222;
+      border-left: 3px solid #d0d0d0;
+    }
+    .mm-node:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .mm-node[data-kind="root"] { font-size: 16px; font-weight: 700; padding: 10px 20px; border: 2px solid #4f90f2; border-left: 2px solid #4f90f2; }
+    .mm-node[data-selected] { outline: 2px solid #4f90f2; outline-offset: 2px; }
+    .mm-connector { fill: none; stroke: #bbb; stroke-width: 2; stroke-linecap: round; }
+    .mm-connector[data-link-kind="main"] { stroke-width: 2.5; stroke: #888; }
+    .mm-ghost { position: fixed; pointer-events: none; z-index: 100; padding: 4px 10px; border-radius: 4px; background: #fff; border: 1px dashed #4f90f2; opacity: 0.85; font-size: 14px; }
+    .mm-preview-bar { position: absolute; height: 3px; background: #4f90f2; border-radius: 2px; pointer-events: none; z-index: 99; }
+    .mm-preview-outline { outline: 2px solid #4f90f2; outline-offset: 3px; }
+    .mm-edit-input { font: inherit; font-size: inherit; border: 2px solid #4f90f2; border-radius: 4px; padding: 4px 8px; outline: none; background: #fff; min-width: 80px; }
+    .mm-menu { position: fixed; z-index: 200; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); padding: 4px 0; min-width: 170px; font-size: 13px; }
+    .mm-menu-item { padding: 7px 14px; cursor: pointer; list-style: none; color: #222; }
+    .mm-menu-item:hover { background: #4f90f2; color: #fff; }
+    .mm-menu-item.disabled { color: #aaa; cursor: default; pointer-events: none; }
+    .mm-menu-sep { border-top: 1px solid #eee; margin: 4px 0; pointer-events: none; }
+    .status-line { font-family: monospace; font-size: 12px; color: #666; padding: 8px 12px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 4px; margin-top: 12px; min-height: 2em; white-space: pre-wrap; }
+    /* Expander button on branch nodes */
+    .mm-expander {
+      position: absolute; right: -18px; top: 50%; transform: translateY(-50%);
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff; border: 2px solid #bbb; cursor: pointer;
+      font-size: 11px; line-height: 11px; text-align: center; color: #666;
+      z-index: 2; transition: background 0.15s, border-color 0.15s;
+    }
+    .mm-expander:hover { background: #4f90f2; border-color: #4f90f2; color: #fff; }
+    .mm-expander.collapsed::after { content: '+'; }
+    .mm-expander:not(.collapsed)::after { content: '−'; }
+    /* Zoom toolbar */
+    .mm-zoom-bar {
+      position: absolute; bottom: 8px; left: 8px; display: flex; gap: 2px; z-index: 50;
+    }
+    .mm-zoom-bar button {
+      width: 28px; height: 28px; border: 1px solid #ccc; border-radius: 4px;
+      background: #fff; cursor: pointer; font-size: 16px; line-height: 1;
+      color: #444; display: flex; align-items: center; justify-content: center;
+    }
+    .mm-zoom-bar button:hover { background: #f0f0f0; }
+    .canvas.space-pressed { cursor: grab !important; }
+    .canvas.space-pressed:active, .canvas.panning { cursor: grabbing !important; }
   </style>
 </head>
 <body>
-  <h1>mindmap — demo</h1>
+  <h1>mindmap — demo v2</h1>
   <div class="toolbar">
     <button id="new-map">+ new map</button>
     <select id="map-select"></select>
-    <button id="add-branch">+ branch to root</button>
-    <button id="add-leaf">+ leaf to first branch</button>
-    <button id="mark-done">mark first leaf done</button>
-    <button id="collapse">toggle first branch collapse</button>
-    <button id="undo">undo</button>
-    <button id="redo">redo</button>
-    <button id="show-md">render markdown</button>
+    <button id="undo-btn">undo</button>
+    <button id="redo-btn">redo</button>
+    <button id="md-btn">md</button>
   </div>
-  <div class="canvas">
-    <svg id="connector-layer"></svg>
-    <div id="node-layer" class="node-layer"></div>
+  <div class="canvas" id="canvas" tabindex="0">
+    <div class="map-canvas" id="map-canvas">
+      <svg id="svg-layer"></svg>
+      <div id="node-layer" class="node-layer"></div>
+    </div>
+    <div class="mm-zoom-bar">
+      <button id="zoom-in" title="Zoom in">+</button>
+      <button id="zoom-out" title="Zoom out">−</button>
+      <button id="zoom-reset" title="Reset zoom">1:1</button>
+      <button id="center-map" title="Center map">⊙</button>
+    </div>
+    </div>
   </div>
-  <pre class="status-line" id="status">Loading runtime…</pre>
+  <pre class="status-line" id="status">Loading…</pre>
 
   <script type="module">
     import { MindmapService } from '/src/modules/mindmap/services/MindmapService.js';
     import { HistoryService } from '/src/modules/history/services/HistoryService.js';
 
-    const eventBus = { _subs: new Map(),
-      subscribe(n, fn) { if (!this._subs.has(n)) this._subs.set(n, []); this._subs.get(n).push(fn); },
-      unsubscribe() {}, publish(n, p) { (this._subs.get(n) || []).forEach((fn) => fn(p)); }
+    // EventBus stub — must expose subscribe/publish (names MindmapService expects)
+    const bus = { _s: new Map(),
+      subscribe(n,fn) { if(!this._s.has(n))this._s.set(n,[]); this._s.get(n).push(fn); },
+      unsubscribe() {},
+      publish(n,p) { (this._s.get(n)||[]).forEach(fn=>fn(p)); }
     };
-
-    const memoryStore = { init: async () => {}, getAll: async () => [], put: async () => {}, clear: async () => {} };
-    const history = new HistoryService(eventBus);
-    await history.init({ store: memoryStore });
-
-    const svc = new MindmapService(eventBus);
+    const mem = { init:async()=>{}, getAll:async()=>[], put:async()=>{}, clear:async()=>{} };
+    const history = new HistoryService(bus);
+    await history.init({ store: mem });
+    const svc = new MindmapService(bus);
     svc.init({ storage: null, history });
 
+    const canvas = document.getElementById('canvas');
     const nodeLayer = document.getElementById('node-layer');
-    const connectorLayer = document.getElementById('connector-layer');
+    const svgLayer = document.getElementById('svg-layer');
+    const mapCanvas = document.getElementById('map-canvas');
     const statusEl = document.getElementById('status');
     const mapSelect = document.getElementById('map-select');
-
     let activeMap = null;
+    function status(m) { statusEl.textContent = m; }
 
+    // Selection
+    const selected = new Set();
+    function selClear() { selected.clear(); for (const el of nodeLayer.children) el.removeAttribute('data-selected'); }
+    function selSingle(id) { selClear(); selected.add(id); const el = nodeLayer.querySelector(`[data-node-id="${id}"]`); if(el) el.setAttribute('data-selected',''); }
+    function selToggle(id) {
+      if(selected.has(id)) { selected.delete(id); const el = nodeLayer.querySelector(`[data-node-id="${id}"]`); if(el) el.removeAttribute('data-selected'); }
+      else { selected.add(id); const el = nodeLayer.querySelector(`[data-node-id="${id}"]`); if(el) el.setAttribute('data-selected',''); }
+    }
+
+    // Render
+    function nodeTopic(id) { const n = svc.findNode(id); return n?.topic || null; }
     function render() {
-      if (!activeMap) return;
+      if(!activeMap) return;
       const { nodes } = svc.layout(activeMap);
       const paths = svc.connectorPaths(activeMap);
-      nodeLayer.innerHTML = '';
-      connectorLayer.innerHTML = '';
+      nodeLayer.replaceChildren();
+      svgLayer.replaceChildren();
       for (const n of nodes) {
         const el = document.createElement('div');
-        const isRoot = n.kind === 'root';
-        el.className = isRoot ? 'branch-node' : (n.kind === 'leaf' ? 'leaf-node' : 'branch-node');
-        el.dataset.status = n.status;
-        el.dataset.kind = n.kind;
+        el.className = 'mm-node';
         el.dataset.nodeId = n.id;
-        el.style.left = `${n.x}px`;
-        el.style.top = `${n.y}px`;
-        el.style.width = `${n.w}px`;
+        el.dataset.kind = n.kind;
+        el.dataset.status = n.status || 'pending';
+        el.style.left = n.x + 'px';
+        el.style.top = n.y + 'px';
+        el.style.width = n.w + 'px';
+        el.style.minHeight = n.h + 'px';
         el.textContent = nodeTopic(n.id) || n.kind;
+        if(selected.has(n.id)) el.setAttribute('data-selected','');
+        // Expander for branches with children
+        const node = svc.findNode(n.id);
+        if (n.kind === 'branch' && node?.children?.length > 0) {
+          const exp = document.createElement('span');
+          exp.className = 'mm-expander' + (node.expanded === false ? ' collapsed' : '');
+          exp.addEventListener('pointerdown', async (ev) => {
+            ev.stopPropagation(); ev.preventDefault();
+            await svc.collapse(n.id, node.expanded !== false);
+            renderAfterMut();
+          });
+          el.appendChild(exp);
+        }
         nodeLayer.appendChild(el);
       }
+      // Size the nodeLayer so scroll works
+      let maxX=0, maxY=0;
+      for(const n of nodes){ if(n.x+n.w > maxX) maxX=n.x+n.w; if(n.y+n.h > maxY) maxY=n.y+n.h; }
+      nodeLayer.style.width = (maxX + 200) + 'px';
+      nodeLayer.style.height = (maxY + 200) + 'px';
+      svgLayer.setAttribute('width', maxX + 200);
+      svgLayer.setAttribute('height', maxY + 200);
       for (const { d, link } of paths) {
-        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        p.setAttribute('class', 'connector-line');
+        const p = document.createElementNS('http://www.w3.org/2000/svg','path');
         p.setAttribute('d', d);
         p.setAttribute('data-link-kind', link.kind);
-        const child = nodes.find((x) => x.id === link.to);
-        if (child) p.setAttribute('data-status', child.status);
-        connectorLayer.appendChild(p);
+        const child = nodes.find(x => x.id === link.to);
+        if(child) p.setAttribute('data-status', child.status);
+        p.classList.add('mm-connector');
+        svgLayer.appendChild(p);
       }
     }
-
-    function nodeTopic(id) {
-      const n = svc.findNode(id);
-      return n ? n.topic : null;
+    async function renderAfterMut() {
+      render();
+      // Re-center if root went off-screen
+      requestAnimationFrame(() => {
+        const rootEl = nodeLayer.querySelector('[data-kind="root"]');
+        if (rootEl) {
+          const rr = rootEl.getBoundingClientRect(), cr = canvas.getBoundingClientRect();
+          if (rr.left < -200 || rr.top < -200 || rr.left > cr.width + 200) centerMap();
+        }
+      });
     }
 
-    function setStatus(msg) { statusEl.textContent = msg; }
+    // Inline edit
+    let editNodeId = null, editOrigText = '';
+    function beginEdit(nodeId) {
+      if(editNodeId) commitEdit();
+      const el = nodeLayer.querySelector(`[data-node-id="${nodeId}"]`);
+      if(!el) return;
+      editNodeId = nodeId; editOrigText = el.textContent || '';
+      el.textContent = '';
+      const inp = document.createElement('input');
+      inp.className = 'mm-edit-input';
+      inp.value = editOrigText;
+      el.appendChild(inp); inp.focus(); inp.select();
+      inp.addEventListener('keydown', e => { if(e.key==='Enter') commitEdit(); if(e.key==='Escape') cancelEdit(); });
+      inp.addEventListener('blur', () => setTimeout(() => { if(editNodeId===nodeId) commitEdit(); }, 100));
+    }
+    async function commitEdit() {
+      if(!editNodeId) return;
+      const el = nodeLayer.querySelector(`[data-node-id="${editNodeId}"]`);
+      const inp = el?.querySelector('.mm-edit-input');
+      const nt = (inp?.value || editOrigText).trim() || editOrigText;
+      const id = editNodeId; editNodeId = null;
+      await svc.updateNode(id, { topic: nt });
+      render();
+      status(`renamed: "${nt}"`);
+    }
+    function cancelEdit() { if(!editNodeId) return; editNodeId = null; render(); }
 
+    // Context menu
+    let menuEl = null;
+    function showMenu(e, nodeId) {
+      hideMenu();
+      const node = svc.findNode(nodeId);
+      const isRoot = !node || nodeId === svc._getMap(activeMap)?.root?.id;
+      const expanded = node ? node.expanded !== false : true;
+      const items = [
+        {l:'Add child', d:false, a:async()=>{await svc.addBranch(nodeId,'New node');renderAfterMut();}},
+        {l:'Add sibling', d:isRoot, a:async()=>{await svc.insertSibling(nodeId,'after','New node');renderAfterMut();}},
+        {l:'Add parent', d:isRoot, a:async()=>{await svc.insertParent(nodeId);renderAfterMut();}},
+        {l:'Remove', d:isRoot, a:async()=>{for(const id of [...selected]){try{await svc.removeNode(id)}catch{}}selClear();renderAfterMut();}},
+        {sep:1},{l:'Move up', d:isRoot, a:async()=>{await svc.moveUp(nodeId);renderAfterMut();}},
+        {l:'Move down', d:isRoot, a:async()=>{await svc.moveDown(nodeId);renderAfterMut();}},
+        {sep:1},{l:expanded?'Collapse':'Expand', d:false, a:async()=>{await svc.collapse(nodeId,expanded);renderAfterMut();}},
+      ];
+      menuEl = document.createElement('ul');
+      menuEl.className = 'mm-menu';
+      menuEl.style.left = Math.min(e.clientX, innerWidth-180) + 'px';
+      menuEl.style.top = Math.min(e.clientY, innerHeight-items.length*34-10) + 'px';
+      for(const it of items) {
+        if(it.sep){const s=document.createElement('li');s.className='mm-menu-sep';menuEl.appendChild(s);continue;}
+        const li = document.createElement('li');
+        li.className = 'mm-menu-item'+(it.d?' disabled':'');
+        li.textContent = it.l;
+        if(!it.d) li.addEventListener('click', ()=>{it.a();hideMenu();});
+        menuEl.appendChild(li);
+      }
+      document.body.appendChild(menuEl);
+    }
+    function hideMenu() { if(menuEl){menuEl.remove();menuEl=null;} }
+
+    // Clipboard
+    let clipStash = null;
+    function clipCopy() {
+      if(!selected.size) return;
+      clipStash = [...selected].map(id => {
+        const t = svc.getSubtree(id);
+        const reid = n => { n={...n}; n.id='n_'+crypto.randomUUID(); if(n.children)n.children=n.children.map(reid); return n; };
+        return reid(t);
+      });
+      status(`copied ${clipStash.length} node(s)`);
+    }
+    async function clipCut() { clipCopy(); for(const id of [...selected]){try{await svc.removeNode(id)}catch{}}selClear();renderAfterMut(); status('cut'); }
+    async function clipPaste(targetId) {
+      if(!clipStash?.length) return;
+      let c=0;
+      for(const tree of clipStash) {
+        const adder = async (pid, n) => {
+          const nid = n.schemaType==='mindmap/leaf'
+            ? (await svc.addLeaf(pid,n.topic,{tag:n.tag,status:n.status})).id
+            : (await svc.addBranch(pid,n.topic,{tag:n.tag,status:n.status})).id;
+          if(n.children) for(const ch of n.children) await adder(nid,ch);
+        };
+        await adder(targetId, tree); c++;
+      }
+      renderAfterMut(); status(`pasted ${c} node(s)`);
+    }
+
+    // ─── Pointer + drag ──────────────────────────────────────────
+    let dragState = 0; // 0=idle 1=wait 2=dragging
+    let dragIds=[], dragGhost=null, dragSX=0, dragSY=0, dragMoved=false;
+    let dragTarget=null, dragType=null, dragPrev=[];
+    let lastClickT=0, lastClickEl=null;
+
+    function clearPrev() { for(const el of dragPrev) el.remove(); dragPrev=[]; if(dragTarget){dragTarget.classList.remove('mm-preview-outline');dragTarget=null;} dragType=null; }
+    function cleanDrag() { if(dragGhost){dragGhost.remove();dragGhost=null;} clearPrev(); for(const id of dragIds){const el=nodeLayer.querySelector(`[data-node-id="${id}"]`);if(el)el.style.opacity='';} dragIds=[]; dragMoved=false; }
+
+    canvas.addEventListener('pointerdown', e => {
+      if(editNodeId) return;
+
+      // Space+drag = pan
+      if (spaceDown || e.button === 1) {
+        panStartX = e.clientX; panStartY = e.clientY;
+        panVpTx = vpTx; panVpTy = vpTy;
+        isPanning = true;
+        canvas.setPointerCapture(e.pointerId);
+        canvas.classList.add('panning');
+        return;
+      }
+
+      const nodeEl = e.target.closest('[data-node-id]');
+      if(!nodeEl) { selClear(); return; }
+      const nid = nodeEl.dataset.nodeId;
+      const ctrl = e.ctrlKey||e.metaKey;
+      if(ctrl) { selToggle(nid); status(`${selected.size} selected`); }
+      else if(!selected.has(nid)) { selSingle(nid); status(`selected: ${nodeTopic(nid)||nid}`); }
+      dragState = 1; dragSX=e.clientX; dragSY=e.clientY;
+      dragIds = selected.size ? [...selected] : [nid];
+      dragMoved = false;
+      canvas.setPointerCapture(e.pointerId);
+    });
+
+    canvas.addEventListener('pointermove', e => {
+      if (isPanning) {
+        vpTx = panVpTx + (e.clientX - panStartX);
+        vpTy = panVpTy + (e.clientY - panStartY);
+        vpApply();
+        return;
+      }
+      if(dragState===1) {
+        const dx=e.clientX-dragSX, dy=e.clientY-dragSY;
+        if(Math.sqrt(dx*dx+dy*dy)<5) return;
+        dragState=2; dragMoved=true;
+        dragGhost=document.createElement('div');
+        dragGhost.className='mm-ghost';
+        dragGhost.textContent=dragIds.length>1?`${dragIds.length} nodes`:(nodeTopic(dragIds[0])||'node');
+        document.body.appendChild(dragGhost);
+        for(const id of dragIds){const el=nodeLayer.querySelector(`[data-node-id="${id}"]`);if(el)el.style.opacity='0.4';}
+      }
+      if(dragState===2 && dragGhost) {
+        dragGhost.style.left=(e.clientX-10)+'px'; dragGhost.style.top=(e.clientY-10)+'px';
+        clearPrev();
+        const th=12;
+        let tel = document.elementFromPoint(e.clientX, e.clientY-th);
+        if(!tel?.closest('[data-node-id]')) tel = document.elementFromPoint(e.clientX, e.clientY+th);
+        tel = tel?.closest('[data-node-id]');
+        if(tel) {
+          const tid=tel.dataset.nodeId;
+          if(tid && !dragIds.includes(tid)) {
+            const tn=svc.findNode(tid);
+            if(tn) {
+              const isDesc=(n,aid)=>{if(!n.children)return false;for(const c of n.children){if(c.id===aid||isDesc(c,aid))return true;}return false;};
+              const safe=!dragIds.some(did=>{const dn=svc.findNode(did);return dn&&(dn.id===tid||isDesc(dn,tid));});
+              if(safe) {
+                const r=tel.getBoundingClientRect();
+                const ry=(e.clientY-r.top)/r.height;
+                if(ry<0.25) dragType='before';
+                else if(ry>0.75) dragType='after';
+                else if(tn.schemaType!=='mindmap/leaf') dragType='in';
+                else dragType='after';
+                dragTarget=tel;
+                if(dragType==='in') { tel.classList.add('mm-preview-outline'); }
+                else {
+                  const bar=document.createElement('div'); bar.className='mm-preview-bar';
+                  const pr=tel.getBoundingClientRect(), cr=canvas.getBoundingClientRect();
+                  bar.style.left=((pr.left-cr.left-vpTx)/vpScale)+'px';
+                  bar.style.width=(pr.width/vpScale)+'px';
+                  bar.style.top=((dragType==='before'?pr.top-cr.top-2:pr.bottom-cr.top)-vpTy)/vpScale+'px';
+                  nodeLayer.appendChild(bar); dragPrev.push(bar);
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    canvas.addEventListener('pointerup', e => {
+      canvas.classList.remove('panning');
+      if (isPanning) { isPanning = false; return; }
+
+      const now=Date.now();
+      const nodeEl=e.target.closest('[data-node-id]');
+      if(nodeEl && dragState===0 && now-lastClickT<350 && lastClickEl===nodeEl && !editNodeId) {
+        beginEdit(nodeEl.dataset.nodeId);
+        lastClickT=0; lastClickEl=null;
+        return;
+      }
+      if(nodeEl && dragState===0) { lastClickT=now; lastClickEl=nodeEl; }
+      if(dragState===2 && dragTarget && dragType) {
+        const tid=dragTarget.dataset.nodeId;
+        (async()=>{
+          if(dragType==='in') { for(const id of dragIds){try{await svc.moveNode(id,tid)}catch{}} }
+          else {
+            const gp = (()=>{const m=svc._getMap(activeMap);if(!m)return null;const w=n=>{if(!n.children)return null;for(const c of n.children){if(c.id===tid)return n;const r=w(c);if(r)return r;}return null;};return w(m.root);})();
+            if(gp) {
+              let idx=gp.children.findIndex(c=>c.id===tid);
+              if(dragType==='after') idx++;
+              for(const id of dragIds){try{await svc.moveNode(id,gp.id,idx++)}catch{}}
+            }
+          }
+          selClear(); renderAfterMut(); status(`moved ${dragIds.length} node(s)`);
+        })();
+      }
+      cleanDrag(); dragState=0;
+    });
+    canvas.addEventListener('pointercancel', ()=>{cleanDrag();dragState=0;isPanning=false;canvas.classList.remove('panning');});
+
+    // ─── Viewport (pan + zoom on mapCanvas) ────────────────────
+    let vpTx = 0, vpTy = 0, vpScale = 1.0;
+    const VP_MIN = 0.2, VP_MAX = 1.4, VP_SENS = 0.1;
+    function vpApply() {
+      mapCanvas.style.transform = `translate(${vpTx}px, ${vpTy}px) scale(${vpScale})`;
+    }
+    function centerMap() {
+      const rootEl = nodeLayer.querySelector('[data-kind="root"]');
+      if (!rootEl) return;
+      const cr = canvas.getBoundingClientRect();
+      vpTx = cr.width/2 - rootEl.offsetLeft - rootEl.offsetWidth/2;
+      vpTy = cr.height/2 - rootEl.offsetTop - rootEl.offsetHeight/2;
+      vpApply();
+    }
+
+    // ─── Pan (wheel) + Zoom (Ctrl+wheel) ───────────────────────
+    let spaceDown = false;
+    canvas.addEventListener('wheel', e => {
+      e.preventDefault();
+      if (e.ctrlKey || e.metaKey) {
+        // Cursor-centered zoom (like mind-elixir scale())
+        const cr = canvas.getBoundingClientRect();
+        const cx = e.clientX - cr.left, cy = e.clientY - cr.top;
+        const delta = -e.deltaY / 40 * VP_SENS;
+        const prev = vpScale;
+        vpScale = Math.max(VP_MIN, Math.min(VP_MAX, vpScale + delta));
+        const ratio = vpScale / prev;
+        vpTx = cx - ratio * (cx - vpTx);
+        vpTy = cy - ratio * (cy - vpTy);
+      } else if (e.shiftKey) {
+        vpTx -= e.deltaY;
+      } else {
+        vpTx -= e.deltaX;
+        vpTy -= e.deltaY;
+      }
+      vpApply();
+    }, { passive: false });
+
+    // ─── Space+drag pan ────────────────────────────────────────
+    let panStartX=0, panStartY=0, panVpTx=0, panVpTy=0, isPanning=false;
+    canvas.addEventListener('keydown', e => {
+      if (e.code === 'Space' && !editNodeId && e.target === canvas) {
+        e.preventDefault(); spaceDown = true; canvas.classList.add('space-pressed');
+      }
+    });
+    canvas.addEventListener('keyup', e => {
+      if (e.code === 'Space') { spaceDown = false; canvas.classList.remove('space-pressed'); }
+    });
+
+    // ─── Zoom toolbar buttons ───────────────────────────────────
+    document.getElementById('zoom-in').onclick = () => {
+      const cr = canvas.getBoundingClientRect();
+      const cx = cr.width/2, cy = cr.height/2;
+      const prev = vpScale;
+      vpScale = Math.min(VP_MAX, vpScale + VP_SENS);
+      const ratio = vpScale / prev;
+      vpTx = cx - ratio * (cx - vpTx);
+      vpTy = cy - ratio * (cy - vpTy);
+      vpApply();
+    };
+    document.getElementById('zoom-out').onclick = () => {
+      const cr = canvas.getBoundingClientRect();
+      const cx = cr.width/2, cy = cr.height/2;
+      const prev = vpScale;
+      vpScale = Math.max(VP_MIN, vpScale - VP_SENS);
+      const ratio = vpScale / prev;
+      vpTx = cx - ratio * (cx - vpTx);
+      vpTy = cy - ratio * (cy - vpTy);
+      vpApply();
+    };
+    document.getElementById('zoom-reset').onclick = () => {
+      vpScale = 1.0; vpApply();
+    };
+    document.getElementById('center-map').onclick = () => centerMap();
+
+    // ─── Maps ────────────────────────────────────────────────────
+    canvas.addEventListener('keydown', async e => {
+      if(editNodeId) return;
+      if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA') return;
+      const mod=e.ctrlKey||e.metaKey, k=e.key;
+      const sid = selected.size===1?[...selected][0]:null;
+      const rid = svc._getMap(activeMap)?.root?.id;
+
+      function findP(id) { const m=svc._getMap(activeMap);if(!m)return null;const w=n=>{if(!n.children)return null;for(const c of n.children){if(c.id===id)return n;const r=w(c);if(r)return r;}return null;};return w(m.root); }
+
+      if(!mod&&!e.shiftKey&&!e.altKey) {
+        if(k==='ArrowUp'&&sid){const p=findP(sid);if(p){const i=p.children.findIndex(c=>c.id===sid);if(i>0){selSingle(p.children[i-1].id);status(`selected: ${nodeTopic(p.children[i-1].id)}`);}}e.preventDefault();}
+        else if(k==='ArrowDown'&&sid){const p=findP(sid);if(p){const i=p.children.findIndex(c=>c.id===sid);if(i<p.children.length-1){selSingle(p.children[i+1].id);status(`selected: ${nodeTopic(p.children[i+1].id)}`);}}e.preventDefault();}
+        else if(k==='ArrowLeft'&&sid){const p=findP(sid);if(p&&p.id!==rid){selSingle(p.id);status(`selected: ${nodeTopic(p.id)}`);}else if(p?.id===rid){selSingle(rid);}e.preventDefault();}
+        else if(k==='ArrowRight'&&sid){const n=svc.findNode(sid);if(n?.children?.length&&n.expanded!==false){selSingle(n.children[0].id);status(`selected: ${nodeTopic(n.children[0].id)}`);}e.preventDefault();}
+        else if(k==='Delete'||k==='Backspace'){for(const id of[...selected]){if(id!==rid)await svc.removeNode(id);}selClear();renderAfterMut();status('removed');e.preventDefault();}
+        else if(k==='F2'&&sid){beginEdit(sid);e.preventDefault();}
+        else if(k==='Enter'&&sid){await svc.insertSibling(sid,'after','New node');renderAfterMut();e.preventDefault();}
+        else if(k==='Tab'&&sid&&!e.shiftKey){await svc.addBranch(sid,'New node');renderAfterMut();e.preventDefault();}
+      }
+      if(e.shiftKey&&k==='Enter'&&sid){await svc.insertSibling(sid,'before','New node');renderAfterMut();e.preventDefault();}
+      if(e.altKey) {
+        if(k==='ArrowUp'&&sid){await svc.moveUp(sid);renderAfterMut();e.preventDefault();}
+        else if(k==='ArrowDown'&&sid){await svc.moveDown(sid);renderAfterMut();e.preventDefault();}
+      }
+      if(mod) {
+        if(k==='Enter'&&sid){await svc.insertParent(sid);renderAfterMut();e.preventDefault();}
+        else if(k==='z'&&!e.shiftKey){await svc.undo();renderAfterMut();status('undo');e.preventDefault();}
+        else if(k==='y'||(k==='Z'&&e.shiftKey)){await svc.redo();renderAfterMut();status('redo');e.preventDefault();}
+        else if(k==='c'){clipCopy();e.preventDefault();}
+        else if(k==='x'){await clipCut();e.preventDefault();}
+        else if(k==='v'&&sid){await clipPaste(sid);e.preventDefault();}
+        else if(k==='ArrowLeft'){await svc.setLayoutDirection(0);renderAfterMut();e.preventDefault();}
+        else if(k==='ArrowRight'){await svc.setLayoutDirection(1);renderAfterMut();e.preventDefault();}
+        else if(k==='ArrowUp'){await svc.setLayoutDirection(2);renderAfterMut();e.preventDefault();}
+        else if(k==='ArrowDown'){await svc.setLayoutDirection(3);renderAfterMut();e.preventDefault();}
+      }
+    });
+
+    // ─── Context menu ────────────────────────────────────────────
+    canvas.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      const nel = e.target.closest('[data-node-id]');
+      if(!nel) return;
+      if(!selected.has(nel.dataset.nodeId)) selSingle(nel.dataset.nodeId);
+      showMenu(e, nel.dataset.nodeId);
+    });
+    document.addEventListener('click', e => { if(menuEl&&!menuEl.contains(e.target)) hideMenu(); });
+    document.addEventListener('keydown', e => { if(e.key==='Escape') hideMenu(); });
+
+    // ─── Maps ────────────────────────────────────────────────────
     async function refreshMapList() {
       const maps = await svc.listMaps();
-      mapSelect.innerHTML = maps.map((m) => `<option value="${m.id}">${m.name}</option>`).join('');
-      if (maps.length > 0 && !activeMap) {
-        activeMap = maps[0].id;
-        mapSelect.value = activeMap;
-        render();
-      }
+      mapSelect.replaceChildren();
+      for(const m of maps) { const o=document.createElement('option'); o.value=m.id; o.textContent=m.name; mapSelect.appendChild(o); }
+      if(maps.length&&!activeMap) { activeMap=maps[0].id; mapSelect.value=activeMap; render(); }
     }
+    document.getElementById('new-map').onclick = async () => {
+      activeMap = await svc.createMap(`Map ${Date.now()%1000}`);
+      await refreshMapList(); mapSelect.value=activeMap; render(); status('new map');
+    };
+    mapSelect.onchange = () => { activeMap=mapSelect.value; selClear(); render(); };
+    document.getElementById('undo-btn').onclick = async () => { await svc.undo(); render(); status('undo'); };
+    document.getElementById('redo-btn').onclick = async () => { await svc.redo(); render(); status('redo'); };
+    document.getElementById('md-btn').onclick = () => { status(svc.toMarkdown(activeMap)||'(empty)'); };
 
-    document.getElementById('new-map').addEventListener('click', async () => {
-      const name = `Map ${Date.now() % 1000}`;
-      activeMap = await svc.createMap(name);
-      await refreshMapList();
-      mapSelect.value = activeMap;
-      render();
-      setStatus(`created map ${name}`);
-    });
-
-    mapSelect.addEventListener('change', () => {
-      activeMap = mapSelect.value;
-      render();
-    });
-
-    document.getElementById('add-branch').addEventListener('click', async () => {
-      const root = svc._getMap(activeMap).root;
-      await svc.addBranch(root.id, `branch-${Date.now() % 1000}`, { tag: 'phase' });
-      render();
-      setStatus('added branch');
-    });
-
-    document.getElementById('add-leaf').addEventListener('click', async () => {
-      const root = svc._getMap(activeMap).root;
-      const firstBranch = root.children.find((c) => c.schemaType === 'mindmap/branch');
-      if (!firstBranch) return setStatus('no branch yet');
-      await svc.addLeaf(firstBranch.id, `leaf-${Date.now() % 1000}`);
-      render();
-      setStatus('added leaf');
-    });
-
-    document.getElementById('mark-done').addEventListener('click', async () => {
-      const root = svc._getMap(activeMap).root;
-      const firstLeaf = root.children.flatMap((b) => b.children || []).find((c) => c.schemaType === 'mindmap/leaf');
-      if (!firstLeaf) return setStatus('no leaf yet');
-      await svc.updateStatus(firstLeaf.id, 'done');
-      render();
-      setStatus('marked done');
-    });
-
-    document.getElementById('collapse').addEventListener('click', async () => {
-      const root = svc._getMap(activeMap).root;
-      const firstBranch = root.children.find((c) => c.schemaType === 'mindmap/branch');
-      if (!firstBranch) return setStatus('no branch yet');
-      await svc.collapse(firstBranch.id, firstBranch.expanded);
-      render();
-      setStatus('toggled collapse');
-    });
-
-    document.getElementById('undo').addEventListener('click', async () => {
-      await svc.undo();
-      render();
-      setStatus('undo');
-    });
-    document.getElementById('redo').addEventListener('click', async () => {
-      await svc.redo();
-      render();
-      setStatus('redo');
-    });
-
-    document.getElementById('show-md').addEventListener('click', () => {
-      setStatus(svc.toMarkdown(activeMap) || '(empty)');
-    });
-
-    // Seed an initial map.
-    (async () => {
-      activeMap = await svc.createMap('Sample map');
-      const root = svc._getMap(activeMap).root;
-      const b1 = await svc.addBranch(root.id, 'e2e-test', { tag: 'phase' });
-      await svc.addLeaf(b1.id, 'init + plan + delegate verified');
-      await svc.addLeaf(b1.id, 'scout: recon');
-      const b2 = await svc.addBranch(root.id, 'docs', { tag: 'module' });
-      await svc.addLeaf(b2.id, 'write readme');
-      await refreshMapList();
-      render();
-      setStatus('ready. Click toolbar buttons to mutate.');
-    })();
+    // ─── Seed ────────────────────────────────────────────────────
+    activeMap = await svc.createMap('Sample map');
+    const r = svc._getMap(activeMap).root;
+    const b1 = await svc.addBranch(r.id, 'e2e-test', { tag: 'phase' });
+    await svc.addLeaf(b1.id, 'init + plan verified');
+    await svc.addLeaf(b1.id, 'scout: recon');
+    const b2 = await svc.addBranch(r.id, 'docs', { tag: 'module' });
+    await svc.addLeaf(b2.id, 'write readme');
+    const b3 = await svc.addBranch(r.id, 'ui', { tag: 'feature' });
+    await svc.addLeaf(b3.id, 'selection');
+    await svc.addLeaf(b3.id, 'keyboard');
+    await refreshMapList();
+    render();
+    // Center the root after first layout
+    requestAnimationFrame(() => centerMap());
+    status('ready — click nodes, double-click to edit, drag to move, right-click for menu, arrow keys to navigate');
   </script>
 </body>
 </html>

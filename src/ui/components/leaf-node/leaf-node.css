@@ -13,9 +13,17 @@
   background: color-mix(in srgb, var(--surface) 60%, transparent);
   border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
   border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+  user-select: none;
   transition:
     background var(--duration-fast, 120ms) ease,
     border-color var(--duration-fast, 120ms) ease;
+}
+
+/* selection outline */
+.leaf-node[data-selected] {
+  outline: 2px solid var(--accent, #4f90f2);
+  outline-offset: 2px;
 }
 
 @media (hover: hover) {
