@@ -802,8 +802,7 @@ describe('Session — apply / undo / redo', () => {
     });
 
     it('apply pushes a history entry', () => {
-        expect(session.history.length).toBe(0);
-        expect(session.history_index).toBe(-1);
+        expect(session.historyService.getAll()).toHaveLength(0);
         expect(session.canUndo).toBe(false);
 
         const tr = session.tr;
@@ -814,8 +813,7 @@ describe('Session — apply / undo / redo', () => {
         });
         session.apply(tr);
 
-        expect(session.history.length).toBe(1);
-        expect(session.history_index).toBe(0);
+        expect(session.historyService.getAll()).toHaveLength(1);
         expect(session.canUndo).toBe(true);
     });
 
@@ -830,10 +828,8 @@ describe('Session — apply / undo / redo', () => {
         });
         session.apply(tr);
 
-        expect(session.history_index).toBe(0);
         session.undo();
 
-        expect(session.history_index).toBe(-1);
         expect(session.canUndo).toBe(false);
         expect(session.get(['para1', 'content', 'content'])).toBe(origContent);
     });
@@ -874,13 +870,15 @@ describe('Session — apply / undo / redo', () => {
         });
         session.apply(tr2);
 
-        expect(session.history.length).toBe(2);
+        expect(session.historyService.getAll()).toHaveLength(2);
 
         // Undo back to edit 1
         session.undo();
-        expect(session.history_index).toBe(0);
+        expect(session.canUndo).toBe(true);
+        expect(session.canRedo).toBe(true);
 
-        // New edit — this should truncate the future (edit 2)
+        // New edit truncates the redo branch: edit 2 is logically orphaned
+        // (kept in the log as 'undone' but no longer reachable via redo).
         const tr3 = session.tr;
         tr3.set(['para1', 'content'], {
             content: 'edit3',
@@ -889,13 +887,15 @@ describe('Session — apply / undo / redo', () => {
         });
         session.apply(tr3);
 
-        expect(session.history.length).toBe(2); // edit 2 is gone
+        // edit 2's redo path is gone; the history module now owns truncation.
         expect(session.canRedo).toBe(false);
+        expect(session.canUndo).toBe(true);
+        expect(session.get(['para1', 'content', 'content'])).toBe('edit3');
     });
 
     it('selection-only transactions do not trigger a doc swap or history entry', () => {
         const origDoc = session.doc;
-        const origHistoryLen = session.history.length;
+        const origHistoryLen = session.historyService.getAll().length;
 
         const tr = session.tr;
         tr.setSelection(createCursor(['para1', 'content'], 5));
@@ -906,7 +906,7 @@ describe('Session — apply / undo / redo', () => {
         // doc should be the same object (no swap for no-op transactions)
         expect(session.doc).toBe(origDoc);
         // history should not grow for ops-free transactions
-        expect(session.history.length).toBe(origHistoryLen);
+        expect(session.historyService.getAll()).toHaveLength(origHistoryLen);
         // But selection should be updated
         expect(session.selection.anchor_offset).toBe(5);
     });

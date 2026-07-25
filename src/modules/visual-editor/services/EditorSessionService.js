@@ -11,6 +11,7 @@ import {
     getSelectedAnnotations
 } from '../engine/SelectionUtils.js';
 import { getReferencingNodeIds } from '../engine/ReferenceTraversal.js';
+import { HistoryService } from '../../history/services/HistoryService.js';
 /**
  * Editor Session Service — CSMA integration point for the visual editor engine.
  *
@@ -30,7 +31,7 @@ export class EditorSessionService {
     /**
      * @param {object} eventBus — CSMA EventBus instance
      */
-    constructor(eventBus) {
+    constructor(eventBus, { historyService = null } = {}) {
         this.eventBus = eventBus;
 
         /** @type {Record<string, object> | null} */
@@ -45,14 +46,22 @@ export class EditorSessionService {
         /** @type {object | null} */
         this._selection = null;
 
-        /** @type {Array<object>} */
-        this.history = [];
-
-        /** @type {number} */
-        this.history_index = -1;
+        /**
+         * Undo/redo log. Delegated to a HistoryService instance. When none is
+         * injected the session owns an ephemeral in-memory one (no IDB reload,
+         * no broadcast) so record/undo/redo work synchronously without a
+         * persistence-init race — matching the prior private-array semantics.
+         * @type {HistoryService}
+         */
+        this.historyService = historyService || this._createEphemeralHistory();
+        /** @type {boolean} */
+        this._ownsHistory = historyService === null;
 
         /** @type {number | undefined} */
         this.last_batch_started = undefined;
+
+        /** @type {string | null} */
+        this._batchEntryId = null;
 
         /** @type {boolean} */
         this.initialized = false;
@@ -113,9 +122,7 @@ export class EditorSessionService {
         }
         this._selection = selection;
 
-        this.history = [];
-        this.history_index = -1;
-        this.last_batch_started = undefined;
+        this._resetHistory();
         this.initialized = true;
 
         // Publish ready event
@@ -136,9 +143,7 @@ export class EditorSessionService {
         this.doc = null;
         this.config = null;
         this._selection = null;
-        this.history = [];
-        this.history_index = -1;
-        this.last_batch_started = undefined;
+        this._resetHistory();
 
         // Clean up intent subscriptions
         for (const unsubscribe of this._intentUnsubscribers) {
@@ -352,49 +357,60 @@ export class EditorSessionService {
             ? structuredClone(transaction.selection)
             : null;
 
-        // Truncate future history if we undid before this edit
         const has_ops = transaction.ops.length > 0;
 
         if (has_ops) {
-            // Truncate future history if we undid before this edit
-            if (this.history_index < this.history.length - 1) {
-                this.history = this.history.slice(0, this.history_index + 1);
-            }
-
             const now = Date.now();
             const should_batch =
                 batch &&
                 this.last_batch_started !== undefined &&
                 now - this.last_batch_started < BATCH_WINDOW_MS;
 
-            if (should_batch) {
-                const last_entry = this.history[this.history_index];
-                last_entry.ops.push(...transaction.ops);
-                last_entry.inverse_ops.push(...transaction.inverse_ops);
-                last_entry.selection_after = this._selection
+            // Payload mirrors the former private history-entry shape so undo/redo
+            // can replay ops/inverse_ops and restore selections identically.
+            const payload = {
+                ops: transaction.ops,
+                inverse_ops: transaction.inverse_ops,
+                doc_id: this.doc.document_id,
+                selection_before: transaction.selection_before
+                    ? structuredClone(transaction.selection_before)
+                    : null,
+                selection_after: this._selection
                     ? structuredClone(this._selection)
-                    : null;
-                this.history = [...this.history];
-            } else {
-                this.history = [
-                    ...this.history,
-                    {
-                        ops: transaction.ops,
-                        inverse_ops: transaction.inverse_ops,
-                        selection_before: transaction.selection_before
-                            ? structuredClone(transaction.selection_before)
-                            : null,
-                        selection_after: this._selection
-                            ? structuredClone(this._selection)
-                            : null
-                    }
-                ];
-                this.history_index = this.history_index + 1;
+                    : null
+            };
 
+            if (should_batch && this._batchEntryId) {
+                // Merge into the open batch entry at the tip of the log.
+                const tip = this.historyService.getAll()[0];
+                if (tip && tip.id === this._batchEntryId && tip.payload) {
+                    this.historyService.updateEntry(tip.id, {
+                        payload: {
+                            ...tip.payload,
+                            ops: [...tip.payload.ops, ...payload.ops],
+                            inverse_ops: [...tip.payload.inverse_ops, ...payload.inverse_ops],
+                            selection_after: payload.selection_after
+                        }
+                    });
+                } else {
+                    const entry = this.historyService.record(
+                        'veditor:transaction', payload, { channels: ['veditor'] }
+                    );
+                    this._batchEntryId = entry.id;
+                }
+            } else {
+                // record() truncates the redo branch automatically: any entries
+                // undone before this edit become unreachable (the former
+                // slice-to-index truncation now handled by the history module).
+                const entry = this.historyService.record(
+                    'veditor:transaction', payload, { channels: ['veditor'] }
+                );
                 if (batch) {
                     this.last_batch_started = now;
+                    this._batchEntryId = entry.id;
                 } else {
                     this.last_batch_started = undefined;
+                    this._batchEntryId = null;
                 }
             }
         }
@@ -433,9 +449,10 @@ export class EditorSessionService {
      * @returns {EditorSessionService} this
      */
     undo() {
-        if (this.history_index < 0) return this;
+        const entry = this.historyService.undo();
+        if (!entry) return this;
 
-        const change = this.history[this.history_index];
+        const change = entry.payload;
         const draft = createDocumentDraft(this.doc);
 
         // Apply inverse ops in reverse order
@@ -447,7 +464,8 @@ export class EditorSessionService {
         this._selection = change.selection_before
             ? structuredClone(change.selection_before)
             : null;
-        this.history_index = this.history_index - 1;
+        this.last_batch_started = undefined;
+        this._batchEntryId = null;
 
         // Publish document changed
         this._publish('EDITOR_DOCUMENT_CHANGED', {
@@ -481,10 +499,10 @@ export class EditorSessionService {
      * @returns {EditorSessionService} this
      */
     redo() {
-        if (this.history_index >= this.history.length - 1) return this;
+        const entry = this.historyService.redo();
+        if (!entry) return this;
 
-        this.history_index = this.history_index + 1;
-        const change = this.history[this.history_index];
+        const change = entry.payload;
         const draft = createDocumentDraft(this.doc);
 
         // Apply forward ops
@@ -496,6 +514,8 @@ export class EditorSessionService {
         this._selection = change.selection_after
             ? structuredClone(change.selection_after)
             : null;
+        this.last_batch_started = undefined;
+        this._batchEntryId = null;
 
         // Publish document changed
         this._publish('EDITOR_DOCUMENT_CHANGED', {
@@ -529,19 +549,24 @@ export class EditorSessionService {
     // ===================================================================
 
     get canUndo() {
-        return this.history_index >= 0;
+        return this.historyService.canUndo();
     }
 
     get canRedo() {
-        return this.history_index < this.history.length - 1;
+        return this.historyService.canRedo();
     }
 
     get historyLength() {
-        return this.history.length;
+        return this.historyService.getAll().length;
     }
 
     get historyIndex() {
-        return this.history_index;
+        // Legacy best-effort accessor: position within the non-undone branch
+        // (-1 when nothing is undoable). Kept for API compatibility; prefer
+        // canUndo/canRedo or historyService directly in new code.
+        const recorded = this.historyService.getAll()
+            .filter(entry => entry.status !== 'undone').length;
+        return Math.max(-1, recorded - 1);
     }
 
     // ===================================================================
@@ -588,6 +613,44 @@ export class EditorSessionService {
                 validateNode(node, this.schema, doc.nodes);
             }
         }
+    }
+
+    /**
+     * Create an ephemeral, in-memory-only HistoryService. init() is NOT called,
+     * so there is no async store-reload race and no IDB dependency: record /
+     * undo / redo / canUndo / canRedo / getAll operate synchronously on the
+     * in-memory actions array (persistence is a fire-and-forget no-op).
+     * @private
+     */
+    _createEphemeralHistory() {
+        // No-op store so persistence is a silent fire-and-forget (no IDB, no
+        // console warnings). init() is intentionally NOT called — that avoids
+        // the async store-reload race while keeping record/undo/redo fully
+        // synchronous on the in-memory actions array.
+        const noopStore = {
+            init() { return Promise.resolve(); },
+            getAll() { return Promise.resolve([]); },
+            put() { return Promise.resolve(); },
+            delete() { return Promise.resolve(); },
+            clear() { return Promise.resolve(); }
+        };
+        const service = new HistoryService(this.eventBus);
+        service.store = noopStore;
+        return service;
+    }
+
+    /**
+     * Reset undo/redo state. For an owned (lazy) log, start fresh per document
+     * load — mirroring the prior private-array reset. For an injected log the
+     * caller owns its lifecycle, so only batch tracking is reset here.
+     * @private
+     */
+    _resetHistory() {
+        if (this._ownsHistory) {
+            this.historyService = this._createEphemeralHistory();
+        }
+        this.last_batch_started = undefined;
+        this._batchEntryId = null;
     }
 
     /**
@@ -671,7 +734,7 @@ export class EditorSessionService {
                     : null,
                 canUndo: this.canUndo,
                 canRedo: this.canRedo,
-                historyLength: this.history.length,
+                historyLength: this.historyLength,
                 timestamp: Date.now()
             });
         });

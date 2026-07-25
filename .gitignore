@@ -30,3 +30,6 @@ Desktop.ini
 *.sublime-project
 *.sublime-workspace
 .fleet/
+
+# pi-subagents per-session tooling artifacts
+.pi-subagents/
