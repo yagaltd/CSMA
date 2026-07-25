@@ -1,4 +1,4 @@
-export const MODULE_CONTRIBUTION_TYPES = ['commands', 'navigation', 'panels', 'adapters', 'views'];
+export const MODULE_CONTRIBUTION_TYPES = ['commands', 'navigation', 'panels', 'adapters', 'views', 'contextSerializers'];
 
 function ensureString(value, label) {
     if (typeof value !== 'string' || value.trim() === '') {

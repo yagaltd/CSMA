@@ -429,3 +429,71 @@ that display operation results (cards, badges, fields).
 .badge[data-state="error"] { background: var(--destructive-muted); color: var(--destructive); }
 .badge[data-state="success"] { background: var(--success-muted); color: var(--success); }
 ```
+
+
+## Agent Context (state-to-text bridge)
+
+CSMA modules expose their state to AI agents through the **agent-context**
+service (`src/modules/agent-context/`). It is the canonical bridge between
+runtime state and LLM-readable text. Direct IDB queries or per-module
+`toMarkdown()` helpers should not be reinvented — register a serializer
+instead.
+
+### Contribution shape
+
+Any module that wants its state readable by an agent declares serializers
+in its manifest:
+
+```js
+contributes: {
+  contextSerializers: [
+    { store: 'maps', format: 'markdown', fn: 'toMarkdown', default: true },
+    { store: 'maps', format: 'ascii',    fn: 'toAscii' },
+    { store: 'maps', format: 'json',     fn: 'toMinimalJson' }
+  ]
+}
+```
+
+- `store` is the IDB store or logical name the serializer targets.
+- `format` is `markdown` (default for LLM token economy), `json`, `ascii`,
+  or a custom name prefixed with `x-`.
+- `fn` is a function (inline) or a string export name resolved against
+  the module's service or namespace at call time.
+
+The serializer signature is `(data, options) => string | { text, cursor? }`.
+The `data` argument is supplied by the caller (or fetched from `storage`
+when available); `options` carries `{ store, id, filter, depth, cursor,
+format }`.
+
+### Dispatch and fallbacks
+
+`AgentContextService.get({ store, format, data?, filter?, depth?, cursor? })`
+returns `{ text, format, bytes, truncated?, cursor? }`.
+
+When no serializer is registered for `{ store, format }`, the service
+falls back to a generic formatter (`MarkdownFormatter`, `JsonFormatter`,
+or `AsciiFormatter`) that produces best-effort output over arbitrary
+record shapes. Built-in formats are always available even without any
+module registered.
+
+Output is truncated at 50KB by default; the response carries
+`truncated: true` plus a `cursor` for pagination.
+
+### Subscriptions
+
+`subscribe({ store, format, filter }, cb)` re-serializes and delivers on
+each matching `HISTORY_OP_RECORDED` event. Requires the `history` module
+to be loaded; otherwise throws `[AgentContext] subscription requires
+history module`.
+
+### What agent-context does NOT do
+
+- No MCP server transport in v1 (decision 1a). The `get()` / `subscribe()`
+  surface is shaped so a future `mcp-bridge` module can wrap it without
+  API changes.
+- No streaming. v1 returns complete strings with truncation.
+- No authn/authz. The in-browser agent is assumed same-origin and
+  trusted. Cross-origin or extension-based agents need the MCP bridge
+  with its own auth layer.
+- No caching of serialized output. Recompute per `get()`; add an LRU if
+  profiling shows hot spots.

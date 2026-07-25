@@ -1,6 +1,9 @@
 # Plan — `agent-context` module
 
-> Status: planning. Order: **2 of 3** (after `history`, before `mindmap`).
+> Status: **implemented** (Wave 1-C). See `README.md` for the live spec;
+> this plan is retained as the historical design record.
+>
+> Order: **2 of 3** (after `history`, before `mindmap`).
 
 ## Goal
 

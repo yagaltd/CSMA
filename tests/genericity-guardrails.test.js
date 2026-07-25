@@ -26,7 +26,8 @@ const coreServiceNames = [
     'navigationRegistry',
     'panelRegistry',
     'adapterRegistry',
-    'viewRegistry'
+    'viewRegistry',
+    'serializerRegistry'
 ];
 
 const defaultDemoContracts = [

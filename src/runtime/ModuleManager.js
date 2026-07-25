@@ -5,7 +5,8 @@ const REGISTRY_KEY_BY_CONTRIBUTION = {
     navigation: 'navigation',
     panels: 'panels',
     adapters: 'adapters',
-    views: 'views'
+    views: 'views',
+    contextSerializers: 'serializer'
 };
 
 function normalizeContractRateLimits(rateLimits) {

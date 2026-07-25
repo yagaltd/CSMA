@@ -45,7 +45,7 @@ bottom of this file under **Archived design (superseded)**.
   - `ai-ui` — secure component composer (mounts `branch-node`, etc.)
   - `storage` — IDB primitive
   - `runtime/EventBus`, `runtime/Contracts`, `runtime/ModuleManager`
-- **Consumed by:** MorphShell (as a tile, future), MCP bridge (future).
+- **Consumed by:** tile host shells / compositors (future), MCP bridge (future).
 
 ## Architecture
 
@@ -393,7 +393,9 @@ The original `src/modules/mindmap/README.md` proposed importing
 because `/lite` is not headless — it renders custom elements
 (`<me-tpc>`, `<me-wrapper>`) and applies inline styles via `shapeTpc()`,
 forcing constant overrides. The new design ports only the layout math
-and lets CSMA own the DOM via `ai-ui`.
+and lets CSMA own the DOM via `ai-ui`. The legacy README has been
+removed; the rejected approach is summarised above for historical
+reference.
 
 The original `plan/components.md` file is **kept** — the component specs
 (branch-node, leaf-node, connector-line) are still accurate. Only the

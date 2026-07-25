@@ -11,6 +11,7 @@ import { NavigationRegistry } from './NavigationRegistry.js';
 import { PanelRegistry } from './PanelRegistry.js';
 import { AdapterRegistry } from './AdapterRegistry.js';
 import { ViewRegistry } from './ViewRegistry.js';
+import { SerializerRegistry } from './SerializerRegistry.js';
 import { PageResolver } from './PageResolver.js';
 import { ClientNavigationService } from './ClientNavigationService.js';
 import { PlatformService } from '../services/PlatformService.js';
@@ -28,7 +29,8 @@ export const CORE_SERVICE_NAMES = new Set([
     'navigationRegistry',
     'panelRegistry',
     'adapterRegistry',
-    'viewRegistry'
+    'viewRegistry',
+    'serializerRegistry'
 ]);
 
 export function createRuntimeState() {
@@ -47,7 +49,8 @@ export function createRuntimeState() {
         navigation: new NavigationRegistry({ eventBus }),
         panels: new PanelRegistry({ eventBus }),
         adapters: new AdapterRegistry({ eventBus, serviceManager }),
-        views: new ViewRegistry({ eventBus, serviceManager })
+        views: new ViewRegistry({ eventBus, serviceManager }),
+        serializer: new SerializerRegistry({ eventBus })
     };
     const moduleManager = new ModuleManager(eventBus, serviceManager, registries);
 
@@ -91,6 +94,10 @@ export function createRuntimeState() {
     serviceManager.register('viewRegistry', registries.views, {
         version: '1.0.0',
         description: 'Module-owned safe view contribution registry'
+    });
+    serviceManager.register('serializerRegistry', registries.serializer, {
+        version: '1.0.0',
+        description: 'Module-owned agent-context serializer contribution registry'
     });
 
     leaderService.init();
