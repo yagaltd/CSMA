@@ -1,0 +1,53 @@
+/* CSMA Typeset Presets — Catalog
+ *
+ * Each preset class overrides the three rhythm controls
+ * (--ts-size, --ts-leading, --ts-flow) for a specific context.
+ * Compose: <div class="csma-typeset csma-typeset-docs">…</div>
+ *
+ * Add new presets here as contexts grow. Do NOT add a preset for one-off
+ * styling — that's what custom classes are for. Presets are shared across
+ * projects.
+ */
+
+/* ── Documentation ── */
+.csma-typeset-docs {
+  --ts-size: 15px;
+  --ts-leading: 1.75;
+  --ts-flow: 1.25em;
+}
+
+/* ── Blog / article ── */
+.csma-typeset-blog {
+  --ts-size: 16px;
+  --ts-leading: 1.6;
+  --ts-flow: 1.3em;
+}
+
+/* ── Chat / messaging ── */
+.csma-typeset-chat {
+  --ts-size: 14px;
+  --ts-leading: 1.5;
+  --ts-flow: 0.9em;
+}
+
+/* ── Slide deck (consumed by slides module) ── */
+.csma-typeset-slides {
+  --ts-size: clamp(15px, 2vw, 20px);
+  --ts-leading: 1.3;
+  --ts-flow: 1em;
+}
+
+/* ── Video output (consumed by video module, 1920×1080) ── */
+.csma-typeset-video {
+  --ts-size: 18px;
+  --ts-leading: 1.4;
+  --ts-flow: 1.2em;
+}
+
+/* ── Accessibility — larger type ──
+   Opt-in preset, not a default. Exposed as a setting. */
+.csma-typeset-large {
+  --ts-size: 18px;
+  --ts-leading: 2;
+  --ts-flow: 2em;
+}

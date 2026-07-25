@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CSMA Typeset — Rhythm Demo</title>
+  <link rel="stylesheet" href="../src/style/main.css">
+  <link rel="stylesheet" href="typeset-demo.css">
+</head>
+<body>
+
+<div class="ts-demo-shell">
+  <!-- Control panel -->
+  <aside class="ts-controls" data-ts-controls>
+    <h2 class="ts-controls__title">Rhythm Controls</h2>
+
+    <label class="ts-control">
+      <span>Size: <output data-ts-output="size">15</output>px</span>
+      <input type="range" data-ts-control="size"
+             min="12" max="24" step="0.5" value="15">
+    </label>
+
+    <label class="ts-control">
+      <span>Leading: <output data-ts-output="leading">1.75</output></span>
+      <input type="range" data-ts-control="leading"
+             min="1.1" max="2.5" step="0.05" value="1.75">
+    </label>
+
+    <label class="ts-control">
+      <span>Flow: <output data-ts-output="flow">1.25</output>em</span>
+      <input type="range" data-ts-control="flow"
+             min="0.5" max="3" step="0.05" value="1.25">
+    </label>
+
+    <fieldset class="ts-presets">
+      <legend>Presets</legend>
+      <button class="button" data-variant="outline" data-ts-preset="docs">Docs</button>
+      <button class="button" data-variant="outline" data-ts-preset="blog">Blog</button>
+      <button class="button" data-variant="outline" data-ts-preset="chat">Chat</button>
+      <button class="button" data-variant="outline" data-ts-preset="slides">Slides</button>
+    </fieldset>
+
+    <label class="ts-control">
+      <span>Font</span>
+      <select data-ts-control="font">
+        <option value="var(--font-family-base)">System (default)</option>
+        <option value="'Georgia', 'Times New Roman', serif">Serif</option>
+        <option value="var(--font-family-mono)">Mono</option>
+      </select>
+    </label>
+
+    <label class="ts-control">
+      <span>Theme</span>
+      <select data-ts-control="theme">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+    </label>
+  </aside>
+
+  <!-- Prose preview -->
+  <main class="ts-preview">
+    <div class="csma-typeset csma-typeset-docs" data-ts-prose>
+      <!-- Prose content: headings, paragraphs, lists, code, table, blockquote.
+           Static HTML — same output a markdown renderer or MorphEditor produces. -->
+      <h1>Architecture Overview</h1>
+      <p>CSMA separates concerns: <strong>JavaScript manages state via events, CSS handles rendering.</strong> This achieves fast DOM updates and a minimal bundle size.</p>
+      <p>CSMA is <em>modules-first</em>. Prefer trusted modules under <code>src/modules/*</code>, Contracts for validation and security, and lifecycle-safe load/unload through ModuleManager.</p>
+
+      <h2>The 6 Rules</h2>
+      <ol>
+        <li><strong>State Changes = CSS Classes Only</strong> — no inline styles for UI state</li>
+        <li><strong>Define All States in CSS</strong> — use <code>data-*</code> attributes</li>
+        <li><strong>JavaScript Publishes Events, CSS Handles Rendering</strong></li>
+      </ol>
+
+      <blockquote>
+        <p>CSMA is modules-first. Prefer trusted modules under <code>src/modules/*</code>.</p>
+      </blockquote>
+
+      <h3>Token Reference</h3>
+      <table>
+        <thead>
+          <tr><th>Token</th><th>Value</th><th>Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>--space-xs</code></td><td>0.25rem</td><td>Tight gaps</td></tr>
+          <tr><td><code>--space-md</code></td><td>0.75rem</td><td>Standard gap</td></tr>
+          <tr><td><code>--space-xl</code></td><td>1.5rem</td><td>Section gaps</td></tr>
+        </tbody>
+      </table>
+
+      <pre><code>const el = document.querySelector('.card');
+el.className = 'card completed';
+el.dataset.state = 'loading';</code></pre>
+
+      <hr>
+
+      <p>A component inside prose can opt out:</p>
+      <div class="card not-typeset">
+        <p>This card keeps its own styles — typeset leaves it alone.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="module" src="typeset-demo.js"></script>
+</body>
+</html>

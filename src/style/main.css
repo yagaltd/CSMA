@@ -21,7 +21,11 @@
 /* 3. Motion system */
 @import './foundation/motion.css';
 
-/* 4. Hardening — split by concern */
+/* 4. Typeset — prose rhythm engine + preset catalog */
+@import './foundation/typeset.css';
+@import './foundation/typeset-presets.css';
+
+/* 5. Hardening — split by concern */
 @import './foundation/hardening/text-overflow.css';
 @import './foundation/hardening/states.css';
 @import './foundation/hardening/accessibility.css';
@@ -29,11 +33,11 @@
 @import './foundation/hardening/loading.css';
 @import './foundation/hardening/error.css';
 
-/* 5. Print */
+/* 6. Print */
 @import './foundation/print.css';
 
-/* 6. Touch */
+/* 7. Touch */
 @import './touch.css';
 
-/* 7. Components (includes theme-toggle via index) */
+/* 8. Components (includes theme-toggle via index) */
 @import '../ui/components/index.css';

@@ -1,0 +1,152 @@
+/* CSMA Typeset — Rhythm Engine
+ *
+ * Styles plain HTML inside a `.csma-typeset` container. Three CSS custom
+ * properties control everything: --ts-size, --ts-leading, --ts-flow.
+ * Change one, the entire document reflows proportionally.
+ *
+ * Consumes CSMA design tokens. Never writes to :root.
+ * Uses :where() guard pattern for zero specificity (coexists with base.css).
+ * Streaming-safe: no :last-child, :has(), :empty in layout rules.
+ *   Spacing via margin-block-start only.
+ *
+ * See: docs/typeset/SKILL.md
+ * Prior art: https://ui.shadcn.com/docs/typeset
+ */
+
+/* ───────────────────────────────────────────────────────────────────────
+   Input tokens — defaults consume CSMA design tokens
+   Agents override these in preset classes (.csma-typeset-docs, etc.).
+   The engine reads them with var() references below.
+   ─────────────────────────────────────────────────────────────────────── */
+.csma-typeset {
+  --ts-font-body:    var(--font-family-base);
+  --ts-font-heading: var(--font-family-base);
+  --ts-font-mono:    var(--font-family-mono);
+  --ts-size:         var(--font-size-base);
+  --ts-leading:      var(--line-height-base);
+  --ts-flow:         1.25em;
+  --ts-color:        var(--foreground);
+  --ts-color-muted:  var(--foreground-muted, var(--foreground));
+  --ts-color-accent: var(--primary);
+  --ts-radius:       var(--radius-md);
+  --ts-border:       var(--border);
+  --ts-surface:      var(--surface);
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   Element styles — zero specificity via :where() so plain CSS overrides win
+   Streaming-safe: every spacing rule uses margin-block-start only.
+   ─────────────────────────────────────────────────────────────────────── */
+:where(.csma-typeset) {
+  /* ── Base ── */
+  font-family: var(--ts-font-body);
+  font-size: var(--ts-size);
+  line-height: var(--ts-leading);
+  color: var(--ts-color);
+
+  /* ── Headings ── */
+  & :where(h1, h2, h3, h4, h5, h6) {
+    font-family: var(--ts-font-heading);
+    text-wrap: balance;
+  }
+  & h1 { font-size: calc(var(--ts-size) * 2.5); line-height: 1.1; font-weight: var(--font-weight-bold); letter-spacing: -0.02em; }
+  & h2 { font-size: calc(var(--ts-size) * 2);   line-height: 1.2; font-weight: var(--font-weight-semibold); letter-spacing: -0.015em; }
+  & h3 { font-size: calc(var(--ts-size) * 1.5); line-height: 1.3; font-weight: var(--font-weight-semibold); letter-spacing: -0.01em; }
+  & h4 { font-size: calc(var(--ts-size) * 1.15); line-height: 1.4; font-weight: var(--font-weight-medium); }
+  & h5 { font-size: var(--ts-size); line-height: 1.5; font-weight: var(--font-weight-semibold); text-transform: uppercase; letter-spacing: 0.05em; }
+  & h6 { font-size: calc(var(--ts-size) * 0.85); line-height: 1.5; font-weight: var(--font-weight-semibold); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ts-color-muted); }
+
+  /* ── Paragraphs ── */
+  & p { margin: 0; }
+  & p + p { margin-block-start: calc(var(--ts-flow) * 0.5); }
+
+  /* ── Lists ── */
+  & ul, & ol { padding-inline-start: 1.5em; }
+  & li + li { margin-block-start: calc(var(--ts-flow) * 0.25); }
+
+  /* ── Blockquote ── */
+  & blockquote {
+    margin-inline: 0;
+    padding-inline-start: 1em;
+    border-inline-start: 3px solid var(--ts-color-accent);
+    color: var(--ts-color-muted);
+  }
+
+  /* ── Inline code ── */
+  & code {
+    font-family: var(--ts-font-mono);
+    font-size: 0.9em;
+    padding: 0.2em 0.4em;
+    border-radius: var(--ts-radius);
+    background: var(--ts-surface);
+  }
+
+  /* ── Code blocks ── */
+  & pre {
+    padding: var(--space-md);
+    border-radius: var(--ts-radius);
+    background: var(--ts-surface);
+    overflow-x: auto;
+  }
+  & pre code { padding: 0; background: none; font-size: inherit; }
+
+  /* ── Links ── */
+  & a { color: var(--ts-color-accent); text-decoration: underline; }
+  & a:hover { text-decoration: none; }
+
+  /* ── Horizontal rule ── */
+  & hr {
+    border: none;
+    border-block-start: 1px solid var(--ts-border);
+    margin-block: var(--ts-flow);
+  }
+
+  /* ── Tables ── */
+  & table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+  & th {
+    text-align: start;
+    font-weight: var(--font-weight-semibold);
+    padding: var(--space-sm) var(--space-md);
+    border-block-end: 2px solid var(--ts-border);
+  }
+  & td {
+    padding: var(--space-sm) var(--space-md);
+    border-block-end: 1px solid var(--ts-border);
+  }
+
+  /* ── Images ── */
+  & img { max-width: 100%; height: auto; border-radius: var(--ts-radius); }
+
+  /* ── Strong / emphasis ── */
+  & strong { font-weight: var(--font-weight-bold); }
+  & em { font-style: italic; }
+
+  /* ── Streaming-safe block spacing ──
+     & > * + * — every top-level block gets flow space above it.
+     This is the only block-spacing rule; never add :last-child / :has() / :empty. */
+  & > * + * { margin-block-start: var(--ts-flow); }
+
+  /* ── Opt-out ──
+     Components inside prose keep their own styles. */
+  & .not-typeset,
+  & [data-not-typeset] { all: revert; }
+
+  /* ── Responsive table wrapper ── */
+  & .typeset-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   Reduced motion — typeset has no motion by default; reserved for future.
+   ─────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :where(.csma-typeset) {
+    /* Typeset ships no animations. If any are added later, disable here. */
+  }
+}

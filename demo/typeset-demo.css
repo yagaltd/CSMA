@@ -1,0 +1,82 @@
+/* ── Typeset Demo Layout ──
+   Two-column shell: control panel + prose preview. Collapses to single
+   column under 768px. Uses CSMA tokens only — no raw values. */
+
+.ts-demo-shell {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: 100vh;
+}
+
+.ts-controls {
+  padding: var(--space-xl);
+  background: var(--surface);
+  border-inline-end: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  overflow-y: auto;
+}
+
+.ts-controls__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+.ts-control {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--foreground-muted);
+}
+
+.ts-control input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
+.ts-control output {
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.ts-presets {
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.ts-presets legend {
+  font-size: var(--font-size-sm);
+  color: var(--foreground-muted);
+  margin-block-end: var(--space-sm);
+}
+
+.ts-preview {
+  padding: var(--space-3xl);
+  overflow-y: auto;
+  background: var(--background);
+}
+
+/* Responsive: controls move above preview */
+@media (max-width: 768px) {
+  .ts-demo-shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .ts-controls {
+    border-inline-end: none;
+    border-block-end: 1px solid var(--border);
+    max-height: 40vh;
+  }
+
+  .ts-preview {
+    padding: var(--space-lg);
+  }
+}
