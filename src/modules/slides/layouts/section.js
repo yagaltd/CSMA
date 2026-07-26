@@ -1,23 +1,26 @@
-import { el, createSlideShell, container } from './_shared.js';
+import { spec, specContainer } from './_shared.js';
 
 /**
  * section — chapter divider with ghost number. Used in long decks (~12+ slides)
  * to mark transitions between parts.
  *
  * Config: `{ n (chapter number), kicker?, title? }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). Mounted by `AIUIComposerService.mountTree()`.
+ * Shell is built directly (not via specShell) because this layout adds a
+ * `data-chapter` attribute alongside `data-layout`.
  */
 export function createSectionSlide(config = {}) {
-    const slide = createSlideShell('section', { center: true });
-    if (Number.isFinite(config.n)) slide.dataset.chapter = String(config.n);
+    const dataset = { layout: 'section' };
+    if (Number.isFinite(config.n)) dataset.chapter = String(config.n);
 
-    const ghost = el('div', { className: 'section-ghost', text: formatChapter(config.n) });
-    const inner = el('div', { className: 'section-inner', children: [
-        config.kicker ? el('p', { className: 'kicker', text: String(config.kicker) }) : null,
-        config.title ? el('h1', { className: 'display', text: String(config.title) }) : null
-    ].filter(Boolean) });
+    const ghost = spec('div', { className: 'section-ghost', text: formatChapter(config.n) });
+    const inner = spec('div', { className: 'section-inner', children: [
+        config.kicker ? spec('p', { className: 'kicker', text: String(config.kicker) }) : null,
+        config.title ? spec('h1', { className: 'display', text: String(config.title) }) : null
+    ] });
 
-    slide.appendChild(container([ghost, inner]));
-    return slide;
+    return spec('div', { className: 'slide center', dataset, children: [specContainer([ghost, inner])] });
 }
 
 function formatChapter(n) {

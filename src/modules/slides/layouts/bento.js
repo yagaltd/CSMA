@@ -1,4 +1,4 @@
-import { el, createSlideShell, createKicker, createHeading, container, formatFigure } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer, formatFigure } from './_shared.js';
 
 /**
  * bento — asymmetric tile grid. 3–5 proof points with figures, titles, short
@@ -6,38 +6,34 @@ import { el, createSlideShell, createKicker, createHeading, container, formatFig
  * (`glow` | `accent`).
  *
  * Config: `{ kicker?, title?, tiles: [{ k, fig?, title?, body?, c?, r?, variant?, img? }] }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). Mounted by `AIUIComposerService.mountTree()`.
  */
 export function createBentoSlide(config = {}) {
-    const slide = createSlideShell('bento', { center: false });
     const tiles = Array.isArray(config.tiles) ? config.tiles : [];
 
-    const header = el('div', { className: 'bento-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
+    const header = spec('div', { className: 'bento-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const grid = el('div', { className: 'bento-grid' });
-    for (const tile of tiles) {
-        grid.appendChild(buildTile(tile));
-    }
+    const grid = spec('div', { className: 'bento-grid', children: tiles.map(buildTile) });
 
-    slide.appendChild(container([header, grid]));
-    return slide;
+    return specShell('bento', { center: false }, [specContainer([header, grid])]);
 }
 
 function buildTile(tile = {}) {
-    const t = el('div', { className: 'bento-tile' });
-    if (tile.c) t.dataset.colSpan = String(tile.c);
-    if (tile.r) t.dataset.rowSpan = String(tile.r);
-    if (tile.variant) t.dataset.variant = String(tile.variant);
-    if (tile.img) t.dataset.image = String(tile.img);
+    const dataset = {};
+    if (tile.c) dataset.colSpan = String(tile.c);
+    if (tile.r) dataset.rowSpan = String(tile.r);
+    if (tile.variant) dataset.variant = String(tile.variant);
+    if (tile.img) dataset.image = String(tile.img);
 
     const children = [];
-    if (tile.k) children.push(el('p', { className: 'kicker', text: String(tile.k) }));
-    if (tile.fig) children.push(el('p', { className: 'figure', text: formatFigure(tile.fig) }));
-    if (tile.title) children.push(el('p', { className: 'tile-title', text: String(tile.title) }));
-    if (tile.body) children.push(el('p', { className: 'tile-body', text: String(tile.body) }));
+    if (tile.k) children.push(spec('p', { className: 'kicker', text: String(tile.k) }));
+    if (tile.fig) children.push(spec('p', { className: 'figure', text: formatFigure(tile.fig) }));
+    if (tile.title) children.push(spec('p', { className: 'tile-title', text: String(tile.title) }));
+    if (tile.body) children.push(spec('p', { className: 'tile-body', text: String(tile.body) }));
 
-    for (const child of children.filter(Boolean)) t.appendChild(child);
-    return t;
+    return spec('div', { className: 'bento-tile', dataset, children });
 }

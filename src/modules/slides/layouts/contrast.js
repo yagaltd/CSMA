@@ -1,40 +1,36 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * contrast — before/after comparison panels. Each side has a label, title,
  * and bullet points.
  *
  * Config: `{ kicker?, title?, left: {label,title,points[]}, right: {...}, center=true }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). Byte-identical DOM to the prior el() version.
  */
 export function createContrastSlide(config = {}) {
-    const slide = createSlideShell('contrast', { center: true });
+    const header = spec('div', { className: 'contrast-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const header = el('div', { className: 'contrast-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
-
-    const grid = el('div', { className: 'contrast-grid', children: [
+    const grid = spec('div', { className: 'contrast-grid', children: [
         buildPanel('left', config.left),
         buildPanel('right', config.right)
-    ].filter(Boolean) });
+    ] });
 
-    slide.appendChild(container([header, grid]));
-    return slide;
+    return specShell('contrast', { center: true }, [specContainer([header, grid])]);
 }
 
-function buildPanel(side, spec = {}) {
-    const panel = el('div', { className: 'contrast-panel', dataset: { side } });
+function buildPanel(side, panelConfig = {}) {
     const children = [];
-    if (spec.label) children.push(el('p', { className: 'kicker', text: String(spec.label) }));
-    if (spec.title) children.push(el('h3', { className: 'panel-title', text: String(spec.title) }));
-    if (Array.isArray(spec.points)) {
-        const ul = el('ul', { className: 'panel-points' });
-        for (const point of spec.points) {
-            ul.appendChild(el('li', { text: String(point) }));
-        }
-        children.push(ul);
+    if (panelConfig.label) children.push(spec('p', { className: 'kicker', text: String(panelConfig.label) }));
+    if (panelConfig.title) children.push(spec('h3', { className: 'panel-title', text: String(panelConfig.title) }));
+    if (Array.isArray(panelConfig.points)) {
+        children.push(spec('ul', {
+            className: 'panel-points',
+            children: panelConfig.points.map((point) => spec('li', { text: String(point) }))
+        }));
     }
-    for (const child of children.filter(Boolean)) panel.appendChild(child);
-    return panel;
+    return spec('div', { className: 'contrast-panel', dataset: { side }, children });
 }

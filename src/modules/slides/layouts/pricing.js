@@ -1,43 +1,46 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * pricing — tier cards. `highlight: true` on a tier gets an accent badge.
  *
  * Config: `{ kicker?, title?, tiers: [{name, price, period?, blurb?, features[], highlight?}] }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). deck.js mounts it via the aiui composer's
+ * `mountTree()`. To embed any aiui surface inside this layout (e.g. a
+ * `chart-display` for a price-over-time graph), drop a
+ * `component('chart-display', { ... })` node in the tier's children.
  */
 export function createPricingSlide(config = {}) {
-    const slide = createSlideShell('pricing', { center: true });
+    const header = spec('div', { className: 'pricing-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const header = el('div', { className: 'pricing-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
-
-    const grid = el('div', { className: 'pricing-grid' });
     const tiers = Array.isArray(config.tiers) ? config.tiers : [];
-    tiers.forEach((tier) => grid.appendChild(buildTier(tier)));
+    const grid = spec('div', {
+        className: 'pricing-grid',
+        children: tiers.map((tier) => buildTier(tier))
+    });
 
-    slide.appendChild(container([header, grid]));
-    return slide;
+    return specShell('pricing', { center: true }, [specContainer([header, grid])]);
 }
 
 function buildTier(tier = {}) {
-    const card = el('div', { className: 'pricing-tier' });
-    if (tier.highlight) card.dataset.highlight = 'true';
-
     const children = [];
-    if (tier.name) children.push(el('p', { className: 'tier-name', text: String(tier.name) }));
+    if (tier.name) children.push(spec('p', { className: 'tier-name', text: String(tier.name) }));
     if (tier.price) {
-        const price = el('p', { className: 'tier-price', text: String(tier.price) });
-        if (tier.period) price.dataset.period = String(tier.period);
-        children.push(price);
+        const priceOpts = { className: 'tier-price', text: String(tier.price) };
+        if (tier.period) priceOpts.dataset = { period: String(tier.period) };
+        children.push(spec('p', priceOpts));
     }
-    if (tier.blurb) children.push(el('p', { className: 'tier-blurb', text: String(tier.blurb) }));
+    if (tier.blurb) children.push(spec('p', { className: 'tier-blurb', text: String(tier.blurb) }));
     if (Array.isArray(tier.features)) {
-        const ul = el('ul', { className: 'tier-features' });
-        for (const f of tier.features) ul.appendChild(el('li', { text: String(f) }));
-        children.push(ul);
+        children.push(spec('ul', {
+            className: 'tier-features',
+            children: tier.features.map((f) => spec('li', { text: String(f) }))
+        }));
     }
-    for (const child of children.filter(Boolean)) card.appendChild(child);
-    return card;
+    const cardOpts = { className: 'pricing-tier', children };
+    if (tier.highlight) cardOpts.dataset = { highlight: 'true' };
+    return spec('div', cardOpts);
 }

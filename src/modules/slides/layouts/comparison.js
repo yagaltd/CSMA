@@ -1,52 +1,46 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * comparison — us-vs-them feature matrix. One column highlighted in accent.
  * Each cell value can be boolean (checkmark/cross) or string.
  *
  * Config: `{ kicker?, title?, cols: string[], rows: [{label, values[]}], highlight?, center=true }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). Byte-identical DOM to the prior el() version.
  */
 export function createComparisonSlide(config = {}) {
-    const slide = createSlideShell('comparison', { center: true });
-
-    const header = el('div', { className: 'comparison-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
-
-    const table = el('table', { className: 'comparison-table' });
     const cols = Array.isArray(config.cols) ? config.cols : [];
     const rows = Array.isArray(config.rows) ? config.rows : [];
     const highlight = Number.isFinite(config.highlight) ? config.highlight : -1;
 
-    const thead = el('thead');
-    const tr = el('tr');
-    cols.forEach((col, i) => {
-        const th = el('th', { text: String(col || '') });
-        if (i === highlight) th.dataset.highlight = 'true';
-        tr.appendChild(th);
-    });
-    thead.appendChild(tr);
-    table.appendChild(thead);
+    const header = spec('div', { className: 'comparison-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const tbody = el('tbody');
-    for (const row of rows) {
-        const tr2 = el('tr');
-        tr2.appendChild(el('th', { className: 'row-label', text: String(row.label || '') }));
+    const thCells = cols.map((col, i) => spec('th', {
+        text: String(col || ''),
+        dataset: i === highlight ? { highlight: 'true' } : {}
+    }));
+    const thead = spec('thead', { children: [spec('tr', { children: thCells })] });
+
+    const bodyRows = rows.map((row) => {
+        const labelCell = spec('th', { className: 'row-label', text: String(row.label || '') });
         const values = Array.isArray(row.values) ? row.values : [];
-        values.forEach((val, i) => {
-            const td = el('td');
-            // Column highlight offset by 1 because first th is the label
-            if (i + 1 === highlight) td.dataset.highlight = 'true';
-            if (val === true) td.dataset.bool = 'true';
-            else if (val === false) td.dataset.bool = 'false';
-            else td.textContent = String(val ?? '');
-            tr2.appendChild(td);
+        const valueCells = values.map((val, i) => {
+            const dataset = {};
+            if (i + 1 === highlight) dataset.highlight = 'true';
+            if (val === true) dataset.bool = 'true';
+            else if (val === false) dataset.bool = 'false';
+            const opts = { dataset };
+            if (val !== true && val !== false) opts.text = String(val ?? '');
+            return spec('td', opts);
         });
-        tbody.appendChild(tr2);
-    }
-    table.appendChild(tbody);
+        return spec('tr', { children: [labelCell, ...valueCells] });
+    });
+    const tbody = spec('tbody', { children: bodyRows });
 
-    slide.appendChild(container([header, table]));
-    return slide;
+    const table = spec('table', { className: 'comparison-table', children: [thead, tbody] });
+
+    return specShell('comparison', { center: true }, [specContainer([header, table])]);
 }

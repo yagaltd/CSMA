@@ -1,4 +1,4 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * spotlight-card — 3 principles/values with cursor-follow accent glow.
@@ -6,29 +6,29 @@ import { el, createSlideShell, createKicker, createHeading, container } from './
  * pointermove via a single delegated listener — no per-card JS handler).
  *
  * Config: `{ kicker?, title?, cards: [{k, title, body}] }` — max 3 cards.
+ *
+ * Emits a SPEC TREE (Phase 2.1). deck.js mounts it via the aiui composer's
+ * `mountTree()`.
  */
 export function createSpotlightCardSlide(config = {}) {
-    const slide = createSlideShell('spotlight-card', { center: true });
+    const header = spec('div', { className: 'spotlight-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const header = el('div', { className: 'spotlight-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
-
-    const grid = el('div', { className: 'spotlight-grid' });
     const cards = Array.isArray(config.cards) ? config.cards.slice(0, 3) : [];
-    cards.forEach((card) => grid.appendChild(buildSpotlightCard(card)));
+    const grid = spec('div', {
+        className: 'spotlight-grid',
+        children: cards.map((card) => buildSpotlightCard(card))
+    });
 
-    slide.appendChild(container([header, grid]));
-    return slide;
+    return specShell('spotlight-card', { center: true }, [specContainer([header, grid])]);
 }
 
 function buildSpotlightCard(card = {}) {
-    const node = el('div', { className: 'spotlight-card' });
     const children = [];
-    if (card.k) children.push(el('p', { className: 'spotlight-k', text: String(card.k) }));
-    if (card.title) children.push(el('h3', { className: 'spotlight-title', text: String(card.title) }));
-    if (card.body) children.push(el('p', { className: 'spotlight-body', text: String(card.body) }));
-    for (const child of children.filter(Boolean)) node.appendChild(child);
-    return node;
+    if (card.k) children.push(spec('p', { className: 'spotlight-k', text: String(card.k) }));
+    if (card.title) children.push(spec('h3', { className: 'spotlight-title', text: String(card.title) }));
+    if (card.body) children.push(spec('p', { className: 'spotlight-body', text: String(card.body) }));
+    return spec('div', { className: 'spotlight-card', children });
 }

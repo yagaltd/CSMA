@@ -1,4 +1,4 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * accordion — expand/collapse panels using native <details> for accessibility.
@@ -6,24 +6,29 @@ import { el, createSlideShell, createKicker, createHeading, container } from './
  * can't click along during a presented deck.
  *
  * Config: `{ kicker?, title?, items: [{title, body}] }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). deck.js mounts it via the aiui composer's
+ * `mountTree()`.
  */
 export function createAccordionSlide(config = {}) {
-    const slide = createSlideShell('accordion', { center: true });
+    const header = spec('div', { className: 'accordion-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const header = el('div', { className: 'accordion-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
-
-    const list = el('div', { className: 'accordion-list' });
     const items = Array.isArray(config.items) ? config.items : [];
-    items.forEach((item) => {
-        const details = el('details', { className: 'accordion-item' });
-        details.appendChild(el('summary', { className: 'accordion-summary', text: String(item.title || '') }));
-        if (item.body) details.appendChild(el('p', { className: 'accordion-body', text: String(item.body) }));
-        list.appendChild(details);
+    const list = spec('div', {
+        className: 'accordion-list',
+        children: items.map((item) => {
+            const detailsChildren = [
+                spec('summary', { className: 'accordion-summary', text: String(item.title || '') })
+            ];
+            if (item.body) {
+                detailsChildren.push(spec('p', { className: 'accordion-body', text: String(item.body) }));
+            }
+            return spec('details', { className: 'accordion-item', children: detailsChildren });
+        })
     });
 
-    slide.appendChild(container([header, list]));
-    return slide;
+    return specShell('accordion', { center: true }, [specContainer([header, list])]);
 }

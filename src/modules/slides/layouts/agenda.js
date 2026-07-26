@@ -1,31 +1,34 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * agenda — numbered table-of-contents. Items can be strings or objects with
  * `{title, hint}` for time estimates.
  *
  * Config: `{ kicker?, title?, items: (string|{title,hint})[] }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). deck.js mounts it via the aiui composer's
+ * `mountTree()`. To embed any aiui surface inside this layout, drop a
+ * `component('comments-thread', { threadId })` (or similar) node anywhere in
+ * the tree.
  */
 export function createAgendaSlide(config = {}) {
-    const slide = createSlideShell('agenda', { center: true });
+    const header = spec('div', { className: 'agenda-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const header = el('div', { className: 'agenda-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
-
-    const list = el('ol', { className: 'agenda-list' });
     const items = Array.isArray(config.items) ? config.items : [];
-    items.forEach((item) => {
-        const li = el('li', { className: 'agenda-item' });
-        const title = typeof item === 'string' ? item : (item?.title || '');
-        li.appendChild(el('span', { className: 'agenda-title', text: String(title) }));
-        if (item && typeof item === 'object' && item.hint) {
-            li.appendChild(el('span', { className: 'agenda-hint', text: String(item.hint) }));
-        }
-        list.appendChild(li);
+    const list = spec('ol', {
+        className: 'agenda-list',
+        children: items.map((item) => {
+            const title = typeof item === 'string' ? item : (item?.title || '');
+            const liChildren = [spec('span', { className: 'agenda-title', text: String(title) })];
+            if (item && typeof item === 'object' && item.hint) {
+                liChildren.push(spec('span', { className: 'agenda-hint', text: String(item.hint) }));
+            }
+            return spec('li', { className: 'agenda-item', children: liChildren });
+        })
     });
 
-    slide.appendChild(container([header, list]));
-    return slide;
+    return specShell('agenda', { center: true }, [specContainer([header, list])]);
 }

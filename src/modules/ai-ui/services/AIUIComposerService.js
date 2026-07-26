@@ -383,7 +383,8 @@ export class AIUIComposerService {
       // layout state, so they are permitted alongside the SAFE_ATTRIBUTES
       // whitelist. This matches the existing el() helper's dataset freedom.
       const isDataAttr = name.startsWith('data-');
-      if (!SAFE_ATTRIBUTES.has(name) && !isDataAttr) {
+      const isAriaAttr = name.startsWith('aria-');
+      if (!SAFE_ATTRIBUTES.has(name) && !isDataAttr && !isAriaAttr) {
         throw new Error(`Unsafe attribute "${name}" in mountTree`);
       }
       const strVal = String(value);

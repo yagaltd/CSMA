@@ -1,4 +1,4 @@
-import { el, createSlideShell, createKicker, createHeading, container, formatFigure } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
 import { mountCountUp } from '../ui/count-up.js';
 
 /**
@@ -6,37 +6,34 @@ import { mountCountUp } from '../ui/count-up.js';
  * from 0 on slide-enter via CountUp.
  *
  * Config: `{ kicker?, title?, stats: [{ value: figureSpec, label, caption? }] }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). Mounted by `AIUIComposerService.mountTree()`.
+ * `wireStatGridCountUps` runs post-mount on the live DOM (unchanged).
  */
 export function createStatGridSlide(config = {}) {
-    const slide = createSlideShell('stat-grid', { center: true });
     const stats = Array.isArray(config.stats) ? config.stats : [];
 
-    const header = el('div', { className: 'stat-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
+    const header = spec('div', { className: 'stat-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const grid = el('div', { className: 'stat-grid' });
-    for (const stat of stats) {
-        grid.appendChild(buildStat(stat));
-    }
+    const grid = spec('div', { className: 'stat-grid', children: stats.map(buildStat) });
 
-    slide.appendChild(container([header, grid]));
-    return slide;
+    return specShell('stat-grid', { center: true }, [specContainer([header, grid])]);
 }
 
 function buildStat(stat = {}) {
-    const card = el('div', { className: 'stat-card' });
-    const valueEl = el('p', { className: 'stat-value' });
-    valueEl.dataset.figure = JSON.stringify(stat.value || {});
-    // Mount count-up once the element is attached to the document — the deck's
-    // mountSlide() walks the slide for [data-figure] elements and calls
-    // mountCountUp on each. This avoids needing IntersectionObserver setup
-    // during pure construction.
-    card.appendChild(valueEl);
-    if (stat.label) card.appendChild(el('p', { className: 'stat-label', text: String(stat.label) }));
-    if (stat.caption) card.appendChild(el('p', { className: 'stat-caption', text: String(stat.caption) }));
-    return card;
+    const valueEl = spec('p', {
+        className: 'stat-value',
+        dataset: { figure: JSON.stringify(stat.value || {}) }
+    });
+
+    const children = [valueEl];
+    if (stat.label) children.push(spec('p', { className: 'stat-label', text: String(stat.label) }));
+    if (stat.caption) children.push(spec('p', { className: 'stat-caption', text: String(stat.caption) }));
+
+    return spec('div', { className: 'stat-card', children });
 }
 
 /**

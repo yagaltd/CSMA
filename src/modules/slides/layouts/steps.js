@@ -1,35 +1,36 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * steps — horizontal numbered process. 3–5 sequential steps.
  *
  * Config: `{ kicker?, title?, items: [{title, body}], center=false }`
+ *
+ * Emits a SPEC TREE (Phase 2.1). Mounted by `AIUIComposerService.mountTree()`.
  */
 export function createStepsSlide(config = {}) {
-    const slide = createSlideShell('steps', { center: false });
-
-    const header = el('div', { className: 'steps-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
-
-    const row = el('div', { className: 'steps-row' });
     const items = Array.isArray(config.items) ? config.items : [];
-    items.forEach((item, i) => {
-        row.appendChild(buildStep(item, i + 1));
+
+    const header = spec('div', { className: 'steps-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
+
+    const row = spec('div', {
+        className: 'steps-row',
+        children: items.map((item, i) => buildStep(item, i + 1))
     });
 
-    slide.appendChild(container([header, row]));
-    return slide;
+    return specShell('steps', { center: false }, [specContainer([header, row])]);
 }
 
 function buildStep(item = {}, n) {
-    const step = el('div', { className: 'step-item', dataset: { step: String(n) } });
-    const children = [
-        el('p', { className: 'step-num', text: String(n) }),
-        item.title ? el('h3', { className: 'step-title', text: String(item.title) }) : null,
-        item.body ? el('p', { className: 'step-body', text: String(item.body) }) : null
-    ];
-    for (const child of children.filter(Boolean)) step.appendChild(child);
-    return step;
+    return spec('div', {
+        className: 'step-item',
+        dataset: { step: String(n) },
+        children: [
+            spec('p', { className: 'step-num', text: String(n) }),
+            item.title ? spec('h3', { className: 'step-title', text: String(item.title) }) : null,
+            item.body ? spec('p', { className: 'step-body', text: String(item.body) }) : null
+        ]
+    });
 }
