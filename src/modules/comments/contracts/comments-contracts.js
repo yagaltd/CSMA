@@ -117,6 +117,12 @@ export const CommentsContracts = {
         security: { rateLimits: COMMENT_NAV_RATE },
         description: 'intent scroll/highlight a comment in the drawer'
     }, object({ id: string(), timestamp: number() })),
+    INTENT_COMMENTS_START_PICK: contract({
+        version: 1, type: 'intent', owner: 'comments',
+        lifecycle: 'active', stability: 'stable', compliance: 'public',
+        security: { rateLimits: COMMENT_NAV_RATE },
+        description: 'intent enter element-pick mode (click an element to comment on it)'
+    }, object({ scope: optional(size(string(), 1, 200)), timestamp: number() })),
 
     // ───────────────────────────────────────────────────────────────────
     // Phase 4 — anchorable comment events (service → UI)
@@ -156,6 +162,11 @@ export const CommentsContracts = {
         lifecycle: 'active', stability: 'stable', compliance: 'public',
         description: 'the comments drawer closed'
     }, object({ timestamp: number() })),
+    COMMENTS_PICK_MODE: contract({
+        version: 1, type: 'event', owner: 'comments',
+        lifecycle: 'active', stability: 'stable', compliance: 'public',
+        description: 'element-pick mode toggled (host may show a hint / change cursor)'
+    }, object({ active: enums(['true', 'false']), timestamp: number() })),
     COMMENT_COUNT_CHANGED: contract({
         version: 1, type: 'event', owner: 'comments',
         lifecycle: 'active', stability: 'stable', compliance: 'public',

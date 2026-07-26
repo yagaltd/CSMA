@@ -78,15 +78,16 @@
     import { AIUIComposerService } from '../src/modules/ai-ui/services/AIUIComposerService.js';
     import { ServiceManager } from '../src/runtime/ServiceManager.js';
     import { CommentsService } from '../src/modules/comments/services/CommentsService.js';
-    // Phase 4 — anchored comments + drawer + markers + popup
+    // Phase 4 — anchored comments + drawer + element picker + popup
     // (import from the individual factory files, not the package index, so the
     //  demo loads over plain HTTP too — the index.js side-effect-imports CSS.)
     import { AnchorableCommentsService } from '../src/modules/comments/services/AnchorableCommentsService.js';
     import { AnchorResolver } from '../src/modules/comments/services/AnchorResolver.js';
     import { createCommentsDrawer } from '../src/modules/comments/ui/CommentsDrawer.js';
-    import { createCommentsMarker } from '../src/modules/comments/ui/CommentsMarker.js';
     import { createCommentsPopup } from '../src/modules/comments/ui/CommentsPopup.js';
+    import { createCommentsPicker } from '../src/modules/comments/ui/CommentsPicker.js';
     import { createOverlayManager } from '../src/modules/archetypes/overlay-manager/overlay-manager.js';
+    import { Storage } from '../src/modules/storage/services/Storage.js';
     import { CommentsContracts } from '../src/modules/comments/contracts/comments-contracts.js';
 
     const eventBus = new EventBus();
@@ -114,60 +115,76 @@
     const service = new SlideDeckService(eventBus);
     service.init();
 
-    // ── Phase 4 — anchorable comments + drawer + markers + popup ───────
+    // ── Phase 4 — anchorable comments + drawer + element picker ────────
     // The dock chat button becomes a drawer-opener + live count badge ONLY
-    // when we pass `commentsService` into mountDeck (opt-in). Without it the
-    // legacy inline-surface toggle (Phase 2.2) is preserved.
+    // when we pass `commentsService` into mountDeck (opt-in).
     const anchorableComments = new AnchorableCommentsService(eventBus);
     anchorableComments.setServiceManager(serviceManager);
-    await anchorableComments.init({});   // in-memory only (no Storage wired in this demo)
+
+    // Persistence: wire real IndexedDB so comments survive reload (the service
+    // calls storage.init(COMMENTS_SCHEMA) internally).
+    const storage = new Storage(eventBus, 'csma-db', 1);
+    await anchorableComments.init({ storage });
     serviceManager.register('anchorableComments', anchorableComments);
+
+    // Scope helpers — kept here (not in the generic drawer) so the drawer
+    // never hardcodes slide semantics.
+    const scopeOf = (idx) => 'deck:slide-' + (Number.isFinite(idx) ? idx : service.index);
+    const scopeLabel = (scope) => {
+      const m = /^deck:slide-(\d+)$/.exec(scope || '');
+      return m ? 'Slide ' + (Number(m[1]) + 1) : scope;
+    };
+    const onScopeNavigate = (scope) => {
+      const m = /^deck:slide-(\d+)$/.exec(scope || '');
+      if (m) eventBus.publish('INTENT_SLIDE_GO', { index: Number(m[1]), timestamp: Date.now() });
+    };
 
     // Overlay manager owns the drawer shell (slide-in panel + backdrop + ESC).
     const overlayManager = createOverlayManager(document.body);
     // Drawer reacts to COMMENTS_DRAWER_OPENED/CLOSED and renders the list.
-    const commentsDrawer = createCommentsDrawer({ eventBus, service: anchorableComments, overlayManager });
+    // scopeLabel renders a per-card "Slide N" chip; onScopeNavigate jumps to
+    // that slide when the chip is clicked. enableElementPicker adds a
+    // "Comment on element" button that hands off to the picker below.
+    const commentsDrawer = createCommentsDrawer({
+      eventBus, service: anchorableComments, overlayManager,
+      scopeLabel, onScopeNavigate, enableElementPicker: true
+    });
 
-    // Anchor resolver + popup: pin clicks -> INTENT_COMMENTS_FOCUS -> popover.
+    // Anchor resolver + popup: a comment's "locate" action opens a popover at
+    // the element it is anchored to (via INTENT_COMMENTS_FOCUS).
     const resolver = new AnchorResolver();
     const commentsPopup = createCommentsPopup({ eventBus, service: anchorableComments, overlayManager, resolver });
 
-    // Seed a couple of scope-level comments so the badge + drawer have content.
-    anchorableComments.add({
-      scope: 'deck:slide-0',
-      anchor: { anchor_type: 'element', anchor: { selector: '[data-comments-scope="deck:slide-0"]' } },
-      body: 'Welcome — this is an anchored comment on the cover slide. Open the drawer with the chat button.',
-      author: { name: 'Demo' }
-    });
-    anchorableComments.add({
-      scope: 'deck:slide-1',
-      anchor: { anchor_type: 'element', anchor: { selector: '[data-comments-scope="deck:slide-1"]' } },
-      body: 'Review: is 24 the right number to headline here?',
-      author: { name: 'Reviewer' }
-    });
+    // Seed a couple of scope-level comments ONLY on first run (empty store) so
+    // reloads keep user-added comments instead of duplicating the seeds.
+    if (anchorableComments.comments.size === 0) {
+      anchorableComments.add({
+        scope: 'deck:slide-0',
+        anchor: { anchor_type: 'element', anchor: { selector: '[data-comments-scope="deck:slide-0"]' } },
+        body: 'Welcome — open the drawer (chat button), or click "Element" to comment on a specific part of this slide.',
+        author: { name: 'Demo' }
+      });
+      anchorableComments.add({
+        scope: 'deck:slide-1',
+        anchor: { anchor_type: 'element', anchor: { selector: '[data-comments-scope="deck:slide-1"]' } },
+        body: 'Review: is 24 the right number to headline here?',
+        author: { name: 'Reviewer' }
+      });
+    }
 
     // Opt into drawer mode: the dock chat button now opens the drawer + shows a badge.
     mountDeck(document.getElementById('deck-root'), service, eventBus, { composer, commentsService: anchorableComments });
 
-    // Markers: pins on commented elements, re-scoped when the slide changes.
+    // Element picker: click "Element" in the drawer, then click any slide
+    // content to start a comment anchored to that exact element. Bound to the
+    // deck root so the dock/rail chrome is never a pick target.
     const deckRoot = document.getElementById('deck-root');
-    let markerCtrl = createCommentsMarker({
-      eventBus, service: anchorableComments, resolver,
-      container: deckRoot, scope: 'deck:slide-' + service.index
-    });
-    markerCtrl.refresh();
-    eventBus.subscribe('SLIDE_CHANGED', (p) => {
-      const idx = Number.isFinite(p?.slide) ? p.slide : service.index;
-      markerCtrl.destroy();
-      markerCtrl = createCommentsMarker({
-        eventBus, service: anchorableComments, resolver,
-        container: deckRoot, scope: 'deck:slide-' + idx
-      });
-      markerCtrl.refresh();
+    const commentsPicker = createCommentsPicker({
+      eventBus, container: deckRoot, getScope: () => scopeOf(service.index), overlayManager
     });
 
     // Expose for debugging
-    window.deck = { service, eventBus, comments, anchorableComments, commentsDrawer, commentsPopup, overlayManager, composer };
+    window.deck = { service, eventBus, comments, anchorableComments, commentsDrawer, commentsPopup, commentsPicker, overlayManager, composer };
 
     // Phase 2.2 diagnostics - log the wiring state so users can verify in console
     console.log('[Phase 2.2] wiring:', {

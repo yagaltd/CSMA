@@ -48,7 +48,15 @@ export function createCommentsDrawer({
     eventBus,
     service,
     overlayManager,
-    documentRef = null
+    documentRef = null,
+    // Optional host hooks keep this drawer generic (no slides coupling):
+    //  scopeLabel(scope) -> string|null  renders a per-card scope chip
+    //  onScopeNavigate(scope)            called when the scope chip is clicked
+    //  enableElementPicker               show a "Comment on element" button that
+    //                                    publishes INTENT_COMMENTS_START_PICK
+    scopeLabel = null,
+    onScopeNavigate = null,
+    enableElementPicker = false
 }) {
     const doc = documentRef || (typeof document !== 'undefined' ? document : null);
     if (!eventBus || !service || !overlayManager || !doc) {
@@ -174,11 +182,24 @@ export function createCommentsDrawer({
                                 maxlength: '20000'
                             }
                         }),
-                        spec('button', {
-                            className: 'csma-comments-add-btn',
-                            text: 'Add',
-                            dataset: { action: 'add' },
-                            attrs: { type: 'button' }
+                        spec('div', {
+                            className: 'csma-comments-add-actions',
+                            children: [
+                                spec('button', {
+                                    className: 'csma-comments-add-btn',
+                                    text: 'Add',
+                                    dataset: { action: 'add' },
+                                    attrs: { type: 'button' }
+                                }),
+                                enableElementPicker
+                                    ? spec('button', {
+                                        className: 'csma-comment-btn',
+                                        text: '📍 Element',
+                                        dataset: { action: 'pick-element' },
+                                        attrs: { type: 'button', title: 'Comment on a specific element' }
+                                    })
+                                    : null
+                            ]
                         })
                     ]
                 })
@@ -199,9 +220,17 @@ export function createCommentsDrawer({
         });
         const addContainer = rootEl.querySelector('.csma-comments-add');
         addContainer?.addEventListener('click', (e) => {
-            const btn = e.target.closest('button[data-action="add"]');
+            const btn = e.target.closest('button[data-action]');
             if (!btn) return;
-            submitAdd();
+            const action = btn.dataset.action;
+            if (action === 'add') {
+                submitAdd();
+            } else if (action === 'pick-element') {
+                // Hand off to the host's element picker, then close so the
+                // user can see and click the slide content.
+                publish('INTENT_COMMENTS_START_PICK', { scope: currentScope, timestamp: Date.now() });
+                close();
+            }
         });
         // Ctrl/Cmd+Enter in the composer submits too.
         addInput = rootEl.querySelector('.csma-comments-input');
@@ -230,6 +259,12 @@ export function createCommentsDrawer({
         const scope = currentScope;
 
         switch (action) {
+            case 'goto-scope':
+                if (typeof onScopeNavigate === 'function' && btn.dataset.scope) onScopeNavigate(btn.dataset.scope);
+                break;
+            case 'locate':
+                publish('INTENT_COMMENTS_FOCUS', { id, timestamp: Date.now() });
+                break;
             case 'resolve':
                 publish('INTENT_COMMENT_RESOLVE', { id, timestamp: Date.now() });
                 break;
@@ -278,6 +313,19 @@ export function createCommentsDrawer({
     function publish(name, payload) {
         if (typeof eventBus.publishSync === 'function') eventBus.publishSync(name, payload);
         else eventBus.publish(name, payload);
+    }
+
+    /** Per-card scope chip (e.g. "Slide 3"). Click navigates via onScopeNavigate. */
+    function scopeChip(scope) {
+        if (typeof scopeLabel !== 'function' || !scope) return null;
+        const label = scopeLabel(scope);
+        if (!label) return null;
+        return spec('button', {
+            className: 'csma-comment-scope',
+            text: label,
+            dataset: { action: 'goto-scope', scope: String(scope) },
+            attrs: { type: 'button', title: 'Go to ' + label }
+        });
     }
 
     // ── list rendering ─────────────────────────────────────────────────
@@ -336,6 +384,7 @@ export function createCommentsDrawer({
             spec('div', {
                 className: 'csma-comment-meta',
                 children: [
+                    scopeChip(c.scope),
                     spec('span', { className: 'csma-comment-author', text: authorName(c.author) }),
                     spec('span', { className: 'csma-comment-time', text: formatTime(c.created_at) }),
                     spec('span', {
@@ -435,6 +484,17 @@ export function createCommentsDrawer({
 
     function rootActions(c, open) {
         const btns = [];
+        // Locate on slide: jump to the element this comment is anchored to
+        // (opens the popup via INTENT_COMMENTS_FOCUS). Only for element-anchored
+        // comments that target a specific id (picker-created), not scope-level.
+        if (c.anchor_type === 'element' && c.anchor && c.anchor.id) {
+            btns.push(spec('button', {
+                className: 'csma-comment-btn ghost',
+                text: '📍',
+                dataset: { action: 'locate' },
+                attrs: { type: 'button', title: 'Show on slide', 'aria-label': 'Show this comment on the slide' }
+            }));
+        }
         if (open) {
             btns.push(spec('button', { className: 'csma-comment-btn', text: 'Resolve', dataset: { action: 'resolve' }, attrs: { type: 'button' } }));
         } else if (c.status === 'resolved') {
