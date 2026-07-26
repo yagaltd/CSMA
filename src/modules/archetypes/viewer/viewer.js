@@ -3,6 +3,14 @@
  *
  * Factory: createViewer(container, emit, options) → { update, destroy }
  *
+ * Phase 3.1 — aiui-native (Option a: factory-wrapping). All DOM construction
+ * routes through `getComposer().mountTree(spec, target)`; no raw
+ * `document.createElement` in archetype internals. The sanitizer pipeline
+ * still uses `document.createDocumentFragment` + `DOMParser` — those are data
+ * utilities that transform untrusted HTML into safe nodes, not archetype
+ * shell construction (see the Layer 2 archetype pattern in
+ * docs/architecture/SKILL.md).
+ *
  * Features:
  * - Fetch-and-render pattern (fetch data, render into DOM)
  * - Loading / empty / error states via data-state attribute
@@ -18,9 +26,10 @@
  *   (absent)   — content displayed normally
  */
 
-import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { clearChildren } from '../../../utils/dom.js';
 
-// ─── HTML Sanitizer ───────────────────────────────────
+// ─── HTML Sanitizer (data pipeline, not archetype shell construction) ──
 
 /**
  * Sanitize HTML by stripping dangerous elements and attributes.
@@ -120,21 +129,6 @@ function walkAndSanitize(root) {
     }
 }
 
-function createViewerEmptyIcon() {
-    return createIcon('0 0 24 24', [
-        createSvgElement('path', { d: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' }),
-        createSvgElement('polyline', { points: '14 2 14 8 20 8' })
-    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
-}
-
-function createViewerErrorIcon() {
-    return createIcon('0 0 24 24', [
-        createSvgElement('circle', { cx: 12, cy: 12, r: 10 }),
-        createSvgElement('line', { x1: 12, y1: 8, x2: 12, y2: 12 }),
-        createSvgElement('line', { x1: 12, y1: 16, x2: 12.01, y2: 16 })
-    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
-}
-
 function sanitizeElementAttributes(node, tag) {
     const attrs = [...node.attributes];
     for (const attr of attrs) {
@@ -159,6 +153,37 @@ function sanitizeElementAttributes(node, tag) {
             node.setAttribute('rel', (rel + ' noopener noreferrer').trim());
         }
     }
+}
+
+// ─── SVG icon specs (composed through mountTree like all other DOM) ────
+
+function svgIconSpec(viewBox, children) {
+    return spec('svg', {
+        attrs: {
+            viewBox,
+            fill: 'none',
+            'aria-hidden': 'true',
+            focusable: 'false',
+            stroke: 'currentColor',
+            'stroke-width': '1.5'
+        },
+        children
+    });
+}
+
+function emptyIconSpec() {
+    return svgIconSpec('0 0 24 24', [
+        spec('path', { attrs: { d: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' } }),
+        spec('polyline', { attrs: { points: '14 2 14 8 20 8' } })
+    ]);
+}
+
+function errorIconSpec() {
+    return svgIconSpec('0 0 24 24', [
+        spec('circle', { attrs: { cx: '12', cy: '12', r: '10' } }),
+        spec('line', { attrs: { x1: '12', y1: '8', x2: '12', y2: '12' } }),
+        spec('line', { attrs: { x1: '12', y1: '16', x2: '12.01', y2: '16' } })
+    ]);
 }
 
 // Simple Markdown-to-HTML converter (safe subset)
@@ -222,6 +247,41 @@ function escapeHtml(str) {
     return str.replace(/[&<>"']/g, (c) => map[c]);
 }
 
+// ─── Spec builders ────────────────────────────────────────────────────
+
+function stateOverlaySpec(state, message, ariaLive, children = []) {
+    return spec('div', {
+        className: 'csma-viewer__state',
+        dataset: { state },
+        attrs: { role: 'status', 'aria-live': ariaLive },
+        children
+    });
+}
+
+function buildShellSpec({ loadingMessage, emptyMessage, errorMessage }) {
+    return spec('div', {
+        className: 'csma-viewer',
+        attrs: { role: 'region', 'aria-label': 'Content viewer' },
+        children: [
+            spec('div', { className: 'csma-viewer__content' }),
+            stateOverlaySpec('loading', null, 'polite', [
+                spec('div', { className: 'csma-viewer__spinner' }),
+                spec('span', { className: 'csma-viewer__state-message', text: loadingMessage })
+            ]),
+            stateOverlaySpec('empty', null, 'polite', [
+                spec('div', { className: 'csma-viewer__state-icon', children: [emptyIconSpec()] }),
+                spec('span', { className: 'csma-viewer__state-message', text: emptyMessage })
+            ]),
+            stateOverlaySpec('error', null, 'assertive', [
+                spec('div', { className: 'csma-viewer__state-icon', children: [errorIconSpec()] }),
+                spec('span', { className: 'csma-viewer__state-message', text: errorMessage }),
+                spec('span', { className: 'csma-viewer__state-detail' }),
+                spec('button', { className: 'csma-viewer__state-retry', text: 'Retry' })
+            ])
+        ]
+    });
+}
+
 export function createViewer(container, emit, options = {}) {
     const {
         fetch: fetchFn = null,
@@ -233,6 +293,8 @@ export function createViewer(container, emit, options = {}) {
         errorMessage = 'Failed to load content',
     } = options;
 
+    const composer = getComposer();
+
     // ─── State ─────────────────────────────────────────
 
     let currentData = null;
@@ -241,70 +303,23 @@ export function createViewer(container, emit, options = {}) {
     let currentFetchId = 0;
     let retryFn = null;
 
-    // ─── DOM Construction ──────────────────────────────
+    // ─── Initial mount (static shell with all state overlays) ──
 
-    const root = document.createElement('div');
-    root.className = 'csma-viewer';
-    root.setAttribute('role', 'region');
-    root.setAttribute('aria-label', 'Content viewer');
+    const { root, cleanup } = composer.mountTree(
+        buildShellSpec({ loadingMessage, emptyMessage, errorMessage }),
+        container
+    );
+
     if (isLoading) root.dataset.state = 'loading';
 
-    // Content area
-    const contentEl = document.createElement('div');
-    contentEl.className = 'csma-viewer__content';
+    // Cached post-mount references
+    const contentEl = root.querySelector('.csma-viewer__content');
+    const errDetail = root.querySelector('.csma-viewer__state-detail');
 
-    // State overlays
-    const stateEls = {};
-    ['loading', 'empty', 'error'].forEach((state) => {
-        const el = document.createElement('div');
-        el.className = 'csma-viewer__state';
-        el.dataset.state = state;
-        el.setAttribute('role', 'status');
-        el.setAttribute('aria-live', state === 'error' ? 'assertive' : 'polite');
-        stateEls[state] = el;
-    });
-
-    // Loading
-    const spinner = document.createElement('div');
-    spinner.className = 'csma-viewer__spinner';
-    stateEls.loading.appendChild(spinner);
-    const loadMsg = document.createElement('span');
-    loadMsg.className = 'csma-viewer__state-message';
-    loadMsg.textContent = loadingMessage;
-    stateEls.loading.appendChild(loadMsg);
-
-    // Empty
-    const emptyIcon = document.createElement('div');
-    emptyIcon.className = 'csma-viewer__state-icon';
-    emptyIcon.appendChild(createViewerEmptyIcon());
-    stateEls.empty.appendChild(emptyIcon);
-    const emptyMsg = document.createElement('span');
-    emptyMsg.className = 'csma-viewer__state-message';
-    emptyMsg.textContent = emptyMessage;
-    stateEls.empty.appendChild(emptyMsg);
-
-    // Error
-    const errorIcon = document.createElement('div');
-    errorIcon.className = 'csma-viewer__state-icon';
-    errorIcon.appendChild(createViewerErrorIcon());
-    stateEls.error.appendChild(errorIcon);
-    const errMsg = document.createElement('span');
-    errMsg.className = 'csma-viewer__state-message';
-    errMsg.textContent = errorMessage;
-    stateEls.error.appendChild(errMsg);
-    const errDetail = document.createElement('span');
-    errDetail.className = 'csma-viewer__state-detail';
-    stateEls.error.appendChild(errDetail);
-    const retryBtn = document.createElement('button');
-    retryBtn.className = 'csma-viewer__state-retry';
-    retryBtn.textContent = 'Retry';
-    retryBtn.addEventListener('click', () => {
+    // Wire retry button (event wiring on mounted DOM — allowed by the pattern)
+    root.querySelector('.csma-viewer__state-retry').addEventListener('click', () => {
         if (retryFn) retryFn();
     });
-    stateEls.error.appendChild(retryBtn);
-
-    root.appendChild(contentEl);
-    Object.values(stateEls).forEach((el) => root.appendChild(el));
 
     // ─── Render ────────────────────────────────────────
 
@@ -402,8 +417,6 @@ export function createViewer(container, emit, options = {}) {
 
     // ─── Initial Render ────────────────────────────────
 
-    container.appendChild(root);
-
     if (fetchFn) {
         doFetch();
     } else {
@@ -470,6 +483,7 @@ export function createViewer(container, emit, options = {}) {
         /** Destroy the viewer, removing all DOM. */
         destroy() {
             currentFetchId = -1; // cancel pending fetches
+            cleanup();
             root.remove();
         },
     };
