@@ -207,6 +207,36 @@ export class MindmapService {
       fn: (data, opts) => svc.search(opts?.query || '', { status: opts?.status, tag: opts?.tag }),
       moduleId: 'mindmap'
     });
+    this.agentContext.register({
+      name: 'mindmap.focus',
+      description: 'Isolate a branch (or set of nodes) by node id(s); dims the rest of the map.',
+      fn: (data, opts) => {
+        const ids = opts?.nodeIds || (opts?.nodeId ? [opts.nodeId] : []);
+        if (ids.length) svc.requestFocus(ids, { scope: opts?.scope || 'branch' });
+        return { focused: ids };
+      },
+      moduleId: 'mindmap'
+    });
+    this.agentContext.register({
+      name: 'mindmap.arrow',
+      description: 'List cross-link arrows in the active map (filter by node or direction); isolate a linked context by focusing its two endpoints.',
+      fn: (data, opts) => {
+        const mapId = typeof opts?.mapId === 'string' ? opts.mapId : svc._activeMapId;
+        let arrows = svc.getArrows(mapId);
+        if (opts?.nodeId) arrows = arrows.filter((a) => a.from === opts.nodeId || a.to === opts.nodeId);
+        if (opts?.direction) arrows = arrows.filter((a) => a.direction === opts.direction);
+        let isolated = null;
+        if (opts?.arrowId && opts?.isolate) {
+          const arrow = arrows.find((a) => a.id === opts.arrowId) || svc.getArrows(mapId).find((a) => a.id === opts.arrowId);
+          if (arrow) {
+            svc.requestFocus([arrow.from, arrow.to], { scope: 'branch' });
+            isolated = arrow.id;
+          }
+        }
+        return { mapId, arrows, isolated };
+      },
+      moduleId: 'mindmap'
+    });
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────
@@ -1144,6 +1174,13 @@ export class MindmapService {
     return out;
   }
 
+  /** Agent/UI entry point to isolate a node set on the live surface (§11.9 / Wave 3 focus). */
+  requestFocus(nodeIds, { scope = 'branch' } = {}) {
+    const ids = Array.isArray(nodeIds) ? nodeIds : [nodeIds];
+    if (!ids.length) return;
+    this._publish('MINDMAP_FOCUS_REQUESTED', { mapId: this._activeMapId, focusIds: ids, scope });
+  }
+
   // ─── Serialization ───────────────────────────────────────────────
 
   toMarkdown(mapId, opts = {}) {
@@ -1500,6 +1537,10 @@ export class MindmapService {
     });
     const viewport = new ViewportController({ container: canvas, nodeLayer, connectorLayer: svgLayer, eventBus: service.eventBus, mapId: resolvedMapId });
     const focus = new FocusController({ service, eventBus: service.eventBus, nodeLayer, svgLayer, mapId: resolvedMapId, getRoot: () => service._getMap(resolvedMapId)?.root, onChange: updatePill });
+    service.eventBus.subscribe('MINDMAP_FOCUS_REQUESTED', (e) => {
+      if (e?.mapId && e.mapId !== resolvedMapId) return;
+      if (e?.focusIds?.length) focus.focusNodes(e.focusIds, { scope: e.scope || 'branch' });
+    });
     new NodeDragHandler({ container: canvas, nodeLayer, selection, viewport, service, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut }).attach();
     const contextMenu = new ContextMenu({ container: canvas, service, selection, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut, focus });
     contextMenu.attach();

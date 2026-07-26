@@ -51,7 +51,8 @@
       ],
       "intentMap": {
         "searchNodes": "mindmap.search",
-        "isolateBranch": "mindmap.focus"
+        "isolateBranch": "mindmap.focus",
+        "listArrows": "mindmap.arrow"
       }
     },
     "style": {

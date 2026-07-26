@@ -171,6 +171,11 @@ export const MindmapContracts = {
     object({ mapId: string(), active: any(), direction: optional(enums(['forward', 'bidirectional'])), source: optional(string()) })
   ),
 
+  MINDMAP_FOCUS_REQUESTED: contract(
+    { version: 1, type: 'event', owner: 'mindmap', lifecycle: 'active', stability: 'stable', compliance: 'public', description: 'Inbound request to isolate (focus) a node set on the live surface (§11.9 / Wave 3 focus).' },
+    object({ mapId: string(), focusIds: array(string()), scope: optional(enums(['branch', 'subtree'])) })
+  ),
+
   // ── Phase 10 — Selection & inline editing ────────────────────────
 
   MINDMAP_NODE_SELECTED: contract({
