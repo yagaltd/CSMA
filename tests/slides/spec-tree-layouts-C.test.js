@@ -4,14 +4,16 @@ import EventBus from '../../src/runtime/EventBus.js';
 import { AIUIComposerService } from '../../src/modules/ai-ui/services/AIUIComposerService.js';
 import { renderSlide } from '../../src/modules/slides/layouts/index.js';
 // Back-compat DOM helpers — used to build golden reference DOM that mirrors the
-// original (pre-Phase-2.1-C) layout implementations, byte-for-byte.
+// original (pre-Phase-2.1-C) layout implementations, byte-for-byte. These live
+// in a test-only fixture (not the production _shared.js) so the golden
+// reference stays an independent, raw-DOM baseline (no circular spec-vs-spec).
 import {
     el,
     createSlideShell,
     createKicker,
     createHeading,
     container
-} from '../../src/modules/slides/layouts/_shared.js';
+} from './fixtures/legacy-dom-helpers.js';
 
 // ──────────────────────────────────────────────────────────────────
 // Golden reference builders — re-implement the ORIGINAL layout bodies using

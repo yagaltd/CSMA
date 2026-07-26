@@ -6,38 +6,53 @@
  *
  * Full-screen grid of slide labels. Visible only when gridOpen=true. Press
  * Escape or click outside to close.
+ *
+ * Phase 3.2 — aiui-native (factory-wrapping). The grid shell + cards are
+ * spec-mounted via `getComposer().mountTree()`; dynamic re-renders (DECK_READY)
+ * mount a fresh card spec subtree into the shell's `.grid-inner`. No raw
+ * `document.createElement` in chrome internals.
  */
 
-import { el } from '../layouts/_shared.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
 
 export function initGrid(container, eventBus, service) {
     if (!container || !eventBus) return () => {};
     const doc = container.ownerDocument || (typeof document !== 'undefined' ? document : null);
     if (!doc) return () => {};
 
-    const grid = el('div', {
+    const composer = getComposer();
+
+    // 1. Build + mount the grid shell (data-open set via spec → DOM dataset).
+    const gridSpec = spec('div', {
         className: 'slide-grid',
-        attrs: { 'aria-label': 'Slide overview' }
+        attrs: { 'aria-label': 'Slide overview' },
+        dataset: { open: 'false' },
+        children: [
+            spec('div', { className: 'grid-inner' })
+        ]
     });
-    grid.dataset.open = 'false';
-    container.appendChild(grid);
+    const { root: grid, cleanup: unmountGrid } = composer.mountTree(gridSpec, container, { documentRef: doc });
+    const inner = grid.querySelector('.grid-inner');
 
-    const inner = el('div', { className: 'grid-inner' });
-    grid.appendChild(inner);
-
+    // Build a card spec subtree for the current slide list, mounted into inner.
     const renderItems = () => {
-        while (inner.firstChild) inner.removeChild(inner.firstChild);
+        inner.replaceChildren();
         const slides = Array.isArray(service.slides) ? service.slides : [];
-        slides.forEach((slide, i) => {
-            const card = el('button', {
-                className: 'grid-card',
-                dataset: { index: String(i), active: i === service.index ? 'true' : 'false' }
-            });
+        const cardSpecs = slides.map((slide, i) => {
             const label = slide?.type ? slide.type : ('slide ' + (i + 1));
-            card.appendChild(el('span', { className: 'grid-thumb', text: String(label) }));
-            card.appendChild(el('span', { className: 'grid-num', text: String(i + 1) }));
-            inner.appendChild(card);
+            return spec('button', {
+                className: 'grid-card',
+                dataset: { index: String(i), active: i === service.index ? 'true' : 'false' },
+                children: [
+                    spec('span', { className: 'grid-thumb', text: String(label) }),
+                    spec('span', { className: 'grid-num', text: String(i + 1) })
+                ]
+            });
         });
+        // mountTree accepts a spec array (mounts a fragment) into inner. Cards
+        // are pure raw HTML (no catalog surfaces), so their cleanup is a no-op
+        // beyond DOM removal — re-renders clear inner above.
+        composer.mountTree(cardSpecs, inner, { documentRef: doc });
     };
 
     renderItems();
@@ -73,6 +88,6 @@ export function initGrid(container, eventBus, service) {
     return () => {
         subs.forEach((fn) => fn && fn());
         grid.removeEventListener('click', onClick);
-        if (grid.parentNode) grid.parentNode.removeChild(grid);
+        unmountGrid();
     };
 }

@@ -32,7 +32,7 @@ import { createAgendaSlide }       from './agenda.js';
 import { createSectionSlide }      from './section.js';
 import { createMarqueeSlide }      from './marquee.js';
 import { createCtaSlide }          from './cta.js';
-import { el } from './_shared.js';
+import { spec } from './_shared.js';
 import { AIUIComposerService } from '../../ai-ui/services/AIUIComposerService.js';
 
 // Lazy default composer used by renderSlide()/buildSlide() when no composer is
@@ -117,16 +117,16 @@ export function buildSlide(config, opts = {}) {
 
     const result = factory(config);
 
+    const composer = opts.composer || getDefaultComposer();
+    const documentRef = opts.documentRef || (typeof document !== 'undefined' ? document : undefined);
+
     let element;
     let cleanup = noopCleanup;
     if (result instanceof Node) {
         // Back-compat: layout still returns DOM (not yet converted to spec).
         element = result;
     } else if (isSpecNode(result)) {
-        const composer = opts.composer || getDefaultComposer();
-        const mounted = composer.mountTree(result, null, {
-            documentRef: opts.documentRef || (typeof document !== 'undefined' ? document : undefined)
-        });
+        const mounted = composer.mountTree(result, null, { documentRef });
         element = mounted.root;
         cleanup = mounted.cleanup;
     } else {
@@ -135,13 +135,17 @@ export function buildSlide(config, opts = {}) {
 
     // code-window / browser-frame return content-only (no `.slide` shell) when
     // used as a top-level slide type; wrap them so every deck slide is full.
+    // The content element is a live DOM Node at this point, so it embeds via
+    // mountTree's DOM-passthrough (no ownership transfer of its cleanup).
     if (CONTENT_ONLY_LAYOUTS.has(config.type) && element && !element.classList?.contains('slide')) {
-        const shell = el('div', { className: 'slide center' });
-        shell.dataset.layout = String(config.type);
-        const inner = el('div', { className: 'slide-container' });
-        inner.appendChild(element);
-        shell.appendChild(inner);
-        element = shell;
+        const wrapperSpec = spec('div', {
+            className: 'slide center',
+            dataset: { layout: String(config.type) },
+            children: [
+                spec('div', { className: 'slide-container', children: [ element ] })
+            ]
+        });
+        element = composer.mountTree(wrapperSpec, null, { documentRef }).root;
     }
 
     return { element, cleanup };
@@ -165,10 +169,15 @@ export function renderSlide(config, opts = {}) {
  * layout" placeholder so the deck never crashes mid-presentation.
  */
 export function createFallbackSlide(config = {}) {
-    const slide = el('div', { className: 'slide center', dataset: { layout: 'fallback' } });
-    const container = el('div', { className: 'slide-container' });
-    container.appendChild(el('p', { className: 'kicker', text: 'Unknown layout' }));
-    container.appendChild(el('h2', { className: 'headline', text: String(config?.type || '(missing type)') }));
-    slide.appendChild(container);
-    return slide;
+    const fallbackSpec = spec('div', {
+        className: 'slide center',
+        dataset: { layout: 'fallback' },
+        children: [
+            spec('div', { className: 'slide-container', children: [
+                spec('p', { className: 'kicker', text: 'Unknown layout' }),
+                spec('h2', { className: 'headline', text: String(config?.type || '(missing type)') })
+            ]})
+        ]
+    });
+    return getDefaultComposer().mountTree(fallbackSpec).root;
 }

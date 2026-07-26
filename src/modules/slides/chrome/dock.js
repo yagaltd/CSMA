@@ -8,57 +8,71 @@
  *            INTENT_SLIDE_OPEN_PRESENTER
  *
  * Hides when uiHidden=true. Two rows on desktop (nav + tools), stacked on mobile.
+ *
+ * Phase 3.2 — aiui-native (factory-wrapping). All DOM construction routes
+ * through `getComposer().mountTree(spec, container)`; no raw
+ * `document.createElement` in chrome internals. The dock shell is spec-mounted;
+ * click delegation and subscription-driven dataset mutations run on the
+ * mounted DOM (see the Layer 2 archetype pattern in docs/architecture/SKILL.md).
  */
 
-import { el } from '../layouts/_shared.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
 
 export function initDock(container, eventBus, service) {
     if (!container || !eventBus) return () => {};
     const doc = container.ownerDocument || (typeof document !== 'undefined' ? document : null);
     if (!doc) return () => {};
 
-    const dock = el('div', { className: 'noir-dock', attrs: { role: 'toolbar', 'aria-label': 'Slide controls' } });
-
-    const counter = el('span', { className: 'dock-counter', text: formatCounter(service.index, service.slides.length) });
-
     const publish = (name) => () => eventBus.publish(name, { timestamp: Date.now() });
 
-    dock.appendChild(el('button', {
-        className: 'dock-btn',
-        text: '←',
-        attrs: { 'aria-label': 'Previous slide' },
-        dataset: { intent: 'INTENT_SLIDE_PREV' }
-    }));
-    dock.appendChild(counter);
-    dock.appendChild(el('button', {
-        className: 'dock-btn',
-        text: '→',
-        attrs: { 'aria-label': 'Next slide' },
-        dataset: { intent: 'INTENT_SLIDE_NEXT' }
-    }));
-
-    const tools = el('div', { className: 'dock-tools' });
     const toolDefs = [
         { label: 'Toggle sidebar', symbol: '☰', intent: 'INTENT_SLIDE_TOGGLE_RAIL' },
         { label: 'Toggle grid',    symbol: '▦', intent: 'INTENT_SLIDE_TOGGLE_GRID' },
         { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' },
         { label: 'Toggle drawing', symbol: '✎', intent: 'INTENT_SLIDE_TOGGLE_DRAWING' },
         { label: 'Fullscreen',     symbol: '⛶', intent: 'INTENT_SLIDE_TOGGLE_FS' },
-        { label: 'Presenter',      symbol: '', intent: 'INTENT_SLIDE_OPEN_PRESENTER' },
+        { label: 'Presenter',      symbol: '', intent: 'INTENT_SLIDE_OPEN_PRESENTER' },
         { label: 'Hide UI',        symbol: '◉', intent: 'INTENT_SLIDE_HIDE_UI' }
     ];
-    for (const t of toolDefs) {
-        tools.appendChild(el('button', {
-            className: 'dock-btn',
-            text: t.symbol,
-            attrs: { 'aria-label': t.label, 'title': t.label },
-            dataset: { intent: t.intent }
-        }));
-    }
-    dock.appendChild(tools);
-    container.appendChild(dock);
 
-    // Click delegation — read intent from data-attr, publish
+    // 1. Build spec tree (byte-identical to the legacy el() DOM it replaced).
+    const dockSpec = spec('div', {
+        className: 'noir-dock',
+        attrs: { role: 'toolbar', 'aria-label': 'Slide controls' },
+        children: [
+            spec('button', {
+                className: 'dock-btn',
+                text: '←',
+                attrs: { 'aria-label': 'Previous slide' },
+                dataset: { intent: 'INTENT_SLIDE_PREV' }
+            }),
+            spec('span', {
+                className: 'dock-counter',
+                text: formatCounter(service.index, service.slides.length)
+            }),
+            spec('button', {
+                className: 'dock-btn',
+                text: '→',
+                attrs: { 'aria-label': 'Next slide' },
+                dataset: { intent: 'INTENT_SLIDE_NEXT' }
+            }),
+            spec('div', {
+                className: 'dock-tools',
+                children: toolDefs.map((t) => spec('button', {
+                    className: 'dock-btn',
+                    text: t.symbol,
+                    attrs: { 'aria-label': t.label, 'title': t.label },
+                    dataset: { intent: t.intent }
+                }))
+            })
+        ]
+    });
+
+    // 2. Mount via composer (appends root to container; cleanup detaches it).
+    const { root: dock, cleanup: unmountDock } = getComposer().mountTree(dockSpec, container, { documentRef: doc });
+    const counter = dock.querySelector('.dock-counter');
+
+    // 3. Wire events + subscriptions on the mounted DOM (same as before).
     const onClick = (e) => {
         const btn = e.target.closest('button[data-intent]');
         if (!btn) return;
@@ -80,10 +94,11 @@ export function initDock(container, eventBus, service) {
         }));
     }
 
+    // 4. Return cleanup
     return () => {
         subs.forEach((fn) => fn && fn());
         dock.removeEventListener('click', onClick);
-        if (dock.parentNode) dock.parentNode.removeChild(dock);
+        unmountDock();
     };
 }
 

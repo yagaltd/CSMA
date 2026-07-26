@@ -14,7 +14,7 @@
  * fields are bypassed (so presenter notes still type normally).
  */
 
-import { el } from '../layouts/_shared.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
 import { buildSlide } from '../layouts/index.js';
 import { animateSlideTransition } from './transitions.js';
 import { initAnnotator } from './annotator.js';
@@ -69,10 +69,13 @@ export function mountDeck(container, service, eventBus, opts = {}) {
     const mountChrome = opts.mountChrome !== false;
     const mountAnnotator = opts.mountAnnotator !== false;
 
-    const deck = el('div', { className: 'deck' });
-    const stage = el('div', { className: 'slide-stage' });
-    deck.appendChild(stage);
-    container.appendChild(deck);
+    // Deck shell (.deck > .slide-stage) — spec-mounted via the composer.
+    const deckSpec = spec('div', {
+        className: 'deck',
+        children: [ spec('div', { className: 'slide-stage' }) ]
+    });
+    const { root: deck, cleanup: unmountDeck } = getComposer().mountTree(deckSpec, container, { documentRef: doc });
+    const stage = deck.querySelector('.slide-stage');
 
     const cleanups = [];
     let currentSlideEl = null;
@@ -283,7 +286,7 @@ export function mountDeck(container, service, eventBus, opts = {}) {
             currentSlideEl.parentNode.removeChild(currentSlideEl);
         }
         currentSlideEl = null;
-        if (deck.parentNode) deck.parentNode.removeChild(deck);
+        unmountDeck();
     };
 }
 

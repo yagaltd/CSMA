@@ -7,38 +7,50 @@
  * Renders a vertical list of thumbnail labels (canvas thumbnails are a Phase 5+
  * optimization; v1 uses labeled placeholders that share styling with the grid
  * chrome). Visible only when railOpen=true.
+ *
+ * Phase 3.2 — aiui-native (factory-wrapping). The rail shell + items are
+ * spec-mounted via `getComposer().mountTree()`; dynamic re-renders (DECK_READY)
+ * mount a fresh item spec subtree into the shell's `.rail-list`. No raw
+ * `document.createElement` in chrome internals.
  */
 
-import { el } from '../layouts/_shared.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
 
 export function initRail(container, eventBus, service) {
     if (!container || !eventBus) return () => {};
     const doc = container.ownerDocument || (typeof document !== 'undefined' ? document : null);
     if (!doc) return () => {};
 
-    const rail = el('aside', {
+    const composer = getComposer();
+
+    // 1. Build + mount the rail shell (data-open set via spec → DOM dataset).
+    const railSpec = spec('aside', {
         className: 'slide-rail',
-        attrs: { 'aria-label': 'Slide thumbnails' }
+        attrs: { 'aria-label': 'Slide thumbnails' },
+        dataset: { open: 'false' },
+        children: [
+            spec('ol', { className: 'rail-list' })
+        ]
     });
-    rail.dataset.open = 'false';
-    container.appendChild(rail);
+    const { root: rail, cleanup: unmountRail } = composer.mountTree(railSpec, container, { documentRef: doc });
+    const list = rail.querySelector('.rail-list');
 
-    const list = el('ol', { className: 'rail-list' });
-    rail.appendChild(list);
-
+    // Build an item spec subtree for the current slide list, mounted into list.
     const renderItems = () => {
-        while (list.firstChild) list.removeChild(list.firstChild);
+        list.replaceChildren();
         const slides = Array.isArray(service.slides) ? service.slides : [];
-        slides.forEach((slide, i) => {
-            const li = el('li', {
-                className: 'rail-item',
-                dataset: { index: String(i), active: i === service.index ? 'true' : 'false' }
-            });
+        const itemSpecs = slides.map((slide, i) => {
             const label = slide?.type ? slide.type : ('slide ' + (i + 1));
-            li.appendChild(el('span', { className: 'rail-thumb', text: String(label) }));
-            li.appendChild(el('span', { className: 'rail-num', text: String(i + 1) }));
-            list.appendChild(li);
+            return spec('li', {
+                className: 'rail-item',
+                dataset: { index: String(i), active: i === service.index ? 'true' : 'false' },
+                children: [
+                    spec('span', { className: 'rail-thumb', text: String(label) }),
+                    spec('span', { className: 'rail-num', text: String(i + 1) })
+                ]
+            });
         });
+        composer.mountTree(itemSpecs, list, { documentRef: doc });
     };
 
     renderItems();
@@ -70,6 +82,6 @@ export function initRail(container, eventBus, service) {
     return () => {
         subs.forEach((fn) => fn && fn());
         list.removeEventListener('click', onClick);
-        if (rail.parentNode) rail.parentNode.removeChild(rail);
+        unmountRail();
     };
 }

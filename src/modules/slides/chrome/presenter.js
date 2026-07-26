@@ -7,9 +7,14 @@
  *
  * Layout: current slide preview + next slide preview + notes textarea + timer.
  * Notes persist to localStorage (device-scoped, same as bolt-slides).
+ *
+ * Phase 3.2 — aiui-native (factory-wrapping). The overlay shell is spec-mounted
+ * via `getComposer().mountTree()`; label updates, the textarea value, and the
+ * timer run on the mounted DOM. No raw `document.createElement` in chrome
+ * internals.
  */
 
-import { el } from '../layouts/_shared.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
 
 const TIMER_KEY = 'csma-slides-timer-start';
 
@@ -19,44 +24,42 @@ export function initPresenter(container, eventBus, service) {
     const win = doc?.defaultView || (typeof window !== 'undefined' ? window : null);
     if (!doc || !win) return () => {};
 
-    const overlay = el('div', { className: 'presenter-overlay' });
-    container.appendChild(overlay);
-
-    // Current slide preview
-    const current = el('section', { className: 'presenter-current' });
-    current.appendChild(el('p', { className: 'kicker', text: 'Current' }));
-    const currentLabel = el('p', { className: 'presenter-slide-label', text: labelFor(service) });
-    current.appendChild(currentLabel);
-
-    // Next slide preview
-    const next = el('section', { className: 'presenter-next' });
-    next.appendChild(el('p', { className: 'kicker', text: 'Next' }));
-    const nextLabel = el('p', { className: 'presenter-slide-label', text: labelFor(service, service.index + 1) });
-    next.appendChild(nextLabel);
-
-    // Notes textarea
-    const notesWrap = el('section', { className: 'presenter-notes' });
-    notesWrap.appendChild(el('label', {
-        className: 'presenter-notes-label',
-        text: 'Notes',
-        attrs: { for: 'csma-presenter-notes' }
-    }));
-    const textarea = el('textarea', {
-        className: 'presenter-notes-input',
-        attrs: { id: 'csma-presenter-notes', maxlength: '5000', placeholder: 'Add talking points for this slide…' }
+    // 1. Build + mount the overlay shell (byte-identical to the legacy el() DOM).
+    const overlaySpec = spec('div', {
+        className: 'presenter-overlay',
+        children: [
+            spec('section', { className: 'presenter-current', children: [
+                spec('p', { className: 'kicker', text: 'Current' }),
+                spec('p', { className: 'presenter-slide-label', text: labelFor(service) })
+            ]}),
+            spec('section', { className: 'presenter-next', children: [
+                spec('p', { className: 'kicker', text: 'Next' }),
+                spec('p', { className: 'presenter-slide-label', text: labelFor(service, service.index + 1) })
+            ]}),
+            spec('section', { className: 'presenter-notes', children: [
+                spec('label', {
+                    className: 'presenter-notes-label',
+                    text: 'Notes',
+                    attrs: { for: 'csma-presenter-notes' }
+                }),
+                spec('textarea', {
+                    className: 'presenter-notes-input',
+                    attrs: { id: 'csma-presenter-notes', maxlength: '5000', placeholder: 'Add talking points for this slide…' }
+                })
+            ]}),
+            spec('section', { className: 'presenter-timer', children: [
+                spec('p', { className: 'presenter-timer-display', text: '00:00' })
+            ]})
+        ]
     });
+    const { root: overlay, cleanup: unmountOverlay } = getComposer().mountTree(overlaySpec, container, { documentRef: doc });
+
+    // Resolve the mutable nodes from the mounted DOM.
+    const currentLabel  = overlay.querySelector('.presenter-current .presenter-slide-label');
+    const nextLabel     = overlay.querySelector('.presenter-next .presenter-slide-label');
+    const textarea      = overlay.querySelector('.presenter-notes-input');
+    const timerDisplay  = overlay.querySelector('.presenter-timer-display');
     textarea.value = service.getNote(service.index) || '';
-    notesWrap.appendChild(textarea);
-
-    // Timer
-    const timerWrap = el('section', { className: 'presenter-timer' });
-    const timerDisplay = el('p', { className: 'presenter-timer-display', text: '00:00' });
-    timerWrap.appendChild(timerDisplay);
-
-    overlay.appendChild(current);
-    overlay.appendChild(next);
-    overlay.appendChild(notesWrap);
-    overlay.appendChild(timerWrap);
 
     // Timer — persist start across reloads (device-scoped)
     let timerStart = null;
@@ -114,7 +117,7 @@ export function initPresenter(container, eventBus, service) {
         win.clearInterval(intervalId);
         textarea.removeEventListener('input', onNotesInput);
         subs.forEach((fn) => fn && fn());
-        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        unmountOverlay();
     };
 }
 

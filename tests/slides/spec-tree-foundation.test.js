@@ -7,7 +7,9 @@ import {
     buildSlide
 } from '../../src/modules/slides/layouts/index.js';
 // Back-compat DOM helpers — used to build golden reference DOM that mirrors the
-// original (pre-Phase-2.0) layout implementations, byte-for-byte.
+// original (pre-Phase-2.0) layout implementations, byte-for-byte. These live
+// in a test-only fixture (not the production _shared.js) so the golden
+// reference stays an independent, raw-DOM baseline (no circular spec-vs-spec).
 import {
     el,
     createSlideShell,
@@ -17,7 +19,7 @@ import {
     createFoot,
     createTitleWithAccent,
     container
-} from '../../src/modules/slides/layouts/_shared.js';
+} from './fixtures/legacy-dom-helpers.js';
 
 // ──────────────────────────────────────────────────────────────────
 // Golden reference builders — re-implement the ORIGINAL layout bodies using
