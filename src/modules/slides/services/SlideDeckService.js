@@ -274,7 +274,12 @@ export class SlideDeckService {
         const win = this.windowRef;
         if (!win) return;
         const url = (win.location.href || '') + (/[?]/.test(win.location.search) ? '&' : '?') + 'presenter=1';
-        try { win.open(url, 'csma-slides-presenter'); } catch { /* noop */ }
+        try {
+            const popup = win.open(url, 'csma-slides-presenter');
+            // Focus the popup so it doesn't open behind the current window —
+            // common cause of 'presenter button does nothing' perception.
+            if (popup && typeof popup.focus === 'function') popup.focus();
+        } catch { /* noop */ }
     }
 
     // ─── Annotations ─────────────────────────────────────────────────
