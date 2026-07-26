@@ -3,6 +3,10 @@
  *
  * Factory: createMediaBrowser(container, emit, options) → { update, destroy, getSelected, getItems }
  *
+ * Phase 3.1-C: all DOM construction routes through `getComposer().mountTree()`.
+ * No raw document.createElement. Events are wired post-mount on the real DOM
+ * elements the composer returns. SVG icons compose through mountTree.
+ *
  * Features:
  * - Responsive thumbnail grid with auto-fill columns
  * - Search/filter bar
@@ -12,25 +16,36 @@
  * - CSMA design tokens for all visual values
  */
 
-import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { clearChildren } from '../../../utils/dom.js';
 
-function createFileIcon(type = 'file') {
+// ─── SVG icon specs (composed through mountTree) ──────────────────
+
+function fileIconSpec(type = 'file') {
+    const svgAttrs = {
+        viewBox: '0 0 24 24',
+        fill: 'none',
+        'aria-hidden': 'true',
+        focusable: 'false',
+        stroke: 'currentColor',
+        'stroke-width': '1.5'
+    };
     if (type === 'image') {
-        return createIcon('0 0 24 24', [
-            createSvgElement('rect', { x: 3, y: 3, width: 18, height: 18, rx: 2 }),
-            createSvgElement('circle', { cx: 8.5, cy: 8.5, r: 1.5 }),
-            createSvgElement('path', { d: 'm21 15-5-5L5 21' })
-        ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+        return spec('svg', { attrs: svgAttrs, children: [
+            spec('rect', { attrs: { x: '3', y: '3', width: '18', height: '18', rx: '2' } }),
+            spec('circle', { attrs: { cx: '8.5', cy: '8.5', r: '1.5' } }),
+            spec('path', { attrs: { d: 'm21 15-5-5L5 21' } })
+        ]});
     }
     if (type === 'video') {
-        return createIcon('0 0 24 24', [
-            createSvgElement('polygon', { points: '5 3 19 12 5 21 5 3' })
-        ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+        return spec('svg', { attrs: svgAttrs, children: [
+            spec('polygon', { attrs: { points: '5 3 19 12 5 21 5 3' } })
+        ]});
     }
-    return createIcon('0 0 24 24', [
-        createSvgElement('path', { d: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' }),
-        createSvgElement('polyline', { points: '14 2 14 8 20 8' })
-    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+    return spec('svg', { attrs: svgAttrs, children: [
+        spec('path', { attrs: { d: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z' } }),
+        spec('polyline', { attrs: { points: '14 2 14 8 20 8' } })
+    ]});
 }
 
 export function createMediaBrowser(container, emit, options = {}) {
@@ -51,80 +66,165 @@ export function createMediaBrowser(container, emit, options = {}) {
     let sortKey = 'name';
     let isLoading = false;
     let error = null;
+    let itemCleanups = [];
 
-    // ─── DOM ───────────────────────────────────────────
+    const composer = getComposer();
 
-    const root = document.createElement('div');
-    root.className = 'csma-media';
-    root.setAttribute('role', 'region');
-    root.setAttribute('aria-label', 'Media browser');
+    // ─── Initial mount via mountTree ───────────────────
 
-    // Toolbar
-    const toolbar = document.createElement('div');
-    toolbar.className = 'csma-media__toolbar';
+    const gridAttrs = { role: 'listbox' };
+    if (multiSelect) gridAttrs['aria-multiselectable'] = 'true';
 
-    const searchInput = document.createElement('input');
-    searchInput.className = 'csma-media__search';
-    searchInput.type = 'search';
-    searchInput.placeholder = 'Search…';
-    searchInput.addEventListener('input', () => {
-        searchQuery = searchInput.value.toLowerCase();
-        renderGrid();
-    });
+    const toolbarChildren = [];
+    if (searchable) {
+        toolbarChildren.push(spec('input', {
+            className: 'csma-media__search',
+            attrs: { type: 'search', placeholder: 'Search…' }
+        }));
+    }
+    if (sortable) {
+        toolbarChildren.push(spec('select', {
+            className: 'csma-media__sort',
+            children: ['name', 'date', 'size'].map((key) =>
+                spec('option', {
+                    attrs: { value: key },
+                    text: key.charAt(0).toUpperCase() + key.slice(1)
+                })
+            )
+        }));
+    }
 
-    const sortSelect = document.createElement('select');
-    sortSelect.className = 'csma-media__sort';
-    ['name', 'date', 'size'].forEach((key) => {
-        const opt = document.createElement('option');
-        opt.value = key;
-        opt.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-        sortSelect.appendChild(opt);
-    });
-    sortSelect.addEventListener('change', () => {
-        sortKey = sortSelect.value;
-        renderGrid();
-    });
-
-    if (searchable) toolbar.appendChild(searchInput);
-    if (sortable) toolbar.appendChild(sortSelect);
-
-    // Grid
-    const grid = document.createElement('div');
-    grid.className = 'csma-media__grid';
-    grid.setAttribute('role', 'listbox');
-    if (multiSelect) grid.setAttribute('aria-multiselectable', 'true');
-
-    // State overlays
-    const stateEls = {};
-    ['loading', 'empty', 'error'].forEach((state) => {
-        const el = document.createElement('div');
-        el.className = 'csma-media__state';
-        el.dataset.state = state;
-        el.setAttribute('role', 'status');
-
+    function buildStateSpec(state) {
+        const children = [];
         if (state === 'loading') {
-            const spinner = document.createElement('div');
-            spinner.className = 'csma-media__spinner';
-            el.appendChild(spinner);
+            children.push(spec('div', { className: 'csma-media__spinner' }));
         }
-        const msg = document.createElement('span');
-        msg.className = 'csma-media__state-message';
-        msg.textContent = state === 'empty' ? emptyMessage : state === 'error' ? 'Failed to load' : 'Loading…';
-        el.appendChild(msg);
-
+        children.push(spec('span', {
+            className: 'csma-media__state-message',
+            text: state === 'empty' ? emptyMessage : state === 'error' ? 'Failed to load' : 'Loading…'
+        }));
         if (state === 'error') {
-            const retry = document.createElement('button');
-            retry.className = 'csma-media__state-retry';
-            retry.textContent = 'Retry';
-            retry.addEventListener('click', () => renderGrid());
-            el.appendChild(retry);
+            children.push(spec('button', { className: 'csma-media__state-retry', text: 'Retry' }));
         }
-        stateEls[state] = el;
-    });
+        return spec('div', {
+            className: 'csma-media__state',
+            dataset: { state },
+            attrs: { role: 'status' },
+            children
+        });
+    }
 
-    root.appendChild(toolbar);
-    root.appendChild(grid);
-    Object.values(stateEls).forEach((el) => root.appendChild(el));
+    const { root, cleanup: rootCleanup } = composer.mountTree(spec('div', {
+        className: 'csma-media',
+        attrs: { role: 'region', 'aria-label': 'Media browser' },
+        children: [
+            spec('div', { className: 'csma-media__toolbar', children: toolbarChildren }),
+            spec('div', { className: 'csma-media__grid', attrs: gridAttrs }),
+            buildStateSpec('loading'),
+            buildStateSpec('empty'),
+            buildStateSpec('error')
+        ]
+    }), container);
+
+    // ─── Query mounted elements + wire events ──────────
+
+    const toolbar = root.querySelector('.csma-media__toolbar');
+    const searchInput = toolbar.querySelector('.csma-media__search');
+    const sortSelect = toolbar.querySelector('.csma-media__sort');
+    const grid = root.querySelector('.csma-media__grid');
+    const retryBtn = root.querySelector('.csma-media__state-retry');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            searchQuery = searchInput.value.toLowerCase();
+            renderGrid();
+        });
+    }
+    if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+            sortKey = sortSelect.value;
+            renderGrid();
+        });
+    }
+    if (retryBtn) {
+        retryBtn.addEventListener('click', () => renderGrid());
+    }
+
+    // ─── Item spec builder ─────────────────────────────
+
+    function buildPlaceholderSpec(item) {
+        return spec('div', {
+            className: 'csma-media__thumbnail csma-media__thumbnail--placeholder',
+            children: [fileIconSpec(item.type || 'file')]
+        });
+    }
+
+    function buildItemSpec(item) {
+        const cardAttrs = { role: 'option', tabindex: '0' };
+        if (selectedIds.has(item.id)) cardAttrs['aria-selected'] = 'true';
+
+        const children = [];
+        if (item.thumbnail || item.src) {
+            children.push(spec('img', {
+                className: 'csma-media__thumbnail',
+                attrs: {
+                    src: item.thumbnail || item.src,
+                    alt: item.name || item.label || ''
+                    // NOTE: 'loading' is set as a DOM PROPERTY post-mount
+                }
+            }));
+        } else {
+            children.push(buildPlaceholderSpec(item));
+        }
+
+        const infoChildren = [
+            spec('div', { className: 'csma-media__name', text: item.name || item.label || item.id })
+        ];
+        if (item.meta || item.size || item.date) {
+            infoChildren.push(spec('div', {
+                className: 'csma-media__meta',
+                text: item.meta || formatMeta(item)
+            }));
+        }
+        children.push(spec('div', { className: 'csma-media__info', children: infoChildren }));
+
+        return spec('div', {
+            className: 'csma-media__item',
+            attrs: cardAttrs,
+            dataset: { itemId: item.id },
+            children
+        });
+    }
+
+    function wireItemEvents(card, item) {
+        // Image properties set as DOM properties (not reflected to attributes)
+        // + runtime error handler.
+        const img = card.querySelector('img.csma-media__thumbnail');
+        if (img) {
+            img.loading = 'lazy';
+            img.addEventListener('error', () => {
+                img.style.display = 'none';
+                const { root: phRoot, cleanup } = composer.mountTree(buildPlaceholderSpec(item), card);
+                itemCleanups.push(cleanup);
+                card.insertBefore(phRoot, img);
+            });
+        }
+
+        card.addEventListener('click', () => {
+            if (selectable) {
+                if (multiSelect) {
+                    if (selectedIds.has(item.id)) selectedIds.delete(item.id);
+                    else selectedIds.add(item.id);
+                } else {
+                    selectedIds.clear();
+                    selectedIds.add(item.id);
+                }
+                renderGrid();
+            }
+            if (onItemClick) onItemClick(item);
+            if (emit) emit('media:select', { item, selectedIds: [...selectedIds] });
+        });
+    }
 
     // ─── Render ────────────────────────────────────────
 
@@ -144,79 +244,6 @@ export function createMediaBrowser(container, emit, options = {}) {
         return filtered;
     }
 
-    function buildItem(item) {
-        const card = document.createElement('div');
-        card.className = 'csma-media__item';
-        card.setAttribute('role', 'option');
-        card.dataset.itemId = item.id;
-        card.tabIndex = 0;
-
-        if (selectedIds.has(item.id)) {
-            card.setAttribute('aria-selected', 'true');
-        }
-
-        // Thumbnail
-        if (item.thumbnail || item.src) {
-            const img = document.createElement('img');
-            img.className = 'csma-media__thumbnail';
-            img.src = item.thumbnail || item.src;
-            img.alt = item.name || item.label || '';
-            img.loading = 'lazy';
-            img.addEventListener('error', () => {
-                img.style.display = 'none';
-                card.insertBefore(buildPlaceholder(item), card.firstChild);
-            });
-            card.appendChild(img);
-        } else {
-            card.appendChild(buildPlaceholder(item));
-        }
-
-        // Info
-        const info = document.createElement('div');
-        info.className = 'csma-media__info';
-
-        const name = document.createElement('div');
-        name.className = 'csma-media__name';
-        name.textContent = item.name || item.label || item.id;
-        info.appendChild(name);
-
-        if (item.meta || item.size || item.date) {
-            const meta = document.createElement('div');
-            meta.className = 'csma-media__meta';
-            meta.textContent = item.meta || formatMeta(item);
-            info.appendChild(meta);
-        }
-
-        card.appendChild(info);
-
-        // Click handler
-        card.addEventListener('click', () => {
-            if (selectable) {
-                if (multiSelect) {
-                    if (selectedIds.has(item.id)) selectedIds.delete(item.id);
-                    else selectedIds.add(item.id);
-                } else {
-                    selectedIds.clear();
-                    selectedIds.add(item.id);
-                }
-                renderGrid();
-            }
-
-            if (onItemClick) onItemClick(item);
-            if (emit) emit('media:select', { item, selectedIds: [...selectedIds] });
-        });
-
-        return card;
-    }
-
-    function buildPlaceholder(item) {
-        const div = document.createElement('div');
-        div.className = 'csma-media__thumbnail csma-media__thumbnail--placeholder';
-        const type = item.type || 'file';
-        div.appendChild(createFileIcon(type));
-        return div;
-    }
-
     function formatMeta(item) {
         const parts = [];
         if (item.size) parts.push(formatSize(item.size));
@@ -233,15 +260,22 @@ export function createMediaBrowser(container, emit, options = {}) {
 
     function renderGrid() {
         const filtered = getFilteredItems();
+        itemCleanups.forEach((fn) => { try { fn(); } catch {} });
+        itemCleanups = [];
         clearChildren(grid);
 
         if (filtered.length === 0) {
-            setState(searchQuery ? 'empty' : 'empty');
+            setState('empty');
             return;
         }
 
         setState(null);
-        filtered.forEach((item) => grid.appendChild(buildItem(item)));
+        filtered.forEach((item) => {
+            const itemSpec = buildItemSpec(item);
+            const { root: itemRoot, cleanup } = composer.mountTree(itemSpec, grid);
+            itemCleanups.push(cleanup);
+            wireItemEvents(itemRoot, item);
+        });
     }
 
     function setState(state) {
@@ -251,33 +285,32 @@ export function createMediaBrowser(container, emit, options = {}) {
 
     // ─── Initial Render ────────────────────────────────
 
-    container.appendChild(root);
     if (currentItems.length === 0) setState('empty');
     else renderGrid();
 
     // ─── Public API ────────────────────────────────────
 
     return {
-        /** Update items array. */
         update(newItems) {
             currentItems = [...newItems];
             error = null;
             renderGrid();
         },
 
-        /** Get currently selected item IDs. */
         getSelected() { return [...selectedIds]; },
 
-        /** Get current items. */
         getItems() { return currentItems; },
 
-        /** Set loading state. */
         setLoading(loading) {
             isLoading = loading;
             setState(loading ? 'loading' : null);
         },
 
-        /** Destroy. */
-        destroy() { root.remove(); },
+        destroy() {
+            itemCleanups.forEach((fn) => { try { fn(); } catch {} });
+            itemCleanups = [];
+            rootCleanup();
+            root.remove();
+        },
     };
 }
