@@ -656,7 +656,7 @@ to `src/ui/components/*/manifest.json`. `AIUIComposerService` gained
 injects itself into services exposing `setServiceManager`. 12 new tests in
 `tests/ai-ui/module-surfaces.test.js`. 1188/1188 green.
 
-### Phase 2 — Slides layouts become aiui compositions (planned)
+### Phase 2 — Slides layouts become aiui compositions (DONE, commits 873d4be + 5ee1e29 + recover)
 
 Each of the 24 slide layout factories in `src/modules/slides/layouts/`
 re-expressed as an aiui composition spec. `SlideDeckService` unchanged
