@@ -1230,6 +1230,10 @@ export class MindmapService {
         // side layout: alternate left/right
         const idx = map.root.children.indexOf(child);
         child.direction = idx % 2 === 0 ? 0 : 1;
+      } else if (direction === 3) {
+        // down layout: LayoutEngine treats an unset `direction` as "down",
+        // so clear the side field instead of stamping the numeric 3.
+        child.direction = undefined;
       } else {
         child.direction = direction;
       }
@@ -1271,7 +1275,10 @@ export class MindmapService {
   layout(mapId, options = {}) {
     const map = this._getMap(mapId) || this._getMap(this._activeMapId);
     if (!map) return { nodes: [], links: [], bounds: { x: 0, y: 0, w: 0, h: 0 } };
-    return layoutTree(map.root, options);
+    // Inject the map's layout direction (numeric 0/1/2/3) so LayoutEngine
+    // can select the DOWN vs SIDE branch. Caller options override if set.
+    const opts = { direction: map.meta.layoutDirection ?? 1, ...options };
+    return layoutTree(map.root, opts);
   }
 
   /**

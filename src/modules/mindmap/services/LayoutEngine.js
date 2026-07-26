@@ -216,7 +216,7 @@ export function layout(root, options = {}) {
   // Root placeholder so root's children get 'main' links.
   const rootParent = null;
 
-  if (opts.direction === DIRECTION.DOWN) {
+  if (opts.direction === 3 || opts.direction === DIRECTION.DOWN) {
     // Top-down: everyone on one column stack below root.
     placeNode(root, rootParent, 0, 0, 0, 'root', undefined, opts, nodes, links);
   } else {
