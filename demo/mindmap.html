@@ -141,7 +141,9 @@
         el.style.left = n.x + 'px';
         el.style.top = n.y + 'px';
         el.style.width = n.w + 'px';
-        el.style.minHeight = n.h + 'px';
+        el.style.height = n.h + 'px';
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
         el.textContent = nodeTopic(n.id) || n.kind;
         if(selected.has(n.id)) el.setAttribute('data-selected','');
         // Expander for branches with children
@@ -368,12 +370,15 @@
 
       const now=Date.now();
       const nodeEl=e.target.closest('[data-node-id]');
-      if(nodeEl && dragState===0 && now-lastClickT<350 && lastClickEl===nodeEl && !editNodeId) {
+
+      // Double-click detection (before drag state reset, always active)
+      if(nodeEl && !editNodeId && now-lastClickT<400 && lastClickEl===nodeEl) {
         beginEdit(nodeEl.dataset.nodeId);
         lastClickT=0; lastClickEl=null;
+        cleanDrag(); dragState=0;
         return;
       }
-      if(nodeEl && dragState===0) { lastClickT=now; lastClickEl=nodeEl; }
+      if(nodeEl) { lastClickT=now; lastClickEl=nodeEl; }
       if(dragState===2 && dragTarget && dragType) {
         const tid=dragTarget.dataset.nodeId;
         (async()=>{
@@ -536,6 +541,7 @@
 
     // ─── Seed ────────────────────────────────────────────────────
     activeMap = await svc.createMap('Sample map');
+    await svc.setLayoutDirection(2); // side layout: children on both left and right
     const r = svc._getMap(activeMap).root;
     const b1 = await svc.addBranch(r.id, 'e2e-test', { tag: 'phase' });
     await svc.addLeaf(b1.id, 'init + plan verified');

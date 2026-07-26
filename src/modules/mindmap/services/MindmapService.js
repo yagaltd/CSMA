@@ -339,7 +339,9 @@ export class MindmapService {
     const { node: parent } = this._findNodeAndParent(map.root, parentId);
     if (!parent) throw new Error(`[MindmapService] parent ${parentId} not found`);
     if (parent.schemaType === SCHEMA_LEAF) {
-      throw new Error('[MindmapService] cannot add child to a leaf');
+      // Auto-promote leaf to branch (mind-elixir style: any node can have children)
+      parent.schemaType = SCHEMA_BRANCH;
+      parent.children = [];
     }
     const branch = makeBranch(topic, meta);
     parent.children = parent.children || [];
@@ -406,7 +408,9 @@ export class MindmapService {
     const { node: parent } = this._findNodeAndParent(map.root, parentId);
     if (!parent) throw new Error(`[MindmapService] parent ${parentId} not found`);
     if (parent.schemaType === SCHEMA_LEAF) {
-      throw new Error('[MindmapService] cannot add child to a leaf');
+      // Auto-promote leaf to branch (mind-elixir style: any node can have children)
+      parent.schemaType = SCHEMA_BRANCH;
+      parent.children = [];
     }
     const leaf = makeLeaf(topic, meta);
     parent.children = parent.children || [];
