@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CSMA Slides — Demo Deck</title>
+  <title>CSMA Slides - Demo Deck</title>
 
   <!-- CSMA core (tokens + base) -->
   <link rel="stylesheet" href="../src/generated/tokens.css">
@@ -20,10 +20,10 @@
 <body>
   <div id="deck-root"></div>
 
-  <!-- Demo deck config — exercises every workhorse layout + a couple specialty ones -->
+  <!-- Demo deck config - exercises every workhorse layout + a couple specialty ones -->
   <script>
     window.__DECK_CONFIG__ = {
-      title: 'CSMA Slides — Demo',
+      title: 'CSMA Slides - Demo',
       theme: { mode: 'dark' },
       slides: [
         { type: 'cover', kicker: 'Demo Deck', title: 'CSMA Slides',
@@ -61,7 +61,7 @@
           kicker: 'Phase 2.2',
           title: 'Embed any aiui surface in a slide',
           body: 'Click the 💆 button in the dock to embed a live comments-thread on this slide. Click again to remove it. (Surface starts absent so the click direction is unambiguous.)'
-          /* no `media` here on purpose — user adds it via the dock button */ }
+          /* no `media` here on purpose - user adds it via the dock button */ }
       ]
     };
   </script>
@@ -79,7 +79,7 @@
     const { SlidesContracts } = await import('../src/modules/slides/index.js');
     eventBus.contracts = SlidesContracts;
 
-    // Phase 2.2 — wire CommentsService + ServiceManager + AIUIComposer so that
+    // Phase 2.2 - wire CommentsService + ServiceManager + AIUIComposer so that
     // the `comments-thread` surface can mount inside a slide.
     const serviceManager = new ServiceManager();
     const comments = new CommentsService(eventBus);
@@ -94,7 +94,7 @@
     // default for slide index 7 (the Phase 2.2 demo slide).
     const demoThreadId = 'slide-7-q-and-a';
     comments.submit({ threadId: demoThreadId, body: 'First comment on the slide-embed demo.' });
-    comments.submit({ threadId: demoThreadId, body: 'Second comment — click 💆 again to remove the surface.' });
+    comments.submit({ threadId: demoThreadId, body: 'Second comment - click 💆 again to remove the surface.' });
 
     const service = new SlideDeckService(eventBus);
     service.init();
@@ -104,7 +104,7 @@
     // Expose for debugging
     window.deck = { service, eventBus, comments, composer };
 
-    // Phase 2.2 diagnostics — log the wiring state so users can verify in console
+    // Phase 2.2 diagnostics - log the wiring state so users can verify in console
     console.log('[Phase 2.2] wiring:', {
       commentsRegistered: serviceManager.get('comments') === comments,
       composerHasServiceManager: !!composer.serviceManager,

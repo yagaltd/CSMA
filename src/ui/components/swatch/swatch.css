@@ -10,19 +10,19 @@
 
 /* Dark theme preview */
 .swatch[data-variant="dark"] {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--surface) 100%);
 }
 
 /* Light theme preview */
 .swatch[data-variant="light"] {
-  background: linear-gradient(135deg, #f8f8fa 0%, #efeff2 50%, #e0e0e8 100%);
+  background: linear-gradient(135deg, var(--surface) 0%, var(--background) 50%, var(--border) 100%);
 }
 
 /* Generic name-based swatches — consumers can add more variants */
-.swatch[data-variant="nord"] {
-  background: linear-gradient(135deg, #2e3440 0%, #3b4252 50%, #4c566a 100%);
+.swatch[data-variant="accent"] {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-foreground) 100%);
 }
 
-.swatch[data-variant="dracula"] {
-  background: linear-gradient(135deg, #282a36 0%, #44475a 50%, #6272a4 100%);
+.swatch[data-variant="surface"] {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-muted) 50%, var(--border) 100%);
 }

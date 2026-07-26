@@ -3,13 +3,13 @@ const style = document.createElement('style');
 style.textContent = `
   body, html, #app, .demo-main, .demo-editor, .ve-editor-surface, .ve-document-root,
   .ve-node, .ve-node-array-container, .ve-text-property, [contenteditable] {
-    background: #ffffff !important;
-    color: #111827 !important;
+    background: var(--surface) !important;
+    color: var(--foreground) !important;
   }
   .ve-text-property {
-    background: #ffffff !important;
-    color: #111827 !important;
-    border: 1px solid #e5e7eb !important;
+    background: var(--surface) !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--border) !important;
     margin: 4px 0 !important;
     padding: 8px !important;
     border-radius: 4px !important;

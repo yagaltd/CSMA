@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSMA — Visual Editor Comments Sync Demo</title>
+    <title>CSMA - Visual Editor Comments Sync Demo</title>
     <link rel="stylesheet" href="../../src/generated/tokens.css">
     <link rel="stylesheet" href="../../src/modules/visual-editor/rendering/rendering.css">
     <link rel="stylesheet" href="../../src/modules/visual-editor/ui/comment-sidebar.css">
     <link rel="stylesheet" href="demo-comments.css">
 </head>
     <style>
-        /* Force light theme for demo — overrides any token/dark-mode variables */
+        /* Force light theme for demo - overrides any token/dark-mode variables */
         html, body, #app, .demo-main, .demo-editor,
         .ve-editor-surface, .ve-document-root, .ve-node,
         .ve-node-array-container, .ve-text-property {
-            background: #ffffff !important;
-            color: #111827 !important;
+            background: var(--surface) !important;
+            color: var(--foreground) !important;
         }
         .ve-text-property {
             padding: 8px 12px !important;
@@ -25,15 +25,15 @@
             line-height: 1.6 !important;
         }
         .ve-text-property:focus {
-            background: #f0f4ff !important;
-            outline: 2px solid #3b82f6 !important;
+            background: var(--surface-muted) !important;
+            outline: 2px solid var(--accent) !important;
             outline-offset: -2px !important;
         }
     </style>
 <body>
     <div id="app">
         <header class="demo-header">
-            <h1>Visual Editor — Annotation Comments Sync</h1>
+            <h1>Visual Editor - Annotation Comments Sync</h1>
             <div id="connection-status" class="demo-status demo-status--connecting">
                 Connecting...
             </div>
@@ -65,7 +65,7 @@
 
         // ── Bootstrap runtime ──────────────────────────────────────────
         const eventBus = new EventBus();
-        // No contracts — demo bypasses production security for simplicity
+        // No contracts - demo bypasses production security for simplicity
 
         const serviceManager = new ServiceManager(eventBus);
         const leader = new CrossTabLeader(eventBus);
@@ -178,7 +178,7 @@
                 console.log('[demo] SENDING to relay:', msg.slice(0, 100));
                 ws.send(msg);
             } else {
-                console.warn('[demo] NOT sending — ws:', wsExists, 'open:', wsOpen, '!incoming:', !incomingFromRemote);
+                console.warn('[demo] NOT sending - ws:', wsExists, 'open:', wsOpen, '!incoming:', !incomingFromRemote);
             }
         }
 
@@ -297,7 +297,7 @@
             const container = document.getElementById('editor-container');
 
             // Create a surface wrapper so EditorSurface.clearContainer() doesn't destroy
-            // the highlights overlay — each component gets its own container.
+            // the highlights overlay - each component gets its own container.
             const surfaceWrapper = document.createElement('div');
             surfaceWrapper.className = 've-editor-surface-wrapper';
             container.appendChild(surfaceWrapper);

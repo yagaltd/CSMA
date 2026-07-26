@@ -9,8 +9,8 @@
 body {
     margin: 0;
     font-family: system-ui, -apple-system, sans-serif;
-    background: #f9fafb;
-    color: #111827;
+    background: var(--background);
+    color: var(--foreground);
 }
 
 .demo-header {
@@ -61,8 +61,8 @@ body {
     position: relative;
     min-height: 500px;
     padding: 24px;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
@@ -71,19 +71,19 @@ body {
     outline: none;
     min-height: 1.5em;
     padding: 4px 8px;
-    color: #111827;
+    color: var(--foreground);
     font-size: 15px;
     line-height: 1.6;
 }
 
 .demo-editor [contenteditable]:focus {
-    background: #f9fafb;
+    background: var(--background);
     border-radius: 4px;
 }
 
 .demo-editor [contenteditable]:empty::before {
     content: 'Start typing...';
-    color: #9ca3af;
+    color: var(--foreground-muted);
 }
 
 .ve-editor-surface-wrapper {

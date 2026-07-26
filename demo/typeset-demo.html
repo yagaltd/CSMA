@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>CSMA Typeset — Rhythm Demo</title>
+  <title>CSMA Typeset - Rhythm Demo</title>
   <link rel="stylesheet" href="../src/generated/tokens.css">
   <link rel="stylesheet" href="../src/style/main.css">
   <link rel="stylesheet" href="typeset-demo.css">
@@ -63,15 +63,15 @@
   <main class="ts-preview">
     <div class="csma-typeset csma-typeset-docs" data-ts-prose>
       <!-- Prose content: headings, paragraphs, lists, code, table, blockquote.
-           Static HTML — same output a markdown renderer or MorphEditor produces. -->
+           Static HTML - same output a markdown renderer or MorphEditor produces. -->
       <h1>Architecture Overview</h1>
       <p>CSMA separates concerns: <strong>JavaScript manages state via events, CSS handles rendering.</strong> This achieves fast DOM updates and a minimal bundle size.</p>
       <p>CSMA is <em>modules-first</em>. Prefer trusted modules under <code>src/modules/*</code>, Contracts for validation and security, and lifecycle-safe load/unload through ModuleManager.</p>
 
       <h2>The 6 Rules</h2>
       <ol>
-        <li><strong>State Changes = CSS Classes Only</strong> — no inline styles for UI state</li>
-        <li><strong>Define All States in CSS</strong> — use <code>data-*</code> attributes</li>
+        <li><strong>State Changes = CSS Classes Only</strong> - no inline styles for UI state</li>
+        <li><strong>Define All States in CSS</strong> - use <code>data-*</code> attributes</li>
         <li><strong>JavaScript Publishes Events, CSS Handles Rendering</strong></li>
       </ol>
 
@@ -99,7 +99,7 @@ el.dataset.state = 'loading';</code></pre>
 
       <p>A component inside prose can opt out:</p>
       <div class="card not-typeset">
-        <p>This card keeps its own styles — typeset leaves it alone.</p>
+        <p>This card keeps its own styles - typeset leaves it alone.</p>
       </div>
     </div>
   </main>
