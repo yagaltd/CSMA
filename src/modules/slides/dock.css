@@ -10,16 +10,17 @@
   left: 50%;
   transform: translateX(-50%);
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-sm) var(--space-md);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-2xl);
-  box-shadow: var(--shadow-lg);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
+  gap: var(--space-xs);
   z-index: var(--z-overlay);
+  /* No visual chrome — the pill carries it. */
+  background: none;
+  border: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  padding: 0;
   transition:
     opacity var(--motion-duration-normal) var(--ease-out-quart),
     transform var(--motion-duration-normal) var(--ease-out-quart);
@@ -31,7 +32,37 @@
   pointer-events: none;
 }
 
-.noir-dock .dock-counter {
+/* ── Pill (visual chrome) ──────────────────────────────────────── */
+.dock-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs, 2px);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* ── Bare nav (mobile header) ──────────────────────────────────── */
+.dock-nav-bare {
+  display: none;
+}
+
+/* ── Separator (thin vertical divider) ─────────────────────────── */
+.dock-sep {
+  display: block;
+  width: 1px;
+  height: 60%;
+  align-self: center;
+  background: var(--border);
+  margin: 0 var(--space-2xs);
+}
+
+/* ── Counter ───────────────────────────────────────────────────── */
+.dock-counter {
   font-variant-numeric: tabular-nums;
   font-size: var(--font-size-sm);
   color: var(--foreground-muted);
@@ -39,7 +70,8 @@
   text-align: center;
 }
 
-.noir-dock .dock-btn {
+/* ── Buttons ───────────────────────────────────────────────────── */
+.dock-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -55,27 +87,19 @@
 
 /* Phase 4.3 — anchor context for the comments open-count badge
    (.csma-comments-badge is absolutely positioned). */
-.noir-dock .dock-btn--badged {
+.dock-btn--badged {
   position: relative;
 }
 
-.noir-dock .dock-btn:hover,
-.noir-dock .dock-btn:focus-visible {
+.dock-btn:hover,
+.dock-btn:focus-visible {
   background: var(--accent);
   color: var(--accent-foreground);
 }
 
-.noir-dock .dock-btn:focus-visible {
+.dock-btn:focus-visible {
   outline: var(--border-width-focus) solid var(--primary);
   outline-offset: 2px;
-}
-
-.noir-dock .dock-tools {
-  display: flex;
-  gap: var(--space-2xs, 2px);
-  padding-inline-start: var(--space-sm);
-  margin-inline-start: var(--space-sm);
-  border-inline-start: 1px solid var(--border);
 }
 
 /* Active tool indicators */
@@ -86,47 +110,57 @@
   color: var(--primary);
 }
 
-/* Mobile: stack tools under nav cluster; enlarge touch targets */
-@media (max-width: 480px) {
-  .noir-dock {
-    flex-direction: column;
-    gap: var(--space-xs);
-    bottom: var(--space-md);
-    padding: var(--space-xs) var(--space-sm);
-    max-width: calc(100vw - var(--space-xl));
-  }
-  .noir-dock .dock-btn {
-    width: var(--layout-touch-target);
-    height: var(--layout-touch-target);
-  }
-  .noir-dock .dock-tools {
-    padding-inline-start: 0;
-    margin-inline-start: 0;
-    border-inline-start: none;
-    border-top: 1px solid var(--border);
-    padding-top: var(--space-xs);
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-}
-
-/* Touch devices (coarse pointer): drop hover-only affordances */
-@media (pointer: coarse) {
-  .noir-dock .dock-btn:hover {
-    background: transparent;
-    color: var(--foreground-muted);
-  }
-  .noir-dock .dock-btn:focus-visible {
-    background: var(--accent);
-    color: var(--accent-foreground);
-  }
-}
-
-/* Phase 2.2 — 💆 button active state when current slide has comments embedded */
-.noir-dock .dock-btn[data-active="true"] {
+/* Phase 2.2 — 💬 button active state when current slide has comments embedded */
+.dock-btn[data-active="true"] {
   background: var(--accent);
   color: var(--accent-foreground);
   border-color: var(--accent);
+}
+
+/* ── Mobile (≤640px): bare nav above pill, inline nav hidden ──── */
+@media (max-width: 640px) {
+  .noir-dock {
+    bottom: var(--space-md);
+  }
+
+  .dock-nav-bare {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs, 2px);
+    filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.5));
+  }
+
+  .dock-nav-inline,
+  .dock-sep {
+    display: none;
+  }
+
+  .dock-pill {
+    gap: var(--space-2xs, 2px);
+    padding: var(--space-xs) var(--space-sm);
+  }
+
+  .dock-btn {
+    width: var(--layout-touch-target);
+    height: var(--layout-touch-target);
+  }
+}
+
+/* Touch devices (coarse pointer): always fully opaque, drop hover */
+@media (hover: none) {
+  .dock-pill {
+    opacity: 1;
+  }
+
+  .dock-btn:hover {
+    background: transparent;
+    color: var(--foreground-muted);
+  }
+
+  .dock-btn:focus-visible {
+    background: var(--accent);
+    color: var(--accent-foreground);
+  }
 }
 
 /* ── Rail (thumbnail sidebar) ───────────────────────────────────── */

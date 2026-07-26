@@ -37,14 +37,16 @@ function serialize(node) {
 // ──────────────────────────────────────────────────────────────────
 // Shared fixtures + helpers (mirroring the original chrome internals).
 // ──────────────────────────────────────────────────────────────────
-const TOOL_DEFS = [
+const TOOL_DEFS_PRE_NAV = [
   { label: 'Toggle sidebar', symbol: '☰', intent: 'INTENT_SLIDE_TOGGLE_RAIL' },
   { label: 'Toggle grid',    symbol: '▦', intent: 'INTENT_SLIDE_TOGGLE_GRID' },
-  { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' },
+  { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' }
+];
+
+const TOOL_DEFS_POST_NAV = [
   { label: 'Toggle drawing', symbol: '✎', intent: 'INTENT_SLIDE_TOGGLE_DRAWING' },
   { label: 'Fullscreen',     symbol: '⛶', intent: 'INTENT_SLIDE_TOGGLE_FS' },
-  { label: 'Presenter',      symbol: '📺', intent: 'INTENT_SLIDE_OPEN_PRESENTER' },
-  { label: 'Hide UI',        symbol: '◉', intent: 'INTENT_SLIDE_HIDE_UI' }
+  { label: 'Presenter',      symbol: '📺', intent: 'INTENT_SLIDE_OPEN_PRESENTER' }
 ];
 
 function formatCounter(slide, total) {
@@ -88,22 +90,50 @@ function mountBoth(goldenBuilder, initFn) {
 // ──────────────────────────────────────────────────────────────────
 // Golden builders — exact mirror of the pre-Phase-3.2 chrome construction.
 // ──────────────────────────────────────────────────────────────────
+function makeGoldenBtn(t, extraClass) {
+  return el('button', {
+    className: 'dock-btn' + (extraClass ? ' ' + extraClass : ''),
+    text: t.symbol,
+    attrs: { 'aria-label': t.label, 'title': t.label },
+    dataset: { intent: t.intent }
+  });
+}
+
 function goldenDock(service) {
   const dock = el('div', { className: 'noir-dock', attrs: { role: 'toolbar', 'aria-label': 'Slide controls' } });
-  const counter = el('span', { className: 'dock-counter', text: formatCounter(service.index, service.slides.length) });
-  dock.appendChild(el('button', { className: 'dock-btn', text: '←', attrs: { 'aria-label': 'Previous slide' }, dataset: { intent: 'INTENT_SLIDE_PREV' } }));
-  dock.appendChild(counter);
-  dock.appendChild(el('button', { className: 'dock-btn', text: '→', attrs: { 'aria-label': 'Next slide' }, dataset: { intent: 'INTENT_SLIDE_NEXT' } }));
-  const tools = el('div', { className: 'dock-tools' });
-  for (const t of TOOL_DEFS) {
-    tools.appendChild(el('button', {
-      className: 'dock-btn',
-      text: t.symbol,
-      attrs: { 'aria-label': t.label, 'title': t.label },
-      dataset: { intent: t.intent }
-    }));
+
+  // Bare nav cluster — visible on mobile only
+  const bareNav = el('div', { className: 'dock-nav-bare' });
+  bareNav.appendChild(el('button', { className: 'dock-btn', text: '←', attrs: { 'aria-label': 'Previous slide' }, dataset: { intent: 'INTENT_SLIDE_PREV' } }));
+  bareNav.appendChild(el('span', { className: 'dock-counter', text: formatCounter(service.index, service.slides.length) }));
+  bareNav.appendChild(el('button', { className: 'dock-btn', text: '→', attrs: { 'aria-label': 'Next slide' }, dataset: { intent: 'INTENT_SLIDE_NEXT' } }));
+  dock.appendChild(bareNav);
+
+  // Main pill
+  const pill = el('div', { className: 'dock-pill' });
+
+  // Pre-nav tools
+  for (const t of TOOL_DEFS_PRE_NAV) {
+    pill.appendChild(makeGoldenBtn(t));
   }
-  dock.appendChild(tools);
+
+  // Separator
+  pill.appendChild(el('span', { className: 'dock-sep' }));
+
+  // Inline nav
+  pill.appendChild(el('button', { className: 'dock-btn dock-nav-inline', text: '←', attrs: { 'aria-label': 'Previous slide' }, dataset: { intent: 'INTENT_SLIDE_PREV' } }));
+  pill.appendChild(el('span', { className: 'dock-counter dock-nav-inline', text: formatCounter(service.index, service.slides.length) }));
+  pill.appendChild(el('button', { className: 'dock-btn dock-nav-inline', text: '→', attrs: { 'aria-label': 'Next slide' }, dataset: { intent: 'INTENT_SLIDE_NEXT' } }));
+
+  // Separator
+  pill.appendChild(el('span', { className: 'dock-sep' }));
+
+  // Post-nav tools
+  for (const t of TOOL_DEFS_POST_NAV) {
+    pill.appendChild(makeGoldenBtn(t));
+  }
+
+  dock.appendChild(pill);
   return dock;
 }
 

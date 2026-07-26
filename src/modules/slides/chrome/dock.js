@@ -4,10 +4,10 @@
  * Subscribes to: SLIDE_CHANGED, UI_STATE_CHANGED
  * Publishes: INTENT_SLIDE_NEXT, INTENT_SLIDE_PREV, INTENT_SLIDE_TOGGLE_RAIL,
  *            INTENT_SLIDE_TOGGLE_GRID, INTENT_SLIDE_TOGGLE_FS,
- *            INTENT_SLIDE_TOGGLE_DRAWING, INTENT_SLIDE_HIDE_UI,
- *            INTENT_SLIDE_OPEN_PRESENTER
+ *            INTENT_SLIDE_TOGGLE_DRAWING, INTENT_SLIDE_OPEN_PRESENTER
  *
- * Hides when uiHidden=true. Two rows on desktop (nav + tools), stacked on mobile.
+ * Hides when uiHidden=true. One pill on desktop (nav inlined between
+ * separators), bare-nav-above-pill on mobile (bolt-slides pattern).
  *
  * Phase 3.2 — aiui-native (factory-wrapping). All DOM construction routes
  * through `getComposer().mountTree(spec, container)`; no raw
@@ -33,54 +33,73 @@ export function initDock(container, eventBus, service, opts = {}) {
 
     const publish = (name) => () => eventBus.publish(name, { timestamp: Date.now() });
 
-    const toolDefs = [
+    const toolDefsPreNav = [
         { label: 'Toggle sidebar', symbol: '☰', intent: 'INTENT_SLIDE_TOGGLE_RAIL' },
         { label: 'Toggle grid',    symbol: '▦', intent: 'INTENT_SLIDE_TOGGLE_GRID' },
         useCommentsDrawer
             ? { label: 'Comments on current slide', symbol: '💬', intent: 'INTENT_COMMENTS_OPEN_DRAWER' }
-            : { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' },
-        { label: 'Toggle drawing', symbol: '✎', intent: 'INTENT_SLIDE_TOGGLE_DRAWING' },
-        { label: 'Fullscreen',     symbol: '⛶', intent: 'INTENT_SLIDE_TOGGLE_FS' },
-        { label: 'Presenter',      symbol: '📺', intent: 'INTENT_SLIDE_OPEN_PRESENTER' },
-        { label: 'Hide UI',        symbol: '◉', intent: 'INTENT_SLIDE_HIDE_UI' }
+            : { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' }
     ];
 
-    // 1. Build spec tree (byte-identical to the legacy el() DOM it replaced).
+    const toolDefsPostNav = [
+        { label: 'Toggle drawing', symbol: '✎', intent: 'INTENT_SLIDE_TOGGLE_DRAWING' },
+        { label: 'Fullscreen',     symbol: '⛶', intent: 'INTENT_SLIDE_TOGGLE_FS' },
+        { label: 'Presenter',      symbol: '📺', intent: 'INTENT_SLIDE_OPEN_PRESENTER' }
+    ];
+
+    // 1. Build spec tree (bolt-style: one pill on desktop, nav-above-pill on mobile).
+    const makeBtn = (t) => spec('button', {
+        className: 'dock-btn',
+        text: t.symbol,
+        attrs: { 'aria-label': t.label, 'title': t.label },
+        dataset: { intent: t.intent }
+    });
+
+    const makeNavCluster = (inline) => [
+        spec('button', {
+            className: 'dock-btn' + (inline ? ' dock-nav-inline' : ''),
+            text: '←',
+            attrs: { 'aria-label': 'Previous slide' },
+            dataset: { intent: 'INTENT_SLIDE_PREV' }
+        }),
+        spec('span', {
+            className: 'dock-counter' + (inline ? ' dock-nav-inline' : ''),
+            text: formatCounter(service.index, service.slides.length)
+        }),
+        spec('button', {
+            className: 'dock-btn' + (inline ? ' dock-nav-inline' : ''),
+            text: '→',
+            attrs: { 'aria-label': 'Next slide' },
+            dataset: { intent: 'INTENT_SLIDE_NEXT' }
+        })
+    ];
+
     const dockSpec = spec('div', {
         className: 'noir-dock',
         attrs: { role: 'toolbar', 'aria-label': 'Slide controls' },
         children: [
-            spec('button', {
-                className: 'dock-btn',
-                text: '←',
-                attrs: { 'aria-label': 'Previous slide' },
-                dataset: { intent: 'INTENT_SLIDE_PREV' }
-            }),
-            spec('span', {
-                className: 'dock-counter',
-                text: formatCounter(service.index, service.slides.length)
-            }),
-            spec('button', {
-                className: 'dock-btn',
-                text: '→',
-                attrs: { 'aria-label': 'Next slide' },
-                dataset: { intent: 'INTENT_SLIDE_NEXT' }
-            }),
+            // Bare nav — visible on mobile only (above the pill)
             spec('div', {
-                className: 'dock-tools',
-                children: toolDefs.map((t) => spec('button', {
-                    className: 'dock-btn',
-                    text: t.symbol,
-                    attrs: { 'aria-label': t.label, 'title': t.label },
-                    dataset: { intent: t.intent }
-                }))
+                className: 'dock-nav-bare',
+                children: makeNavCluster(false)
+            }),
+            // Main pill — single row on desktop, tools-only on mobile
+            spec('div', {
+                className: 'dock-pill',
+                children: [
+                    ...toolDefsPreNav.map(makeBtn),
+                    spec('span', { className: 'dock-sep' }),
+                    ...makeNavCluster(true),
+                    spec('span', { className: 'dock-sep' }),
+                    ...toolDefsPostNav.map(makeBtn)
+                ]
             })
         ]
     });
 
     // 2. Mount via composer (appends root to container; cleanup detaches it).
     const { root: dock, cleanup: unmountDock } = getComposer().mountTree(dockSpec, container, { documentRef: doc });
-    const counter = dock.querySelector('.dock-counter');
+    const counters = () => dock.querySelectorAll('.dock-counter');
 
     // 3. Wire events + subscriptions on the mounted DOM (same as before).
     const onClick = (e) => {
@@ -102,7 +121,8 @@ export function initDock(container, eventBus, service, opts = {}) {
     let badgeWired = null;
     if (eventBus.subscribe) {
         subs.push(eventBus.subscribe('SLIDE_CHANGED', (payload) => {
-            counter.textContent = formatCounter(payload?.slide, payload?.total);
+            const text = formatCounter(payload?.slide, payload?.total);
+            counters().forEach((c) => { c.textContent = text; });
             // Refresh the comments badge for the newly-current slide scope.
             badgeWired?.refresh();
         }));
