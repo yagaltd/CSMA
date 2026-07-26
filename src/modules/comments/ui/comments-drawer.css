@@ -1,0 +1,329 @@
+/* ─────────────────────────────────────────────────────────────────────
+   CommentsDrawer + CommentsBadge — Phase 4.1
+   Token-driven. All visual values reference CSMA tokens with safe fallbacks.
+   Scoped under .csma-comments-* (drawer) and .csma-comments-badge (badge).
+   No inline styles at runtime; state via data-* attrs + CSS classes.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* ── Drawer content root ───────────────────────────────────────────── */
+.csma-comments-drawer {
+    display: flex;
+    flex-direction: column;
+    min-height: 50vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ── Toolbar: filters + count ──────────────────────────────────────── */
+.csma-comments-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-sm, 0.5rem) 0 var(--space-xs, 0.25rem);
+    border-bottom: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+    flex-shrink: 0;
+}
+
+.csma-comments-filters {
+    display: inline-flex;
+    gap: var(--space-2xs, 0.25rem);
+    background: var(--color-surface-muted, rgba(0, 0, 0, 0.04));
+    border-radius: var(--radius-pill, 999px);
+    padding: 2px;
+}
+
+.csma-comments-filter {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary, #555);
+    font: inherit;
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1;
+    padding: var(--space-2xs, 0.25rem) var(--space-sm, 0.5rem);
+    border-radius: var(--radius-pill, 999px);
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease;
+}
+
+.csma-comments-filter:hover { color: var(--color-text-primary, #111); }
+
+.csma-comments-filter[aria-selected="true"] {
+    background: var(--color-surface-raised, #fff);
+    color: var(--color-text-primary, #111);
+    box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.08));
+}
+
+.csma-comments-count {
+    font-size: var(--font-size-xs, 0.75rem);
+    color: var(--color-text-tertiary, #777);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── List ──────────────────────────────────────────────────────────── */
+.csma-comments-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm, 0.5rem);
+    padding: var(--space-sm, 0.5rem) 0;
+    min-height: 80px;
+}
+
+.csma-comments-empty {
+    color: var(--color-text-tertiary, #777);
+    font-size: var(--font-size-sm, 0.875rem);
+    text-align: center;
+    padding: var(--space-lg, 1.5rem) var(--space-sm, 0.5rem);
+}
+
+/* ── Comment card ──────────────────────────────────────────────────── */
+.csma-comment {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs, 0.25rem);
+    padding: var(--space-sm, 0.5rem) var(--space-md, 0.75rem);
+    border: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+    border-radius: var(--radius-md, 0.5rem);
+    background: var(--color-surface-raised, #fff);
+    transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.csma-comment.is-focused {
+    border-color: var(--color-accent, #2563eb);
+    box-shadow: 0 0 0 2px var(--color-accent-soft, rgba(37, 99, 235, 0.25));
+}
+
+.csma-comment[data-status="resolved"] .csma-comment-body {
+    color: var(--color-text-tertiary, #777);
+    text-decoration: line-through;
+    text-decoration-color: var(--color-text-tertiary, #777);
+}
+
+.csma-comment-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2xs, 0.25rem) var(--space-sm, 0.5rem);
+    font-size: var(--font-size-xs, 0.75rem);
+}
+
+.csma-comment-author {
+    font-weight: var(--font-weight-semibold, 600);
+    color: var(--color-text-primary, #111);
+}
+
+.csma-comment-time {
+    color: var(--color-text-tertiary, #777);
+    font-variant-numeric: tabular-nums;
+}
+
+.csma-comment-status {
+    margin-left: auto;
+    padding: 1px var(--space-2xs, 0.25rem);
+    border-radius: var(--radius-pill, 999px);
+    font-size: var(--font-size-2xs, 0.6875rem);
+    line-height: 1.4;
+    text-transform: capitalize;
+    background: var(--color-surface-muted, rgba(0, 0, 0, 0.05));
+    color: var(--color-text-secondary, #555);
+}
+
+.csma-comment-status[data-status="open"] {
+    background: var(--color-accent-soft, rgba(37, 99, 235, 0.12));
+    color: var(--color-accent-strong, #1d4ed8);
+}
+
+.csma-comment-status[data-status="reopened"] {
+    background: var(--color-warning-soft, rgba(217, 119, 6, 0.14));
+    color: var(--color-warning-strong, #b45309);
+}
+
+.csma-comment-status[data-status="resolved"] {
+    background: var(--color-success-soft, rgba(22, 163, 74, 0.14));
+    color: var(--color-success-strong, #15803d);
+}
+
+.csma-comment-body {
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-base, 1.5);
+    color: var(--color-text-primary, #111);
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.csma-comment-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs, 0.25rem);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────────── */
+.csma-comment-btn {
+    appearance: none;
+    border: 1px solid var(--color-border, rgba(0, 0, 0, 0.14));
+    background: var(--color-surface-raised, #fff);
+    color: var(--color-text-primary, #111);
+    font: inherit;
+    font-size: var(--font-size-xs, 0.75rem);
+    padding: var(--space-2xs, 0.25rem) var(--space-sm, 0.5rem);
+    border-radius: var(--radius-sm, 0.375rem);
+    cursor: pointer;
+    transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.csma-comment-btn:hover { background: var(--color-surface-muted, rgba(0, 0, 0, 0.04)); }
+
+.csma-comment-btn.ghost {
+    border-color: transparent;
+    background: transparent;
+    color: var(--color-text-secondary, #555);
+}
+.csma-comment-btn.ghost:hover {
+    background: var(--color-surface-muted, rgba(0, 0, 0, 0.04));
+    color: var(--color-text-primary, #111);
+}
+
+.csma-comment-btn.danger { color: var(--color-danger-strong, #b91c1c); border-color: transparent; }
+.csma-comment-btn.danger:hover {
+    background: var(--color-danger-soft, rgba(185, 28, 28, 0.1));
+    border-color: var(--color-danger-soft, rgba(185, 28, 28, 0.2));
+}
+
+/* ── Inline edit / reply forms ─────────────────────────────────────── */
+.csma-comment-edit-input,
+.csma-comment-reply-input {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-base, 1.5);
+    padding: var(--space-2xs, 0.25rem) var(--space-sm, 0.5rem);
+    border: 1px solid var(--color-border, rgba(0, 0, 0, 0.14));
+    border-radius: var(--radius-sm, 0.375rem);
+    background: var(--color-surface-raised, #fff);
+    color: var(--color-text-primary, #111);
+    resize: vertical;
+}
+
+.csma-comment-edit-input:focus,
+.csma-comment-reply-input:focus {
+    outline: none;
+    border-color: var(--color-accent, #2563eb);
+    box-shadow: 0 0 0 2px var(--color-accent-soft, rgba(37, 99, 235, 0.25));
+}
+
+.csma-comment-form-actions {
+    display: flex;
+    gap: var(--space-2xs, 0.25rem);
+}
+
+.csma-comment-reply-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs, 0.25rem);
+    padding-top: var(--space-2xs, 0.25rem);
+}
+
+/* ── Threaded replies ──────────────────────────────────────────────── */
+.csma-comment-replies {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs, 0.25rem);
+    margin-top: var(--space-2xs, 0.25rem);
+    padding-left: var(--space-md, 0.75rem);
+    border-left: 2px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+}
+
+.csma-comment--reply {
+    background: var(--color-surface-muted, rgba(0, 0, 0, 0.025));
+    border: none;
+    padding: var(--space-2xs, 0.25rem) var(--space-sm, 0.5rem);
+}
+
+/* ── Add composer ──────────────────────────────────────────────────── */
+.csma-comments-add {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs, 0.25rem);
+    padding-top: var(--space-sm, 0.5rem);
+    border-top: 1px solid var(--color-border-subtle, rgba(0, 0, 0, 0.08));
+    flex-shrink: 0;
+}
+
+.csma-comments-input {
+    width: 100%;
+    box-sizing: border-box;
+    font: inherit;
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-base, 1.5);
+    padding: var(--space-2xs, 0.25rem) var(--space-sm, 0.5rem);
+    border: 1px solid var(--color-border, rgba(0, 0, 0, 0.14));
+    border-radius: var(--radius-sm, 0.375rem);
+    background: var(--color-surface-raised, #fff);
+    color: var(--color-text-primary, #111);
+    resize: vertical;
+    min-height: 2.5em;
+}
+
+.csma-comments-input:focus {
+    outline: none;
+    border-color: var(--color-accent, #2563eb);
+    box-shadow: 0 0 0 2px var(--color-accent-soft, rgba(37, 99, 235, 0.25));
+}
+
+.csma-comments-add-btn {
+    align-self: flex-end;
+    appearance: none;
+    border: none;
+    background: var(--color-accent, #2563eb);
+    color: var(--color-on-accent, #fff);
+    font: inherit;
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-medium, 500);
+    padding: var(--space-2xs, 0.25rem) var(--space-md, 0.75rem);
+    border-radius: var(--radius-sm, 0.375rem);
+    cursor: pointer;
+    transition: background-color 120ms ease;
+}
+
+.csma-comments-add-btn:hover { background: var(--color-accent-strong, #1d4ed8); }
+.csma-comments-add-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Badge (dock / toolbar decoration) ─────────────────────────────── */
+.csma-comments-badge {
+    position: absolute;
+    top: var(--space-2xs, 0.125rem);
+    right: var(--space-2xs, 0.125rem);
+    min-width: 1.1em;
+    height: 1.1em;
+    padding: 0 0.3em;
+    box-sizing: content-box;
+    border-radius: var(--radius-pill, 999px);
+    background: var(--color-accent, #2563eb);
+    color: var(--color-on-accent, #fff);
+    font-size: var(--font-size-2xs, 0.625rem);
+    font-weight: var(--font-weight-semibold, 600);
+    line-height: 1.1;
+    text-align: center;
+    pointer-events: none;
+    transform: scale(0);
+    transform-origin: center;
+    transition: transform 140ms ease;
+}
+
+.csma-comments-badge[data-has-open="true"] { transform: scale(1); }
+
+/* ── Reduced motion ────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .csma-comments-filter,
+    .csma-comment,
+    .csma-comment-btn,
+    .csma-comments-add-btn,
+    .csma-comments-badge,
+    .csma-comment-edit-input,
+    .csma-comment-reply-input,
+    .csma-comments-input { transition: none; }
+}
