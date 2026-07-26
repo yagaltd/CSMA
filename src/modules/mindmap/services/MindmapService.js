@@ -113,7 +113,8 @@ export class MindmapService {
 .mm-surface-svg .connector-line { pointer-events: stroke; cursor: pointer; }
 .mm-canvas[data-mode="focus"] .mm-surface-nodes .branch-node:not([data-in-focus]) { opacity: 0.25; filter: saturate(0.55); }
 .mm-canvas[data-mode="focus"] .mm-surface-svg .connector-line:not([data-in-focus]) { opacity: 0.12; }
-.mm-surface-nodes .branch-node[data-in-focus] { box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary, var(--accent)) 35%, transparent); }
+.mm-surface-svg .connector-line[data-in-focus] { stroke: var(--accent); stroke-width: 3; }
+.mm-surface-nodes .branch-node[data-in-focus] { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent)) 25%, transparent); }
 .mm-focus-pill { position: absolute; bottom: var(--space-sm); left: 50%; transform: translateX(-50%); z-index: 6; display: flex; gap: var(--space-xs); align-items: center; padding: var(--space-xs) var(--space-sm); background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--border); border-radius: var(--radius-md); pointer-events: auto; box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 12%, transparent); }
 .mm-focus-pill .badge { font-size: var(--font-size-xs, 12px); }
 `;
@@ -202,7 +203,7 @@ export class MindmapService {
     this.agentContext.register({
       name: 'mindmap.search',
       description: 'Fuzzy search mindmap nodes by topic / status / tag',
-      fn: (data, opts) => svc.searchNodes(opts?.query || '', { status: opts?.status, tag: opts?.tag }),
+      fn: (data, opts) => svc.search(opts?.query || '', { status: opts?.status, tag: opts?.tag }),
       moduleId: 'mindmap'
     });
   }
@@ -265,7 +266,7 @@ export class MindmapService {
   }
 
   /** Fuzzy-search the active map; returns matches with ancestor topic path. */
-  searchNodes(query, { status = null, tag = null } = {}) {
+  search(query, { status = null, tag = null } = {}) {
     const root = this._getMap(this._activeMapId)?.root;
     if (!root) return [];
     const matches = this.searcher.search(root, query, { status, tag });
@@ -1032,12 +1033,8 @@ export class MindmapService {
   }
 
   // ─── Search ──────────────────────────────────────────────────────
-
-  search(mapId, query, { status, tag } = {}) {
-    const map = this._getMap(mapId) || this._getMap(this._activeMapId);
-    if (!map) return [];
-    return this.searcher.search(map.root, query, { status, tag });
-  }
+  // (Legacy 3-arg `search(mapId, …)` removed; the agent-facing
+  // `search(query, {status, tag})` below is the single canonical method.)
 
   // ─── Serialization ───────────────────────────────────────────────
 
@@ -1224,10 +1221,13 @@ export class MindmapService {
     pill.hidden = true;
     const pillCount = doc.createElement('span');
     pillCount.className = 'badge';
+    const pillHint = doc.createElement('span');
+    pillHint.className = 'mm-focus-pill__hint';
+    pillHint.textContent = 'Alt+Click node · Shift+Click arrow to add · Esc exit';
     const copyMdBtn = makeToolButton('Copy');
     const copyJsonBtn = makeToolButton('Copy JSON');
     const exitPillBtn = makeToolButton('Exit');
-    pill.append(pillCount, copyMdBtn, copyJsonBtn, exitPillBtn);
+    pill.append(pillCount, pillHint, copyMdBtn, copyJsonBtn, exitPillBtn);
     canvas.append(pill);
     const updatePill = (s) => {
       const active = !!s?.active;
@@ -1374,7 +1374,10 @@ export class MindmapService {
       const path = e.target.closest('.connector-line');
       if (!path) return;
       const childId = path.getAttribute('data-child-id');
-      if (childId) focus.focusNode(childId);
+      if (!childId) return;
+      // Shift+Click accumulates into the focus set; plain click replaces (single branch).
+      if (e.shiftKey) focus.addToFocus(childId);
+      else focus.focusNode(childId);
     });
     canvas.addEventListener('pointerdown', (e) => {
       if (!e.altKey) return;
