@@ -9,57 +9,45 @@
   <link rel="stylesheet" href="/src/ui/components/branch-node/branch-node.css" />
   <link rel="stylesheet" href="/src/ui/components/leaf-node/leaf-node.css" />
   <link rel="stylesheet" href="/src/ui/components/connector-line/connector-line.css" />
+  <link rel="stylesheet" href="/src/ui/components/button/button.css" />
   <link rel="stylesheet" href="/src/ui/components/theme-toggle/theme-toggle.css" />
+  <link rel="stylesheet" href="/src/style/base.css" />
+  <link rel="stylesheet" href="/src/style/foundation/layout.css" />
+  <link rel="stylesheet" href="/src/style/foundation/motion.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; background: var(--background); color: var(--foreground); margin: 0; padding: 16px; }
-    h1 { font-size: 1.25rem; margin: 0 0 12px; }
+    body { background: var(--background); color: var(--foreground); margin: 0; padding: 16px; }
     .toolbar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
-    .toolbar button, .toolbar select { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); background: var(--surface); color: var(--foreground); cursor: pointer; font: inherit; font-size: 13px; }
+    .toolbar select { padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--foreground); cursor: pointer; font: inherit; font-size: 13px; }
     .canvas {
       position: relative; width: 100%; height: 70vh; overflow: hidden;
-      border: 1px solid var(--border); border-radius: 8px; background: var(--mindmap-canvas-bg);
-      outline: none; user-select: none; touch-action: none;
+      border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--mindmap-canvas-bg);
     }
-    .map-canvas { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
-    .canvas svg { position: absolute; top: 0; left: 0; pointer-events: none; overflow: visible; }
-    .node-layer { position: absolute; top: 0; left: 0; }
-    /* Legacy .mm-node / .mm-connector reskinned to CSMA catalog components.
-       Absolute canvas layout is preserved (svc.layout sets left/top/width/height);
-       branch-node / leaf-node / connector-line CSS now drive the visuals. */
-    .node-layer .branch-node,
-    .node-layer .leaf-node { position: absolute; box-sizing: border-box; }
-    .node-layer .branch-node { min-width: 0; }
-    .node-layer [data-selected] { outline: 2px solid var(--accent); outline-offset: 2px; }
-    /* Drag previews are rendered by NodeDragHandler (WAVE1-A1); token-styled. */
-    .insert-preview-in { outline: 2px solid var(--accent); outline-offset: 3px; }
-    .insert-preview-before, .insert-preview-after { background: var(--accent); border-radius: 2px; }
-    .mindmap-drag-ghost { background: var(--surface); border: 1px dashed var(--accent); }
-    /* Inline edit input removed (Wave 1 / A3); inline editing is handled by SelectionController. */
-    /* context menu now handled by ContextMenu.js (WAVE1-A2) */
-    .status-line { font-family: monospace; font-size: 12px; color: var(--foreground-muted); padding: 8px 12px; background: var(--background); border: 1px solid var(--border); border-radius: 4px; margin-top: 12px; min-height: 2em; white-space: pre-wrap; }
-    /* Demo expander mapped to .branch-node__collapse (catalog), kept at the node's side */
+    .status-line { font-family: monospace; font-size: 12px; color: var(--foreground-muted); padding: 8px 12px; background: var(--background); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-top: 12px; min-height: 2em; white-space: pre-wrap; }
+    /* Expander (catalog .branch-node__collapse) positioned at the node's side. */
     .branch-node .branch-node__collapse {
       position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
       width: 16px; height: 16px; border-radius: 50%; padding: 0;
       background: var(--surface); border: 2px solid var(--border); cursor: pointer;
-      font-size: 11px; line-height: 11px; text-align: center; color: var(--foreground-muted, #666);
+      font-size: 11px; line-height: 11px; text-align: center; color: var(--foreground-muted);
       z-index: 2;
     }
-    .branch-node .branch-node__collapse:hover { background: var(--accent, #4f90f2); border-color: var(--accent, #4f90f2); color: #fff; }
-    /* Zoom toolbar reborn as a mountSurface toolbar in Wave 2; pan/zoom handled by ViewportController (WAVE1-A3). */
-    .canvas.space-pressed { cursor: grab !important; }
-    .canvas.space-pressed:active, .canvas.panning { cursor: grabbing !important; }
+    .branch-node .branch-node__collapse:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-foreground); }
+    /* Mobile touch targets: meet 44x44 minimum (check:responsive) */
+    @media (max-width: 768px) {
+      .toolbar .button, .toolbar select, .mm-toolbar .button { min-height: 44px; min-width: 44px; }
+      .branch-node .branch-node__collapse { min-width: 44px; min-height: 44px; }
+    }
   </style>
 </head>
 <body>
   <h1>mindmap - demo v2</h1>
   <div class="toolbar">
-    <button id="new-map">+ new map</button>
+    <button id="new-map" class="button" data-variant="ghost" data-size="sm">+ new map</button>
     <select id="map-select"></select>
-    <button id="undo-btn">undo</button>
-    <button id="redo-btn">redo</button>
-    <button id="md-btn">md</button>
+    <button id="undo-btn" class="button" data-variant="ghost" data-size="sm">undo</button>
+    <button id="redo-btn" class="button" data-variant="ghost" data-size="sm">redo</button>
+    <button id="md-btn" class="button" data-variant="ghost" data-size="sm">md</button>
     <button class="theme-toggle" type="button" data-theme-toggle data-theme-active="light" aria-label="Switch theme">
       <span class="theme-toggle__icons" aria-hidden="true">
         <span class="theme-icon theme-icon--sun">☀</span>
@@ -69,26 +57,12 @@
       <span class="theme-toggle__label" data-theme-label>Theme: Light</span>
     </button>
   </div>
-  <div class="canvas" id="canvas" tabindex="0">
-    <div class="map-canvas" id="map-canvas">
-      <svg id="svg-layer"></svg>
-      <div id="node-layer" class="node-layer"></div>
-    </div>
-    <!-- zoom buttons reborn as a mountSurface toolbar in Wave 2 (pan/zoom now via ViewportController, WAVE1-A3) -->
-    </div>
-  </div>
+  <div class="canvas" id="canvas" tabindex="0"></div>
   <pre class="status-line" id="status">Loading…</pre>
 
   <script type="module">
     import { MindmapService } from '/src/modules/mindmap/services/MindmapService.js';
     import { HistoryService } from '/src/modules/history/services/HistoryService.js';
-    import { ContextMenu } from '/src/modules/mindmap/ui/ContextMenu.js';
-    import { NodeDragHandler } from '/src/modules/mindmap/services/NodeDragHandler.js';
-    import { SelectionController } from '/src/modules/mindmap/services/SelectionController.js';
-    import { ViewportController } from '/src/modules/mindmap/services/ViewportController.js';
-    import { KeyboardHandler } from '/src/modules/mindmap/services/KeyboardHandler.js';
-    import { BoxSelector } from '/src/modules/mindmap/services/BoxSelector.js';
-    import { ClipboardManager } from '/src/modules/mindmap/services/ClipboardManager.js';
     import { applyStoredTheme, registerThemeToggle } from '/src/style/theme/theme-manager.js';
 
     // EventBus stub - must expose subscribe/publish (names MindmapService expects)
@@ -104,7 +78,11 @@
     svc.init({ storage: null, history });
 
     const canvas = document.getElementById('canvas');
-    const nodeLayer = document.getElementById('node-layer');
+    const statusEl = document.getElementById('status');
+    const mapSelect = document.getElementById('map-select');
+    let activeMap = null;
+    let surface = null;
+    function status(m) { statusEl.textContent = m; }
 
     // CSMA theme toggle - cycles light / dark / contrast, persists to localStorage
     applyStoredTheme();
@@ -119,215 +97,48 @@
         syncLabel(theme);
       });
     }
-    const svgLayer = document.getElementById('svg-layer');
-    const mapCanvas = document.getElementById('map-canvas');
-    const statusEl = document.getElementById('status');
-    const mapSelect = document.getElementById('map-select');
-    let activeMap = null;
-    function status(m) { statusEl.textContent = m; }
 
-    // Selection - delegated to SelectionController (Wave 1 / A3). The `selected`
-    // facade + selClear/selSingle/selToggle keep legacy call sites working
-    // (render, map select, context menu) without editing those regions.
-    const selected = {
-      get size() { return selection ? selection.selectedIds.length : 0; },
-      has(id) { return selection ? selection.selectedIds.includes(id) : false; },
-      *[Symbol.iterator]() { if (selection) yield* selection.selectedIds; },
-      add(id) { if (selection) selection.addToSelection(id); },
-      delete(id) { if (selection) selection.removeFromSelection(id); },
-      clear() { if (selection) selection.clearSelection(); }
-    };
-    function selClear() { if (selection) selection.clearSelection(); }
-    function selSingle(id) { if (selection) selection.selectNode(id); }
-    function selToggle(id) { if (!selection) return; if (selection.selectedIds.includes(id)) selection.removeFromSelection(id); else selection.addToSelection(id); }
-
-    // Render
-    function nodeTopic(id) { const n = svc.findNode(id); return n?.topic || null; }
-
-    // ── WAVE1-A1 ──
-    // Wire NodeDragHandler (drag + pan delegated to the shared viewport).
-    // `selection` and `viewport` are created at module scope by Wave 1 agent A3.
-    function initWave1A1() {
-      const drag = new NodeDragHandler({
-        container: canvas,
-        nodeLayer,
-        selection,
-        viewport,
-        service: svc,
-        eventBus: bus,
-        mapId: activeMap,
-        onRenderNeeded: renderAfterMut
-      });
-      drag.attach();
+    // All rendering + interaction handlers live inside mountSurface (Wave 2).
+    // The demo is a thin harness: it owns map data/seed and the status line.
+    function mountMap(id) {
+      if (surface) surface(); // cleanup previous surface
+      surface = svc.mountSurface('mindmap-canvas', canvas, { mapId: id });
     }
 
-    // ── WAVE1-A2 ── context-menu wiring (ContextMenu.js)
-    // i18n shape expected by ContextMenu: { t(key):string }. Labels mirror
-    // src/modules/mindmap/i18n/mindmap-en.json (English). `selection` is the
-    // SelectionController instance created by A3 at module scope.
-    const i18n = {
-      t(key) {
-        const labels = {
-          'mindmap.menu.addChild': 'Add child',
-          'mindmap.menu.addParent': 'Add parent',
-          'mindmap.menu.addSibling': 'Add sibling',
-          'mindmap.menu.removeNode': 'Remove node',
-          'mindmap.menu.moveUp': 'Move up',
-          'mindmap.menu.moveDown': 'Move down',
-        };
-        return labels[key] || key;
-      }
-    };
-    function initWave1A2() {
-      const menu = new ContextMenu({ container: canvas, service: svc, selection, eventBus: bus, mapId: activeMap, i18n, onRenderNeeded: renderAfterMut });
-      menu.attach();
-    }
-
-    // ── WAVE1-A3 ── keyboard + selection + viewport + box + clipboard wiring.
-    // `selection` and `viewport` are module-scope shared controllers also used
-    // by A1 (drag) and A2 (context menu).
-    let selection, viewport;
-    function centerMap() {
-      if (!viewport || !activeMap) return;
-      const layout = svc.layout(activeMap);
-      const root = layout.nodes.find(n => n.kind === 'root');
-      if (root) viewport.toCenter({ x: root.x, y: root.y, w: root.w, h: root.h });
-    }
-    function initWave1A3() {
-      if (selection) return; // idempotent - runs once
-      selection = new SelectionController({ container: canvas, nodeLayer, eventBus: bus, mapId: activeMap,
-        onSelect: () => {}, onMultiSelect: () => {}, onEditCommit: async (id, topic) => { await svc.updateNode(id, { topic }); renderAfterMut(); } });
-      viewport = new ViewportController({ container: canvas, nodeLayer, connectorLayer: svgLayer, eventBus: bus, mapId: activeMap });
-      new KeyboardHandler({ container: canvas, selection, viewport, service: svc, eventBus: bus, mapId: activeMap,
-        onRenderNeeded: renderAfterMut, getRoot: () => (svc._getMap ? svc._getMap(activeMap)?.root : null) }).attach();
-      new BoxSelector({ container: canvas, nodeLayer, selection, eventBus: bus, mapId: activeMap }).attach();
-      new ClipboardManager({ service: svc, selection, eventBus: bus, mapId: activeMap });
-    }
-
-    function render() {
-      if(!activeMap) return;
-      const { nodes } = svc.layout(activeMap);
-      const paths = svc.connectorPaths(activeMap);
-      nodeLayer.replaceChildren();
-      svgLayer.replaceChildren();
-      for (const n of nodes) {
-        const node = svc.findNode(n.id);
-        const el = document.createElement('div');
-        el.className = n.kind === 'leaf' ? 'leaf-node' : 'branch-node';
-        el.dataset.nodeId = n.id;
-        el.dataset.kind = n.kind;
-        el.dataset.status = n.status || 'pending';
-        el.style.left = n.x + 'px';
-        el.style.top = n.y + 'px';
-        el.style.width = n.w + 'px';
-        el.style.height = n.h + 'px';
-        el.style.display = 'flex';
-        el.style.alignItems = 'center';
-        if (selected.has(n.id)) el.setAttribute('data-selected', '');
-
-        if (n.kind === 'leaf') {
-          const status = document.createElement('span');
-          status.className = 'leaf-node__status';
-          const topic = document.createElement('span');
-          topic.className = 'leaf-node__topic';
-          topic.textContent = nodeTopic(n.id) || '';
-          el.append(status, topic);
-          if (node?.metadata?.bottleneck) el.dataset.bottleneck = node.metadata.bottleneck;
-        } else {
-          const header = document.createElement('div');
-          header.className = 'branch-node__header';
-          const statusDot = document.createElement('span');
-          statusDot.className = 'branch-node__status';
-          const topic = document.createElement('span');
-          topic.className = 'branch-node__topic';
-          topic.textContent = nodeTopic(n.id) || n.kind;
-          header.append(statusDot, topic);
-          if (node?.tag) {
-            const tag = document.createElement('span');
-            tag.className = 'branch-node__tag';
-            tag.textContent = node.tag;
-            header.append(tag);
-          }
-          el.append(header);
-          // Expander for branches with children (maps to .branch-node__collapse)
-          if (n.kind === 'branch' && node?.children?.length > 0) {
-            const collapsed = node.expanded === false;
-            el.setAttribute('data-collapsed', collapsed ? 'true' : 'false');
-            const exp = document.createElement('button');
-            exp.className = 'branch-node__collapse';
-            exp.type = 'button';
-            exp.setAttribute('aria-label', 'Collapse branch');
-            exp.addEventListener('pointerdown', async (ev) => {
-              ev.stopPropagation(); ev.preventDefault();
-              await svc.collapse(n.id, !collapsed);
-              renderAfterMut();
-            });
-            el.appendChild(exp);
-          }
-        }
-        nodeLayer.appendChild(el);
-      }
-      // Size the nodeLayer so scroll works
-      let maxX=0, maxY=0;
-      for(const n of nodes){ if(n.x+n.w > maxX) maxX=n.x+n.w; if(n.y+n.h > maxY) maxY=n.y+n.h; }
-      nodeLayer.style.width = (maxX + 200) + 'px';
-      nodeLayer.style.height = (maxY + 200) + 'px';
-      svgLayer.setAttribute('width', maxX + 200);
-      svgLayer.setAttribute('height', maxY + 200);
-      for (const { d, link } of paths) {
-        const p = document.createElementNS('http://www.w3.org/2000/svg','path');
-        p.setAttribute('d', d);
-        p.setAttribute('data-link-kind', link.kind);
-        const child = nodes.find(x => x.id === link.to);
-        if(child) p.setAttribute('data-status', child.status);
-        p.classList.add('connector-line');
-        svgLayer.appendChild(p);
-      }
-    }
-    async function renderAfterMut() {
-      render();
-      // Re-center if root went off-screen
-      requestAnimationFrame(() => {
-        const rootEl = nodeLayer.querySelector('[data-kind="root"]');
-        if (rootEl) {
-          const rr = rootEl.getBoundingClientRect(), cr = canvas.getBoundingClientRect();
-          if (rr.left < -200 || rr.top < -200 || rr.left > cr.width + 200) centerMap();
-        }
-      });
-    }
-
-    // Inline edit is handled by SelectionController (Wave 1 / A3) via dblclick +
-    // contentEditable; no demo-side edit input remains.
-
-    // context menu now handled by ContextMenu.js (WAVE1-A2)
-
-    // Copy / paste is handled by KeyboardHandler (Ctrl+C/X/V) + ClipboardManager
-    // (Wave 1 / A3); no demo-side stash remains.
-
-    // drag + pan now handled by NodeDragHandler (WAVE1-A1)
-    // Pan / zoom delegated to ViewportController (Wave 1 / A3); see the WAVE1-A3
-    // init. The old vpTx/vpScale/vpApply/centerMap helpers are gone; centerMap()
-    // is redefined above to call viewport.toCenter().
-
-    // Keyboard shortcuts delegated to KeyboardHandler (Wave 1 / A3) via initWave1A3.
-
-    // context menu now handled by ContextMenu.js (WAVE1-A2)
-
-    // ─── Maps ────────────────────────────────────────────────────
     async function refreshMapList() {
       const maps = await svc.listMaps();
       mapSelect.replaceChildren();
-      for(const m of maps) { const o=document.createElement('option'); o.value=m.id; o.textContent=m.name; mapSelect.appendChild(o); }
-      if(maps.length&&!activeMap) { activeMap=maps[0].id; mapSelect.value=activeMap; render(); }
+      for (const m of maps) {
+        const o = document.createElement('option');
+        o.value = m.id; o.textContent = m.name;
+        mapSelect.appendChild(o);
+      }
+      if (activeMap) mapSelect.value = activeMap;
     }
+
     document.getElementById('new-map').onclick = async () => {
-      activeMap = await svc.createMap(`Map ${Date.now()%1000}`);
-      await refreshMapList(); mapSelect.value=activeMap; render(); status('new map');
+      activeMap = await svc.createMap(`Map ${Date.now() % 1000}`);
+      await refreshMapList();
+      mapSelect.value = activeMap;
+      mountMap(activeMap);
+      status('new map');
     };
-    mapSelect.onchange = () => { activeMap=mapSelect.value; selClear(); render(); };
-    document.getElementById('undo-btn').onclick = async () => { await svc.undo(); render(); status('undo'); };
-    document.getElementById('redo-btn').onclick = async () => { await svc.redo(); render(); status('redo'); };
-    document.getElementById('md-btn').onclick = () => { status(svc.toMarkdown(activeMap)||'(empty)'); };
+    mapSelect.onchange = () => {
+      activeMap = mapSelect.value;
+      mountMap(activeMap);
+      status('switched map');
+    };
+    document.getElementById('undo-btn').onclick = async () => {
+      await svc.undo();
+      if (surface) surface.render();
+      status('undo');
+    };
+    document.getElementById('redo-btn').onclick = async () => {
+      await svc.redo();
+      if (surface) surface.render();
+      status('redo');
+    };
+    document.getElementById('md-btn').onclick = () => { status(svc.toMarkdown(activeMap) || '(empty)'); };
 
     // ─── Seed ────────────────────────────────────────────────────
     activeMap = await svc.createMap('Sample map');
@@ -342,15 +153,8 @@
     await svc.addLeaf(b3.id, 'selection');
     await svc.addLeaf(b3.id, 'keyboard');
     await refreshMapList();
-    // WAVE1-A3: create shared selection + viewport before drag / context-menu wiring
-    initWave1A3();
-    render();
-    // WAVE1-A1: attach drag handler once the initial map is rendered
-    initWave1A1();
-    initWave1A2(); // WAVE1-A2
-    // Center the root after first layout
-    requestAnimationFrame(() => centerMap());
-    status('ready - click nodes, double-click to edit, drag to move, right-click for menu, arrow keys to navigate');
+    mountMap(activeMap);
+    status('ready - click nodes, double-click to edit, drag to move, right-click for menu, arrow keys to navigate; toolbar: zoom / fit / layout / fullscreen');
   </script>
 </body>
 </html>

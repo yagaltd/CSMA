@@ -22,6 +22,13 @@ import { MarkdownCodec } from './MarkdownCodec.js';
 import { Search } from './Search.js';
 import { layout as layoutTree } from './LayoutEngine.js';
 import { main as mainConnector, sub as subConnector, rectFromNodes, directionClassFor } from './ConnectorGeometry.js';
+import { NodeDragHandler } from './NodeDragHandler.js';
+import { SelectionController } from './SelectionController.js';
+import { ViewportController } from './ViewportController.js';
+import { KeyboardHandler } from './KeyboardHandler.js';
+import { BoxSelector } from './BoxSelector.js';
+import { ClipboardManager } from './ClipboardManager.js';
+import { ContextMenu } from '../ui/ContextMenu.js';
 
 const ACTIVE_MAP_KEY = 'mindmap:active';
 const SCHEMA_BRANCH = 'mindmap/branch';
@@ -87,13 +94,20 @@ function makeLeaf(topic, meta = {}) {
 
 export class MindmapService {
   static SURFACE_CSS = `
-.mm-canvas { position: relative; width: 100%; height: 100%; min-height: 320px; overflow: hidden; outline: none; user-select: none; background: var(--mindmap-canvas-bg, #fafafa); }
+.mm-canvas { position: relative; width: 100%; height: 100%; min-height: 320px; overflow: hidden; outline: none; user-select: none; touch-action: none; background: var(--mindmap-canvas-bg, #fafafa); }
 .mm-surface-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
 .mm-surface-nodes { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
-.mm-node { position: absolute; box-sizing: border-box; padding: 4px 10px; border-radius: 6px; font-size: 13px; line-height: 1.4; white-space: nowrap; border: 1px solid var(--border, #d0d0d0); border-left-width: 3px; background: var(--surface, #fff); color: var(--foreground, #222); }
-.mm-node[data-kind="root"] { font-weight: 700; border-width: 2px; border-color: var(--accent, #4f90f2); }
-.mm-connector { fill: none; stroke: var(--border, #bbb); stroke-width: 2; stroke-linecap: round; }
 .mm-canvas[data-read-only] { pointer-events: none; }
+.mm-surface-nodes [data-selected] { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Toolbar surface (Wave 2) — composed from the CSMA button component. */
+.mm-toolbar { position: absolute; top: var(--space-sm); left: var(--space-sm); z-index: 5; display: flex; gap: var(--space-xs); flex-wrap: wrap; align-items: center; padding: var(--space-xs); background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--border); border-radius: var(--radius-md); pointer-events: auto; }
+.mm-toolbar .button { pointer-events: auto; }
+/* Insert previews (NodeDragHandler) — token-styled. */
+.insert-preview-in { outline: 2px solid var(--accent); outline-offset: 3px; }
+.insert-preview-before, .insert-preview-after { position: absolute; left: 0; right: 0; height: 3px; background: var(--accent); border-radius: 2px; z-index: 9999; pointer-events: none; }
+.insert-preview-before { top: -2px; }
+.insert-preview-after { bottom: -2px; }
+.mindmap-drag-ghost { position: fixed; z-index: 10001; pointer-events: none; padding: 4px 8px; border-radius: var(--radius-sm, 4px); background: var(--surface); border: 1px dashed var(--accent); font-size: var(--font-size-sm, 14px); white-space: nowrap; }
 `;
 
   constructor(eventBus) {
@@ -1068,45 +1082,128 @@ export class MindmapService {
       throw new Error(`MindmapService.mountSurface: unknown surface "${surfaceId}"`);
     }
     const doc = container.ownerDocument || globalThis.document;
-    const readOnly = props.readOnly === true || props.readOnly === 'true';
+    const service = this;
+    let resolvedMapId = props.mapId || this._activeMapId;
 
     const canvas = doc.createElement('div');
     canvas.className = 'mm-canvas';
     canvas.setAttribute('data-surface', 'mindmap-canvas');
-    if (readOnly) canvas.setAttribute('data-read-only', '');
+    if (props.readOnly === true || props.readOnly === 'true') {
+      canvas.setAttribute('data-read-only', '');
+    }
     const style = doc.createElement('style');
     style.textContent = MindmapService.SURFACE_CSS;
+    const toolbar = doc.createElement('div');
+    toolbar.className = 'mm-toolbar';
     const svgLayer = doc.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svgLayer.setAttribute('class', 'mm-surface-svg');
     svgLayer.setAttribute('overflow', 'visible');
     const nodeLayer = doc.createElement('div');
     nodeLayer.className = 'mm-surface-nodes';
-    canvas.append(style, svgLayer, nodeLayer);
+    canvas.append(style, toolbar, svgLayer, nodeLayer);
     container.append(canvas);
 
+    // ── Toolbar surface (Wave 2) ───────────────────────────────────
+    // Direction cycle: right → side → down → left (matches setLayoutDirection).
+    const layoutDirs = [1, 2, 3, 0];
+    const dirLabel = { 0: 'Left', 1: 'Right', 2: 'Side', 3: 'Down' };
+    const makeToolButton = (label) => {
+      const b = doc.createElement('button');
+      b.type = 'button';
+      b.className = 'button';
+      b.setAttribute('data-variant', 'ghost');
+      b.setAttribute('data-size', 'sm');
+      b.textContent = label;
+      return b;
+    };
+    const zoomInBtn = makeToolButton('Zoom in');
+    const zoomOutBtn = makeToolButton('Zoom out');
+    const fitBtn = makeToolButton('Fit');
+    const layoutBtn = makeToolButton('Layout');
+    const fullBtn = makeToolButton('Fullscreen');
+    toolbar.append(zoomInBtn, zoomOutBtn, fitBtn, layoutBtn, fullBtn);
+    // Stop toolbar pointer/keyboard events from reaching the canvas handlers
+    // (drag / pan / context-menu / keyboard) attached below.
+    for (const ev of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'wheel', 'contextmenu', 'keydown', 'keyup', 'click']) {
+      toolbar.addEventListener(ev, (e) => e.stopPropagation());
+    }
+
     const topicOf = (id) => {
-      const node = this.findNode(id, { mapId: props.mapId });
+      const node = service.findNode(id, { mapId: resolvedMapId });
       return node ? node.topic : null;
     };
 
+    const computeBounds = () => {
+      const { nodes } = service.layout(resolvedMapId);
+      if (!nodes.length) return { x: 0, y: 0, w: 1, h: 1 };
+      let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+      for (const n of nodes) {
+        minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+        maxX = Math.max(maxX, n.x + n.w); maxY = Math.max(maxY, n.y + n.h);
+      }
+      return { x: minX, y: minY, w: Math.max(1, maxX - minX), h: Math.max(1, maxY - minY) };
+    };
+
+    // ── Render via catalog components (branch-node / leaf-node / connector-line) ──
     const render = () => {
-      const mapId = props.mapId || this._activeMapId;
-      const { nodes } = this.layout(mapId);
-      const paths = this.connectorPaths(mapId);
+      const mapId = resolvedMapId || service._activeMapId;
+      if (!mapId) return;
+      const { nodes } = service.layout(mapId);
+      const paths = service.connectorPaths(mapId);
       nodeLayer.replaceChildren();
       svgLayer.replaceChildren();
       for (const n of nodes) {
+        const node = service.findNode(n.id, { mapId });
         const el = doc.createElement('div');
-        el.className = 'mm-node';
+        el.className = n.kind === 'leaf' ? 'leaf-node' : 'branch-node';
         el.dataset.nodeId = n.id;
         el.dataset.kind = n.kind;
         el.dataset.status = n.status || 'pending';
+        el.style.position = 'absolute';
+        el.style.boxSizing = 'border-box';
         el.style.left = `${n.x}px`;
         el.style.top = `${n.y}px`;
         el.style.width = `${n.w}px`;
-        el.style.minHeight = `${n.h}px`;
-        const topic = topicOf(n.id);
-        el.textContent = topic != null ? topic : n.kind;
+        el.style.height = `${n.h}px`;
+        if (n.kind === 'leaf') {
+          const statusDot = doc.createElement('span');
+          statusDot.className = 'leaf-node__status';
+          const topic = doc.createElement('span');
+          topic.className = 'leaf-node__topic';
+          topic.textContent = topicOf(n.id) || '';
+          el.append(statusDot, topic);
+          if (node?.metadata?.bottleneck) el.dataset.bottleneck = node.metadata.bottleneck;
+        } else {
+          const header = doc.createElement('div');
+          header.className = 'branch-node__header';
+          const statusDot = doc.createElement('span');
+          statusDot.className = 'branch-node__status';
+          const topic = doc.createElement('span');
+          topic.className = 'branch-node__topic';
+          topic.textContent = topicOf(n.id) || n.kind;
+          header.append(statusDot, topic);
+          if (node?.tag) {
+            const tag = doc.createElement('span');
+            tag.className = 'branch-node__tag';
+            tag.textContent = node.tag;
+            header.append(tag);
+          }
+          el.append(header);
+          if (n.kind === 'branch' && node?.children?.length > 0) {
+            const collapsed = node.expanded === false;
+            el.dataset.collapsed = collapsed ? 'true' : 'false';
+            const exp = doc.createElement('button');
+            exp.type = 'button';
+            exp.className = 'branch-node__collapse';
+            exp.setAttribute('aria-label', collapsed ? 'Expand branch' : 'Collapse branch');
+            exp.addEventListener('pointerdown', async (ev) => {
+              ev.stopPropagation(); ev.preventDefault();
+              await service.collapse(n.id, !collapsed, { mapId });
+              renderAfterMut();
+            });
+            el.append(exp);
+          }
+        }
         nodeLayer.append(el);
       }
       for (const { d, link } of paths) {
@@ -1115,18 +1212,83 @@ export class MindmapService {
         p.setAttribute('data-link-kind', link.kind);
         const child = nodes.find((x) => x.id === link.to);
         if (child) p.setAttribute('data-status', child.status);
-        p.classList.add('mm-connector');
+        p.classList.add('connector-line');
         svgLayer.append(p);
       }
     };
 
-    render();
-    const off = this.eventBus?.subscribe?.('MINDMAP_STRUCTURE_CHANGED', render);
+    const renderAfterMut = () => {
+      render();
+      requestAnimationFrame(() => {
+        const rootEl = nodeLayer.querySelector('[data-kind="root"]');
+        if (rootEl) {
+          const rr = rootEl.getBoundingClientRect();
+          const cr = canvas.getBoundingClientRect();
+          if (rr.left < -200 || rr.top < -200 || rr.left > cr.width + 200) {
+            const layout = service.layout(resolvedMapId);
+            const root = layout.nodes.find((x) => x.kind === 'root');
+            if (root) viewport.toCenter({ x: root.x, y: root.y, w: root.w, h: root.h });
+          }
+        }
+      });
+    };
 
-    return () => {
-      if (typeof off === 'function') off();
+    // ── Wire interaction handlers (Wave 2) ─────────────────────────
+    // Selection + Viewport are shared controllers used by the other handlers.
+    const selection = new SelectionController({
+      container: canvas, nodeLayer, eventBus: service.eventBus, mapId: resolvedMapId,
+      onSelect: () => {}, onMultiSelect: () => {},
+      onEditCommit: async (id, topic) => {
+        await service.updateNode(id, { topic }, { mapId: resolvedMapId });
+        renderAfterMut();
+      }
+    });
+    const viewport = new ViewportController({ container: canvas, nodeLayer, connectorLayer: svgLayer, eventBus: service.eventBus, mapId: resolvedMapId });
+    new NodeDragHandler({ container: canvas, nodeLayer, selection, viewport, service, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut }).attach();
+    const contextMenu = new ContextMenu({ container: canvas, service, selection, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut });
+    contextMenu.attach();
+    new KeyboardHandler({ container: canvas, selection, viewport, service, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut, getRoot: () => service._getMap(resolvedMapId)?.root }).attach();
+    new BoxSelector({ container: canvas, nodeLayer, selection, eventBus: service.eventBus, mapId: resolvedMapId }).attach();
+    new ClipboardManager({ service, selection, eventBus: service.eventBus, mapId: resolvedMapId });
+
+    // ── Toolbar bindings ──────────────────────────────────────────────
+    zoomInBtn.addEventListener('click', () => viewport.scaleTo(viewport.scale * 1.2));
+    zoomOutBtn.addEventListener('click', () => viewport.scaleTo(viewport.scale / 1.2));
+    fitBtn.addEventListener('click', () => viewport.scaleFit(computeBounds()));
+    layoutBtn.addEventListener('click', () => {
+      const cur = service.getLayoutDirection(resolvedMapId);
+      const next = layoutDirs[(layoutDirs.indexOf(cur) + 1) % layoutDirs.length];
+      service.setLayoutDirection(next, { mapId: resolvedMapId });
+      layoutBtn.textContent = `Layout: ${dirLabel[next]}`;
+    });
+    fullBtn.addEventListener('click', () => {
+      if (doc.fullscreenElement) doc.exitFullscreen?.();
+      else canvas.requestFullscreen?.();
+    });
+    layoutBtn.textContent = `Layout: ${dirLabel[service.getLayoutDirection(resolvedMapId)] || 'Right'}`;
+
+    render();
+    const offStructure = service.eventBus?.subscribe?.('MINDMAP_STRUCTURE_CHANGED', render);
+    // Center the root on initial mount (mirrors the demo's centerMap()).
+    requestAnimationFrame(() => {
+      const layout = service.layout(resolvedMapId);
+      const root = layout.nodes.find((x) => x.kind === 'root');
+      if (root) viewport.toCenter({ x: root.x, y: root.y, w: root.w, h: root.h });
+    });
+
+    const destroy = () => {
+      if (typeof offStructure === 'function') offStructure();
+      try { selection.destroy(); } catch { /* noop */ }
+      try { viewport.destroy(); } catch { /* noop */ }
+      try { contextMenu.destroy(); } catch { /* noop */ }
       container.replaceChildren();
     };
+    // Return a callable cleanup fn with host helper methods.
+    const api = () => destroy();
+    api.render = render;
+    api.setMapId = (id) => { resolvedMapId = id; renderAfterMut(); };
+    api.destroy = destroy;
+    return api;
   }
 }
 
