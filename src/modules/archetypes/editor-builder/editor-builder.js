@@ -3,6 +3,10 @@
  *
  * Factory: createEditor(container, emit, options) → { update, destroy, getValues, setValues, reset }
  *
+ * Phase 3.1-C: all DOM construction routes through `getComposer().mountTree()`.
+ * No raw document.createElement. Events are wired post-mount on the real DOM
+ * elements the composer returns.
+ *
  * Features:
  * - Form fields rendered from declarative definitions
  * - Field types: text, email, number, password, textarea, select, checkbox, toggle
@@ -13,6 +17,7 @@
  * - Keyboard-friendly (Enter to submit)
  */
 
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
 import { clearChildren } from '../../../utils/dom.js';
 
 const DRAFT_PREFIX = 'csma.editor.draft.';
@@ -30,6 +35,7 @@ export function createEditor(container, emit, options = {}) {
     let isSaving = false;
     let values = { ...initialValues };
     let fieldErrors = {};
+    let fieldCleanups = [];
 
     // Restore draft if available
     if (draftKey) {
@@ -39,177 +45,196 @@ export function createEditor(container, emit, options = {}) {
         } catch {}
     }
 
-    // ─── DOM ───────────────────────────────────────────
+    // ─── Initial mount via mountTree ───────────────────
 
-    const root = document.createElement('div');
-    root.className = 'csma-editor';
-    root.setAttribute('role', 'form');
-    root.setAttribute('aria-label', 'Editor');
+    const composer = getComposer();
+    const { root, cleanup: rootCleanup } = composer.mountTree(spec('div', {
+        className: 'csma-editor',
+        attrs: { role: 'form', 'aria-label': 'Editor' },
+        children: [
+            spec('div', { className: 'csma-editor__fields' }),
+            spec('div', { className: 'csma-editor__actions', children: [
+                spec('span', { className: 'csma-editor__save-status' }),
+                spec('button', {
+                    className: 'csma-editor__reset',
+                    attrs: { type: 'button' },
+                    text: resetLabel
+                }),
+                spec('button', {
+                    className: 'csma-editor__submit',
+                    attrs: { type: 'button' },
+                    text: submitLabel
+                })
+            ]})
+        ]
+    }), container);
 
-    const fieldsContainer = document.createElement('div');
-    fieldsContainer.className = 'csma-editor__fields';
+    const fieldsContainer = root.querySelector('.csma-editor__fields');
+    const submitBtn = root.querySelector('.csma-editor__submit');
+    const resetBtn = root.querySelector('.csma-editor__reset');
+    const saveStatus = root.querySelector('.csma-editor__save-status');
 
-    const actionsEl = document.createElement('div');
-    actionsEl.className = 'csma-editor__actions';
+    // ─── Event wiring (on mounted DOM) ─────────────────
 
-    const submitBtn = document.createElement('button');
-    submitBtn.className = 'csma-editor__submit';
-    submitBtn.type = 'button';
-    submitBtn.textContent = submitLabel;
     submitBtn.addEventListener('click', () => handleSubmit());
-
-    const resetBtn = document.createElement('button');
-    resetBtn.className = 'csma-editor__reset';
-    resetBtn.type = 'button';
-    resetBtn.textContent = resetLabel;
     resetBtn.addEventListener('click', () => reset());
+    root.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+            e.preventDefault();
+            handleSubmit();
+        }
+    });
 
-    const saveStatus = document.createElement('span');
-    saveStatus.className = 'csma-editor__save-status';
+    // ─── Field Spec Builders ───────────────────────────
 
-    actionsEl.appendChild(saveStatus);
-    actionsEl.appendChild(resetBtn);
-    actionsEl.appendChild(submitBtn);
+    function buildTextInputSpec(field) {
+        const inputType = field.type === 'email' ? 'email' :
+                         field.type === 'number' ? 'number' :
+                         field.type === 'password' ? 'password' : 'text';
+        const inputAttrs = {
+            type: inputType,
+            id: `field-${field.id}`,
+            placeholder: field.placeholder || ''
+        };
+        // NOTE: 'value' is set as a DOM PROPERTY post-mount (not as an
+        // attribute) to match the original implementation's semantics.
+        if (field.required) inputAttrs.required = '';
+        if (field.minLength != null) inputAttrs.minlength = String(field.minLength);
+        if (field.maxLength != null) inputAttrs.maxlength = String(field.maxLength);
 
-    root.appendChild(fieldsContainer);
-    root.appendChild(actionsEl);
-
-    // ─── Field Builders ────────────────────────────────
-
-    function buildTextInput(field) {
-        const wrap = document.createElement('div');
-        wrap.className = 'csma-editor__field';
-
-        const label = document.createElement('label');
-        label.className = 'csma-editor__label' + (field.required ? ' csma-editor__label-required' : '');
-        label.textContent = field.label;
-        label.htmlFor = `field-${field.id}`;
-
-        const input = document.createElement('input');
-        input.className = 'csma-editor__input';
-        input.id = `field-${field.id}`;
-        input.type = field.type === 'email' ? 'email' :
-                     field.type === 'number' ? 'number' :
-                     field.type === 'password' ? 'password' : 'text';
-        input.value = values[field.id] || '';
-        input.placeholder = field.placeholder || '';
-        if (field.required) input.required = true;
-        if (field.minLength) input.minLength = field.minLength;
-        if (field.maxLength) input.maxLength = field.maxLength;
-        input.addEventListener('input', () => {
-            values[field.id] = input.value;
-            clearFieldError(field.id);
-            persistDraft();
+        return spec('div', {
+            className: 'csma-editor__field',
+            children: [
+                spec('label', {
+                    className: 'csma-editor__label' + (field.required ? ' csma-editor__label-required' : ''),
+                    attrs: { for: `field-${field.id}` },
+                    text: field.label
+                }),
+                spec('input', { className: 'csma-editor__input', attrs: inputAttrs }),
+                spec('span', { className: 'csma-editor__error', dataset: { field: field.id } }),
+                field.help ? spec('span', { className: 'csma-editor__help', text: field.help }) : null
+            ]
         });
-
-        wrap.appendChild(label);
-        wrap.appendChild(input);
-        appendFieldMeta(wrap, field);
-        return { wrap, input };
     }
 
-    function buildTextarea(field) {
-        const wrap = document.createElement('div');
-        wrap.className = 'csma-editor__field';
+    function buildTextareaSpec(field) {
+        const attrs = {
+            id: `field-${field.id}`,
+            placeholder: field.placeholder || '',
+            rows: String(field.rows || 4)
+        };
+        if (field.required) attrs.required = '';
 
-        const label = document.createElement('label');
-        label.className = 'csma-editor__label' + (field.required ? ' csma-editor__label-required' : '');
-        label.textContent = field.label;
-        label.htmlFor = `field-${field.id}`;
-
-        const textarea = document.createElement('textarea');
-        textarea.className = 'csma-editor__textarea';
-        textarea.id = `field-${field.id}`;
-        textarea.value = values[field.id] || '';
-        textarea.placeholder = field.placeholder || '';
-        textarea.rows = field.rows || 4;
-        if (field.required) textarea.required = true;
-        textarea.addEventListener('input', () => {
-            values[field.id] = textarea.value;
-            clearFieldError(field.id);
-            persistDraft();
+        return spec('div', {
+            className: 'csma-editor__field',
+            children: [
+                spec('label', {
+                    className: 'csma-editor__label' + (field.required ? ' csma-editor__label-required' : ''),
+                    attrs: { for: `field-${field.id}` },
+                    text: field.label
+                }),
+                spec('textarea', {
+                    className: 'csma-editor__textarea',
+                    attrs,
+                    text: values[field.id] || ''
+                }),
+                spec('span', { className: 'csma-editor__error', dataset: { field: field.id } }),
+                field.help ? spec('span', { className: 'csma-editor__help', text: field.help }) : null
+            ]
         });
-
-        wrap.appendChild(label);
-        wrap.appendChild(textarea);
-        appendFieldMeta(wrap, field);
-        return { wrap, input: textarea };
     }
 
-    function buildSelect(field) {
-        const wrap = document.createElement('div');
-        wrap.className = 'csma-editor__field';
-
-        const label = document.createElement('label');
-        label.className = 'csma-editor__label' + (field.required ? ' csma-editor__label-required' : '');
-        label.textContent = field.label;
-        label.htmlFor = `field-${field.id}`;
-
-        const select = document.createElement('select');
-        select.className = 'csma-editor__select';
-        select.id = `field-${field.id}`;
-        (field.options || []).forEach((opt) => {
-            const option = document.createElement('option');
-            option.value = typeof opt === 'string' ? opt : opt.value;
-            option.textContent = typeof opt === 'string' ? opt : opt.label;
-            if (option.value === (values[field.id] || '')) option.selected = true;
-            select.appendChild(option);
-        });
-        select.addEventListener('change', () => {
-            values[field.id] = select.value;
-            clearFieldError(field.id);
-            persistDraft();
+    function buildSelectSpec(field) {
+        const optionSpecs = (field.options || []).map((opt) => {
+            const val = typeof opt === 'string' ? opt : opt.value;
+            const label = typeof opt === 'string' ? opt : opt.label;
+            const optAttrs = { value: val };
+            // NOTE: 'selected' is set as a DOM PROPERTY post-mount.
+            return spec('option', { attrs: optAttrs, text: label });
         });
 
-        wrap.appendChild(label);
-        wrap.appendChild(select);
-        appendFieldMeta(wrap, field);
-        return { wrap, input: select };
+        return spec('div', {
+            className: 'csma-editor__field',
+            children: [
+                spec('label', {
+                    className: 'csma-editor__label' + (field.required ? ' csma-editor__label-required' : ''),
+                    attrs: { for: `field-${field.id}` },
+                    text: field.label
+                }),
+                spec('select', {
+                    className: 'csma-editor__select',
+                    attrs: { id: `field-${field.id}` },
+                    children: optionSpecs
+                }),
+                spec('span', { className: 'csma-editor__error', dataset: { field: field.id } }),
+                field.help ? spec('span', { className: 'csma-editor__help', text: field.help }) : null
+            ]
+        });
     }
 
-    function buildToggle(field) {
-        const wrap = document.createElement('div');
-        wrap.className = 'csma-editor__field';
+    function buildToggleSpec(field) {
+        const checkboxAttrs = { type: 'checkbox' };
+        // NOTE: 'checked' is set as a DOM PROPERTY post-mount.
 
-        const togg = document.createElement('label');
-        togg.className = 'csma-editor__toggle';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = !!values[field.id];
-        checkbox.addEventListener('change', () => {
-            values[field.id] = checkbox.checked;
-            persistDraft();
+        return spec('div', {
+            className: 'csma-editor__field',
+            children: [
+                spec('label', {
+                    className: 'csma-editor__toggle',
+                    children: [
+                        spec('input', { attrs: checkboxAttrs }),
+                        spec('span', { className: 'csma-editor__toggle-track' }),
+                        spec('span', { text: field.label })
+                    ]
+                }),
+                spec('span', { className: 'csma-editor__error', dataset: { field: field.id } }),
+                field.help ? spec('span', { className: 'csma-editor__help', text: field.help }) : null
+            ]
         });
-
-        const track = document.createElement('span');
-        track.className = 'csma-editor__toggle-track';
-
-        const labelText = document.createElement('span');
-        labelText.textContent = field.label;
-
-        togg.appendChild(checkbox);
-        togg.appendChild(track);
-        togg.appendChild(labelText);
-        wrap.appendChild(togg);
-        appendFieldMeta(wrap, field);
-        return { wrap, input: checkbox };
     }
 
-    function appendFieldMeta(wrap, field) {
-        const errEl = document.createElement('span');
-        errEl.className = 'csma-editor__error';
-        errEl.dataset.field = field.id;
-        // visibility controlled by CSS
-        wrap.appendChild(errEl);
-
-        if (field.help) {
-            const help = document.createElement('span');
-            help.className = 'csma-editor__help';
-            help.textContent = field.help;
-            wrap.appendChild(help);
+    function buildFieldSpec(field) {
+        switch (field.type) {
+            case 'textarea': case 'richtext':
+                return buildTextareaSpec(field);
+            case 'select':
+                return buildSelectSpec(field);
+            case 'toggle': case 'checkbox':
+                return buildToggleSpec(field);
+            case 'text': case 'email': case 'number': case 'password': default:
+                return buildTextInputSpec(field);
         }
     }
+
+    function wireFieldEvents(fieldEl, field) {
+        const input = fieldEl.querySelector(`#field-${field.id}`) || fieldEl.querySelector('input[type="checkbox"]');
+        if (!input) return;
+
+        // Set DOM properties that differ from attributes (value/selected/checked)
+        if (field.type === 'toggle' || field.type === 'checkbox') {
+            input.checked = !!values[field.id];
+        } else if (field.type === 'select') {
+            input.value = String(values[field.id] || '');
+        } else if (values[field.id] != null) {
+            input.value = String(values[field.id]);
+        }
+
+        const eventName = field.type === 'select' ? 'change' :
+                         (field.type === 'toggle' || field.type === 'checkbox') ? 'change' : 'input';
+
+        input.addEventListener(eventName, () => {
+            if (field.type === 'toggle' || field.type === 'checkbox') {
+                values[field.id] = input.checked;
+            } else {
+                values[field.id] = input.value;
+                clearFieldError(field.id);
+            }
+            if (field.type === 'select') clearFieldError(field.id);
+            persistDraft();
+        });
+    }
+
+    // ─── Error display ─────────────────────────────────
 
     function showFieldError(fieldId, message) {
         const errEl = root.querySelector(`.csma-editor__error[data-field="${fieldId}"]`);
@@ -229,28 +254,17 @@ export function createEditor(container, emit, options = {}) {
 
     // ─── Render All Fields ─────────────────────────────
 
-    const fieldRefs = {};
-
     function renderFields() {
+        fieldCleanups.forEach((fn) => { try { fn(); } catch {} });
+        fieldCleanups = [];
         clearChildren(fieldsContainer);
-        fieldRefs.length = 0;
 
         fields.forEach((field) => {
-            let result;
-            switch (field.type) {
-                case 'textarea': case 'richtext':
-                    result = buildTextarea(field); break;
-                case 'select':
-                    result = buildSelect(field); break;
-                case 'toggle': case 'checkbox':
-                    result = buildToggle(field); break;
-                case 'text': case 'email': case 'number': case 'password': default:
-                    result = buildTextInput(field); break;
-            }
-            fieldsContainer.appendChild(result.wrap);
-            fieldRefs[field.id] = result.input;
+            const fieldSpec = buildFieldSpec(field);
+            const { root: fieldRoot, cleanup } = composer.mountTree(fieldSpec, fieldsContainer);
+            fieldCleanups.push(cleanup);
+            wireFieldEvents(fieldRoot, field);
 
-            // Show existing errors
             if (fieldErrors[field.id]) {
                 showFieldError(field.id, fieldErrors[field.id]);
             }
@@ -346,46 +360,34 @@ export function createEditor(container, emit, options = {}) {
 
     // ─── Initial Render ────────────────────────────────
 
-    container.appendChild(root);
     renderFields();
-
-    // Keyboard submit
-    root.addEventListener('keydown', (e) => {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-            e.preventDefault();
-            handleSubmit();
-        }
-    });
 
     // ─── Public API ────────────────────────────────────
 
     return {
-        /** Get current form values. */
         getValues() {
             return { ...values };
         },
 
-        /** Set form values (merges with current). */
         setValues(newValues) {
             values = { ...values, ...newValues };
             renderFields();
         },
 
-        /** Reset form to initial values. */
         reset,
 
-        /** Programmatically submit. */
         submit() {
             handleSubmit();
         },
 
-        /** Validate without submitting. Returns true if valid. */
         validate() {
             return validate();
         },
 
-        /** Destroy the editor. */
         destroy() {
+            fieldCleanups.forEach((fn) => { try { fn(); } catch {} });
+            fieldCleanups = [];
+            rootCleanup();
             root.remove();
         },
     };
