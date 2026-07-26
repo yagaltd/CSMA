@@ -684,3 +684,193 @@ Scope estimate: ~1 week, long-tail across multiple waves.
 3. **Default chart adapter** (Phase 2): ship a default chart.js adapter in
    `src/modules/charts/adapters/`, or leave adapter registration to the app?
    Lean: leave to app, document in a new `docs/charts/SKILL.md`.
+
+### Phase 4 — Anchorable comments module (planned, after Phase 3)
+
+**Status: planning. Scope locked, contracts sketched, no code yet.**
+
+CSMA today has TWO half-built comment systems and the gap showed up
+inside slides:
+
+- `src/modules/comments/` is a thin flat thread store (`CommentsService`,
+  ~50 LOC). One aiui surface (`comments-thread`) that renders a thread by
+  `threadId`. No anchoring, no drawer, no UI components beyond the inline
+  surface. Used by Phase 2.2 to embed a live thread in a slide media slot —
+  wrong UX (inline, not deck-wide).
+- `src/modules/visual-editor/` has a rich annotation system
+  (`AnnotationSchema`, `AnnotationOps`, `AnnotationCommentService`,
+  `CommentSidebar`, CRDT + sync) — but it is **hard-coupled** to visual
+  editor sessions and text selections (`[data-path]` ranges, `getSelection()`).
+  Slides cannot reuse it without becoming visual-editor instances.
+
+Phase 4 builds ONE generic, anchorable comments module that any app can
+use, then migrates slides (and later visual-editor) onto it.
+
+**Target UX (per spec)**
+
+1. Click any commentable element → popup modal opens at click position to
+   author a comment. Confirm creates the comment.
+2. Commented element is highlighted (corner color) and gets a badge/label.
+   The label is a generic slot today; @mention integration (via the existing
+   `mentions` module) replaces it later.
+3. Desktop: hover a commented element → popup preview shows the comment.
+   Mobile: tap to show the same preview. Both have a Reply button (replies
+   go in the preview modal or the drawer).
+4. Drawer (separate from the inline popup) lists ALL comments for the
+   current scope (a slide, a mindmap, a document). Filter, search, jump.
+5. App dock/toolbar gets ONE comments button. Icon shows a total-count
+   badge. Click opens the drawer.
+
+**Refactor / keep / build new**
+
+| Today | Phase 4 decision |
+|-------|------------------|
+| `CommentsService` flat thread store | **Keep + extend** — becomes the storage layer for the new module; add anchor fields to the comment payload |
+| `comments-thread` aiui surface | **Keep** — still useful for live Q&A embeds (Phase 2.2 use case). Orthogonal to the new drawer. |
+| Phase 2.2 `INTENT_SLIDE_TOGGLE_COMMENTS` (toggles media slot) | **Deprecate** — wrong UX. Replace with `INTENT_COMMENTS_OPEN_DRAWER`. The media-slot embedding can stay as a documented capability but is not the primary flow. |
+| `SlideDeckService.toggleComments()` | **Remove** — replaced by the generic service. Slides module only owns its dock button + element anchoring hooks. |
+| `AnnotationSchema` rich payload (author, status, resolved_at, assigned_to, thread_reply_to, anchor_type, anchor_path) | **Adopt the shape** — port into the generic module's schema. Visual-editor keeps its session-coupled impl until Phase 5. |
+| `CommentSidebar` (494 LOC, text-selection-coupled) | **Port + generalize** — new `CommentsDrawer` archetype. Strip text-selection coupling; accept any anchor shape. |
+| `AnnotationOps` add/remove | **Generalize** — new ops accept `{anchor_type, anchor}` payloads, not text-path-specific ranges. |
+| `mentions` module | **Integrate (optional)** — Phase 4 stubs the badge as a generic label; a Phase 4.1 sub-phase swaps in @mention resolution. |
+
+**New module shape (`src/modules/comments/` after Phase 4)**
+
+```
+src/modules/comments/
+├── services/
+│   ├── CommentsService.js        ← existing, extended with anchor fields
+│   ├── AnchorableCommentsService.js  ← NEW: inherits CommentsService,
+│   │                                 adds anchor CRUD + queries by target
+│   └── AnchorResolver.js         ← NEW: resolves an anchor (CSS selector,
+│                                   stable id, text path) to a live DOM element
+├── ui/
+│   ├── CommentsDrawer.js         ← NEW: drawer component (replaces ve CommentSidebar)
+│   ├── CommentPopup.js           ← NEW: click-to-add modal, hover/tap preview
+│   └── CommentMarker.js          ← NEW: corner highlight + badge overlay
+├── aiui/
+│   ├── manifest.json             ← existing (comments-thread)
+│   └── comments-drawer.json      ← NEW aiui surface for the drawer (embeddable)
+├── contracts/comments-contracts.js  ← extended with anchor intents/events
+└── README.md
+```
+
+**Anchor model** (the key abstraction)
+
+An anchor identifies WHERE a comment attaches. Three primitive shapes:
+
+```javascript
+// Element anchor (most common — any clickable DOM element)
+{ anchor_type: 'element', anchor: { selector: '.slide[data-index="3"] .headline' } }
+// or stable id (preferred when the host app assigns one)
+{ anchor_type: 'element', anchor: { id: 'slide-3-headline' } }
+
+// Text anchor (port from visual-editor for editor apps)
+{ anchor_type: 'text', anchor: { path: [...], start: 12, end: 27 } }
+
+// Point anchor (canvas / SVG — for mindmap nodes, chart cells)
+{ anchor_type: 'point', anchor: { x: 240, y: 180, scope: 'map-abc' } }
+```
+
+`AnchorResolver` turns an anchor into a live DOM element so the marker,
+popup, and drawer can highlight/jump to it. Apps that want fine control
+register a custom resolver; the default uses `selector` or `id`.
+
+**Layered architecture (rides on Phase 3)**
+
+```
+LAYER 4  SLIDES APP / MINDMAP APP / VISUAL-EDITOR APP  ← integrate
+LAYER 3  APP-SPECIFIC ANCHOR HOOKS  ← slide element clicks, mindmap node clicks
+LAYER 2  COMMENTS-DRAWER + COMMENTS-POPUP + COMMENTS-MARKER archetypes
+LAYER 1  aiui composer (mounts the drawer/popup/marker surfaces)
+LAYER 0  AnchorableCommentsService (CRUD + persistence + events)
+```
+
+Phase 3 must land first because the drawer, popup, and marker are
+archetypes that compose via aiui. Phase 4 builds the Layer 0 service +
+Layer 2 archetypes + one Layer 3 integration (slides). Mindmap and
+visual-editor integrations are follow-on sub-phases.
+
+**Contracts sketch**
+
+```javascript
+// Intents (user/agent → service)
+INTENT_COMMENT_ADD        { anchor, body, author? } → creates comment
+INTENT_COMMENT_REPLY      { parentId, body, author? } → appends to thread
+INTENT_COMMENT_RESOLVE    { id } → marks resolved
+INTENT_COMMENT_EDIT       { id, body } → edits body
+INTENT_COMMENT_DELETE     { id } → soft-deletes
+INTENT_COMMENTS_OPEN_DRAWER  { scope? } → opens drawer filtered to scope
+INTENT_COMMENTS_CLOSE_DRAWER { }
+INTENT_COMMENTS_FOCUS      { id } → scroll + highlight a comment in drawer
+
+// Events (service → UI)
+COMMENT_ADDED             { comment }
+COMMENT_RESOLVED          { id, resolvedBy, resolvedAt }
+COMMENT_UPDATED           { id, changes }
+COMMENT_REMOVED           { id }
+COMMENTS_DRAWER_OPENED    { scope }
+COMMENTS_DRAWER_CLOSED    { }
+COMMENT_COUNT_CHANGED     { scope, openCount, totalCount }  ← drives dock badge
+```
+
+**Dock badge contract (cross-module)**
+
+Apps with a dock/toolbar subscribe to `COMMENT_COUNT_CHANGED` and render
+a badge on their comments button. The slides module's dock button
+(`💬`) drops its Phase 2.2 `INTENT_SLIDE_TOGGLE_COMMENTS` and instead:
+
+- on click → publishes `INTENT_COMMENTS_OPEN_DRAWER { scope: 'deck' }`
+- on `COMMENT_COUNT_CHANGED` for `scope: 'deck'` → updates `data-count`
+- CSS renders the badge via `::after` content from `data-count`
+
+**Phases within Phase 4 (sub-waves)**
+
+- **4.0 — Service + anchor model** (~half day): AnchorableCommentsService,
+  AnchorResolver, schema (adopts AnnotationSchema shape), IDB persistence,
+  contracts, unit tests. No UI yet.
+- **4.1 — Drawer archetype + count badge** (~half day): CommentsDrawer
+  archetype (port + generalize from CommentSidebar), dock badge wiring,
+  remove `INTENT_SLIDE_TOGGLE_COMMENTS` from slides.
+- **4.2 — Popup composer + marker overlay** (~1 day): click-to-add popup,
+  hover/tap preview, corner highlight + badge marker. Desktop + mobile
+  interaction modes.
+- **4.3 — Slides integration** (~quarter day): wire slide element clicks
+  to `INTENT_COMMENT_ADD` with `{anchor_type: 'element', anchor: {selector}}`,
+  update demo, deprecate Phase 2.2 media-slot flow.
+- **4.4 — @mention swap-in** (optional, ~half day): replace generic badge
+  label with mention resolution via the existing `mentions` module.
+- **4.5 — Visual-editor migration** (deferred): port visual-editor's
+  annotation system onto AnchorableCommentsService. Not in Phase 4
+  proper — Phase 5+.
+
+**Estimated total**: ~2.5–3 days for 4.0–4.3. Sub-phases 4.4–4.5 are
+follow-ons.
+
+**What Phase 4 does NOT do**
+
+- Real-time multi-user sync (CRDT merge) — local-first single-user for
+  v1. The visual-editor `AnnotationCommentSync` model is documented as
+  a future port when sync arrives.
+- Per-user identity / auth integration — author is a free-form object
+  for v1; auth wiring is app-specific.
+- Backend persistence — local IDB only. SSMA gateway comes later.
+- Migrate visual-editor annotations — that's Phase 5+ (visual-editor is
+  not blocked by Phase 4 and vice versa).
+
+**Open questions (resolve in their respective sub-phase)**
+
+1. **Anchor stability under re-render** (4.0): when a slide re-renders,
+   the same headline gets a new DOM node. CSS selector or stable id
+   must survive. Lean: require host apps to stamp `data-comment-id` on
+   anchorable elements; selector becomes `[data-comment-id="X"]`.
+2. **Drawer vs popup as separate surfaces** (4.1/4.2): is the drawer a
+   full aiui surface (registered in catalog) or a slides-owned chrome
+   element? Lean: aiui surface — embeddable in any app, not just slides.
+3. **Reply threading depth** (4.0): flat replies (one level) or nested?
+   Lean: flat with `parentId` for v1; nested rendering if needed later.
+4. **Resolved comment visibility** (4.1): show resolved in drawer with
+   filter, or hide by default? Lean: show with filter toggle.
+5. **Mobile popup positioning** (4.2): popover at tap point or modal
+   sheet? Lean: bottom-sheet on viewport < 600px, popover at tap above.
+
