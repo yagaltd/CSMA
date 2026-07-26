@@ -146,6 +146,31 @@ export const MindmapContracts = {
     active: any()
   })),
 
+  MINDMAP_ARROW_ADDED: contract(
+    { version: 1, type: 'event', owner: 'mindmap', lifecycle: 'active', stability: 'stable', compliance: 'public', description: 'Published when a cross-link arrow is added.' },
+    object({ mapId: string(), arrow: object({ id: string(), from: string(), to: string(), direction: enums(['forward', 'bidirectional']), label: optional(any()), style: optional(any()) }) })
+  ),
+
+  MINDMAP_ARROW_REMOVED: contract(
+    { version: 1, type: 'event', owner: 'mindmap', lifecycle: 'active', stability: 'stable', compliance: 'public', description: 'Published when a cross-link arrow is removed.' },
+    object({ mapId: string(), arrowId: string() })
+  ),
+
+  MINDMAP_ARROW_UPDATED: contract(
+    { version: 1, type: 'event', owner: 'mindmap', lifecycle: 'active', stability: 'stable', compliance: 'public', description: 'Published when a cross-link arrow is updated.' },
+    object({ mapId: string(), arrow: object({ id: string(), from: string(), to: string(), direction: enums(['forward', 'bidirectional']), label: optional(any()), style: optional(any()) }) })
+  ),
+
+  MINDMAP_ARROW_SELECTED: contract(
+    { version: 1, type: 'event', owner: 'mindmap', lifecycle: 'active', stability: 'stable', compliance: 'public', description: 'Published when a cross-link arrow is selected.' },
+    object({ mapId: string(), arrowId: string(), from: string(), to: string() })
+  ),
+
+  MINDMAP_LINK_MODE_CHANGED: contract(
+    { version: 1, type: 'event', owner: 'mindmap', lifecycle: 'active', stability: 'stable', compliance: 'public', description: 'Published when link mode starts/stops.' },
+    object({ mapId: string(), active: any(), direction: optional(enums(['forward', 'bidirectional'])), source: optional(string()) })
+  ),
+
   // ── Phase 10 — Selection & inline editing ────────────────────────
 
   MINDMAP_NODE_SELECTED: contract({

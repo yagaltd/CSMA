@@ -22,6 +22,7 @@ import { MarkdownCodec } from './MarkdownCodec.js';
 import { Search } from './Search.js';
 import { layout as layoutTree } from './LayoutEngine.js';
 import { main as mainConnector, sub as subConnector, rectFromNodes, directionClassFor } from './ConnectorGeometry.js';
+import { arrowPath } from './ArrowGeometry.js';
 import { NodeDragHandler } from './NodeDragHandler.js';
 import { SelectionController } from './SelectionController.js';
 import { ViewportController } from './ViewportController.js';
@@ -916,6 +917,15 @@ export class MindmapService {
           await this.setLayoutDirection(p.previousDirection, opts);
         }
         break;
+      case 'addArrow':
+        await this.removeArrow(p.arrow.id, { mapId: p.mapId, skipHistory: true });
+        break;
+      case 'removeArrow':
+        await this._restoreArrow(p.mapId, p.arrow, { skipHistory: true });
+        break;
+      case 'updateArrow':
+        await this.updateArrow(p.arrowId, p.before, { mapId: p.mapId, skipHistory: true });
+        break;
       default:
         break;
     }
@@ -967,9 +977,31 @@ export class MindmapService {
       case 'setLayoutDirection':
         await this.setLayoutDirection(p.direction, opts);
         break;
+      case 'addArrow':
+        await this._restoreArrow(p.mapId, p.arrow, { skipHistory: true });
+        break;
+      case 'removeArrow':
+        await this.removeArrow(p.arrow.id, { mapId: p.mapId, skipHistory: true });
+        break;
+      case 'updateArrow':
+        await this.updateArrow(p.arrowId, p.after, { mapId: p.mapId, skipHistory: true });
+        break;
       default:
         break;
     }
+  }
+
+  /**
+   * Restore an exact arrow object (same id) into the map. Used by
+   * undo/redo so arrow ids stay stable across history ops.
+   */
+  async _restoreArrow(mapId, arrow, options = {}) {
+    const map = this._getMap(mapId);
+    if (!map) return;
+    if (!Array.isArray(map.arrows)) map.arrows = [];
+    map.arrows.push(arrow);
+    if (this.store?.putMap) await this.store.putMap(map);
+    this._publish('MINDMAP_ARROW_ADDED', { mapId: map.meta.id, arrow });
   }
 
   /**
@@ -1035,6 +1067,82 @@ export class MindmapService {
   // ─── Search ──────────────────────────────────────────────────────
   // (Legacy 3-arg `search(mapId, …)` removed; the agent-facing
   // `search(query, {status, tag})` below is the single canonical method.)
+
+  // ─── Arrows (§11 cross-link graph edges) ──────────────────────────
+
+  getArrows(mapId) {
+    const map = this._getMap(mapId);
+    return map?.arrows || [];
+  }
+
+  async addArrow(fromId, toId, { direction = 'forward', label = null, style = null, skipHistory = false } = {}) {
+    const map = this._getMap();
+    if (!map) throw new Error('[MindmapService] no active map for addArrow');
+    if (fromId === toId) throw new Error('[MindmapService] arrow cannot connect a node to itself');
+    const { node: fromNode } = this._findNodeAndParent(map.root, fromId);
+    const { node: toNode } = this._findNodeAndParent(map.root, toId);
+    if (!fromNode || !toNode) throw new Error('[MindmapService] arrow endpoints must exist in the map');
+    // Reject structural (tree) edges — arrows are true cross-links only.
+    if (this._isDescendantOf(fromNode, toId) || this._isDescendantOf(toNode, fromId)) {
+      throw new Error('[MindmapService] arrow cannot duplicate a structural tree edge');
+    }
+    if (!Array.isArray(map.arrows)) map.arrows = [];
+    const arrow = {
+      id: `arrow-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+      from: fromId,
+      to: toId,
+      direction,
+      label: label || undefined,
+      style: style || undefined,
+    };
+    map.arrows.push(arrow);
+    if (this.store?.putMap) await this.store.putMap(map);
+    if (!skipHistory) this._recordOp('mindmap', { op: 'addArrow', mapId: map.meta.id, arrow });
+    this._publish('MINDMAP_ARROW_ADDED', { mapId: map.meta.id, arrow });
+    return arrow;
+  }
+
+  async removeArrow(arrowId, options = {}) {
+    const map = this._getMap(options.mapId);
+    if (!map?.arrows?.length) return false;
+    const idx = map.arrows.findIndex((a) => a.id === arrowId);
+    if (idx === -1) return false;
+    const [removed] = map.arrows.splice(idx, 1);
+    if (this.store?.putMap) await this.store.putMap(map);
+    if (!options.skipHistory) this._recordOp('mindmap', { op: 'removeArrow', mapId: map.meta.id, arrow: removed });
+    this._publish('MINDMAP_ARROW_REMOVED', { mapId: map.meta.id, arrowId });
+    return true;
+  }
+
+  async updateArrow(arrowId, changes = {}, options = {}) {
+    const map = this._getMap(options.mapId);
+    if (!map?.arrows) return null;
+    const arrow = map.arrows.find((a) => a.id === arrowId);
+    if (!arrow) return null;
+    const before = { ...arrow };
+    Object.assign(arrow, changes);
+    if (this.store?.putMap) await this.store.putMap(map);
+    if (!options.skipHistory) this._recordOp('mindmap', { op: 'updateArrow', mapId: map.meta.id, arrowId, before, after: { ...arrow } });
+    this._publish('MINDMAP_ARROW_UPDATED', { mapId: map.meta.id, arrow });
+    return arrow;
+  }
+
+  /** Compute SVG paths for every arrow using LayoutEngine rects. */
+  arrowPaths(mapId) {
+    const map = this._getMap(mapId);
+    if (!map?.arrows?.length) return [];
+    const { nodes } = this.layout(mapId);
+    const byId = new Map(nodes.map((n) => [n.id, n]));
+    const out = [];
+    for (const arrow of map.arrows) {
+      const from = byId.get(arrow.from);
+      const to = byId.get(arrow.to);
+      if (!from || !to) continue;
+      const { d } = arrowPath(from, to, { curved: arrow.style?.curved !== false });
+      out.push({ d, arrow });
+    }
+    return out;
+  }
 
   // ─── Serialization ───────────────────────────────────────────────
 
@@ -1331,6 +1439,36 @@ export class MindmapService {
         p.classList.add('connector-line');
         svgLayer.append(p);
       }
+      // Cross-link arrows (§11) — recomputed every render from fresh layout rects.
+      const arrowDefs = doc.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      const marker = doc.createElementNS('http://www.w3.org/2000/svg', 'marker');
+      marker.setAttribute('id', 'mm-arrow');
+      marker.setAttribute('viewBox', '0 0 10 10');
+      marker.setAttribute('refX', '8');
+      marker.setAttribute('refY', '5');
+      marker.setAttribute('markerWidth', '7');
+      marker.setAttribute('markerHeight', '7');
+      marker.setAttribute('orient', 'auto-start-reverse');
+      const tip = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
+      tip.setAttribute('d', 'M 0 0 L 10 5 L 0 10 z');
+      tip.setAttribute('class', 'mm-arrow-head');
+      marker.appendChild(tip);
+      arrowDefs.appendChild(marker);
+      svgLayer.append(arrowDefs);
+      for (const { d, arrow } of service.arrowPaths(mapId)) {
+        const p = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.setAttribute('d', d);
+        p.setAttribute('class', 'arrow-line');
+        p.setAttribute('data-arrow-id', arrow.id);
+        p.setAttribute('data-from', arrow.from);
+        p.setAttribute('data-to', arrow.to);
+        p.setAttribute('data-direction', arrow.direction);
+        if (arrow.style?.color) p.setAttribute('data-style-color', arrow.style.color);
+        if (service._selectedArrowId === arrow.id) p.setAttribute('data-selected', 'true');
+        p.setAttribute('marker-end', 'url(#mm-arrow)');
+        svgLayer.append(p);
+      }
+
       focus.apply();
     };
 
@@ -1395,6 +1533,55 @@ export class MindmapService {
     canvas.addEventListener('click', (e) => {
       if (e.target.closest('[data-node-id]') || e.target.closest('.mm-toolbar') || e.target.closest('.connector-line') || e.target.closest('.mm-focus-pill')) return;
       focus.clearFocus();
+    });
+
+    // ── Wave 4: cross-link arrows (§11) ────────────────────────────
+    let linkMode = null;
+    let arrowSource = null;
+    this.startLinkMode = (direction, sourceId) => {
+      linkMode = direction;
+      arrowSource = sourceId || selection.selectedIds[0] || null;
+      canvas.setAttribute('data-link-mode', direction);
+      service._publish('MINDMAP_LINK_MODE_CHANGED', { mapId: resolvedMapId, active: true, direction, source: arrowSource });
+      if (arrowSource) focus.focusNodes([arrowSource]);
+    };
+    const selectArrow = (arrowId) => {
+      service._selectedArrowId = arrowId;
+      const arrow = service.getArrows(resolvedMapId).find((a) => a.id === arrowId);
+      if (arrow) {
+        focus.focusNodes([arrow.from, arrow.to]);
+        service._publish('MINDMAP_ARROW_SELECTED', { mapId: resolvedMapId, arrowId, from: arrow.from, to: arrow.to });
+      }
+      renderAfterMut();
+    };
+    svgLayer.addEventListener('click', (e) => {
+      const p = e.target.closest('.arrow-line');
+      if (!p) return;
+      e.stopPropagation();
+      const arrowId = p.getAttribute('data-arrow-id');
+      if (arrowId) selectArrow(arrowId);
+    });
+    canvas.addEventListener('click', (e) => {
+      if (!linkMode) return;
+      const nodeEl = e.target.closest('[data-node-id]');
+      if (!nodeEl) return;
+      const targetId = nodeEl.dataset.nodeId;
+      if (!targetId || targetId === arrowSource) return;
+      service.addArrow(arrowSource, targetId, { direction: linkMode })
+        .then(() => renderAfterMut())
+        .catch((err) => console.warn('[mindmap] addArrow failed:', err.message));
+      linkMode = null;
+      arrowSource = null;
+      canvas.removeAttribute('data-link-mode');
+      service._publish('MINDMAP_LINK_MODE_CHANGED', { mapId: resolvedMapId, active: false });
+    });
+    canvas.addEventListener('keydown', (e) => {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && service._selectedArrowId) {
+        e.preventDefault();
+        const id = service._selectedArrowId;
+        service._selectedArrowId = null;
+        service.removeArrow(id).then(() => renderAfterMut());
+      }
     });
 
     // ── Toolbar bindings ──────────────────────────────────────────────

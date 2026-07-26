@@ -1,0 +1,32 @@
+/* CSMA Component — Arrow Line (mindmap cross-link arrows)
+ * Token-driven only. No inline styles, no literal hex.
+ */
+
+.arrow-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: stroke;
+  cursor: pointer;
+  transition: stroke var(--duration-fast, 120ms) ease, opacity var(--duration-fast, 120ms) ease;
+}
+
+.arrow-line[data-direction="bidirectional"] {
+  stroke-dasharray: 6 4;
+}
+
+.arrow-line[data-style-color="blocking"] {
+  stroke: var(--destructive);
+}
+
+.arrow-line[data-selected] {
+  stroke-width: 3;
+}
+
+/* Arrowhead inherits the arrow stroke color via context-stroke (with a
+ * token fallback for engines that do not support context-stroke yet). */
+.mm-arrow-head {
+  fill: var(--accent);
+  fill: context-stroke;
+}

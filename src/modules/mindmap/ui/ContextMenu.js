@@ -25,6 +25,8 @@ const DEFAULT_LABELS = Object.freeze({
   'mindmap.menu.removeNode': 'Remove node',
   'mindmap.menu.moveUp': 'Move up',
   'mindmap.menu.moveDown': 'Move down',
+  'mindmap.menu.link': 'Add link',
+  'mindmap.menu.linkBidirectional': 'Add link (both ways)',
 });
 
 // ---------------------------------------------------------------------------
@@ -352,6 +354,19 @@ export class ContextMenu {
       }));
       ul.appendChild(createItem(this._t('mindmap.menu.cancelFocus'), false, () => {
         this._focus.clearFocus();
+        this._removeMenu();
+      }));
+    }
+
+    // Cross-link arrows (Wave 4 / §11) — gated to non-root nodes.
+    if (!isRoot) {
+      ul.appendChild(createSeparator());
+      ul.appendChild(createItem(this._t('mindmap.menu.link'), false, () => {
+        this._service.startLinkMode?.('forward', nodeId);
+        this._removeMenu();
+      }));
+      ul.appendChild(createItem(this._t('mindmap.menu.linkBidirectional'), false, () => {
+        this._service.startLinkMode?.('bidirectional', nodeId);
         this._removeMenu();
       }));
     }
