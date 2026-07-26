@@ -131,6 +131,21 @@ export const MindmapContracts = {
     mapId: string()
   })),
 
+  MINDMAP_FOCUS_CHANGED: contract({
+    version: 1,
+    type: 'event',
+    owner: 'mindmap',
+    lifecycle: 'active',
+    stability: 'stable',
+    compliance: 'public',
+    description: 'Published when the focus / isolation set or scope changes.'
+  }, object({
+    mapId: string(),
+    focusIds: array(string()),
+    scope: enums(['branch', 'subtree']),
+    active: any()
+  })),
+
   // ── Phase 10 — Selection & inline editing ────────────────────────
 
   MINDMAP_NODE_SELECTED: contract({

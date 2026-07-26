@@ -45,8 +45,14 @@
     "behavior": {
       "role": "module-surface",
       "events": [],
-      "targetActions": [],
-      "intentMap": {}
+      "targetActions": [
+        { "action": "mindmap.search", "description": "Fuzzy search mindmap nodes by topic / status / tag" },
+        { "action": "mindmap.focus", "description": "Isolate a branch by node id(s)" }
+      ],
+      "intentMap": {
+        "searchNodes": "mindmap.search",
+        "isolateBranch": "mindmap.focus"
+      }
     },
     "style": {
       "surfaceAware": true,

@@ -10,6 +10,8 @@
     "mindmap.menu.removeNode": "Remove node",
     "mindmap.menu.focus": "Focus Mode",
     "mindmap.menu.cancelFocus": "Cancel Focus Mode",
+    "mindmap.menu.focusBranch": "Focus branch",
+    "mindmap.menu.addToFocus": "Add to focus",
     "mindmap.menu.moveUp": "Move up",
     "mindmap.menu.moveDown": "Move down",
     "mindmap.menu.summary": "Summary",

@@ -148,13 +148,14 @@ export class ContextMenu {
    * @param {{ t(key:string):string }} [opts.i18n] — optional i18n object with t() method
    * @param {function():void} [opts.onRenderNeeded] — called after a tree mutation so the host re-renders
    */
-  constructor({ container, service, selection, eventBus, mapId, i18n, onRenderNeeded }) {
+  constructor({ container, service, selection, eventBus, mapId, i18n, onRenderNeeded, focus }) {
     this._container = container;
     this._service = service;
     this._selection = selection;
     this._mapId = mapId || null;
     this._i18n = i18n || null;
     this._onRenderNeeded = onRenderNeeded || (() => {});
+    this._focus = focus || null;
 
     /** @type {HTMLElement|null} */
     this._menu = null;
@@ -335,6 +336,25 @@ export class ContextMenu {
       this._service.collapse(nodeId, !isCollapsed).then(() => this._onRenderNeeded());
       this._removeMenu();
     }));
+
+    // --- separator ---
+    ul.appendChild(createSeparator());
+
+    // Focus / isolation (Wave 3) — only when a FocusController is wired.
+    if (this._focus) {
+      ul.appendChild(createItem(this._t('mindmap.menu.focusBranch'), false, () => {
+        this._focus.focusNode(nodeId);
+        this._removeMenu();
+      }));
+      ul.appendChild(createItem(this._t('mindmap.menu.addToFocus'), false, () => {
+        this._focus.addToFocus(nodeId);
+        this._removeMenu();
+      }));
+      ul.appendChild(createItem(this._t('mindmap.menu.cancelFocus'), false, () => {
+        this._focus.clearFocus();
+        this._removeMenu();
+      }));
+    }
 
     return ul;
   }

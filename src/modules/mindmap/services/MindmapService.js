@@ -29,6 +29,7 @@ import { KeyboardHandler } from './KeyboardHandler.js';
 import { BoxSelector } from './BoxSelector.js';
 import { ClipboardManager } from './ClipboardManager.js';
 import { ContextMenu } from '../ui/ContextMenu.js';
+import { FocusController } from './FocusController.js';
 
 const ACTIVE_MAP_KEY = 'mindmap:active';
 const SCHEMA_BRANCH = 'mindmap/branch';
@@ -108,6 +109,13 @@ export class MindmapService {
 .insert-preview-before { top: -2px; }
 .insert-preview-after { bottom: -2px; }
 .mindmap-drag-ghost { position: fixed; z-index: 10001; pointer-events: none; padding: 4px 8px; border-radius: var(--radius-sm, 4px); background: var(--surface); border: 1px dashed var(--accent); font-size: var(--font-size-sm, 14px); white-space: nowrap; }
+/* Focus mode (Wave 3) — token-driven, no inline styles / literal colors. */
+.mm-surface-svg .connector-line { pointer-events: stroke; cursor: pointer; }
+.mm-canvas[data-mode="focus"] .mm-surface-nodes .branch-node:not([data-in-focus]) { opacity: 0.25; filter: saturate(0.55); }
+.mm-canvas[data-mode="focus"] .mm-surface-svg .connector-line:not([data-in-focus]) { opacity: 0.12; }
+.mm-surface-nodes .branch-node[data-in-focus] { box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary, var(--accent)) 35%, transparent); }
+.mm-focus-pill { position: absolute; bottom: var(--space-sm); left: 50%; transform: translateX(-50%); z-index: 6; display: flex; gap: var(--space-xs); align-items: center; padding: var(--space-xs) var(--space-sm); background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--border); border-radius: var(--radius-md); pointer-events: auto; box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 12%, transparent); }
+.mm-focus-pill .badge { font-size: var(--font-size-xs, 12px); }
 `;
 
   constructor(eventBus) {
@@ -191,9 +199,84 @@ export class MindmapService {
       label: 'Mindmap (minimal JSON)',
       moduleId: 'mindmap'
     });
+    this.agentContext.register({
+      name: 'mindmap.search',
+      description: 'Fuzzy search mindmap nodes by topic / status / tag',
+      fn: (data, opts) => svc.searchNodes(opts?.query || '', { status: opts?.status, tag: opts?.tag }),
+      moduleId: 'mindmap'
+    });
   }
 
   // ─── Helpers ─────────────────────────────────────────────────────
+
+  // ─── Focus / isolation helpers (Wave 3) ──────────────────────────
+
+  _findNodeById(root, id) {
+    if (!root) return null;
+    if (root.id === id) return root;
+    for (const c of root.children || []) {
+      const found = this._findNodeById(c, id);
+      if (found) return found;
+    }
+    return null;
+  }
+
+  _buildParentIndex(root) {
+    const idx = new Map();
+    const walk = (n, parentId) => {
+      for (const c of n.children || []) {
+        idx.set(c.id, parentId);
+        walk(c, c.id);
+      }
+    };
+    walk(root, null);
+    return idx;
+  }
+
+  _collectDescendants(node, set) {
+    set.add(node.id);
+    for (const c of node.children || []) this._collectDescendants(c, set);
+  }
+
+  _computeEffectiveIds(root, focusIds, scope = 'branch') {
+    const parentIndex = this._buildParentIndex(root);
+    const eff = new Set();
+    for (const seed of focusIds || []) {
+      eff.add(seed);
+      const seedNode = this._findNodeById(root, seed);
+      if (seedNode) this._collectDescendants(seedNode, eff);
+      if (scope === 'branch') {
+        let pid = parentIndex.get(seed);
+        while (pid) {
+          eff.add(pid);
+          pid = parentIndex.get(pid);
+        }
+      }
+    }
+    return eff;
+  }
+
+  _prune(root, effectiveIds) {
+    const copy = (n) => ({
+      ...n,
+      children: (n.children || []).filter((c) => effectiveIds.has(c.id)).map(copy),
+    });
+    return copy(root);
+  }
+
+  /** Fuzzy-search the active map; returns matches with ancestor topic path. */
+  searchNodes(query, { status = null, tag = null } = {}) {
+    const root = this._getMap(this._activeMapId)?.root;
+    if (!root) return [];
+    const matches = this.searcher.search(root, query, { status, tag });
+    return matches.map((m) => ({
+      id: m.nodeId,
+      topic: m.topic,
+      status: m.status,
+      tag: m.tag || null,
+      path: (m.path || []).map((p) => p.topic),
+    }));
+  }
 
   _publish(eventName, payload) {
     if (!this.eventBus) return;
@@ -961,7 +1044,12 @@ export class MindmapService {
   toMarkdown(mapId, opts = {}) {
     const map = this._getMap(mapId) || this._getMap(this._activeMapId);
     if (!map) return '';
-    return this.codec.serialize(map.root, { format: 'markdown', ...opts });
+    const { focusIds, scope, ...rest } = opts || {};
+    const root = map.root;
+    const pruned = Array.isArray(focusIds) && focusIds.length
+      ? this._prune(root, this._computeEffectiveIds(root, focusIds, scope === 'subtree' ? 'subtree' : 'branch'))
+      : root;
+    return this.codec.serialize(pruned, { format: 'markdown', ...rest });
   }
 
   toAscii(mapId, opts = {}) {
@@ -973,7 +1061,12 @@ export class MindmapService {
   toMinimalJson(mapId, opts = {}) {
     const map = this._getMap(mapId) || this._getMap(this._activeMapId);
     if (!map) return null;
-    return this.codec.serialize(map.root, { format: 'json', ...opts });
+    const { focusIds, scope, ...rest } = opts || {};
+    const root = map.root;
+    const pruned = Array.isArray(focusIds) && focusIds.length
+      ? this._prune(root, this._computeEffectiveIds(root, focusIds, scope === 'subtree' ? 'subtree' : 'branch'))
+      : root;
+    return this.codec.serialize(pruned, { format: 'json', ...rest });
   }
 
   // ─── Layout direction ───────────────────────────────────────────
@@ -1122,6 +1215,28 @@ export class MindmapService {
     const layoutBtn = makeToolButton('Layout');
     const fullBtn = makeToolButton('Fullscreen');
     toolbar.append(zoomInBtn, zoomOutBtn, fitBtn, layoutBtn, fullBtn);
+    const focusBtn = makeToolButton('Focus');
+    const exitFocusBtn = makeToolButton('Exit focus');
+    toolbar.append(focusBtn, exitFocusBtn);
+    // Focus pill (Wave 3) — visibility driven by FocusController.onChange.
+    const pill = doc.createElement('div');
+    pill.className = 'mm-focus-pill';
+    pill.hidden = true;
+    const pillCount = doc.createElement('span');
+    pillCount.className = 'badge';
+    const copyMdBtn = makeToolButton('Copy');
+    const copyJsonBtn = makeToolButton('Copy JSON');
+    const exitPillBtn = makeToolButton('Exit');
+    pill.append(pillCount, copyMdBtn, copyJsonBtn, exitPillBtn);
+    canvas.append(pill);
+    const updatePill = (s) => {
+      const active = !!s?.active;
+      pill.hidden = !active;
+      pillCount.textContent = active ? `${s.focusIds?.length || 0} focused` : '0';
+    };
+    copyMdBtn.addEventListener('click', () => focus.copyContext('markdown'));
+    copyJsonBtn.addEventListener('click', () => focus.copyContext('json'));
+    exitPillBtn.addEventListener('click', () => focus.clearFocus());
     // Stop toolbar pointer/keyboard events from reaching the canvas handlers
     // (drag / pan / context-menu / keyboard) attached below.
     for (const ev of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'wheel', 'contextmenu', 'keydown', 'keyup', 'click']) {
@@ -1210,11 +1325,13 @@ export class MindmapService {
         const p = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
         p.setAttribute('d', d);
         p.setAttribute('data-link-kind', link.kind);
+        p.setAttribute('data-child-id', link.to);
         const child = nodes.find((x) => x.id === link.to);
         if (child) p.setAttribute('data-status', child.status);
         p.classList.add('connector-line');
         svgLayer.append(p);
       }
+      focus.apply();
     };
 
     const renderAfterMut = () => {
@@ -1244,12 +1361,38 @@ export class MindmapService {
       }
     });
     const viewport = new ViewportController({ container: canvas, nodeLayer, connectorLayer: svgLayer, eventBus: service.eventBus, mapId: resolvedMapId });
+    const focus = new FocusController({ service, eventBus: service.eventBus, nodeLayer, svgLayer, mapId: resolvedMapId, getRoot: () => service._getMap(resolvedMapId)?.root, onChange: updatePill });
     new NodeDragHandler({ container: canvas, nodeLayer, selection, viewport, service, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut }).attach();
-    const contextMenu = new ContextMenu({ container: canvas, service, selection, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut });
+    const contextMenu = new ContextMenu({ container: canvas, service, selection, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut, focus });
     contextMenu.attach();
     new KeyboardHandler({ container: canvas, selection, viewport, service, eventBus: service.eventBus, mapId: resolvedMapId, onRenderNeeded: renderAfterMut, getRoot: () => service._getMap(resolvedMapId)?.root }).attach();
     new BoxSelector({ container: canvas, nodeLayer, selection, eventBus: service.eventBus, mapId: resolvedMapId }).attach();
     new ClipboardManager({ service, selection, eventBus: service.eventBus, mapId: resolvedMapId });
+
+    // ── Wave 3: focus / isolation interactions ──────────────────────
+    svgLayer.addEventListener('click', (e) => {
+      const path = e.target.closest('.connector-line');
+      if (!path) return;
+      const childId = path.getAttribute('data-child-id');
+      if (childId) focus.focusNode(childId);
+    });
+    canvas.addEventListener('pointerdown', (e) => {
+      if (!e.altKey) return;
+      const nodeEl = e.target.closest('[data-node-id]');
+      if (!nodeEl) return;
+      const id = nodeEl.dataset.nodeId;
+      if (!id) return;
+      e.stopPropagation();
+      e.preventDefault();
+      focus.toggleFocus(id);
+    }, true);
+    canvas.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') focus.clearFocus();
+    });
+    canvas.addEventListener('click', (e) => {
+      if (e.target.closest('[data-node-id]') || e.target.closest('.mm-toolbar') || e.target.closest('.connector-line') || e.target.closest('.mm-focus-pill')) return;
+      focus.clearFocus();
+    });
 
     // ── Toolbar bindings ──────────────────────────────────────────────
     zoomInBtn.addEventListener('click', () => viewport.scaleTo(viewport.scale * 1.2));
@@ -1265,6 +1408,8 @@ export class MindmapService {
       if (doc.fullscreenElement) doc.exitFullscreen?.();
       else canvas.requestFullscreen?.();
     });
+    focusBtn.addEventListener('click', () => focus.focusNodes(selection.selectedIds));
+    exitFocusBtn.addEventListener('click', () => focus.clearFocus());
     layoutBtn.textContent = `Layout: ${dirLabel[service.getLayoutDirection(resolvedMapId)] || 'Right'}`;
 
     render();

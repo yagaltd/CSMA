@@ -400,3 +400,34 @@ Reuses the node rects already in `nodes`.
 - [ ] `addArrow` / `removeArrow` survive `svc.undo()` / `svc.redo()`.
 - [ ] `arrow-line` stroke is token-driven; arrowhead renders via `<marker>`.
 - [ ] `MINDMAP_ARROW_*` events fire and are contract-validated.
+
+---
+
+## 12. Wave 3 — Focus & Context Capture
+
+> Full spec: `src/modules/mindmap/docs/wave3-focus-spec.md`
+
+One-click path from "the branch I care about" to "text I paste into an agent".
+
+- **Focus** = dim everything except a chosen branch context. Triggered by
+  clicking a **structural connector** (`connector-line`, exists now) — no §11
+  dependency — or by node selection / `Alt+Click` (multi-node focus set).
+- **Scope default** = focused node **+ all ancestors to root + all descendants**
+  (full contextual branch); `subtree`-only variant available.
+- **Context capture** = serialize the focused subtree via the existing
+  `toMarkdown`/`toMinimalJson` (+ `agentContext` serializers, lines 172–190)
+  after pruning to `effectiveIds`; copy to clipboard.
+- **Seam for §11**: when cross-link arrows land, an arrow click calls
+  `FocusController.focusNodes([from, to])` — same `effectiveIds`/`apply()`/
+  `MINDMAP_FOCUS_CHANGED` machinery. The two arrow features compose, not conflict.
+- **New**: `services/FocusController.js`, `MINDMAP_FOCUS_CHANGED` contract,
+  `mindmap-focus.css`; `mountSurface` instantiates it and calls `focus.apply()`
+  at the end of `render()` so focus survives re-renders. `demo/mindmap.html`
+  unchanged (delivered entirely by `mountSurface`).
+
+Prerequisite: connector paths need `data-child-id` (currently only
+`data-link-kind`, ~line 1212) so a connector click can resolve its child node.
+
+Wave 3 also closes the **agent** loop: a `mindmap.search` agentContext provider +
+aiui manifest `targetActions` let an agent find-then-isolate a branch (see
+`wave3-focus-spec.md` §7.1–§7.2).

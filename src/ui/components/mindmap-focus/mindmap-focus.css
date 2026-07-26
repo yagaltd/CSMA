@@ -1,0 +1,45 @@
+/* CSMA Component — mindmap-focus (Wave 3 focus / isolation mode)
+ * Token-driven only. No inline styles, no literal hex/rgb colors.
+ * Mirrors the rules injected by MindmapService.SURFACE_CSS so the
+ * standalone demo works; this file is the catalog artifact (imported
+ * via src/ui/components/index.css) for app-shell surfaces.
+ */
+
+.mm-surface-svg .connector-line {
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
+.mm-canvas[data-mode="focus"] .mm-surface-nodes .branch-node:not([data-in-focus]) {
+  opacity: 0.25;
+  filter: saturate(0.55);
+}
+
+.mm-canvas[data-mode="focus"] .mm-surface-svg .connector-line:not([data-in-focus]) {
+  opacity: 0.12;
+}
+
+.mm-surface-nodes .branch-node[data-in-focus] {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary, var(--accent)) 35%, transparent);
+}
+
+.mm-focus-pill {
+  position: absolute;
+  bottom: var(--space-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+  padding: var(--space-xs) var(--space-sm);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  pointer-events: auto;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+
+.mm-focus-pill .badge {
+  font-size: var(--font-size-xs, 12px);
+}
