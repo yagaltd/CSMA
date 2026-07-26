@@ -295,19 +295,43 @@ export class NodeDragHandler {
   // ─── Drop-target detection ───────────────────────────────────────
 
   /**
+   * @returns {boolean} true when the active map uses the top-down (DOWN)
+   * layout, where siblings are arranged horizontally (left/right).
+   */
+  _isDownLayout() {
+    const dir = typeof this._service?.getLayoutDirection === 'function'
+      ? this._service.getLayoutDirection()
+      : 2;
+    return dir === 3;
+  }
+
+  /**
    * @param {PointerEvent} e
    */
   _findDropTarget(e) {
     const threshold = 12 * (this._viewport ? this._viewport.scale : 1);
 
-    // Bias: try above cursor first, then below
-    let targetEl = /** @type {HTMLElement|null} */ (
-      document.elementFromPoint(e.clientX, e.clientY - threshold)
-    );
-    if (!targetEl || !targetEl.closest('[data-node-id]')) {
+    // Bias the hit-test along the sibling axis: vertical (above/below) for
+    // left/right/side layouts, horizontal (left/right) for the down layout.
+    let targetEl;
+    if (this._isDownLayout()) {
       targetEl = /** @type {HTMLElement|null} */ (
-        document.elementFromPoint(e.clientX, e.clientY + threshold)
+        document.elementFromPoint(e.clientX - threshold, e.clientY)
       );
+      if (!targetEl || !targetEl.closest('[data-node-id]')) {
+        targetEl = /** @type {HTMLElement|null} */ (
+          document.elementFromPoint(e.clientX + threshold, e.clientY)
+        );
+      }
+    } else {
+      targetEl = /** @type {HTMLElement|null} */ (
+        document.elementFromPoint(e.clientX, e.clientY - threshold)
+      );
+      if (!targetEl || !targetEl.closest('[data-node-id]')) {
+        targetEl = /** @type {HTMLElement|null} */ (
+          document.elementFromPoint(e.clientX, e.clientY + threshold)
+        );
+      }
     }
 
     const nodeEl = targetEl ? targetEl.closest('[data-node-id]') : null;
@@ -331,24 +355,41 @@ export class NodeDragHandler {
       return;
     }
 
-    // Determine insert type from cursor position relative to target rect
+    // Determine insert type from cursor position relative to target rect.
+    // In the DOWN layout siblings are arranged horizontally, so detect
+    // left/right; otherwise (left/right/side) siblings are vertical, so
+    // detect top/bottom. Mirrors mind-elixir's direction-aware drag.
     const rect = nodeEl.getBoundingClientRect();
-    const relY = e.clientY - rect.top;
-    const ratio = relY / rect.height;
+    const isDown = this._isDownLayout();
 
     let insertType;
-    if (ratio < INSERT_ZONE_RATIO) {
-      insertType = 'before';
-    } else if (ratio > 1 - INSERT_ZONE_RATIO) {
-      insertType = 'after';
-    } else {
-      // 'in' only if target is a branch (can accept children)
-      const targetObj = this._service.findNode(this._targetId);
-      if (targetObj && targetObj.schemaType === 'mindmap/branch') {
-        insertType = 'in';
+    if (isDown) {
+      const relX = e.clientX - rect.left;
+      const ratio = relX / rect.width;
+      if (ratio < INSERT_ZONE_RATIO) {
+        insertType = 'before';
+      } else if (ratio > 1 - INSERT_ZONE_RATIO) {
+        insertType = 'after';
       } else {
-        // Leaf target: default to 'after' when cursor is in the middle
-        insertType = ratio < 0.5 ? 'before' : 'after';
+        const targetObj = this._service.findNode(this._targetId);
+        insertType = targetObj && targetObj.schemaType === 'mindmap/branch' ? 'in' : (ratio < 0.5 ? 'before' : 'after');
+      }
+    } else {
+      const relY = e.clientY - rect.top;
+      const ratio = relY / rect.height;
+      if (ratio < INSERT_ZONE_RATIO) {
+        insertType = 'before';
+      } else if (ratio > 1 - INSERT_ZONE_RATIO) {
+        insertType = 'after';
+      } else {
+        // 'in' only if target is a branch (can accept children)
+        const targetObj = this._service.findNode(this._targetId);
+        if (targetObj && targetObj.schemaType === 'mindmap/branch') {
+          insertType = 'in';
+        } else {
+          // Leaf target: default to 'after' when cursor is in the middle
+          insertType = ratio < 0.5 ? 'before' : 'after';
+        }
       }
     }
 
@@ -388,17 +429,34 @@ export class NodeDragHandler {
       return;
     }
 
-    // Create a bar element for before/after
+    // Create a bar element for before/after. In the DOWN layout siblings are
+    // horizontal, so the indicator is a vertical bar (left/right); otherwise
+    // it is a horizontal bar (top/bottom). Mirrors mind-elixir's drag preview.
+    const isDown = this._isDownLayout();
     const bar = document.createElement('div');
     bar.className = insertType === 'before' ? PREVIEW_BEFORE_CLASS : PREVIEW_AFTER_CLASS;
-    bar.style.cssText = 'position:absolute;left:0;right:0;height:3px;'
-      + 'background:var(--accent,#4f90f2);border-radius:2px;z-index:9999;pointer-events:none;';
-    if (insertType === 'before') {
-      bar.style.top = '-2px';
-    } else {
-      bar.style.bottom = '-2px';
-    }
     nodeEl.style.position = nodeEl.style.position || 'relative';
+    if (isDown) {
+      bar.style.cssText = 'position:absolute;top:0;bottom:0;width:3px;'
+        + 'background:var(--accent,#4f90f2);border-radius:2px;z-index:9999;pointer-events:none;';
+      if (insertType === 'before') {
+        bar.style.left = '-2px';
+        bar.style.right = 'auto';
+      } else {
+        bar.style.left = 'auto';
+        bar.style.right = '-2px';
+      }
+    } else {
+      bar.style.cssText = 'position:absolute;left:0;right:0;height:3px;'
+        + 'background:var(--accent,#4f90f2);border-radius:2px;z-index:9999;pointer-events:none;';
+      if (insertType === 'before') {
+        bar.style.top = '-2px';
+        bar.style.bottom = 'auto';
+      } else {
+        bar.style.top = 'auto';
+        bar.style.bottom = '-2px';
+      }
+    }
     nodeEl.appendChild(bar);
     this._previewEl = bar;
   }

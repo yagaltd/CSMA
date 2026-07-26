@@ -31,8 +31,8 @@ export const DIRECTION = Object.freeze({
   DOWN: 'down' // root on top, children stacked below
 });
 
-export const SIDE_LEFT = 1;
-export const SIDE_RIGHT = 0;
+export const SIDE_LEFT = 0;
+export const SIDE_RIGHT = 1;
 
 const DEFAULTS = {
   direction: DIRECTION.SIDE,

@@ -473,6 +473,7 @@ export class MindmapService {
       parent.children = [];
     }
     const branch = makeBranch(topic, meta);
+    branch.direction = parent.direction;
     parent.children = parent.children || [];
     parent.children.push(branch);
     parent.updatedAt = now();
@@ -506,6 +507,7 @@ export class MindmapService {
     const idx = parent.children.indexOf(sibling);
     const insertAt = position === 'before' ? idx : idx + 1;
     const branch = makeBranch(topic, meta);
+    branch.direction = sibling.direction;
     parent.children.splice(insertAt, 0, branch);
     parent.updatedAt = now();
     this._recomputeBranchCounts(parent);
@@ -542,6 +544,7 @@ export class MindmapService {
       parent.children = [];
     }
     const leaf = makeLeaf(topic, meta);
+    leaf.direction = parent.direction;
     parent.children = parent.children || [];
     parent.children.push(leaf);
     parent.updatedAt = now();
