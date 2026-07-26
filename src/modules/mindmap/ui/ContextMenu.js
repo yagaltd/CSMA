@@ -146,13 +146,15 @@ export class ContextMenu {
    * @param {object} [opts.eventBus] — optional EventBus
    * @param {string} [opts.mapId] — active map id
    * @param {{ t(key:string):string }} [opts.i18n] — optional i18n object with t() method
+   * @param {function():void} [opts.onRenderNeeded] — called after a tree mutation so the host re-renders
    */
-  constructor({ container, service, selection, eventBus, mapId, i18n }) {
+  constructor({ container, service, selection, eventBus, mapId, i18n, onRenderNeeded }) {
     this._container = container;
     this._service = service;
     this._selection = selection;
     this._mapId = mapId || null;
     this._i18n = i18n || null;
+    this._onRenderNeeded = onRenderNeeded || (() => {});
 
     /** @type {HTMLElement|null} */
     this._menu = null;
@@ -200,6 +202,7 @@ export class ContextMenu {
     this._service = null;
     this._selection = null;
     this._i18n = null;
+    this._onRenderNeeded = null;
   }
 
   // ---- event handlers ---------------------------------------------
@@ -265,7 +268,7 @@ export class ContextMenu {
 
   /** @param {string} nodeId */
   _isRootNode(nodeId) {
-    const map = this._service._getMap();
+    const map = this._service._getMap(this._mapId);
     if (!map || !map.meta) return false;
     return map.meta.rootId === nodeId;
   }
@@ -284,25 +287,25 @@ export class ContextMenu {
 
     // Add child
     ul.appendChild(createItem(this._t('mindmap.menu.addChild'), false, () => {
-      this._service.addBranch(nodeId, this._t('mindmap.menu.addChild') === 'Add child' ? 'New node' : 'New node');
+      this._service.addBranch(nodeId, 'New node').then(() => this._onRenderNeeded());
       this._removeMenu();
     }));
 
     // Add parent — disabled for root
     ul.appendChild(createItem(this._t('mindmap.menu.addParent'), isRoot, () => {
-      this._service.insertParent(nodeId);
+      this._service.insertParent(nodeId).then(() => this._onRenderNeeded());
       this._removeMenu();
     }));
 
     // Add sibling (after) — disabled for root
     ul.appendChild(createItem(this._t('mindmap.menu.addSibling'), isRoot, () => {
-      this._service.insertSibling(nodeId, 'after', 'New node');
+      this._service.insertSibling(nodeId, 'after', 'New node').then(() => this._onRenderNeeded());
       this._removeMenu();
     }));
 
     // Remove node — disabled for root
     ul.appendChild(createItem(this._t('mindmap.menu.removeNode'), isRoot, () => {
-      this._service.removeNode(nodeId);
+      this._service.removeNode(nodeId).then(() => this._onRenderNeeded());
       this._removeMenu();
     }));
 
@@ -311,23 +314,25 @@ export class ContextMenu {
 
     // Move up — disabled for root
     ul.appendChild(createItem(this._t('mindmap.menu.moveUp'), isRoot, () => {
-      this._service.moveUp(nodeId);
+      this._service.moveUp(nodeId).then(() => this._onRenderNeeded());
       this._removeMenu();
     }));
 
     // Move down — disabled for root
     ul.appendChild(createItem(this._t('mindmap.menu.moveDown'), isRoot, () => {
-      this._service.moveDown(nodeId);
+      this._service.moveDown(nodeId).then(() => this._onRenderNeeded());
       this._removeMenu();
     }));
 
     // --- separator ---
     ul.appendChild(createSeparator());
 
-    // Collapse / Expand (dynamic label)
+    // Collapse / Expand (dynamic label). svc.collapse(nodeId, collapsed) sets
+    // node.expanded = !collapsed, so pass the current EXPANDED flag (!isCollapsed)
+    // to toggle correctly (mirrors the demo's svc.collapse(nodeId, expanded)).
     const collapseLabel = isCollapsed ? 'Expand' : 'Collapse';
     ul.appendChild(createItem(collapseLabel, false, () => {
-      this._service.collapse(nodeId, isCollapsed); // toggle: pass current collapsed state → service flips it
+      this._service.collapse(nodeId, !isCollapsed).then(() => this._onRenderNeeded());
       this._removeMenu();
     }));
 

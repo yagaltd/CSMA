@@ -24,9 +24,9 @@ const EDGE_SCROLL_INTERVAL = 100;  // ms
 const INSERT_ZONE_RATIO = 0.25;    // top/bottom 25% = before/after, middle 50% = in
 
 const GHOST_CLASS = 'mindmap-drag-ghost';
-const PREVIEW_BEFORE_CLASS = 'mindmap-insert-preview-before';
-const PREVIEW_AFTER_CLASS = 'mindmap-insert-preview-after';
-const PREVIEW_IN_CLASS = 'mindmap-insert-preview-in';
+const PREVIEW_BEFORE_CLASS = 'insert-preview-before';
+const PREVIEW_AFTER_CLASS = 'insert-preview-after';
+const PREVIEW_IN_CLASS = 'insert-preview-in';
 
 const STATE = { Idle: 0, Ready: 1, Dragging: 2 };
 

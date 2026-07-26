@@ -178,7 +178,7 @@ export class SelectionController {
     editEl.contentEditable = 'true';
     editEl.textContent = this._editOriginalText;
     // Style minimally — design tokens + necessary overrides
-    editEl.style.cssText = 'outline:none;min-width:4rem;padding:2px 4px;border-bottom:2px solid var(--accent,#4f90f2);font:inherit;color:inherit;background:transparent;';
+    editEl.style.cssText = 'outline:none;min-width:4rem;padding:2px 4px;border-bottom:2px solid var(--accent);font:inherit;color:inherit;background:transparent;';
 
     // Replace content
     targetEl.style.display = 'none';

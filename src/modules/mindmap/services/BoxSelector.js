@@ -119,8 +119,8 @@ export class BoxSelector {
       this._boxEl = document.createElement('div');
       this._boxEl.className = BOX_CLASS;
       this._boxEl.style.cssText =
-        'border:1px solid #4f90f2;' +
-        'background:rgba(79,144,242,0.15);' +
+        'border:1px solid var(--accent);' +
+        'background:color-mix(in srgb, var(--accent) 15%, transparent);' +
         'pointer-events:none;' +
         'position:fixed;' +
         'z-index:9999;' +
