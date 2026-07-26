@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/src/ui/components/branch-node/branch-node.css" />
   <link rel="stylesheet" href="/src/ui/components/leaf-node/leaf-node.css" />
   <link rel="stylesheet" href="/src/ui/components/connector-line/connector-line.css" />
+  <link rel="stylesheet" href="/src/ui/components/theme-toggle/theme-toggle.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body { font-family: system-ui, sans-serif; background: var(--background); color: var(--foreground); margin: 0; padding: 16px; }
@@ -59,6 +60,14 @@
     <button id="undo-btn">undo</button>
     <button id="redo-btn">redo</button>
     <button id="md-btn">md</button>
+    <button class="theme-toggle" type="button" data-theme-toggle data-theme-active="light" aria-label="Switch theme">
+      <span class="theme-toggle__icons" aria-hidden="true">
+        <span class="theme-icon theme-icon--sun">☀</span>
+        <span class="theme-icon theme-icon--moon">◐</span>
+        <span class="theme-icon theme-icon--contrast">◫</span>
+      </span>
+      <span class="theme-toggle__label" data-theme-label>Theme: Light</span>
+    </button>
   </div>
   <div class="canvas" id="canvas" tabindex="0">
     <div class="map-canvas" id="map-canvas">
@@ -80,6 +89,7 @@
     import { KeyboardHandler } from '/src/modules/mindmap/services/KeyboardHandler.js';
     import { BoxSelector } from '/src/modules/mindmap/services/BoxSelector.js';
     import { ClipboardManager } from '/src/modules/mindmap/services/ClipboardManager.js';
+    import { applyStoredTheme, registerThemeToggle } from '/src/style/theme/theme-manager.js';
 
     // EventBus stub - must expose subscribe/publish (names MindmapService expects)
     const bus = { _s: new Map(),
@@ -95,6 +105,20 @@
 
     const canvas = document.getElementById('canvas');
     const nodeLayer = document.getElementById('node-layer');
+
+    // CSMA theme toggle - cycles light / dark / contrast, persists to localStorage
+    applyStoredTheme();
+    const themeToggleBtn = document.querySelector('[data-theme-toggle]');
+    if (themeToggleBtn) {
+      const themeLabel = themeToggleBtn.querySelector('[data-theme-label]');
+      const syncLabel = (theme) => { if (themeLabel) themeLabel.textContent = `Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`; };
+      syncLabel(document.documentElement.getAttribute('data-theme') || 'light');
+      registerThemeToggle(themeToggleBtn, ({ theme, next }) => {
+        themeToggleBtn.dataset.themeActive = theme;
+        themeToggleBtn.setAttribute('aria-label', `Switch to ${next} theme`);
+        syncLabel(theme);
+      });
+    }
     const svgLayer = document.getElementById('svg-layer');
     const mapCanvas = document.getElementById('map-canvas');
     const statusEl = document.getElementById('status');
