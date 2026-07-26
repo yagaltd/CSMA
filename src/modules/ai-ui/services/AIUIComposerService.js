@@ -6,6 +6,15 @@ const MAX_COMPOSITION_DEPTH = 8;
 // Module surfaces receive structured props (objects/arrays for data/options).
 // Cap serialized size to keep payloads bounded.
 const MAX_STRUCTURED_PROP_LENGTH = 20000;
+
+// SVG drawing tags live in SAFE_TAGS but must be created in the SVG namespace;
+// HTML `createElement('path')` yields an HTMLUnknownElement that does not
+// render. SVG_TAGS is the subset of SAFE_TAGS that need createElementNS.
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const SVG_TAGS = new Set([
+  'svg', 'path', 'g', 'line', 'circle', 'rect', 'polyline', 'polygon'
+]);
+
 const SAFE_TAGS = new Set([
   // ── Layout ──
   'article',
@@ -56,7 +65,7 @@ const SAFE_TAGS = new Set([
   'picture', 'source',
   'video', 'audio',
 
-  // ── Graphics (chart canvas + mindmap svg connectors) ──
+  // ── Graphics (chart canvas + mindmap svg connectors + archetype icons) ──
   // NOTE: script/iframe/object/embed are intentionally excluded (security).
   'canvas',
   'svg', 'path', 'g',
@@ -93,8 +102,22 @@ const SAFE_ATTRIBUTES = new Set([
   'rows',
   'src',
   'step',
+  'tabindex',
+  'title',
   'type',
-  'value'
+  'value',
+  'alt',
+
+  // ── SVG geometry & presentation (inert — no script execution, no resource
+  // loading). Needed so archetype icons and vector decoration compose through
+  // the same mountTree pipeline instead of bypassing it. href/src stay
+  // URL-validated above; no new URL-capable attributes are added here. ──
+  'viewBox', 'preserveAspectRatio',
+  'fill', 'fill-opacity', 'fill-rule',
+  'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-opacity',
+  'points', 'd',
+  'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry',
+  'width', 'height', 'transform', 'opacity', 'focusable'
 ]);
 const URL_ATTRIBUTES = new Set(['href', 'src']);
 const KNOWN_STATE_ATTRS = new Set([
@@ -368,7 +391,9 @@ export class AIUIComposerService {
       throw new Error(`Unsafe tag "${tag}" in mountTree`);
     }
 
-    const element = ctx.documentRef.createElement(tag);
+    const element = SVG_TAGS.has(tag)
+      ? ctx.documentRef.createElementNS(SVG_NS, tag)
+      : ctx.documentRef.createElement(tag);
     const attrs = isPlainObject(node.attrs) ? node.attrs : {};
 
     for (const [name, value] of Object.entries(attrs)) {

@@ -665,7 +665,7 @@ schema unchanged. The `el()` helper in `_shared.js` is deprecated for new
 layouts. Result: any aiui surface (comments, video, charts, mindmap) can
 embed inside any slide. Scope estimate: ~3–5 days, run as a modular wave.
 
-### Phase 3 — Archetypes migrate, `el()` removed (planned)
+### Phase 3 — Archetypes migrate, `el()` removed (in progress)
 
 `src/modules/archetypes/*` (data-grid, stats-dashboard, config-panel,
 editor-builder, media-browser, nav-tabs, overlay-manager, viewer)
@@ -674,6 +674,23 @@ presenter) becomes aiui components. The `el()` helper is removed. New
 convention documented: all Layer-2 patterns compose via aiui; raw DOM
 factories forbidden in `src/modules/*/layouts/` and `src/modules/archetypes/`.
 Scope estimate: ~1 week, long-tail across multiple waves.
+
+**Phase 3.0 — Foundation (DONE).** Design decision: **factory-wrapping
+(Option a)** — archetypes keep their `create*` signature and build DOM
+through `getComposer().mountTree()` internally; events are wired on the
+mounted DOM. Documented in `docs/architecture/SKILL.md` § *Layer 2
+archetype pattern*. New shared module: `src/modules/ai-ui/specHelpers.js`
+(canonical `spec` / `textNode` / `component` / `getComposer`). `mountTree`
+gained correct SVG-namespace creation (`createElementNS`) and inert SVG
+presentation attributes in `SAFE_ATTRIBUTES`, plus `tabindex` / `alt` /
+`title`. Two reference archetypes converted: `overlay-manager`, `nav-tabs`
+(byte-identical DOM verified). `tests/archetypes/foundation.test.js`
+(14 tests). 1272/1272 green.
+
+**Phase 3.1 — Convert remaining 6 archetypes (planned).** Follow the
+Phase 3.0 factory-wrapping pattern.
+
+**Phase 3.2 — Slides chrome + `el()` removal (planned).**
 
 ### Open questions (resolve in their respective phase)
 

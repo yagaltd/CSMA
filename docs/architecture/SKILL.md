@@ -273,6 +273,66 @@ error the agent can handle.
 Migration is **incremental**, not big-bang. The current status of the
 unification initiative lives in `docs/roadmap.md` (search: *aiui Unification*).
 
+### Layer 2 archetype pattern
+
+**Decision: factory-wrapping (Option a).** Layer-2 archetypes are stateful
+factories (lifecycle, event listeners, internal state). Unlike Phase 2.0 slide
+layouts — which are pure render functions that were mechanically translated
+into spec trees — archetypes own an entire interaction lifecycle and cannot be
+reduced to a static catalog entry. CSMA therefore wraps each archetype's
+internals in `getComposer().mountTree(spec, target)` while keeping its existing
+`create*(container, emit, options)` public signature. This was chosen over
+catalog-archetype components (Option b) because archetypes take imperative
+arguments the catalog's JSON-serializable-props contract cannot express —
+`overlay-manager.openModal(domNode, { onClose })`, `stats-dashboard({
+renderChart: fn → Node })` — which would force exceptions for at least 2/8
+archetypes and give Phase 3.1 two competing patterns. Factory-wrapping needs no
+new composer render path, no catalog-generator scan root, and no archetype
+registry, and it mirrors how Phase 2.0 layouts already compose: emit spec
+trees, mount through the single aiui pipeline.
+
+**Archetype contract (the pattern Phase 3.1 agents copy)**
+
+```javascript
+// src/modules/archetypes/<name>/<name>.js
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+
+export function createArchetype(container, emit, options = {}) {
+    const composer = getComposer();           // process-level shared composer
+    // 1. Build the initial DOM as a spec tree, mount through aiui.
+    const { root, cleanup } = composer.mountTree(buildSpec(options), container);
+    // 2. Query the mounted DOM and wire events on real elements.
+    const button = root.querySelector('.archetype__action');
+    button.addEventListener('click', () => { /* … */ });
+    // 3. Return the lifecycle handle.
+    return {
+        update(next) { /* re-mount the dynamic subtree via mountTree */ },
+        destroy() { cleanup(); },
+    };
+}
+```
+
+- **Spec helpers** live in `src/modules/ai-ui/specHelpers.js` — the canonical
+  home for the composition grammar (`spec`, `textNode`, `component`,
+  `toAttrs`, `getComposer`). Slides keep their own copy until Phase 3.2.
+- **Interactions**: events are wired with standard `addEventListener` on the
+  elements `mountTree` returns. Archetypes publish intents via the `emit`
+  callback (e.g. `emit('navtabs:select', { id, tab })`); callers map those to
+  EventBus contracts. Archetypes never call `eventBus` directly.
+- **State updates**: the dynamic subtree is re-mounted (clear + `mountTree` +
+  re-wire), exactly as the pre-conversion code re-rendered. This keeps DOM
+  byte-identical and avoids introducing a diff engine. Targeted `setState`
+  (data-attribute flips) is fine for CSS-driven state.
+- **SVG**: icon/vector DOM composes through `mountTree` like any other node.
+  `mountTree` creates `svg`/`path`/`line`/`polyline`/… in the SVG namespace
+  (required for rendering) and accepts their inert presentation attributes
+  (`viewBox`, `stroke`, `points`, …).
+- **Forbidden**: raw `document.createElement` / `createElementNS` in archetype
+  internals. All element construction MUST go through `mountTree`. Post-mount
+  mutation of already-mounted elements (appending caller-supplied content,
+  setting runtime-computed inline styles like popover position, wiring events)
+  is permitted — it operates on the composer's output, not around it.
+
 ## EventBus Patterns
 
 ### Subscribe (with cleanup)

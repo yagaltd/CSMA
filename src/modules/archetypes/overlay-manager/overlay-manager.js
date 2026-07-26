@@ -3,6 +3,13 @@
  *
  * Factory: createOverlayManager(container) → { openModal, openDrawer, openPopover, openLightbox, closeAll, destroy }
  *
+ * Phase 3.0 — aiui-native (Option a: factory-wrapping). All DOM construction
+ * routes through `getComposer().mountTree(spec, target)`; no raw
+ * `document.createElement` in archetype internals. The shells (modal/drawer/
+ * lightbox/backdrop) are spec-mounted; the per-overlay imperative content,
+ * inline positioning styles, and event wiring are applied on the mounted DOM
+ * (see the Layer 2 archetype pattern in docs/architecture/SKILL.md).
+ *
  * Features:
  * - Modal dialog with header, body, footer slots
  * - Drawer panel sliding from the right
@@ -15,11 +22,13 @@
  * - CSMA design tokens for all visual values
  */
 
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
 import { appendTextOrNode } from '../../../utils/dom.js';
 
 const CLOSE_ICON = '×';
 
 export function createOverlayManager(container, emit, options = {}) {
+    const composer = getComposer();
     const stack = [];
     let backdropEl = null;
 
@@ -27,8 +36,10 @@ export function createOverlayManager(container, emit, options = {}) {
 
     function ensureBackdrop() {
         if (backdropEl) return;
-        backdropEl = document.createElement('div');
-        backdropEl.className = 'csma-overlay-backdrop';
+        const { root } = composer.mountTree(
+            spec('div', { className: 'csma-overlay-backdrop' })
+        );
+        backdropEl = root;
         backdropEl.addEventListener('click', (e) => {
             if (e.target === backdropEl) closeTop();
         });
@@ -71,7 +82,22 @@ export function createOverlayManager(container, emit, options = {}) {
         }
     }
 
-    // ─── Stack Management ──────────────────────────────
+    // ─── Shared shell builder ──────────────────────────
+
+    function overlayHeaderSpec(title, closable) {
+        if (!title && !closable) return null;
+        const children = [spec('span', { text: title })];
+        if (closable) {
+            children.push(spec('button', {
+                className: 'csma-overlay-close',
+                attrs: { 'aria-label': 'Close' },
+                text: CLOSE_ICON
+            }));
+        }
+        return spec('div', { className: 'csma-overlay-header', children });
+    }
+
+    // ─── Stack Management ─────────────────────────────
 
     function pushOverlay(config) {
         ensureBackdrop();
@@ -104,53 +130,30 @@ export function createOverlayManager(container, emit, options = {}) {
             width = null,
         } = opts;
 
-        const el = document.createElement('div');
-        el.className = 'csma-overlay-modal';
-        el.setAttribute('role', 'dialog');
-        el.setAttribute('aria-modal', 'true');
-        el.setAttribute('aria-label', title || 'Dialog');
-        if (width) el.style.maxWidth = typeof width === 'number' ? width + 'px' : width;
+        const children = [
+            overlayHeaderSpec(title, closable),
+            spec('div', { className: 'csma-overlay-body' }),
+            footer ? spec('div', { className: 'csma-overlay-footer' }) : null
+        ];
+        const { root: el } = composer.mountTree(spec('div', {
+            className: 'csma-overlay-modal',
+            attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': title || 'Dialog' },
+            children
+        }));
 
-        // Header
-        if (title || closable) {
-            const header = document.createElement('div');
-            header.className = 'csma-overlay-header';
-
-            const titleEl = document.createElement('span');
-            titleEl.textContent = title;
-            header.appendChild(titleEl);
-
-            if (closable) {
-                const closeBtn = document.createElement('button');
-                closeBtn.className = 'csma-overlay-close';
-                closeBtn.setAttribute('aria-label', 'Close');
-                closeBtn.textContent = CLOSE_ICON;
-                closeBtn.addEventListener('click', closeTop);
-                header.appendChild(closeBtn);
-            }
-
-            el.appendChild(header);
-        }
-
-        // Body
-        const body = document.createElement('div');
-        body.className = 'csma-overlay-body';
-        appendTextOrNode(body, content);
-        el.appendChild(body);
-
-        // Footer
+        // Post-mount: content, footer, width, close button
+        appendTextOrNode(el.querySelector('.csma-overlay-body'), content);
         if (footer) {
-            const footerEl = document.createElement('div');
-            footerEl.className = 'csma-overlay-footer';
-            appendTextOrNode(footerEl, footer);
-            el.appendChild(footerEl);
+            appendTextOrNode(el.querySelector('.csma-overlay-footer'), footer);
         }
+        if (width) el.style.maxWidth = typeof width === 'number' ? width + 'px' : width;
+        const closeBtn = el.querySelector('.csma-overlay-close');
+        if (closeBtn) closeBtn.addEventListener('click', closeTop);
 
         ensureBackdrop();
         backdropEl.appendChild(el);
         pushOverlay({ type: 'modal', el, closable, onClose });
 
-        // Focus first focusable element
         requestAnimationFrame(() => {
             const first = el.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
             if (first) first.focus();
@@ -169,37 +172,20 @@ export function createOverlayManager(container, emit, options = {}) {
             side = 'right',
         } = opts;
 
-        const el = document.createElement('div');
-        el.className = 'csma-overlay-drawer';
-        el.setAttribute('role', 'dialog');
-        el.setAttribute('aria-modal', 'true');
-        el.setAttribute('aria-label', title || 'Drawer');
+        const children = [
+            overlayHeaderSpec(title, closable),
+            spec('div', { className: 'csma-overlay-body' })
+        ];
+        const { root: el } = composer.mountTree(spec('div', {
+            className: 'csma-overlay-drawer',
+            attrs: { role: 'dialog', 'aria-modal': 'true', 'aria-label': title || 'Drawer' },
+            children
+        }));
+
+        appendTextOrNode(el.querySelector('.csma-overlay-body'), content);
         if (side === 'left') el.style.left = '0';
-
-        if (title || closable) {
-            const header = document.createElement('div');
-            header.className = 'csma-overlay-header';
-
-            const titleEl = document.createElement('span');
-            titleEl.textContent = title;
-            header.appendChild(titleEl);
-
-            if (closable) {
-                const closeBtn = document.createElement('button');
-                closeBtn.className = 'csma-overlay-close';
-                closeBtn.setAttribute('aria-label', 'Close');
-                closeBtn.textContent = CLOSE_ICON;
-                closeBtn.addEventListener('click', closeTop);
-                header.appendChild(closeBtn);
-            }
-
-            el.appendChild(header);
-        }
-
-        const body = document.createElement('div');
-        body.className = 'csma-overlay-body';
-        appendTextOrNode(body, content);
-        el.appendChild(body);
+        const closeBtn = el.querySelector('.csma-overlay-close');
+        if (closeBtn) closeBtn.addEventListener('click', closeTop);
 
         ensureBackdrop();
         backdropEl.appendChild(el);
@@ -229,21 +215,20 @@ export function createOverlayManager(container, emit, options = {}) {
             if (existing.el) existing.el.remove();
         }
 
-        const el = document.createElement('div');
-        el.className = 'csma-overlay-popover';
-        el.setAttribute('role', 'dialog');
+        const { root: el } = composer.mountTree(
+            spec('div', { className: 'csma-overlay-popover', attrs: { role: 'dialog' } })
+        );
 
+        // Post-mount: content + positioning (popover placement is runtime-computed)
         appendTextOrNode(el, content);
-
-        // Position relative to anchor
         document.body.appendChild(el);
+
         const anchorRect = anchor.getBoundingClientRect();
         const popoverRect = el.getBoundingClientRect();
 
         let top = anchorRect.bottom + 4;
         let left = anchorRect.left;
 
-        // Flip if overflows viewport
         if (top + popoverRect.height > window.innerHeight) {
             top = anchorRect.top - popoverRect.height - 4;
         }
@@ -256,7 +241,6 @@ export function createOverlayManager(container, emit, options = {}) {
         el.style.top = top + 'px';
         el.style.left = left + 'px';
 
-        // Click outside to close
         const outsideHandler = (e) => {
             if (!el.contains(e.target) && e.target !== anchor && !anchor.contains(e.target)) {
                 closeTop();
@@ -275,29 +259,26 @@ export function createOverlayManager(container, emit, options = {}) {
     function openLightbox(src, opts = {}) {
         const { alt = '', onClose = null } = opts;
 
-        const el = document.createElement('div');
-        el.className = 'csma-overlay-lightbox';
-        el.setAttribute('role', 'dialog');
-        el.setAttribute('aria-label', alt || 'Image preview');
+        const { root: el } = composer.mountTree(spec('div', {
+            className: 'csma-overlay-lightbox',
+            attrs: { role: 'dialog', 'aria-label': alt || 'Image preview' },
+            children: [
+                spec('img', { attrs: { src, alt } }),
+                spec('button', {
+                    className: 'csma-overlay-close',
+                    attrs: { 'aria-label': 'Close' },
+                    text: CLOSE_ICON
+                })
+            ]
+        }));
 
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = alt;
-        el.appendChild(img);
-
-        const closeBtn = document.createElement('button');
-        closeBtn.className = 'csma-overlay-close';
-        closeBtn.setAttribute('aria-label', 'Close');
-        closeBtn.textContent = CLOSE_ICON;
-        closeBtn.addEventListener('click', closeTop);
-        el.appendChild(closeBtn);
-
-        document.body.appendChild(el);
-        pushOverlay({ type: 'lightbox', el, closable: true, onClose });
-
+        el.querySelector('.csma-overlay-close').addEventListener('click', closeTop);
         el.addEventListener('click', (e) => {
             if (e.target === el) closeTop();
         });
+
+        document.body.appendChild(el);
+        pushOverlay({ type: 'lightbox', el, closable: true, onClose });
 
         return { close: closeTop, el };
     }

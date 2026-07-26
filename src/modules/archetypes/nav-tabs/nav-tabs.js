@@ -1,7 +1,12 @@
 /**
  * Nav Tabs Archetype — CSMA Token-Driven Horizontal Tab Bar
  *
- * Factory: createNavTabs(container, emit, options) → { update, destroy, getActive, setActive, addTab, removeTab }
+ * Factory: createNavTabs(container, emit, options) → { update, destroy, getActive, setActive, addTab, removeTab, getTabs }
+ *
+ * Phase 3.0 — aiui-native (Option a: factory-wrapping). All DOM construction
+ * routes through `getComposer().mountTree(spec, target)`; no raw
+ * `document.createElement` in archetype internals. Events are wired on the
+ * mounted DOM (see the Layer 2 archetype pattern in docs/architecture/SKILL.md).
  *
  * Features:
  * - Horizontal tab bar with overflow scroll
@@ -13,19 +18,67 @@
  * - CSMA design tokens for all visual values
  */
 
-import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { clearChildren } from '../../../utils/dom.js';
 
-function createCloseIcon() {
-    return createIcon('0 0 12 12', [
-        createSvgElement('line', { x1: 3, y1: 3, x2: 9, y2: 9 }),
-        createSvgElement('line', { x1: 9, y1: 3, x2: 3, y2: 9 })
-    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+// ─── SVG icon specs (composed through mountTree like all other DOM) ────
+
+function svgIconSpec(children) {
+    return spec('svg', {
+        attrs: {
+            viewBox: '0 0 12 12',
+            fill: 'none',
+            'aria-hidden': 'true',
+            focusable: 'false',
+            stroke: 'currentColor',
+            'stroke-width': '1.5'
+        },
+        children
+    });
 }
 
-function createArrowIcon(direction) {
-    return createIcon('0 0 12 12', [
-        createSvgElement('polyline', { points: direction === 'left' ? '8 2 4 6 8 10' : '4 2 8 6 4 10' })
-    ], { stroke: 'currentColor', 'stroke-width': 1.5 });
+function arrowIconSpec(direction) {
+    const points = direction === 'left' ? '8 2 4 6 8 10' : '4 2 8 6 4 10';
+    return svgIconSpec([spec('polyline', { attrs: { points } })]);
+}
+
+function closeIconSpec() {
+    return svgIconSpec([
+        spec('line', { attrs: { x1: '3', y1: '3', x2: '9', y2: '9' } }),
+        spec('line', { attrs: { x1: '9', y1: '3', x2: '3', y2: '9' } })
+    ]);
+}
+
+// ─── Spec builders ────────────────────────────────────────────────────
+
+function arrowSpec(direction) {
+    return spec('button', {
+        className: `csma-navtabs__arrow csma-navtabs__arrow--${direction}`,
+        attrs: { 'aria-label': `Scroll tabs ${direction}` },
+        children: [arrowIconSpec(direction)]
+    });
+}
+
+function tabSpec(tab, activeId, closable) {
+    const children = [spec('span', { text: tab.label || tab.id })];
+    if (tab.badge != null) {
+        children.push(spec('span', { className: 'csma-navtabs__tab-badge', text: String(tab.badge) }));
+    }
+    if (closable) {
+        children.push(spec('button', {
+            className: 'csma-navtabs__close',
+            attrs: { 'aria-label': `Close ${tab.label || tab.id}` },
+            children: [closeIconSpec()]
+        }));
+    }
+    const attrs = { role: 'tab', tabindex: String(tab.id === activeId ? 0 : -1) };
+    if (tab.id === activeId) attrs['aria-selected'] = 'true';
+    return spec('div', {
+        className: 'csma-navtabs__tab',
+        attrs,
+        dataset: { tabId: tab.id },
+        children
+    });
 }
 
 export function createNavTabs(container, emit, options = {}) {
@@ -36,94 +89,64 @@ export function createNavTabs(container, emit, options = {}) {
         onTabClose = null,
     } = options;
 
+    const composer = getComposer();
+
     let tabList = [...tabs];
     let activeId = tabs.find((t) => t.active)?.id || tabs[0]?.id || null;
 
-    // ─── DOM ───────────────────────────────────────────
+    // ─── Initial mount (static shell; tabs render into the scroll slot) ──
 
-    const root = document.createElement('div');
-    root.className = 'csma-navtabs';
-    root.setAttribute('role', 'tablist');
-    root.setAttribute('aria-label', 'Navigation tabs');
+    const { root, cleanup } = composer.mountTree(spec('div', {
+        className: 'csma-navtabs',
+        attrs: { role: 'tablist', 'aria-label': 'Navigation tabs' },
+        children: [
+            arrowSpec('left'),
+            spec('div', { className: 'csma-navtabs__scroll' }),
+            arrowSpec('right')
+        ]
+    }), container);
 
-    // Left arrow
-    const arrowLeft = document.createElement('button');
-    arrowLeft.className = 'csma-navtabs__arrow csma-navtabs__arrow--left';
-    arrowLeft.setAttribute('aria-label', 'Scroll tabs left');
-    arrowLeft.appendChild(createArrowIcon('left'));
+    const scrollEl = root.querySelector('.csma-navtabs__scroll');
+    const arrowLeft = root.querySelector('.csma-navtabs__arrow--left');
+    const arrowRight = root.querySelector('.csma-navtabs__arrow--right');
+
     arrowLeft.addEventListener('click', () => scrollTabs(-200));
-
-    // Scroll container
-    const scrollEl = document.createElement('div');
-    scrollEl.className = 'csma-navtabs__scroll';
-
-    // Right arrow
-    const arrowRight = document.createElement('button');
-    arrowRight.className = 'csma-navtabs__arrow csma-navtabs__arrow--right';
-    arrowRight.setAttribute('aria-label', 'Scroll tabs right');
-    arrowRight.appendChild(createArrowIcon('right'));
     arrowRight.addEventListener('click', () => scrollTabs(200));
 
-    root.appendChild(arrowLeft);
-    root.appendChild(scrollEl);
-    root.appendChild(arrowRight);
+    let resizeObserver = null;
 
-    // ─── Build Tab ─────────────────────────────────────
+    // ─── Tab rendering + event wiring ────────────────────────────────
 
-    function buildTab(tab) {
-        const el = document.createElement('div');
-        el.className = 'csma-navtabs__tab';
-        el.setAttribute('role', 'tab');
-        el.dataset.tabId = tab.id;
-        el.tabIndex = tab.id === activeId ? 0 : -1;
-
-        if (tab.id === activeId) {
-            el.setAttribute('aria-selected', 'true');
-        }
-
-        // Label
-        const label = document.createElement('span');
-        label.textContent = tab.label || tab.id;
-        el.appendChild(label);
-
-        // Badge
-        if (tab.badge != null) {
-            const badge = document.createElement('span');
-            badge.className = 'csma-navtabs__tab-badge';
-            badge.textContent = String(tab.badge);
-            el.appendChild(badge);
-        }
-
-        // Close button
-        if (closable) {
-            const closeBtn = document.createElement('button');
-            closeBtn.className = 'csma-navtabs__close';
-            closeBtn.appendChild(createCloseIcon());
-            closeBtn.setAttribute('aria-label', `Close ${tab.label || tab.id}`);
-            closeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                removeTab(tab.id);
-            });
-            el.appendChild(closeBtn);
-        }
-
-        // Click
-        el.addEventListener('click', () => {
+    function wireTabEvents(tabEl, tab) {
+        tabEl.addEventListener('click', () => {
             setActive(tab.id);
             if (onTabClick) onTabClick(tab);
             if (emit) emit('navtabs:select', { id: tab.id, tab });
         });
-
-        return el;
+        if (closable) {
+            const closeBtn = tabEl.querySelector('.csma-navtabs__close');
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                removeTab(tab.id);
+            });
+        }
     }
 
     function renderAll() {
         clearChildren(scrollEl);
-        tabList.forEach((tab) => scrollEl.appendChild(buildTab(tab)));
+        if (tabList.length === 0) {
+            updateOverflowIndicators();
+            return;
+        }
+        const specs = tabList.map((tab) => tabSpec(tab, activeId, closable));
+        const { root: frag } = composer.mountTree(specs);
+        const tabEls = [...frag.children];
+        tabList.forEach((tab, i) => wireTabEvents(tabEls[i], tab));
+        scrollEl.appendChild(frag);
         updateOverflowIndicators();
     }
 
-    // ─── Overflow ──────────────────────────────────────
+    // ─── Overflow ────────────────────────────────────────────────────
 
     function updateOverflowIndicators() {
         const canScrollLeft = scrollEl.scrollLeft > 1;
@@ -143,12 +166,12 @@ export function createNavTabs(container, emit, options = {}) {
 
     scrollEl.addEventListener('scroll', updateOverflowIndicators);
 
-    // Resize observer for overflow
     if (typeof ResizeObserver !== 'undefined') {
-        new ResizeObserver(updateOverflowIndicators).observe(scrollEl);
+        resizeObserver = new ResizeObserver(updateOverflowIndicators);
+        resizeObserver.observe(scrollEl);
     }
 
-    // ─── Keyboard ──────────────────────────────────────
+    // ─── Keyboard ────────────────────────────────────────────────────
 
     root.addEventListener('keydown', (e) => {
         const tabs = scrollEl.querySelectorAll('[role="tab"]');
@@ -168,14 +191,13 @@ export function createNavTabs(container, emit, options = {}) {
         tabs[next].focus();
     });
 
-    // ─── Public Methods ────────────────────────────────
+    // ─── Public Methods ──────────────────────────────────────────────
 
     function setActive(id) {
         activeId = id;
         renderAll();
-        // Scroll active tab into view
         const activeEl = scrollEl.querySelector(`[data-tab-id="${id}"]`);
-        if (activeEl) {
+        if (activeEl && typeof activeEl.scrollIntoView === 'function') {
             activeEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }
     }
@@ -208,12 +230,11 @@ export function createNavTabs(container, emit, options = {}) {
         return tabList;
     }
 
-    // ─── Initial Render ────────────────────────────────
+    // ─── Initial Render ──────────────────────────────────────────────
 
-    container.appendChild(root);
     renderAll();
 
-    // ─── Public API ────────────────────────────────────
+    // ─── Public API ──────────────────────────────────────────────────
 
     return {
         update(newTabs) {
@@ -229,7 +250,11 @@ export function createNavTabs(container, emit, options = {}) {
         addTab,
         removeTab,
         destroy() {
-            root.remove();
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+                resizeObserver = null;
+            }
+            cleanup();
         },
     };
 }
