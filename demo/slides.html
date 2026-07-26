@@ -16,6 +16,11 @@
   <link rel="stylesheet" href="../src/modules/slides/dock.css">
   <link rel="stylesheet" href="../src/modules/slides/layouts.css">
   <link rel="stylesheet" href="../src/modules/slides/print.css">
+
+  <!-- Phase 4 — comments drawer + markers + overlay shell -->
+  <link rel="stylesheet" href="../src/modules/archetypes/overlay-manager/overlay-manager.css">
+  <link rel="stylesheet" href="../src/modules/comments/ui/comments-drawer.css">
+  <link rel="stylesheet" href="../src/modules/comments/ui/comments-marker.css">
 </head>
 <body>
   <div id="deck-root"></div>
@@ -58,10 +63,10 @@
           ] },
         { type: 'cta', title: 'Ship a deck.', subtitle: 'Read SKILL.md → write deck.json → mountDeck' },
         { type: 'split',
-          kicker: 'Phase 2.2',
-          title: 'Embed any aiui surface in a slide',
-          body: 'Click the 💆 button in the dock to embed a live comments-thread on this slide. Click again to remove it. (Surface starts absent so the click direction is unambiguous.)'
-          /* no `media` here on purpose - user adds it via the dock button */ }
+          kicker: 'Phase 4',
+          title: 'Comments on every slide',
+          body: 'Click the 💬 button in the dock to open the comments drawer for the current slide. The badge shows the open-count. Add a comment, resolve it, or reply. Anchored elements get a pin marker — click a pin to focus + open a popup.'
+          /* drawer + badge + markers wired in the bootstrap below */ }
       ]
     };
   </script>
@@ -73,11 +78,21 @@
     import { AIUIComposerService } from '../src/modules/ai-ui/services/AIUIComposerService.js';
     import { ServiceManager } from '../src/runtime/ServiceManager.js';
     import { CommentsService } from '../src/modules/comments/services/CommentsService.js';
+    // Phase 4 — anchored comments + drawer + markers + popup
+    // (import from the individual factory files, not the package index, so the
+    //  demo loads over plain HTTP too — the index.js side-effect-imports CSS.)
+    import { AnchorableCommentsService } from '../src/modules/comments/services/AnchorableCommentsService.js';
+    import { AnchorResolver } from '../src/modules/comments/services/AnchorResolver.js';
+    import { createCommentsDrawer } from '../src/modules/comments/ui/CommentsDrawer.js';
+    import { createCommentsMarker } from '../src/modules/comments/ui/CommentsMarker.js';
+    import { createCommentsPopup } from '../src/modules/comments/ui/CommentsPopup.js';
+    import { createOverlayManager } from '../src/modules/archetypes/overlay-manager/overlay-manager.js';
+    import { CommentsContracts } from '../src/modules/comments/contracts/comments-contracts.js';
 
     const eventBus = new EventBus();
-    // Register slides contracts so validation passes
+    // Register slides + comments contracts so validation passes
     const { SlidesContracts } = await import('../src/modules/slides/index.js');
-    eventBus.contracts = SlidesContracts;
+    eventBus.contracts = Object.assign({}, SlidesContracts, CommentsContracts);
 
     // Phase 2.2 - wire CommentsService + ServiceManager + AIUIComposer so that
     // the `comments-thread` surface can mount inside a slide.
@@ -99,10 +114,60 @@
     const service = new SlideDeckService(eventBus);
     service.init();
 
-    mountDeck(document.getElementById('deck-root'), service, eventBus, { composer });
+    // ── Phase 4 — anchorable comments + drawer + markers + popup ───────
+    // The dock chat button becomes a drawer-opener + live count badge ONLY
+    // when we pass `commentsService` into mountDeck (opt-in). Without it the
+    // legacy inline-surface toggle (Phase 2.2) is preserved.
+    const anchorableComments = new AnchorableCommentsService(eventBus);
+    anchorableComments.setServiceManager(serviceManager);
+    await anchorableComments.init({});   // in-memory only (no Storage wired in this demo)
+    serviceManager.register('anchorableComments', anchorableComments);
+
+    // Overlay manager owns the drawer shell (slide-in panel + backdrop + ESC).
+    const overlayManager = createOverlayManager(document.body);
+    // Drawer reacts to COMMENTS_DRAWER_OPENED/CLOSED and renders the list.
+    const commentsDrawer = createCommentsDrawer({ eventBus, service: anchorableComments, overlayManager });
+
+    // Anchor resolver + popup: pin clicks -> INTENT_COMMENTS_FOCUS -> popover.
+    const resolver = new AnchorResolver();
+    const commentsPopup = createCommentsPopup({ eventBus, service: anchorableComments, overlayManager, resolver });
+
+    // Seed a couple of scope-level comments so the badge + drawer have content.
+    anchorableComments.add({
+      scope: 'deck:slide-0',
+      anchor: { anchor_type: 'element', anchor: { selector: '[data-comments-scope="deck:slide-0"]' } },
+      body: 'Welcome — this is an anchored comment on the cover slide. Open the drawer with the chat button.',
+      author: { name: 'Demo' }
+    });
+    anchorableComments.add({
+      scope: 'deck:slide-1',
+      anchor: { anchor_type: 'element', anchor: { selector: '[data-comments-scope="deck:slide-1"]' } },
+      body: 'Review: is 24 the right number to headline here?',
+      author: { name: 'Reviewer' }
+    });
+
+    // Opt into drawer mode: the dock chat button now opens the drawer + shows a badge.
+    mountDeck(document.getElementById('deck-root'), service, eventBus, { composer, commentsService: anchorableComments });
+
+    // Markers: pins on commented elements, re-scoped when the slide changes.
+    const deckRoot = document.getElementById('deck-root');
+    let markerCtrl = createCommentsMarker({
+      eventBus, service: anchorableComments, resolver,
+      container: deckRoot, scope: 'deck:slide-' + service.index
+    });
+    markerCtrl.refresh();
+    eventBus.subscribe('SLIDE_CHANGED', (p) => {
+      const idx = Number.isFinite(p?.slide) ? p.slide : service.index;
+      markerCtrl.destroy();
+      markerCtrl = createCommentsMarker({
+        eventBus, service: anchorableComments, resolver,
+        container: deckRoot, scope: 'deck:slide-' + idx
+      });
+      markerCtrl.refresh();
+    });
 
     // Expose for debugging
-    window.deck = { service, eventBus, comments, composer };
+    window.deck = { service, eventBus, comments, anchorableComments, commentsDrawer, commentsPopup, overlayManager, composer };
 
     // Phase 2.2 diagnostics - log the wiring state so users can verify in console
     console.log('[Phase 2.2] wiring:', {

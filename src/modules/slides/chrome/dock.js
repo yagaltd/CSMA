@@ -17,7 +17,10 @@
  */
 
 import { spec, getComposer } from '../../ai-ui/specHelpers.js';
-import { wireCommentsBadge } from '../../comments/index.js';
+// Import the badge factory directly (not the package index) so importing the
+// dock does NOT pull the comments module's CSS side-effects — that would
+// break raw-browser / non-Vite loading with a strict-MIME module error.
+import { wireCommentsBadge } from '../../comments/ui/CommentsBadge.js';
 
 export function initDock(container, eventBus, service, opts = {}) {
     if (!container || !eventBus) return () => {};
