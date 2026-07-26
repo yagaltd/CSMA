@@ -140,12 +140,19 @@ describe('MindmapService', () => {
     await expect(svc.removeNode(root.id)).rejects.toThrowError(/root/);
   });
 
-  it('addLeaf to a leaf rejects with an error', async () => {
+  it('addLeaf to a leaf auto-promotes the leaf to a branch (mind-elixir style)', async () => {
     const mapId = await svc.createMap('m');
     const root = svc._getMap(mapId).root;
     const branch = await svc.addBranch(root.id, 'b');
     const leaf = await svc.addLeaf(branch.id, 'l');
-    await expect(svc.addLeaf(leaf.id, 'x')).rejects.toThrowError(/leaf/);
+    // Mind-elixir-style: adding a child to a leaf promotes it to a branch
+    // rather than rejecting. Any node can have children.
+    const child = await svc.addLeaf(leaf.id, 'x');
+    expect(child.topic).toBe('x');
+    const refreshed = svc.findNode(leaf.id);
+    expect(refreshed.schemaType).toBe('mindmap/branch');
+    expect(Array.isArray(refreshed.children)).toBe(true);
+    expect(refreshed.children.find((n) => n.id === child.id)).toBeTruthy();
   });
 
   it('collapse fires both MINDMAP_COLLAPSED and MINDMAP_STRUCTURE_CHANGED', async () => {

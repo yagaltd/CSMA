@@ -179,6 +179,14 @@ export function mountDeck(container, service, eventBus, opts = {}) {
             // so compare against the previous render.
             renderCurrentSlide(true, direction);
         }));
+
+        // Phase 2.2 — re-render current slide when its media changes
+        // (e.g. user toggled comments on/off via the dock button).
+        cleanups.push(eventBus.subscribe('SLIDE_MEDIA_CHANGED', (payload) => {
+            if (payload?.index === service.index) {
+                renderCurrentSlide(false);
+            }
+        }));
     }
 
     // ─── Keyboard ─────────────────────────────────────────────────

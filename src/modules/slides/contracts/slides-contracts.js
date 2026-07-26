@@ -105,6 +105,19 @@ export const SlidesContracts = {
         description: 'Escape key — close grid/rail/drawing, or exit fullscreen'
     }, object({ timestamp: number() })),
 
+    INTENT_SLIDE_TOGGLE_COMMENTS: contract({
+        version: 1, type: 'intent', owner: 'slides',
+        lifecycle: 'active', stability: 'stable', compliance: 'public',
+        security: { rateLimits: SLOW_RATE },
+        description: 'Toggle an embedded comments-thread surface on the current slide (Phase 2.2). Adds a `media: { type: \'surface\', component: \'comments-thread\' }` slot to the current slide if absent, removes it if present. Only affects layouts that consume `media` (split, spotlight-card).'
+    }, object({ timestamp: number(), threadId: optional(string()) })),
+
+    SLIDE_MEDIA_CHANGED: contract({
+        version: 1, type: 'event', owner: 'slides',
+        lifecycle: 'active', stability: 'stable', compliance: 'public',
+        description: "A slide's media config changed (e.g. comments toggled on/off). Deck re-renders the affected slide."
+    }, object({ index: number(), media: any() })),
+
     // ─── Annotation intents ───────────────────────────────────────────
 
     INTENT_ANNOTATION_STROKE: contract({

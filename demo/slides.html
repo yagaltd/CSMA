@@ -56,7 +56,12 @@
             { label: 'Sync', values: ['CrossTabLeader', 'custom BroadcastChannel'] },
             { label: 'Security', values: [true, false] }
           ] },
-        { type: 'cta', title: 'Ship a deck.', subtitle: 'Read SKILL.md → write deck.json → mountDeck' }
+        { type: 'cta', title: 'Ship a deck.', subtitle: 'Read SKILL.md → write deck.json → mountDeck' },
+        { type: 'split',
+          kicker: 'Phase 2.2',
+          title: 'Embed any aiui surface in a slide',
+          body: 'The right panel is a live comments-thread mounted via mountTree. Try the dock 💆 button to toggle comments on/off on any slide.',
+          media: { type: 'surface', component: 'comments-thread', props: { threadId: 'slide-5-q-and-a' } } }
       ]
     };
   </script>
@@ -65,19 +70,36 @@
   <script type="module">
     import { EventBus } from '../src/runtime/EventBus.js';
     import { SlideDeckService, mountDeck } from '../src/modules/slides/index.js';
+    import { AIUIComposerService } from '../src/modules/ai-ui/services/AIUIComposerService.js';
+    import { ServiceManager } from '../src/runtime/ServiceManager.js';
+    import { CommentsService } from '../src/modules/comments/services/CommentsService.js';
 
     const eventBus = new EventBus();
     // Register slides contracts so validation passes
     const { SlidesContracts } = await import('../src/modules/slides/index.js');
     eventBus.contracts = SlidesContracts;
 
+    // Phase 2.2 — wire CommentsService + ServiceManager + AIUIComposer so that
+    // the `comments-thread` surface can mount inside a slide.
+    const serviceManager = new ServiceManager();
+    const comments = new CommentsService(eventBus);
+    await comments.init();
+    serviceManager.register('comments', comments);
+
+    const composer = new AIUIComposerService();
+    composer.setServiceManager?.(serviceManager);
+
+    // Seed a sample comment thread so the embedded surface has content.
+    comments.submit({ threadId: 'slide-5-q-and-a', body: 'First comment on the slide-embed demo.' });
+    comments.submit({ threadId: 'slide-5-q-and-a', body: 'Second comment — try the dock 💆 button too.' });
+
     const service = new SlideDeckService(eventBus);
     service.init();
 
-    mountDeck(document.getElementById('deck-root'), service, eventBus);
+    mountDeck(document.getElementById('deck-root'), service, eventBus, { composer });
 
     // Expose for debugging
-    window.deck = { service, eventBus };
+    window.deck = { service, eventBus, comments, composer };
   </script>
 </body>
 </html>

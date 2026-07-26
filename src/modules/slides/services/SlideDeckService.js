@@ -109,6 +109,7 @@ export class SlideDeckService {
         sub('INTENT_SLIDE_OPEN_PRESENTER', () => this.openPresenter());
         sub('INTENT_SLIDE_HIDE_UI',        () => this.toggleHideUi());
         sub('INTENT_SLIDE_ESCAPE',         () => this.handleEscape());
+        sub('INTENT_SLIDE_TOGGLE_COMMENTS', (p) => this.toggleComments(p?.threadId));
 
         sub('INTENT_ANNOTATION_STROKE', (p) => this.addStroke(p));
         sub('INTENT_ANNOTATION_CLEAR',  (p) => this.clearAnnotations(p?.slide));
@@ -117,6 +118,53 @@ export class SlideDeckService {
         sub('INTENT_SLIDE_NOTE_UPDATE', (p) => this.updateNote(p?.slide, p?.text));
 
         sub('INTENT_DECK_EXPORT_PNG', (p) => this.exportPng(p));
+    }
+
+    // ─── Surface embedding (Phase 2.2) ─────────────────────────────
+    //
+    // toggleComments(threadId?) — adds or removes an embedded comments-thread
+    // surface on the current slide's `media` slot. Idempotent: clicking the
+    // dock button again removes it. Other media types are preserved.
+    //
+    // The slide re-renders via SLIDE_MEDIA_CHANGED; deck.js subscribes and
+    // re-mounts the affected slide.
+
+    toggleComments(threadId) {
+        if (!this.slides.length) return false;
+        const idx = this.index;
+        const slide = this.slides[idx];
+        const currentMedia = slide?.media;
+        const isCommentsActive = currentMedia?.type === 'surface'
+            && currentMedia?.component === 'comments-thread';
+
+        let nextMedia;
+        if (isCommentsActive) {
+            // Toggle off — remove the comments surface (set media to null).
+            nextMedia = null;
+        } else {
+            // Toggle on — install a comments-thread surface.
+            nextMedia = {
+                type: 'surface',
+                component: 'comments-thread',
+                props: { threadId: threadId || `slide-${idx}-q-and-a` }
+            };
+        }
+
+        this.slides[idx] = { ...slide, media: nextMedia };
+        this.eventBus.publish('SLIDE_MEDIA_CHANGED', { index: idx, media: nextMedia });
+        this._broadcastState();
+        return true;
+    }
+
+    /**
+     * Generic media slot setter (Phase 2.2 foundation for future surfaces).
+     */
+    setSlideMedia(index, media) {
+        if (index < 0 || index >= this.slides.length) return false;
+        this.slides[index] = { ...this.slides[index], media };
+        this.eventBus.publish('SLIDE_MEDIA_CHANGED', { index, media });
+        this._broadcastState();
+        return true;
     }
 
     // ─── next() / prev() — the core click-build loop ─────────────────

@@ -1,4 +1,4 @@
-import { spec, specShell, specKicker, specHeading, specBody, specContainer } from './_shared.js';
+import { spec, specShell, specKicker, specHeading, specBody, specContainer, component } from './_shared.js';
 import { createCodeWindowSlide } from './code-window.js';
 import { createBrowserFrameSlide } from './browser-frame.js';
 
@@ -7,7 +7,9 @@ import { createBrowserFrameSlide } from './browser-frame.js';
  *
  * Config: `{ kicker?, title, body?, media, flip?, center=false }`
  * `media` is an embedded config: `{ type, ... }` where type can be
- * 'image', 'code-window', 'browser-frame', 'panel', 'globe', 'chart'.
+ * 'image', 'code-window', 'browser-frame', 'panel', 'globe', 'chart', or
+ * 'surface' (Phase 2.2). The 'surface' type embeds any aiui catalog
+ * surface: `{ type: 'surface', component: 'comments-thread', props: { threadId } }`.
  *
  * Emits a SPEC TREE (Phase 2.0). `renderMedia` may return a DOM Node for the
  * not-yet-converted 'code-window' / 'browser-frame' types — `mountTree`
@@ -56,6 +58,14 @@ export function renderMedia(mediaConfig) {
             return spec('div', { className: 'media-globe', dataset: { layout: 'globe' } });
         case 'chart':
             return spec('div', { className: 'media-chart', dataset: { chartType: mediaConfig.chartType || 'bar' } });
+        case 'surface': {
+            // Phase 2.2 — embed any aiui catalog surface (comments-thread,
+            // video-player, chart-display, mindmap-canvas, future modules).
+            // The composer resolves the component via mountSurface.
+            const name = mediaConfig.component;
+            if (!name || typeof name !== 'string') return null;
+            return component(name, mediaConfig.props || {}, mediaConfig.slot);
+        }
         default:
             return null;
     }

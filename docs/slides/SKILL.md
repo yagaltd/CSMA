@@ -28,16 +28,53 @@ LAYER 0  CSMA components     button, card, badge, branch-node, …
 ```
 
 The deck **state machine** (Layer 3) is slide-specific and stays. The
-**layouts** (Layer 2) currently build DOM directly via an `el()` helper.
-They are being migrated to compose through aiui (Layer 1) so any aiui
-surface — comments, video, charts, mindmap — can embed inside any slide.
+**layouts** (Layer 2) emit spec trees consumed by the **aiui composer**
+(Layer 1). Because every layout renders through aiui, any catalog surface
+— `comments-thread`, `video-player`, `chart-display`, `mindmap-canvas`,
+future modules — can embed inside any slide.
 
-See `docs/architecture/aiui-unification.md` for the full migration plan
-(Phase 1 done, Phase 2 = slides layouts as aiui compositions, Phase 3 =
-archetypes + deprecate `el()`).
+See `docs/architecture/SKILL.md` § *Layered Rendering Architecture* for the
+full contract.
 
-For authoring purposes nothing changes today: agents still write JSON, the
-slides runtime still mounts layouts. The migration is internal.
+## Embedding aiui surfaces inside slides (Phase 2.2)
+
+Any layout that consumes a `media` slot (`split`, `spotlight-card`) accepts
+a surface reference:
+
+```json
+{
+  "type": "split",
+  "kicker": "Q&A",
+  "title": "Comments inside a slide",
+  "body": "The right panel is a live comments thread.",
+  "media": {
+    "type": "surface",
+    "component": "comments-thread",
+    "props": { "threadId": "slide-3-q-and-a" }
+  }
+}
+```
+
+When the composer mounts the slide, it resolves `component: 'comments-thread'`
+via `serviceManager.get('comments').mountSurface(...)`. The owning module
+owns the rendering inside the slot; the slide just provides the slot.
+
+**Catalog of embeddable surfaces:** `comments-thread`, `chart-display`,
+`mindmap-canvas`, `video-player` (forward-declared). Run
+`npm run generate-ai-ui-catalog` to see the live list, or read
+`src/modules/ai-ui/catalog/componentCatalog.js`.
+
+**Dock UX:** the dock includes a 💬 button that publishes
+`INTENT_SLIDE_TOGGLE_COMMENTS`. `SlideDeckService.toggleComments()` adds
+or removes the surface on the current slide's media slot and re-renders.
+Agents can publish the same intent to drive embedding programmatically.
+
+**Wiring requirement:** for an embedded surface to render, the host app
+must register the owning module's service with `ServiceManager` AND pass
+the composer to `mountDeck(container, service, eventBus, { composer })`.
+See `demo/slides.html` for the wiring pattern. Without it, the dock button
+still toggles the spec, but the composer throws "module not loaded" when
+trying to mount.
 
 ## 0. Required reading chain
 
