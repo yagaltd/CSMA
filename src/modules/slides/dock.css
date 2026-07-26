@@ -116,6 +116,13 @@
   }
 }
 
+/* Phase 2.2 — 💆 button active state when current slide has comments embedded */
+.noir-dock .dock-btn[data-active="true"] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--accent);
+}
+
 /* ── Rail (thumbnail sidebar) ───────────────────────────────────── */
 .slide-rail {
   position: fixed;

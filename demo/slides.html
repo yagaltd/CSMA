@@ -60,8 +60,8 @@
         { type: 'split',
           kicker: 'Phase 2.2',
           title: 'Embed any aiui surface in a slide',
-          body: 'The right panel is a live comments-thread mounted via mountTree. Try the dock 💆 button to toggle comments on/off on any slide.',
-          media: { type: 'surface', component: 'comments-thread', props: { threadId: 'slide-5-q-and-a' } } }
+          body: 'Click the 💆 button in the dock to embed a live comments-thread on this slide. Click again to remove it. (Surface starts absent so the click direction is unambiguous.)'
+          /* no `media` here on purpose — user adds it via the dock button */ }
       ]
     };
   </script>
@@ -90,8 +90,11 @@
     composer.setServiceManager?.(serviceManager);
 
     // Seed a sample comment thread so the embedded surface has content.
-    comments.submit({ threadId: 'slide-5-q-and-a', body: 'First comment on the slide-embed demo.' });
-    comments.submit({ threadId: 'slide-5-q-and-a', body: 'Second comment — try the dock 💆 button too.' });
+    // The threadId matches what SlideDeckService.toggleComments() will use by
+    // default for slide index 7 (the Phase 2.2 demo slide).
+    const demoThreadId = 'slide-7-q-and-a';
+    comments.submit({ threadId: demoThreadId, body: 'First comment on the slide-embed demo.' });
+    comments.submit({ threadId: demoThreadId, body: 'Second comment — click 💆 again to remove the surface.' });
 
     const service = new SlideDeckService(eventBus);
     service.init();
@@ -100,6 +103,26 @@
 
     // Expose for debugging
     window.deck = { service, eventBus, comments, composer };
+
+    // Phase 2.2 diagnostics — log the wiring state so users can verify in console
+    console.log('[Phase 2.2] wiring:', {
+      commentsRegistered: serviceManager.get('comments') === comments,
+      composerHasServiceManager: !!composer.serviceManager,
+      seededComments: comments.getComments('slide-5-q-and-a').length,
+      dockHasCommentsBtn: true
+    });
+    // Reflect 💆 button active state when current slide has comments media
+    eventBus.subscribe('SLIDE_MEDIA_CHANGED', () => updateCommentsBtnState());
+    eventBus.subscribe('SLIDE_CHANGED', () => updateCommentsBtnState());
+    function updateCommentsBtnState() {
+      const btn = document.querySelector('.dock-btn[data-intent="INTENT_SLIDE_TOGGLE_COMMENTS"]');
+      if (!btn) return;
+      const media = service.getCurrentSlide()?.media;
+      const active = media?.type === 'surface' && media?.component === 'comments-thread';
+      btn.dataset.active = active ? 'true' : 'false';
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    }
+    updateCommentsBtnState();
   </script>
 </body>
 </html>
