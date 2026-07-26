@@ -1,33 +1,39 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
+import { spec, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * team — people grid. Each card has name, role, optional image (via data-img,
  * rendered by CSS) or initials fallback.
  *
  * Config: `{ kicker?, title?, people: [{name, role, img?}] }`
+ *
+ * Emits a SPEC TREE (Phase 2.1).
  */
 export function createTeamSlide(config = {}) {
-    const slide = createSlideShell('team', { center: true });
+    const header = spec('div', { className: 'team-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const header = el('div', { className: 'team-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
-
-    const grid = el('div', { className: 'team-grid' });
     const people = Array.isArray(config.people) ? config.people : [];
-    people.forEach((person) => grid.appendChild(buildPerson(person)));
+    const grid = spec('div', {
+        className: 'team-grid',
+        children: people.map((person) => buildPersonSpec(person))
+    });
 
-    slide.appendChild(container([header, grid]));
-    return slide;
+    const inner = specContainer([header, grid]);
+    return spec('div', { className: 'slide center', dataset: { layout: 'team' }, children: [inner] });
 }
 
-function buildPerson(person = {}) {
-    const card = el('div', { className: 'team-card' });
-    if (person.img) card.dataset.image = String(person.img);
+/**
+ * Build a single team-card spec node. Initials derived from name (never
+ * user-provided markup). Spec equivalent of the legacy buildPerson().
+ */
+function buildPersonSpec(person = {}) {
+    const cardOpts = { className: 'team-card' };
+    if (person.img) {
+        cardOpts.dataset = { image: String(person.img) };
+    }
 
-    const avatar = el('div', { className: 'team-avatar' });
-    // Initials fallback — derived from name, never user-provided markup
     const initials = String(person.name || '')
         .split(/\s+/)
         .map((s) => s[0])
@@ -35,10 +41,10 @@ function buildPerson(person = {}) {
         .slice(0, 2)
         .join('')
         .toUpperCase();
-    avatar.textContent = initials;
-    card.appendChild(avatar);
 
-    if (person.name) card.appendChild(el('p', { className: 'team-name', text: String(person.name) }));
-    if (person.role) card.appendChild(el('p', { className: 'team-role', text: String(person.role) }));
-    return card;
+    const children = [spec('div', { className: 'team-avatar', text: initials })];
+    if (person.name) children.push(spec('p', { className: 'team-name', text: String(person.name) }));
+    if (person.role) children.push(spec('p', { className: 'team-role', text: String(person.role) }));
+
+    return spec('div', { ...cardOpts, children });
 }

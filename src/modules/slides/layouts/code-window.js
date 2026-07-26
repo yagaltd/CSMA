@@ -1,4 +1,4 @@
-import { el } from './_shared.js';
+import { spec } from './_shared.js';
 
 /**
  * code-window — code block with macOS chrome + optional line highlights.
@@ -6,45 +6,47 @@ import { el } from './_shared.js';
  *
  * Config: `{ title?, highlight: number[]?, code: string }`
  *
- * Security: code is rendered as textContent of a single <pre><code> block —
- * no syntax highlighter that touches innerHTML, no eval. Lines highlighted by
- * row index via data-line attributes (CSS handles the striping).
+ * Emits a SPEC TREE (Phase 2.1).
+ *
+ * Security: code is rendered as textContent of line spans inside a `<pre>`
+ * — no syntax highlighter that touches innerHTML, no eval. Lines highlighted
+ * by row index via data-line attributes (CSS handles the striping).
  */
 export function createCodeWindowSlide(config = {}) {
-    const wrap = el('div', { className: 'code-window' });
+    const chromeChildren = [
+        spec('span', { className: 'code-dot code-dot--red' }),
+        spec('span', { className: 'code-dot code-dot--yellow' }),
+        spec('span', { className: 'code-dot code-dot--green' })
+    ];
+    if (config.title) {
+        chromeChildren.push(spec('span', { className: 'code-title', text: String(config.title) }));
+    }
 
-    const chrome = el('div', { className: 'code-chrome', children: [
-        el('span', { className: 'code-dot code-dot--red' }),
-        el('span', { className: 'code-dot code-dot--yellow' }),
-        el('span', { className: 'code-dot code-dot--green' }),
-        config.title ? el('span', { className: 'code-title', text: String(config.title) }) : null
-    ].filter(Boolean) });
-    wrap.appendChild(chrome);
-
-    const pre = el('pre', { className: 'code-body' });
-    const code = el('code');
-    code.textContent = typeof config.code === 'string' ? config.code : '';
-    pre.appendChild(code);
-    wrap.appendChild(pre);
-
-    // Highlight rows via data-line on each line wrapper. We split the source
-    // into lines so the CSS can stripe/highlight without innerHTML.
+    const preChildren = [];
     if (typeof config.code === 'string') {
-        pre.removeChild(code);
         const lines = config.code.split('\n');
         const highlight = Array.isArray(config.highlight) ? new Set(config.highlight) : new Set();
         for (let i = 0; i < lines.length; i++) {
             const lineNo = i + 1;
-            const line = el('span', {
+            const lineDataset = { line: String(lineNo) };
+            if (highlight.has(lineNo)) lineDataset.highlight = 'true';
+            preChildren.push(spec('span', {
                 className: 'code-line',
-                text: lines[i] || ' '
-            });
-            line.dataset.line = String(lineNo);
-            if (highlight.has(lineNo)) line.dataset.highlight = 'true';
-            pre.appendChild(line);
-            pre.appendChild(el('br'));
+                text: lines[i] || ' ',
+                dataset: lineDataset
+            }));
+            // <br> is not in SAFE_TAGS — use DOM Node passthrough (mountTree
+            // accepts raw Nodes in children arrays alongside spec nodes).
+            if (typeof document !== 'undefined') {
+                preChildren.push(document.createElement('br'));
+            }
         }
+    } else {
+        preChildren.push(spec('code'));
     }
 
-    return wrap;
+    return spec('div', { className: 'code-window', children: [
+        spec('div', { className: 'code-chrome', children: chromeChildren }),
+        spec('pre', { className: 'code-body', children: preChildren })
+    ] });
 }

@@ -1,5 +1,4 @@
-import { el, createSlideShell, createKicker, createHeading, container } from './_shared.js';
-import { createBuildElement } from '../engine/build.js';
+import { spec, specKicker, specHeading, specContainer } from './_shared.js';
 
 /**
  * chat — message exchange. Each message is wrapped in a Build element so each
@@ -8,33 +7,40 @@ import { createBuildElement } from '../engine/build.js';
  *
  * Config: `{ kicker?, title?, name?, messages: [{from:'user'|'ai', text}] }`
  *
- * The deck wires up build registration once the slide is attached. Here we
- * pre-stamp each message with data-build-step; deck's mountBuilds() will
- * call service.registerMax on each.
+ * Emits a SPEC TREE (Phase 2.1). Each message is pre-stamped with
+ * `data-build-step`; deck.js's mountBuilds() reads `[data-build-step]` and
+ * calls service.registerMax for each. Initial `data-visible` is `'false'`
+ * for every step (matches the legacy createBuildElement with currentClicks=0).
  */
 export function createChatSlide(config = {}) {
-    const slide = createSlideShell('chat', { center: false });
-    if (config.name) slide.dataset.botName = String(config.name);
+    const dataset = { layout: 'chat' };
+    if (config.name) dataset.botName = String(config.name);
 
-    const header = el('div', { className: 'chat-header', children: [
-        createKicker(config.kicker),
-        createHeading(config.title)
-    ].filter(Boolean) });
+    const header = spec('div', { className: 'chat-header', children: [
+        specKicker(config.kicker),
+        specHeading(config.title)
+    ] });
 
-    const thread = el('div', { className: 'chat-thread' });
     const messages = Array.isArray(config.messages) ? config.messages : [];
-    messages.forEach((msg, i) => {
+    const threadChildren = messages.map((msg, i) => {
         const step = i + 1;
-        const bubble = el('div', {
+        const bubbleChildren = [];
+        if (msg.text) bubbleChildren.push(spec('p', { className: 'chat-text', text: String(msg.text) }));
+        const bubble = spec('div', {
             className: 'chat-bubble',
-            dataset: { from: String(msg.from || 'user') }
+            dataset: { from: String(msg.from || 'user') },
+            children: bubbleChildren
         });
-        if (msg.text) bubble.appendChild(el('p', { className: 'chat-text', text: String(msg.text) }));
-        // Wrap each message in a Build element so the deck can reveal on click.
-        const build = createBuildElement({ at: step, children: [bubble] });
-        thread.appendChild(build);
+        // Wrap each message in a build reveal — dataset.buildStep / dataset.visible
+        // are read by deck.mountBuilds() at attach time.
+        return spec('div', {
+            className: 'build',
+            dataset: { buildStep: String(step), visible: 'false' },
+            children: [bubble]
+        });
     });
+    const thread = spec('div', { className: 'chat-thread', children: threadChildren });
 
-    slide.appendChild(container([header, thread]));
-    return slide;
+    const inner = specContainer([header, thread]);
+    return spec('div', { className: 'slide', dataset, children: [inner] });
 }
