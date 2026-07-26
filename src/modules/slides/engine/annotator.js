@@ -51,6 +51,16 @@ export function initAnnotator(container, eventBus, service) {
         renderAll(payload?.strokes);
     }));
 
+    // Re-render the NEW slide's strokes on navigation. Without this, strokes
+    // drawn on slide A stay visible after navigating to slide B (the service
+    // only emits ANNOTATION_UPDATED on add/clear, not on slide change).
+    subs.push(eventBus.subscribe('SLIDE_CHANGED', (payload) => {
+        const idx = Number.isFinite(payload?.slide) ? payload.slide : service?.index;
+        if (service && typeof service.getAnnotations === 'function' && Number.isFinite(idx)) {
+            renderAll(service.getAnnotations(idx));
+        }
+    }));
+
     // Reflect drawing state from UI_STATE_CHANGED.
     subs.push(eventBus.subscribe('UI_STATE_CHANGED', (payload) => {
         svg.dataset.active = payload?.drawing ? 'true' : 'false';
