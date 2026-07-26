@@ -480,6 +480,39 @@ export async function loadOptionalFeatures(state, {
         })
     ].filter(Boolean));
 
+    // Wave B2: anchorable comments + drawer (after Wave B so the comments
+    // module is loaded and the optional Storage service is registered).
+    // The base 'comments' service (Phase 1) loads in Wave B; this layers on the
+    // Phase 4 anchorable service, an app-wide overlay manager, and the comments
+    // drawer. Slides/hosts opt into dock-badge + drawer mode by passing the
+    // anchorableComments instance as opts.commentsService to mountDeck.
+    if (FEATURES.COMMENTS_MODULE) {
+        await runFeature('[AnchorableComments] Failed to initialize:', async () => {
+            const anchorableComments = serviceManager.get('anchorableComments');
+            const storageService = serviceManager.get('Storage') || null;
+            if (anchorableComments?.init) {
+                await initService(anchorableComments, storageService ? { storage: storageService } : {});
+            }
+            const csma = ensureCsma();
+            csma.anchorableComments = anchorableComments;
+
+            if (documentRef?.body && anchorableComments) {
+                const { createOverlayManager } = await import('../modules/archetypes/overlay-manager/index.js');
+                const { createCommentsDrawer } = await import('../modules/comments/index.js');
+                const overlayManager = createOverlayManager(documentRef.body, null, { documentRef });
+                const commentsDrawer = createCommentsDrawer({
+                    eventBus,
+                    service: anchorableComments,
+                    overlayManager,
+                    documentRef
+                });
+                csma.overlayManager = overlayManager;
+                csma.commentsDrawer = commentsDrawer;
+            }
+            console.log('[AnchorableComments] Drawer + anchorable comments enabled');
+        });
+    }
+
     // Wave C: sync-queue (after network-status)
     if (syncQueueEnabled) {
         if (!networkStatusEnabled) {

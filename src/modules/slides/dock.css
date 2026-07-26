@@ -53,6 +53,12 @@
   transition: background var(--motion-duration-fast) var(--ease-out-quart);
 }
 
+/* Phase 4.3 — anchor context for the comments open-count badge
+   (.csma-comments-badge is absolutely positioned). */
+.noir-dock .dock-btn--badged {
+  position: relative;
+}
+
 .noir-dock .dock-btn:hover,
 .noir-dock .dock-btn:focus-visible {
   background: var(--accent);

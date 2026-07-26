@@ -105,6 +105,10 @@ export function mountDeck(container, service, eventBus, opts = {}) {
             }
             currentSlideEl = newEl;
             currentSlideCleanup = newCleanup;
+            // Phase 4.3 — tag the slide container with its comments scope so the
+            // AnchorableComments drawer/popup can resolve scope-level anchors and
+            // the dock badge can map counts to the current slide.
+            currentSlideEl.dataset.commentsScope = 'deck:slide-' + service.index;
             stage.appendChild(newEl);
             postMount(newEl, service.index);
         };
@@ -262,7 +266,7 @@ export function mountDeck(container, service, eventBus, opts = {}) {
             // overflow:hidden, which some browsers treat as the containing
             // block for fixed descendants, clipping overlays). Append to body.
             const chromeHost = doc.body || deck;
-            cleanups.push(initDock(chromeHost, eventBus, service));
+            cleanups.push(initDock(chromeHost, eventBus, service, { commentsService: opts.commentsService }));
             cleanups.push(initRail(chromeHost, eventBus, service));
             cleanups.push(initGrid(chromeHost, eventBus, service));
         }

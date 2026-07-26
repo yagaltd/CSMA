@@ -17,18 +17,25 @@
  */
 
 import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { wireCommentsBadge } from '../../comments/index.js';
 
-export function initDock(container, eventBus, service) {
+export function initDock(container, eventBus, service, opts = {}) {
     if (!container || !eventBus) return () => {};
     const doc = container.ownerDocument || (typeof document !== 'undefined' ? document : null);
     if (!doc) return () => {};
+
+    const commentsService = opts.commentsService || null;
+    const useCommentsDrawer = Boolean(commentsService);
+    const scopeOf = (idx) => 'deck:slide-' + (Number.isFinite(idx) ? idx : (service.index || 0));
 
     const publish = (name) => () => eventBus.publish(name, { timestamp: Date.now() });
 
     const toolDefs = [
         { label: 'Toggle sidebar', symbol: '☰', intent: 'INTENT_SLIDE_TOGGLE_RAIL' },
         { label: 'Toggle grid',    symbol: '▦', intent: 'INTENT_SLIDE_TOGGLE_GRID' },
-        { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' },
+        useCommentsDrawer
+            ? { label: 'Comments on current slide', symbol: '💬', intent: 'INTENT_COMMENTS_OPEN_DRAWER' }
+            : { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' },
         { label: 'Toggle drawing', symbol: '✎', intent: 'INTENT_SLIDE_TOGGLE_DRAWING' },
         { label: 'Fullscreen',     symbol: '⛶', intent: 'INTENT_SLIDE_TOGGLE_FS' },
         { label: 'Presenter',      symbol: '📺', intent: 'INTENT_SLIDE_OPEN_PRESENTER' },
@@ -77,14 +84,24 @@ export function initDock(container, eventBus, service) {
         const btn = e.target.closest('button[data-intent]');
         if (!btn) return;
         const intent = btn.dataset.intent;
-        if (intent) publish(intent)();
+        if (!intent) return;
+        // The comments-drawer intent needs the current slide scope, unlike the
+        // generic timestamp-only publishes.
+        if (intent === 'INTENT_COMMENTS_OPEN_DRAWER') {
+            eventBus.publish(intent, { scope: scopeOf(service.index), timestamp: Date.now() });
+            return;
+        }
+        publish(intent)();
     };
     dock.addEventListener('click', onClick);
 
     const subs = [];
+    let badgeWired = null;
     if (eventBus.subscribe) {
         subs.push(eventBus.subscribe('SLIDE_CHANGED', (payload) => {
             counter.textContent = formatCounter(payload?.slide, payload?.total);
+            // Refresh the comments badge for the newly-current slide scope.
+            badgeWired?.refresh();
         }));
         subs.push(eventBus.subscribe('UI_STATE_CHANGED', (payload) => {
             dock.dataset.uiHidden = payload?.uiHidden ? 'true' : 'false';
@@ -94,9 +111,27 @@ export function initDock(container, eventBus, service) {
         }));
     }
 
+    // Phase 4.3 — decorate the comments button with a live open-count badge
+    // when the drawer integration is active. wireCommentsBadge builds its own
+    // badge element (aiui-native) and subscribes to COMMENT_COUNT_CHANGED.
+    if (useCommentsDrawer) {
+        const commentsBtn = dock.querySelector('button[data-intent="INTENT_COMMENTS_OPEN_DRAWER"]');
+        if (commentsBtn) {
+            // position:relative anchors the absolutely-positioned badge.
+            commentsBtn.classList.add('dock-btn--badged');
+            badgeWired = wireCommentsBadge(commentsBtn, {
+                getScope: () => scopeOf(service.index),
+                eventBus,
+                service: commentsService,
+                documentRef: doc
+            });
+        }
+    }
+
     // 4. Return cleanup
     return () => {
         subs.forEach((fn) => fn && fn());
+        badgeWired?.destroy();
         dock.removeEventListener('click', onClick);
         unmountDock();
     };
