@@ -3,6 +3,13 @@
  *
  * Factory: createStatsDashboard(container, emit, options) → { update, destroy, refresh }
  *
+ * Phase 3.1 — aiui-native (Option a: factory-wrapping). All DOM construction
+ * routes through `getComposer().mountTree(spec, target)`; no raw
+ * `document.createElement` in archetype internals. Cards and charts re-mount
+ * via spec arrays on each render cycle; chart renderer DOM (returned by
+ * `options.renderChart`) is slotted via post-mount `appendChild` (mountTree
+ * allows DOM Node passthrough inside spec trees).
+ *
  * Features:
  * - Responsive auto-grid of stat cards
  * - Declarative metric definitions (label, fetch, format)
@@ -13,16 +20,31 @@
  * - CSMA design tokens for all visual values
  */
 
-import { clearChildren, createIcon, createSvgElement } from '../../../utils/dom.js';
+import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { clearChildren } from '../../../utils/dom.js';
 
-function createTrendIcon(direction) {
+// ─── SVG icon specs (composed through mountTree like all other DOM) ────
+
+function svgIconSpec(children) {
+    return spec('svg', {
+        attrs: {
+            viewBox: '0 0 12 12',
+            fill: 'none',
+            'aria-hidden': 'true',
+            focusable: 'false'
+        },
+        children
+    });
+}
+
+function trendIconSpec(direction) {
     if (direction === 'up') {
-        return createIcon('0 0 12 12', [createSvgElement('path', { d: 'M6 2L10 7H2L6 2Z', fill: 'currentColor' })]);
+        return svgIconSpec([spec('path', { attrs: { d: 'M6 2L10 7H2L6 2Z', fill: 'currentColor' } })]);
     }
     if (direction === 'down') {
-        return createIcon('0 0 12 12', [createSvgElement('path', { d: 'M6 10L2 5H10L6 10Z', fill: 'currentColor' })]);
+        return svgIconSpec([spec('path', { attrs: { d: 'M6 10L2 5H10L6 10Z', fill: 'currentColor' } })]);
     }
-    return createIcon('0 0 12 12', [createSvgElement('rect', { x: 2, y: 5, width: 8, height: 2, rx: 1, fill: 'currentColor' })]);
+    return svgIconSpec([spec('rect', { attrs: { x: '2', y: '5', width: '8', height: '2', rx: '1', fill: 'currentColor' } })]);
 }
 
 const FORMATTERS = {
@@ -44,6 +66,57 @@ const FORMATTERS = {
     currency: (v) => '$' + Number(v).toLocaleString(undefined, { minimumFractionDigits: 2 }),
 };
 
+// ─── Spec builders ────────────────────────────────────────────────────
+
+function cardSpec(cardDef, data, loading) {
+    const children = [spec('div', { className: 'csma-stats__card-label', text: cardDef.label })];
+
+    if (data == null && loading) {
+        children.push(spec('div', { className: 'csma-stats__skeleton' }));
+    } else {
+        const fmt = FORMATTERS[cardDef.format] || FORMATTERS.number;
+        children.push(spec('div', {
+            className: 'csma-stats__card-value',
+            text: fmt(data != null ? (data.value != null ? data.value : data) : 0)
+        }));
+
+        if (data && data.trend != null) {
+            const dir = data.trend > 0 ? 'up' : data.trend < 0 ? 'down' : 'neutral';
+            children.push(spec('div', {
+                className: 'csma-stats__card-trend',
+                dataset: { direction: dir },
+                children: [
+                    trendIconSpec(dir),
+                    ` ${Math.abs(data.trend)}%`
+                ]
+            }));
+        }
+    }
+
+    return spec('div', {
+        className: 'csma-stats__card',
+        dataset: { cardId: cardDef.id },
+        children
+    });
+}
+
+function chartSpec(chartDef) {
+    return spec('div', {
+        className: 'csma-stats__chart',
+        dataset: { chartId: chartDef.id },
+        children: [
+            spec('div', { className: 'csma-stats__chart-label', text: chartDef.label }),
+            // Summary <p> rendered when no renderChart callback; if renderChart
+            // is provided, its DOM is appended post-mount (mountTree Node
+            // passthrough), and the summary is removed.
+            spec('p', {
+                className: 'csma-stats__chart-summary',
+                text: chartDef.description || `Chart: ${chartDef.label}`
+            })
+        ]
+    });
+}
+
 export function createStatsDashboard(container, emit, options = {}) {
     const {
         cards = [],
@@ -54,148 +127,97 @@ export function createStatsDashboard(container, emit, options = {}) {
         errorMessage = 'Failed to load metrics',
     } = options;
 
+    const composer = getComposer();
+
     let isLoading = cards.some(c => c.fetch);
     let error = null;
     let cardData = {};
 
-    // ─── DOM ───────────────────────────────────────────
+    // ─── Initial mount (static shell with all state overlays) ──
 
-    const root = document.createElement('div');
-    root.className = 'csma-stats';
-    root.setAttribute('role', 'region');
-    root.setAttribute('aria-label', 'Stats dashboard');
+    const { root, cleanup } = composer.mountTree(spec('div', {
+        className: 'csma-stats',
+        attrs: { role: 'region', 'aria-label': 'Stats dashboard' },
+        children: [
+            spec('div', { className: 'csma-stats__grid' }),
+            spec('div', { className: 'csma-stats__charts' }),
+            spec('div', {
+                className: 'csma-stats__state',
+                dataset: { state: 'loading' },
+                attrs: { role: 'status' },
+                children: [
+                    spec('div', { className: 'csma-stats__spinner' }),
+                    spec('span', { className: 'csma-stats__state-message', text: loadingMessage })
+                ]
+            }),
+            spec('div', {
+                className: 'csma-stats__state',
+                dataset: { state: 'empty' },
+                attrs: { role: 'status' },
+                children: [
+                    spec('span', { className: 'csma-stats__state-message', text: emptyMessage })
+                ]
+            }),
+            spec('div', {
+                className: 'csma-stats__state',
+                dataset: { state: 'error' },
+                attrs: { role: 'status' },
+                children: [
+                    spec('span', { className: 'csma-stats__state-message', text: errorMessage }),
+                    spec('button', { className: 'csma-stats__state-retry', text: 'Retry' })
+                ]
+            })
+        ]
+    }), container);
+
     if (isLoading) root.dataset.state = 'loading';
 
-    // Card grid
-    const grid = document.createElement('div');
-    grid.className = 'csma-stats__grid';
+    // Cached post-mount references
+    const grid = root.querySelector('.csma-stats__grid');
+    const chartsEl = root.querySelector('.csma-stats__charts');
 
-    // Charts section
-    const chartsEl = document.createElement('div');
-    chartsEl.className = 'csma-stats__charts';
-
-    // State overlays
-    const stateEls = {};
-    ['loading', 'empty', 'error'].forEach((state) => {
-        const el = document.createElement('div');
-        el.className = 'csma-stats__state';
-        el.dataset.state = state;
-        el.setAttribute('role', 'status');
-
-        if (state === 'loading') {
-            const spinner = document.createElement('div');
-            spinner.className = 'csma-stats__spinner';
-            el.appendChild(spinner);
-        }
-
-        const msg = document.createElement('span');
-        msg.className = 'csma-stats__state-message';
-        msg.textContent = state === 'loading' ? loadingMessage :
-                          state === 'empty' ? emptyMessage : errorMessage;
-        el.appendChild(msg);
-
-        if (state === 'error') {
-            const retry = document.createElement('button');
-            retry.className = 'csma-stats__state-retry';
-            retry.textContent = 'Retry';
-            retry.addEventListener('click', () => loadAll());
-            el.appendChild(retry);
-        }
-
-        stateEls[state] = el;
-    });
-
-    root.appendChild(grid);
-    root.appendChild(chartsEl);
-    Object.values(stateEls).forEach(el => root.appendChild(el));
+    // Wire retry button (event wiring on mounted DOM — allowed by the pattern)
+    root.querySelector('.csma-stats__state-retry').addEventListener('click', () => loadAll());
 
     // ─── Render ────────────────────────────────────────
 
-    function buildCard(cardDef, data) {
-        const card = document.createElement('div');
-        card.className = 'csma-stats__card';
-        card.dataset.cardId = cardDef.id;
-
-        const label = document.createElement('div');
-        label.className = 'csma-stats__card-label';
-        label.textContent = cardDef.label;
-        card.appendChild(label);
-
-        if (data == null && isLoading) {
-            const skelVal = document.createElement('div');
-            skelVal.className = 'csma-stats__skeleton';
-            skelVal.style.width = '60%';
-            card.appendChild(skelVal);
-        } else {
-            const value = document.createElement('div');
-            value.className = 'csma-stats__card-value';
-            const fmt = FORMATTERS[cardDef.format] || FORMATTERS.number;
-            value.textContent = fmt(data != null ? (data.value != null ? data.value : data) : 0);
-            card.appendChild(value);
-
-            if (data && data.trend != null) {
-                const trend = document.createElement('div');
-                trend.className = 'csma-stats__card-trend';
-                const dir = data.trend > 0 ? 'up' : data.trend < 0 ? 'down' : 'neutral';
-                trend.dataset.direction = dir;
-                trend.appendChild(createTrendIcon(dir));
-                trend.appendChild(document.createTextNode(` ${Math.abs(data.trend)}%`));
-                card.appendChild(trend);
-            }
-        }
-
-        return card;
-    }
-
-    function buildChart(chartDef) {
-        const chart = document.createElement('div');
-        chart.className = 'csma-stats__chart';
-        chart.dataset.chartId = chartDef.id;
-
-        const label = document.createElement('div');
-        label.className = 'csma-stats__chart-label';
-        label.textContent = chartDef.label;
-        chart.appendChild(label);
-
-        // Extension point: if a renderChart callback is provided, use it.
-        // If absent, render an accessible summary instead of a blank canvas.
-        if (typeof options.renderChart === 'function') {
-            const rendered = options.renderChart(chartDef, { emit, container: chart });
-            if (rendered instanceof Node) {
-                chart.appendChild(rendered);
-            }
-        } else {
-            const summary = document.createElement('p');
-            summary.className = 'csma-stats__chart-summary';
-            summary.textContent = chartDef.description || `Chart: ${chartDef.label}`;
-            chart.appendChild(summary);
-        }
-
-        return chart;
-    }
-
-    let chartsBuilt = false;
-
     function renderCards() {
         clearChildren(grid);
-        cards.forEach((cardDef) => {
-            const data = cardData[cardDef.id];
-            grid.appendChild(buildCard(cardDef, data));
+        if (cards.length === 0) return;
+        const cardSpecs = cards.map((cardDef) => cardSpec(cardDef, cardData[cardDef.id], isLoading));
+        const { root: frag } = composer.mountTree(cardSpecs);
+        // Post-mount: skeleton inline width (mountTree forbids style attr;
+        // .style.width post-mount is the documented exception).
+        frag.querySelectorAll('.csma-stats__skeleton').forEach((s) => {
+            s.style.width = '60%';
         });
+        grid.appendChild(frag);
     }
 
     function renderChartsDOM() {
-        if (chartsBuilt) return;
         clearChildren(chartsEl);
-        charts.forEach((chartDef) => {
-            chartsEl.appendChild(buildChart(chartDef));
-        });
         if (charts.length === 0) {
             chartsEl.setAttribute('hidden', '');
-        } else {
-            chartsEl.removeAttribute('hidden');
+            return;
         }
-        chartsBuilt = true;
+        chartsEl.removeAttribute('hidden');
+        const chartSpecs = charts.map((cd) => chartSpec(cd));
+        const { root: frag } = composer.mountTree(chartSpecs);
+        // Post-mount: if renderChart callback is provided, replace the summary
+        // <p> with the renderer's DOM Node. Otherwise the summary stays.
+        const chartEls = [...frag.children];
+        charts.forEach((chartDef, i) => {
+            if (typeof options.renderChart === 'function') {
+                const chartEl = chartEls[i];
+                const summary = chartEl.querySelector('.csma-stats__chart-summary');
+                const rendered = options.renderChart(chartDef, { emit, container: chartEl });
+                if (summary) summary.remove();
+                if (rendered instanceof Node) {
+                    chartEl.appendChild(rendered);
+                }
+            }
+        });
+        chartsEl.appendChild(frag);
     }
 
     function renderAll() {
@@ -251,7 +273,6 @@ export function createStatsDashboard(container, emit, options = {}) {
 
     // ─── Initial Render ────────────────────────────────
 
-    container.appendChild(root);
     renderAll();
 
     if (cards.some(c => c.fetch)) {
@@ -281,6 +302,7 @@ export function createStatsDashboard(container, emit, options = {}) {
 
         /** Destroy the dashboard. */
         destroy() {
+            cleanup();
             root.remove();
         },
     };
