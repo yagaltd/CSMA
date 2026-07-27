@@ -63,36 +63,42 @@ export function initAnnotator(container, eventBus, service) {
 
     let selectedStrokeId = null;
 
+    // Safe CSS ID selector (avoids crash if CSS.escape is unavailable)
+    const cssId = (id) => {
+        try { return '#' + CSS.escape(id); } catch { return '#' + id.replace(/[^a-zA-Z0-9_-]/g, '\\$&'); }
+    };
+
     function selectStroke(strokeId) {
         if (selectedStrokeId === strokeId) return;
         if (selectedStrokeId) {
-            const prev = svg.querySelector('#' + CSS.escape(selectedStrokeId));
+            const prev = svg.querySelector(cssId(selectedStrokeId));
             if (prev) prev.dataset.selected = 'false';
         }
         selectedStrokeId = strokeId;
-        const path = svg.querySelector('#' + CSS.escape(strokeId));
+        const path = svg.querySelector(cssId(strokeId));
         if (path) path.dataset.selected = 'true';
     }
 
     function deselectAll() {
         if (!selectedStrokeId) return;
-        const path = svg.querySelector('#' + CSS.escape(selectedStrokeId));
+        const path = svg.querySelector(cssId(selectedStrokeId));
         if (path) path.dataset.selected = 'false';
         selectedStrokeId = null;
     }
 
     // Deselect when clicking anywhere outside a stroke path
-    doc.addEventListener('click', (e) => {
+    const onDocClick = (e) => {
         if (!selectedStrokeId) return;
         if (svg.dataset.active === 'true') return;
         const clickedPath = e.target.closest('.slide-annotation');
         if (!clickedPath || !svg.contains(clickedPath)) {
             deselectAll();
         }
-    });
+    };
+    doc.addEventListener('click', onDocClick);
 
     // Delete key removes the selected stroke
-    doc.addEventListener('keydown', (e) => {
+    const onDocKeyDown = (e) => {
         if (!selectedStrokeId) return;
         if (e.key === 'Delete' || e.key === 'Backspace') {
             const tag = doc.activeElement?.tagName;
@@ -108,7 +114,8 @@ export function initAnnotator(container, eventBus, service) {
         if (e.key === 'Escape') {
             deselectAll();
         }
-    });
+    };
+    doc.addEventListener('keydown', onDocKeyDown);
 
     subs.push(eventBus.subscribe('ANNOTATION_UPDATED', (payload) => {
         const idx = service?.index;
@@ -187,6 +194,8 @@ export function initAnnotator(container, eventBus, service) {
         svg.removeEventListener('pointermove', onPointerMove);
         svg.removeEventListener('pointerup', onPointerUp);
         svg.removeEventListener('pointercancel', onPointerUp);
+        doc.removeEventListener('click', onDocClick);
+        doc.removeEventListener('keydown', onDocKeyDown);
         if (svg.parentNode) svg.parentNode.removeChild(svg);
     };
 }
