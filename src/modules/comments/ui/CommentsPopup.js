@@ -78,8 +78,13 @@ export function createCommentsPopup({
         const comment = service.focus(id);
         if (!comment) return;
         const envelope = { anchor_type: comment.anchor_type, anchor: comment.anchor };
-        const el = resolver.resolve(envelope, { documentRef: doc });
-        if (!el || typeof el.getBoundingClientRect !== 'function') return;
+        let el = resolver.resolve(envelope, { documentRef: doc });
+        // Fallback: if the anchored element was removed from the DOM (slide re-render),
+        // anchor the popover to the slide stage instead of failing silently.
+        if (!el || typeof el.getBoundingClientRect !== 'function') {
+            el = doc.querySelector('.slide-stage') || doc.querySelector('[data-comments-scope]') || doc.body;
+        }
+        if (!el) return;
         openAt(el, envelope, comment.scope ?? null);
     }
 

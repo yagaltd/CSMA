@@ -38,10 +38,14 @@ export function initAnnotator(container, eventBus, service) {
     const subs = [];
 
     // Render persisted strokes when ANNOTATION_UPDATED fires.
+    // Hidden strokes stay in the DOM (with display:none) so element anchors
+    // remain findable for comment popovers and pin highlights.
     const renderAll = (strokes) => {
         while (svg.firstChild) svg.removeChild(svg.firstChild);
         for (const stroke of (strokes || [])) {
-            svg.appendChild(buildPath(stroke));
+            const path = buildPath(stroke);
+            if (stroke.hidden) path.style.display = 'none';
+            svg.appendChild(path);
         }
     };
 

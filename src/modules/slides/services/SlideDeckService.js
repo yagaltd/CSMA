@@ -25,7 +25,6 @@ export class SlideDeckService {
         this.clicks = 0;
         this.maxClicks = new Map();      // slide index → max build steps
         this.annotations = new Map();    // slide index → Stroke[]
-        this.hiddenStrokes = new Set();  // stroke IDs that are resolved/hidden
         this._undoneStrokes = [];        // redo stack for drawing strokes
         this.notes = new Map();          // slide index → string
         this.listeners = [];             // EventBus unsubscribe fns
@@ -301,7 +300,7 @@ export class SlideDeckService {
             width: Number.isFinite(width) ? width : 3
         });
         this.annotations.set(idx, list);
-        this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: this.getStrokes(idx) });
+        this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: [...list] });
         this._lastStrokeId = id;
         this._undoneStrokes = [];  // new stroke invalidates redo history
         return id;
@@ -314,7 +313,7 @@ export class SlideDeckService {
             if (pos !== -1) {
                 list.splice(pos, 1);
                 this.annotations.set(idx, list);
-                this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: this.getStrokes(idx) });
+                this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: [...list] });
                 return true;
             }
         }
@@ -324,31 +323,41 @@ export class SlideDeckService {
     getStrokes(slide) {
         const idx = Number.isFinite(slide) ? slide : this.index;
         const all = this.annotations.get(idx) || [];
-        return all.filter((s) => !this.hiddenStrokes.has(s.id));
+        return all.filter((s) => !s.hidden);
     }
 
     hideStroke(strokeId) {
-        this.hiddenStrokes.add(String(strokeId));
-        const slideIdx = this._findStrokeSlide(strokeId);
-        if (slideIdx >= 0) {
-            this.eventBus.publish('ANNOTATION_UPDATED', { slide: slideIdx, strokes: this.getStrokes(slideIdx) });
+        for (const [, list] of this.annotations) {
+            const stroke = list.find((s) => s.id === strokeId);
+            if (stroke) {
+                stroke.hidden = true;
+                this._publishAnnotationsForSlide(stroke);
+                return true;
+            }
         }
+        return false;
     }
 
     showStroke(strokeId) {
-        this.hiddenStrokes.delete(String(strokeId));
-        const slideIdx = this._findStrokeSlide(strokeId);
-        if (slideIdx >= 0) {
-            this.eventBus.publish('ANNOTATION_UPDATED', { slide: slideIdx, strokes: this.getStrokes(slideIdx) });
+        for (const [, list] of this.annotations) {
+            const stroke = list.find((s) => s.id === strokeId);
+            if (stroke) {
+                stroke.hidden = false;
+                this._publishAnnotationsForSlide(stroke);
+                return true;
+            }
         }
+        return false;
     }
 
-    /** Find which slide contains the given stroke ID. Returns -1 if not found. */
-    _findStrokeSlide(strokeId) {
+    /** Find which slide a stroke belongs to and publish its updated stroke list. */
+    _publishAnnotationsForSlide(stroke) {
         for (const [idx, list] of this.annotations) {
-            if (list.some((s) => s.id === strokeId)) return idx;
+            if (list.some((s) => s.id === stroke.id)) {
+                this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: [...list] });
+                return;
+            }
         }
-        return -1;
     }
 
     clearAnnotations(slide) {
@@ -364,7 +373,7 @@ export class SlideDeckService {
         const popped = list.pop();
         this._undoneStrokes.push({ slide: idx, stroke: popped });
         this.annotations.set(idx, list);
-        this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: this.getStrokes(idx) });
+        this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: [...list] });
     }
 
     redoStroke() {
@@ -373,14 +382,14 @@ export class SlideDeckService {
         const list = this.annotations.get(entry.slide) || [];
         list.push(entry.stroke);
         this.annotations.set(entry.slide, list);
-        this.eventBus.publish('ANNOTATION_UPDATED', { slide: entry.slide, strokes: this.getStrokes(entry.slide) });
+        this.eventBus.publish('ANNOTATION_UPDATED', { slide: entry.slide, strokes: [...list] });
     }
 
     getAnnotations(slide) {
         // Return only visible strokes (not hidden by resolved comments)
         const idx = Number.isFinite(slide) ? slide : this.index;
         const all = this.annotations.get(idx) || [];
-        return all.filter((s) => !this.hiddenStrokes.has(s.id));
+        return all.filter((s) => !s.hidden);
     }
 
     // ─── Notes ───────────────────────────────────────────────────────
