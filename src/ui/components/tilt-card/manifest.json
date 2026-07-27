@@ -1,0 +1,25 @@
+{
+    "id": "tilt-card",
+    "name": "Tilt Card",
+    "version": "1.0.0",
+    "description": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
+    "type": "I",
+    "category": "motion",
+    "exports": {
+        "js": "./tilt-card.js",
+        "css": "./tilt-card.css"
+    },
+    "aiUi": {
+        "propsSchema": {
+            "maxDegrees": { "type": "number", "default": 6 }
+        },
+        "render": {
+            "tag": "div",
+            "className": "tilt-card"
+        },
+        "behavior": {
+            "role": "interactive",
+            "events": ["pointerenter", "pointermove", "pointerleave"]
+        }
+    }
+}

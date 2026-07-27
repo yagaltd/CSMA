@@ -11,6 +11,7 @@ import { initPresenter } from '../../src/modules/slides/chrome/presenter.js';
 // verbatim; the converted chrome modules now build the same DOM via spec +
 // mountTree. We assert byte-identical serialization.
 import { el } from './fixtures/legacy-dom-helpers.js';
+import { buildSlide } from '../../src/modules/slides/layouts/index.js';
 
 const TIMER_KEY = 'csma-slides-timer-start';
 
@@ -145,12 +146,20 @@ function goldenGrid(service) {
   const slides = Array.isArray(service.slides) ? service.slides : [];
   slides.forEach((slide, i) => {
     const card = el('button', {
-      className: 'grid-card',
+      className: 'slide-thumb-card',
       dataset: { index: String(i), active: i === service.index ? 'true' : 'false' }
     });
-    const label = slide?.type ? slide.type : ('slide ' + (i + 1));
-    card.appendChild(el('span', { className: 'grid-thumb', text: String(label) }));
-    card.appendChild(el('span', { className: 'grid-num', text: String(i + 1) }));
+    // Shared primitive structure: frame + num badge. Real slide rendered
+    // via buildSlide inside a csma-thumb-scale wrapper (mirrors renderThumb).
+    const thumbFrame = el('span', { className: 'slide-thumb-frame' });
+    const scaleWrapper = el('div', { className: 'csma-thumb-scale' });
+    scaleWrapper.style.width = '1280px';
+    scaleWrapper.style.height = '720px';
+    const { element: slideEl } = buildSlide(slide || {});
+    if (slideEl) scaleWrapper.appendChild(slideEl);
+    thumbFrame.appendChild(scaleWrapper);
+    card.appendChild(thumbFrame);
+    card.appendChild(el('span', { className: 'slide-thumb-num', text: String(i + 1) }));
     inner.appendChild(card);
   });
   return grid;
@@ -164,12 +173,20 @@ function goldenRail(service) {
   const slides = Array.isArray(service.slides) ? service.slides : [];
   slides.forEach((slide, i) => {
     const li = el('li', {
-      className: 'rail-item',
+      className: 'slide-thumb-card',
       dataset: { index: String(i), active: i === service.index ? 'true' : 'false' }
     });
-    const label = slide?.type ? slide.type : ('slide ' + (i + 1));
-    li.appendChild(el('span', { className: 'rail-thumb', text: String(label) }));
-    li.appendChild(el('span', { className: 'rail-num', text: String(i + 1) }));
+    // Shared primitive structure: frame + num badge. Real slide rendered
+    // via buildSlide inside a csma-thumb-scale wrapper (mirrors renderThumb).
+    const thumbFrame = el('span', { className: 'slide-thumb-frame' });
+    const scaleWrapper = el('div', { className: 'csma-thumb-scale' });
+    scaleWrapper.style.width = '1280px';
+    scaleWrapper.style.height = '720px';
+    const { element: slideEl } = buildSlide(slide || {});
+    if (slideEl) scaleWrapper.appendChild(slideEl);
+    thumbFrame.appendChild(scaleWrapper);
+    li.appendChild(thumbFrame);
+    li.appendChild(el('span', { className: 'slide-thumb-num', text: String(i + 1) }));
     list.appendChild(li);
   });
   return rail;

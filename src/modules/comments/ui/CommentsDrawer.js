@@ -56,7 +56,13 @@ export function createCommentsDrawer({
     //                                    publishes INTENT_COMMENTS_START_PICK
     scopeLabel = null,
     onScopeNavigate = null,
-    enableElementPicker = false
+    enableElementPicker = false,
+    // scopeRail — optional host-provided thumbnail rail (slide picker).
+    // { render: (railContainer: HTMLElement) => (() => void) }
+    //   The host renders its scope cards (each carrying data-scope + data-active)
+    //   into the container and returns a cleanup. The drawer toggles data-active
+    //   on scope change and publishes INTENT_COMMENTS_OPEN_DRAWER on card click.
+    scopeRail = null
 }) {
     const doc = documentRef || (typeof document !== 'undefined' ? document : null);
     if (!eventBus || !service || !overlayManager || !doc) {
@@ -74,6 +80,9 @@ export function createCommentsDrawer({
     const editing = new Set();    // comment ids in inline-edit mode
     const replying = new Set();   // comment ids with an open reply form
     const subs = [];
+    // ── scopeRail state ────────────────────────────────────────────
+    let railContainer = null;
+    let railRenderCleanup = null;  // cleanup returned by scopeRail.render()
 
     const sub = (name, fn) => {
         const u = eventBus.subscribe?.(name, fn);
@@ -95,7 +104,11 @@ export function createCommentsDrawer({
 
     function open(scope) {
         currentScope = scope ?? null;
-        if (overlayHandle) { reRender(); return; }
+        if (overlayHandle) {
+            reRender();
+            updateActiveRail();
+            return;
+        }
         rootEl = buildRoot();
         overlayHandle = overlayManager.openDrawer(rootEl, {
             title: 'Comments',
@@ -104,9 +117,11 @@ export function createCommentsDrawer({
                 rootEl = null;
                 listEl = null;
                 addInput = null;
+                railContainer = null;
                 editing.clear();
                 replying.clear();
                 if (focusTimer) { clearTimeout(focusTimer); focusTimer = null; }
+                if (railRenderCleanup) { try { railRenderCleanup(); } catch { /* best-effort */ } railRenderCleanup = null; }
             }
         });
         listEl = rootEl.querySelector('.csma-comments-list');
@@ -114,6 +129,7 @@ export function createCommentsDrawer({
         wireEvents();
         updateFilterAria();
         reRender();
+        renderRail();
     }
 
     function close() {
@@ -139,18 +155,22 @@ export function createCommentsDrawer({
         subs.forEach((u) => { try { u(); } catch { /* best-effort */ } });
         subs.length = 0;
         if (focusTimer) { clearTimeout(focusTimer); focusTimer = null; }
+        if (railRenderCleanup) { try { railRenderCleanup(); } catch { /* best-effort */ } railRenderCleanup = null; }
         close();
     }
 
     // ── DOM shell (mounted once per open) ──────────────────────────────
 
     function buildRoot() {
-        const tree = spec('div', {
-            className: 'csma-comments-drawer',
-            attrs: { role: 'region', 'aria-label': 'Comments for this scope' },
-            children: [
-                spec('div', {
-                    className: 'csma-comments-toolbar',
+        const children = [];
+        // scopeRail container is built once per open and reused across
+        // re-renders. The host's render() is called into it on each open.
+        if (scopeRail) {
+            children.push(spec('div', { className: 'csma-comments-scoperail' }));
+        }
+        children.push(
+            spec('div', {
+                className: 'csma-comments-toolbar',
                     children: [
                         spec('div', {
                             className: 'csma-comments-filters',
@@ -203,7 +223,11 @@ export function createCommentsDrawer({
                         })
                     ]
                 })
-            ]
+        );
+        const tree = spec('div', {
+            className: 'csma-comments-drawer',
+            attrs: { role: 'region', 'aria-label': 'Comments for this scope' },
+            children
         });
         const { root } = getComposer().mountTree(tree, null, { documentRef: doc });
         return root;
@@ -211,6 +235,16 @@ export function createCommentsDrawer({
 
     function wireEvents() {
         if (!rootEl) return;
+        // scopeRail click — publish open-drawer intent to switch scope.
+        // Cards carry data-scope on their root (set by the host's render).
+        railContainer = rootEl.querySelector('.csma-comments-scoperail');
+        if (railContainer) {
+            railContainer.addEventListener('click', (e) => {
+                const card = e.target.closest('[data-scope]');
+                if (!card) return;
+                publish('INTENT_COMMENTS_OPEN_DRAWER', { scope: card.dataset.scope, timestamp: Date.now() });
+            });
+        }
         rootEl.querySelector('.csma-comments-filters')?.addEventListener('click', (e) => {
             const btn = e.target.closest('button[data-filter]');
             if (!btn) return;
@@ -325,6 +359,31 @@ export function createCommentsDrawer({
             text: label,
             dataset: { action: 'goto-scope', scope: String(scope) },
             attrs: { type: 'button', title: 'Go to ' + label }
+        });
+    }
+
+    // ── scopeRail rendering ────────────────────────────────────────────
+
+    function renderRail() {
+        if (!scopeRail || !rootEl) return;
+        // Tear down the previous host render (cards + thumb cleanups).
+        if (railRenderCleanup) { try { railRenderCleanup(); } catch { /* best-effort */ } railRenderCleanup = null; }
+        railContainer = rootEl.querySelector('.csma-comments-scoperail');
+        if (!railContainer) return;
+        railContainer.replaceChildren();
+        // Delegate card creation to the host. The host appends elements
+        // (each carrying data-scope) into railContainer and returns a
+        // cleanup that tears down any renderThumb observers.
+        railRenderCleanup = scopeRail.render(railContainer) || null;
+        updateActiveRail();
+    }
+
+    /** Toggle data-active on scope-rail cards to match currentScope. */
+    function updateActiveRail() {
+        if (!railContainer) return;
+        const cards = railContainer.querySelectorAll('[data-scope]');
+        cards.forEach((card) => {
+            card.dataset.active = card.dataset.scope === currentScope ? 'true' : 'false';
         });
     }
 

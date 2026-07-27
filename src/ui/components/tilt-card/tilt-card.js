@@ -9,6 +9,9 @@
  * and applies the perspective transform.
  *
  * Returns a cleanup function that removes the listeners.
+ *
+ * @module tilt-card
+ * @category ui/component
  */
 
 /**

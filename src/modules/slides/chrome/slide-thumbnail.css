@@ -1,0 +1,89 @@
+/* ─────────────────────────────────────────────────────────────────────
+   slide-thumbnail.css — shared card visuals for the slide-thumbnail
+   primitive (SlideThumbnail.js). One root, three CSS layouts.
+
+   Used by: grid (▦), rail (☰), comments-drawer scope rail.
+   Token-driven with var(--token, fallback).
+   ───────────────────────────────────────────────────────────────────── */
+
+/* ── Card root ──────────────────────────────────────────────────────── */
+.slide-thumb-card {
+    appearance: none;
+    border: 1px solid var(--border, rgba(0, 0, 0, 0.14));
+    border-radius: var(--radius-md, 0.5rem);
+    background: var(--surface, #fff);
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs, 0.25rem);
+    padding: var(--space-sm, 0.5rem);
+    font: inherit;
+    text-align: start;
+    color: var(--foreground, #111);
+    transition:
+        border-color var(--motion-duration-fast, 120ms) var(--ease-out-quart),
+        box-shadow var(--motion-duration-fast, 120ms) var(--ease-out-quart),
+        background-color var(--motion-duration-fast, 120ms) var(--ease-out-quart);
+}
+
+.slide-thumb-card:hover {
+    border-color: var(--primary, #2563eb);
+}
+
+.slide-thumb-card[data-active="true"] {
+    border-color: var(--primary, #2563eb);
+    background: var(--primary-soft, rgba(37, 99, 235, 0.08));
+    box-shadow: 0 0 0 2px var(--primary-soft, rgba(37, 99, 235, 0.18));
+}
+
+/* ── Thumbnail frame (clipping window for the scaled slide) ─────────── */
+.slide-thumb-frame {
+    display: block;
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--surface-muted, rgba(0, 0, 0, 0.04));
+    border: 1px solid var(--border, rgba(0, 0, 0, 0.1));
+    border-radius: var(--radius-sm, 0.375rem);
+    flex-shrink: 0;
+}
+
+/* Scale wrapper inside the clipping frame — the slide renders at full design
+   size (1280×720) then scales down to fit the frame width. width / height /
+   transform are set inline (pixel math) by renderThumb. */
+.csma-thumb-scale {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform-origin: top left;
+    pointer-events: none;
+}
+
+/* ── Number badge ───────────────────────────────────────────────────── */
+.slide-thumb-num {
+    font-size: var(--font-size-xs, 0.75rem);
+    font-variant-numeric: tabular-nums;
+    color: var(--foreground-muted, #777);
+    line-height: 1;
+}
+
+/* ── Optional label caption ─────────────────────────────────────────── */
+.slide-thumb-label {
+    display: block;
+    font-size: var(--font-size-2xs, 0.6875rem);
+    color: var(--foreground-muted, #777);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .slide-thumb-card {
+        transition: none;
+    }
+}

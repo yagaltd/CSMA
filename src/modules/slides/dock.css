@@ -177,8 +177,11 @@
   transform: translateX(-100%);
   transition: transform var(--motion-duration-normal) var(--ease-out-quart);
   overflow-y: auto;
+  scrollbar-width: none;
   padding: var(--space-md);
 }
+
+.slide-rail::-webkit-scrollbar { display: none; }
 
 .slide-rail[data-open="true"] {
   transform: translateX(0);
@@ -259,44 +262,8 @@
   max-width: var(--layout-container-wide);
 }
 
-.slide-grid .grid-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  padding: var(--space-md);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  text-align: start;
-  min-height: calc(var(--layout-grid-min-md) * 0.75);
-  transition: border-color var(--motion-duration-fast);
-}
-
-.slide-grid .grid-card:hover {
-  border-color: var(--primary);
-}
-
-.slide-grid .grid-card[data-active="true"] {
-  border-color: var(--primary);
-  background: var(--primary-soft);
-}
-
-.slide-grid .grid-thumb {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--font-size-sm);
-  color: var(--foreground-muted);
-  background: var(--surface-muted);
-  border-radius: var(--radius-md);
-}
-
-.slide-grid .grid-num {
-  font-size: var(--font-size-xs);
-  color: var(--foreground-muted);
-}
+/* Cards inside the grid are .slide-thumb-card (styled by the shared
+   slide-thumbnail.css). The grid-inner provides grid layout only. */
 
 /* ── Presenter overlay ──────────────────────────────────────────── */
 .presenter-overlay {

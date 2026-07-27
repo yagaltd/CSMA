@@ -42,6 +42,23 @@ Never edit generated artifacts directly. For app-specific token work, do not
 edit `src/style/design-tokens.json` directly; patch via
 `src/style/token-overrides.json`.
 
+## Component Placement
+
+CSMA has three UI folders. Pick the right one:
+
+| Folder | Purpose | Litmus test |
+|--------|---------|-------------|
+| `src/ui/components/` | Cross-app primitives (button, card, badge, count-up, tilt-card). Each folder has `manifest.json` for aiui catalog. | "Would another module reuse this?" → yes = here |
+| `src/modules/<module>/ui/` | Domain UI scoped to one module. Use when the component is unique to that module, or when a module needs to **modify** an existing primitive. | "Would another module reuse this?" → no = here |
+| `src/modules/<module>/aiui/` | Embeddable module surfaces. Used ONLY when a module wants to be mounted INSIDE other surfaces (e.g. comments-thread inside a slide). Requires `manifest.json` + `mountSurface()` on the service. | "Should this module be embeddable inside slides/dashboards/mindmaps?" → yes = here |
+
+**Vendoring rule**: If a module needs to change a shared component's behavior, copy it into `src/modules/<module>/ui/`, modify it, and document the delta in the module's README. Never modify `src/ui/components/` for one module's needs.
+
+**Component placement errors to avoid**:
+- Putting a generic component (count-up, tilt-card) inside `modules/<module>/ui/` → belongs in `src/ui/components/`
+- Putting a module surface manifest in `ui/` instead of `aiui/` → `aiui/` is for `mountSurface`, `ui/` is for scoped Type I/II components
+- Adding `aiui/` to a module that is an app shell (slides, dashboards) → app shells consume surfaces, they don't offer them
+
 ## Architecture Rules
 
 - JavaScript manages state via events; CSS handles rendering.
@@ -59,7 +76,8 @@ edit `src/style/design-tokens.json` directly; patch via
 | Website, app, page, route, flow, or motion planning | `docs/product-planning/SKILL.md` |
 | Runtime animation implementation | `docs/animation/SKILL.md` |
 | Existing video asset integration | `docs/video/SKILL.md` |
-| EventBus, Contracts, component types | `docs/architecture/SKILL.md` |
+| Component placement, `ui/` vs `aiui/`, `mountSurface`, vendoring, layer cake | `docs/architecture/SKILL.md` (Component Placement section) |
+| EventBus, Contracts, runtime patterns | `docs/architecture/SKILL.md` |
 | Security, CSP, sanitization | `docs/security/SKILL.md` |
 | Testing strategy | `docs/testing/SKILL.md` |
 | Layout recipes, spatial patterns | `docs/patterns/SKILL.md` |

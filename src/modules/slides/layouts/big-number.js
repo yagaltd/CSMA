@@ -1,5 +1,5 @@
 import { spec, specShell, specKicker, specFoot } from './_shared.js';
-import { mountCountUp } from '../ui/count-up.js';
+import { mountCountUp } from '../../../ui/components/count-up/count-up.js';
 
 /**
  * big-number — one enormous accent figure + caption. Always cited in `foot`.

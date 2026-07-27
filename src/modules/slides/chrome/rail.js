@@ -4,17 +4,18 @@
  * Subscribes to: SLIDE_CHANGED, UI_STATE_CHANGED, DECK_READY
  * Publishes: INTENT_SLIDE_GO
  *
- * Renders a vertical list of thumbnail labels (canvas thumbnails are a Phase 5+
- * optimization; v1 uses labeled placeholders that share styling with the grid
- * chrome). Visible only when railOpen=true.
+ * Renders a vertical list of slide thumbnails using the shared
+ * `createSlideThumbnail` primitive (same card root as the grid).
+ * Visible only when railOpen=true.
  *
- * Phase 3.2 — aiui-native (factory-wrapping). The rail shell + items are
- * spec-mounted via `getComposer().mountTree()`; dynamic re-renders (DECK_READY)
- * mount a fresh item spec subtree into the shell's `.rail-list`. No raw
- * `document.createElement` in chrome internals.
+ * Phase 3.2 — aiui-native (factory-wrapping). The rail shell is spec-mounted
+ * via `getComposer().mountTree()`; cards are built through the shared
+ * `createSlideThumbnail` primitive. No raw `document.createElement` in
+ * chrome internals.
  */
 
 import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { createSlideThumbnail } from './SlideThumbnail.js';
 
 export function initRail(container, eventBus, service) {
     if (!container || !eventBus) return () => {};
@@ -35,22 +36,30 @@ export function initRail(container, eventBus, service) {
     const { root: rail, cleanup: unmountRail } = composer.mountTree(railSpec, container, { documentRef: doc });
     const list = rail.querySelector('.rail-list');
 
-    // Build an item spec subtree for the current slide list, mounted into list.
+    // Per-render cleanup bag — createSlideThumbnail returns cleanups.
+    let thumbCleanups = [];
+
+    // Build <li> card elements via the shared primitive, append into list.
     const renderItems = () => {
+        // Tear down previous thumbnails before wiping the list.
+        thumbCleanups.forEach((fn) => { try { fn(); } catch { /* swallow */ } });
+        thumbCleanups = [];
+
         list.replaceChildren();
         const slides = Array.isArray(service.slides) ? service.slides : [];
-        const itemSpecs = slides.map((slide, i) => {
-            const label = slide?.type ? slide.type : ('slide ' + (i + 1));
-            return spec('li', {
-                className: 'rail-item',
-                dataset: { index: String(i), active: i === service.index ? 'true' : 'false' },
-                children: [
-                    spec('span', { className: 'rail-thumb', text: String(label) }),
-                    spec('span', { className: 'rail-num', text: String(i + 1) })
-                ]
+
+        for (let i = 0; i < slides.length; i++) {
+            const { root, cleanup } = createSlideThumbnail(slides[i], {
+                index: i,
+                active: i === service.index,
+                tag: 'li',
+                documentRef: doc
             });
-        });
-        composer.mountTree(itemSpecs, list, { documentRef: doc });
+            if (root) {
+                list.appendChild(root);
+                thumbCleanups.push(cleanup);
+            }
+        }
     };
 
     renderItems();
@@ -80,6 +89,8 @@ export function initRail(container, eventBus, service) {
     }
 
     return () => {
+        thumbCleanups.forEach((fn) => { try { fn(); } catch { /* swallow */ } });
+        thumbCleanups = [];
         subs.forEach((fn) => fn && fn());
         list.removeEventListener('click', onClick);
         unmountRail();

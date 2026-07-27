@@ -1,5 +1,5 @@
 import { spec, specShell, specKicker, specHeading, specContainer } from './_shared.js';
-import { mountCountUp } from '../ui/count-up.js';
+import { mountCountUp } from '../../../ui/components/count-up/count-up.js';
 
 /**
  * stat-grid — 2–4 headline metrics with labels + captions. Each value animates

@@ -55,5 +55,9 @@ export { initRail } from './chrome/rail.js';
 export { initGrid } from './chrome/grid.js';
 export { initPresenter } from './chrome/presenter.js';
 export { LAYOUT_FACTORIES, LAYOUT_TYPES, renderSlide } from './layouts/index.js';
-export { mountCountUp } from './ui/count-up.js';
-export { mountTiltCard } from './ui/tilt-card.js';
+export { createSlideThumbnail } from './chrome/SlideThumbnail.js';
+export { renderThumb } from './chrome/renderThumb.js';
+
+// Re-exports from shared CSMA UI library (moved from slides/ui/).
+export { mountCountUp } from '../../ui/components/count-up/count-up.js';
+export { mountTiltCard } from '../../ui/components/tilt-card/tilt-card.js';

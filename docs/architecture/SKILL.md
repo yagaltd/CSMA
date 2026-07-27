@@ -209,6 +209,67 @@ To create a new Type I component, see the `csma-component-creation` skill.
 
 ### Layered Rendering Architecture
 
+## Where UI Lives — the Three Folders
+
+Agents must pick the correct folder. Getting this wrong creates drift.
+
+### 1. `src/ui/components/<name>/` — Shared Primitives (Layer 0)
+
+For cross-app atomic UI. Every folder has `manifest.json`. The litmus test:
+**"Would another module ever reuse this?"** If yes, it belongs here.
+
+Examples: `button`, `card`, `badge`, `field`, `count-up`, `tilt-card`.
+
+### 2. `src/modules/<module>/ui/` — Scoped Domain UI
+
+For components unique to one module. Two valid reasons to put something here:
+
+1. **Module-specific** — no other module would ever use it (e.g. `EditorToolbar`
+   in `visual-editor/ui/`, `CommentsPicker` in `comments/ui/`).
+2. **Vendored** — the module needs to modify a shared component's behavior.
+   Copy the component here, modify it, document the delta in the module's
+   README. Never alter `src/ui/components/` to serve one module.
+
+### 3. `src/modules/<module>/aiui/` — Embeddable Module Surfaces
+
+ONLY used when a module wants to be mounted INSIDE other surfaces via the
+`mountSurface` contract. This is the Layer 1 ↔ module boundary — the aiui
+composer resolves `component: 'comments-thread'` by reading the manifest,
+calling `serviceManager.get(moduleId)`, then `mountSurface(surfaceId, container, props)`.
+
+**Requirements**:
+- `aiui/manifest.json` with `component.moduleId` and `aiUi.render.kind: "module"`
+- `mountSurface(surfaceId, container, props) → cleanupFn` on the module's service
+
+**Currently registered**: `comments-thread`, `chart-display`, `mindmap-canvas`,
+`video-player`.
+
+**Anti-pattern**: adding `aiui/` to an app-shell module (slides, dashboards).
+App shells CONSUME surfaces; they do not offer them. If nobody mounts your
+module inside a slide, you don't need `aiui/`.
+
+### Quick Decision Table
+
+| Question | Answer | Folder |
+|----------|--------|--------|
+| Is it a generic UI widget (button, card, counter)? | → | `src/ui/components/` |
+| Is it specific to one module AND no other module would use it? | → | `src/modules/<module>/ui/` |
+| Does a module need to modify an existing shared component? | → | Vendor into `src/modules/<module>/ui/` |
+| Should this module be embeddable inside slides/dashboards/mindmaps? | → | `src/modules/<module>/aiui/` |
+| Is this module the top-level app shell (slides, dashboards)? | → | No `aiui/` needed |
+
+### Vendoring Rule
+
+```
+If module X needs different behavior from component Y:
+  1. Copy Y from src/ui/components/<y>/ into src/modules/<X>/ui/<y>/
+  2. Modify it
+  3. Document the delta in src/modules/<X>/README.md
+  4. Never change src/ui/components/<y>/ for X's needs alone
+```
+
+### Layered Rendering Architecture
+
 CSMA renders through a strict layer cake. Each layer composes the layer
 immediately below — no skipping:
 

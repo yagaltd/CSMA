@@ -4,16 +4,17 @@
  * Subscribes to: SLIDE_CHANGED, UI_STATE_CHANGED, DECK_READY
  * Publishes: INTENT_SLIDE_GO
  *
- * Full-screen grid of slide labels. Visible only when gridOpen=true. Press
- * Escape or click outside to close.
+ * Full-screen grid of slide thumbnails. Visible only when gridOpen=true.
+ * Press Escape or click outside to close.
  *
- * Phase 3.2 — aiui-native (factory-wrapping). The grid shell + cards are
- * spec-mounted via `getComposer().mountTree()`; dynamic re-renders (DECK_READY)
- * mount a fresh card spec subtree into the shell's `.grid-inner`. No raw
- * `document.createElement` in chrome internals.
+ * Phase 3.2 — aiui-native (factory-wrapping). The grid shell is spec-mounted
+ * via `getComposer().mountTree()`; cards are built through the shared
+ * `createSlideThumbnail` primitive. No raw `document.createElement` in chrome
+ * internals.
  */
 
 import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { createSlideThumbnail } from './SlideThumbnail.js';
 
 export function initGrid(container, eventBus, service) {
     if (!container || !eventBus) return () => {};
@@ -34,25 +35,32 @@ export function initGrid(container, eventBus, service) {
     const { root: grid, cleanup: unmountGrid } = composer.mountTree(gridSpec, container, { documentRef: doc });
     const inner = grid.querySelector('.grid-inner');
 
-    // Build a card spec subtree for the current slide list, mounted into inner.
+    // Per-render cleanup bag — createSlideThumbnail returns cleanups
+    // (renderThumb teardown + mountTree unmount) that must run before
+    // the next renderItems().
+    let thumbCleanups = [];
+
+    // Build card elements via the shared primitive, append into inner.
     const renderItems = () => {
+        // Tear down previous thumbnails before wiping inner.
+        thumbCleanups.forEach((fn) => { try { fn(); } catch { /* swallow */ } });
+        thumbCleanups = [];
+
         inner.replaceChildren();
         const slides = Array.isArray(service.slides) ? service.slides : [];
-        const cardSpecs = slides.map((slide, i) => {
-            const label = slide?.type ? slide.type : ('slide ' + (i + 1));
-            return spec('button', {
-                className: 'grid-card',
-                dataset: { index: String(i), active: i === service.index ? 'true' : 'false' },
-                children: [
-                    spec('span', { className: 'grid-thumb', text: String(label) }),
-                    spec('span', { className: 'grid-num', text: String(i + 1) })
-                ]
+
+        for (let i = 0; i < slides.length; i++) {
+            const { root, cleanup } = createSlideThumbnail(slides[i], {
+                index: i,
+                active: i === service.index,
+                tag: 'button',
+                documentRef: doc
             });
-        });
-        // mountTree accepts a spec array (mounts a fragment) into inner. Cards
-        // are pure raw HTML (no catalog surfaces), so their cleanup is a no-op
-        // beyond DOM removal — re-renders clear inner above.
-        composer.mountTree(cardSpecs, inner, { documentRef: doc });
+            if (root) {
+                inner.appendChild(root);
+                thumbCleanups.push(cleanup);
+            }
+        }
     };
 
     renderItems();
@@ -86,6 +94,8 @@ export function initGrid(container, eventBus, service) {
     }
 
     return () => {
+        thumbCleanups.forEach((fn) => { try { fn(); } catch { /* swallow */ } });
+        thumbCleanups = [];
         subs.forEach((fn) => fn && fn());
         grid.removeEventListener('click', onClick);
         unmountGrid();

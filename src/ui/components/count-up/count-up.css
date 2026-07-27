@@ -1,0 +1,18 @@
+/* count-up — Type II animated number counter.
+ *
+ * The animation is driven by requestAnimationFrame, not CSS. This file
+ * provides the target element's base styling and reduced-motion handling.
+ * Consumers should apply their own typographic styles (font-size, weight,
+ * color) via layout-specific selectors.
+ */
+
+.count-up-target {
+    font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .count-up-target {
+        /* Instant settle — the JS also detects this and skips rAF,
+           but the CSS class signals the same intent for pure-CSS fallbacks. */
+    }
+}

@@ -1,0 +1,17 @@
+/* tilt-card — Type I perspective tilt on hover.
+ *
+ * The JS sets --tilt-x, --tilt-y (range -1..1) and --tilt-max via
+ * element.style.setProperty. The card element applies the perspective
+ * transform by reading those custom properties.
+ *
+ * Include this CSS alongside the element that mounts tilt behavior.
+ * The transform rule below is intentionally scoped to .tilt-card so it
+ * can be composed with layout-specific card selectors.
+ */
+
+.tilt-card[data-tilt-active="true"] {
+    transform: perspective(800px)
+        rotateX(calc(var(--tilt-y, 0) * var(--tilt-max, 6deg)))
+        rotateY(calc(var(--tilt-x, 0) * var(--tilt-max, 6deg) * -1));
+    transition: transform var(--motion-duration-fast, 120ms) var(--ease-out-quart);
+}

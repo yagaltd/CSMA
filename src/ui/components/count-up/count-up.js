@@ -1,16 +1,17 @@
 /**
  * count-up.js — animated number counter (Type II).
  *
- * Wraps a target figure and animates from 0 (or previous value) to the target
+ * Wraps a target element and animates from 0 (or previous value) to the target
  * over --motion-duration-enter when the element enters the viewport. Uses
  * requestAnimationFrame — cleaned up on teardown.
  *
  * CSMA rule: canvas/rAF renderers are transient. They must clean up on
  * teardown and respect prefers-reduced-motion (in which case we set the final
  * value immediately).
+ *
+ * @module count-up
+ * @category ui/component
  */
-
-import { formatFigure } from '../layouts/_shared.js';
 
 const DEFAULT_DURATION_MS = 1200; // matches --motion-duration-enter token
 
@@ -115,4 +116,24 @@ function prefersReducedMotion(win) {
 function formatNum(n, decimals) {
     if (decimals > 0) return n.toFixed(decimals);
     return String(Math.round(n));
+}
+
+/**
+ * Format a figure spec into a display string.
+ *
+ * Accepts `{ number, decimals, prefix, suffix }` or a primitive.
+ * @param {object|number|string|null|undefined} spec
+ * @returns {string}
+ */
+function formatFigure(spec) {
+    if (spec == null) return '';
+    if (typeof spec === 'number') return String(spec);
+    if (typeof spec === 'string') return spec;
+    const n = Number(spec.number);
+    if (!Number.isFinite(n)) return '';
+    const decimals = Number.isFinite(spec.decimals) ? spec.decimals : 0;
+    const prefix = spec.prefix || '';
+    const suffix = spec.suffix || '';
+    const formatted = decimals > 0 ? n.toFixed(decimals) : String(Math.round(n));
+    return prefix + formatted + suffix;
 }
