@@ -121,7 +121,8 @@ export class AnchorableCommentsService extends CommentsService {
             resolved_at: comment.resolved_at ?? null,
             resolved_by: comment.resolved_by ?? null,
             assigned_to: comment.assigned_to ?? null,
-            status: comment.status ?? 'open'
+            status: comment.status ?? 'open',
+            type: comment.type ?? 'user'
         };
     }
 
@@ -136,7 +137,7 @@ export class AnchorableCommentsService extends CommentsService {
     // ── anchor-aware CRUD ───────────────────────────────────────────────
 
     /** Create an anchored (root) comment. Throws on an invalid anchor shape. */
-    add({ scope, anchor, body, author } = {}) {
+    add({ scope, anchor, body, author, type } = {}) {
         if (typeof body !== 'string' || body.length === 0) {
             throw new Error('AnchorableCommentsService.add: body is required');
         }
@@ -151,6 +152,7 @@ export class AnchorableCommentsService extends CommentsService {
             body,
             author: author ?? null,
             status: 'open',
+            type: type ?? 'user',
             created_at: now
         });
         this.comments.set(comment.id, comment);
@@ -180,6 +182,7 @@ export class AnchorableCommentsService extends CommentsService {
             body,
             author: options.author ?? null,
             status: 'open',
+            type: options.type ?? 'user',
             created_at: now
         });
         this.comments.set(comment.id, comment);
