@@ -374,6 +374,10 @@ export class SlideDeckService {
         this._undoneStrokes.push({ slide: idx, stroke: popped });
         this.annotations.set(idx, list);
         this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: [...list] });
+        // Signal so the linked comment is cleaned up
+        if (popped.id) {
+            this.eventBus.publish('INTENT_ANNOTATION_STROKE_DELETE', { strokeId: popped.id, timestamp: Date.now() });
+        }
     }
 
     redoStroke() {

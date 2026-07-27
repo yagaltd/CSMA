@@ -225,6 +225,12 @@
       eventBus.subscribe('INTENT_ELEMENT_EDITED', ({ elementId, tagName, value, previousValue }) => {
         const scope = scopeOf(service.index);
         if (!elementId || !value || value === previousValue) return;
+        // Remove any stale system comment for this element (undo/re-edit)
+        for (const c of anchorableComments.comments.values()) {
+          if (c.type === 'system' && c.anchor?.id === elementId && c.scope === scope && c.status !== 'deleted') {
+            anchorableComments.delete(c.id);
+          }
+        }
         const elLabel = tagName ? `<${tagName}>` : 'text';
         const truncated = (s) => s.length > 60 ? s.slice(0, 57) + '…' : s;
         anchorableComments.add({
@@ -233,7 +239,7 @@
           body: `Changed ${elLabel} from "${truncated(previousValue)}" to "${truncated(value)}"`,
           author: { name: 'System' },
           type: 'system',
-          status: 'resolved'  // auto-resolved: informational only, no review needed
+          status: 'resolved'
         });
       });
       // Drawing strokes: create an annotation comment (type 'annotation', not 'system')
