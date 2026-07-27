@@ -1,6 +1,6 @@
 # Component specs for MorphMap mindmap
 
-## branch-node
+## mind-node
 
 Represents a `##` heading in the mindmap (a branch with leaves).
 
@@ -10,18 +10,18 @@ Represents a `##` heading in the mindmap (a branch with leaves).
 {
   "eccac": { "version": "1.0.0", "spec": "1.0.0" },
   "component": {
-    "name": "branch-node",
+    "name": "mind-node",
     "type": "I",
     "owner": "mindmap",
     "lifecycle": "stable",
     "stability": "stable"
   },
   "contracts": { "published": [], "subscribed": [] },
-  "dependencies": { "runtime": [], "components": ["leaf-node", "connector-line"] },
+  "dependencies": { "runtime": [], "components": ["mind-node", "connector-line"] },
   "metadata": { "description": "Mindmap branch node — represents a ## branch with children" },
   "aiUi": {
     "enabled": true,
-    "alias": "branch-node",
+    "alias": "mind-node",
     "title": "Branch Node",
     "category": "Mindmap",
     "preferred": true,
@@ -35,7 +35,7 @@ Represents a `##` heading in the mindmap (a branch with leaves).
       "doneCount": { "type": "number", "default": 0 }
     },
     "slots": {
-      "leaves": { "description": "Container for leaf-node children", "maxChildren": 200 }
+      "leaves": { "description": "Container for mind-node children", "maxChildren": 200 }
     }
   }
 }
@@ -55,19 +55,19 @@ Represents a `##` heading in the mindmap (a branch with leaves).
 ### DOM structure
 
 ```html
-<div class="branch-node" data-status="in_progress" data-tag="phase">
-  <div class="branch-node__header">
-    <span class="branch-node__emoji">🔄</span>
-    <span class="branch-node__topic">e2e-test</span>
-    <span class="branch-node__tag">phase</span>
-    <button class="branch-node__collapse" aria-label="Collapse">▾</button>
+<div class="mind-node" data-status="in_progress" data-tag="phase">
+  <div class="mind-node__header">
+    <span class="mind-node__emoji">🔄</span>
+    <span class="mind-node__topic">e2e-test</span>
+    <span class="mind-node__tag">phase</span>
+    <button class="mind-node__collapse" aria-label="Collapse">▾</button>
   </div>
-  <div class="branch-node__leaves" data-slot="leaves">
-    <!-- leaf-node instances mounted here by AIUIComposer or mind-elixir -->
+  <div class="mind-node__leaves" data-slot="leaves">
+    <!-- mind-node instances mounted here by AIUIComposer or mind-elixir -->
   </div>
-  <div class="branch-node__actions">
-    <button class="branch-node__add-leaf">+ Add leaf</button>
-    <span class="branch-node__count">3/5 done</span>
+  <div class="mind-node__actions">
+    <button class="mind-node__add-leaf">+ Add leaf</button>
+    <span class="mind-node__count">3/5 done</span>
   </div>
 </div>
 ```
@@ -79,7 +79,7 @@ Represents a `##` heading in the mindmap (a branch with leaves).
 
 ---
 
-## leaf-node
+## mind-node
 
 Represents a `- ✅` list item in the mindmap (a leaf).
 
@@ -89,7 +89,7 @@ Represents a `- ✅` list item in the mindmap (a leaf).
 {
   "eccac": { "version": "1.0.0", "spec": "1.0.0" },
   "component": {
-    "name": "leaf-node",
+    "name": "mind-node",
     "type": "I",
     "owner": "mindmap",
     "lifecycle": "stable",
@@ -100,7 +100,7 @@ Represents a `- ✅` list item in the mindmap (a leaf).
   "metadata": { "description": "Mindmap leaf node — a task/checklist item with status" },
   "aiUi": {
     "enabled": true,
-    "alias": "leaf-node",
+    "alias": "mind-node",
     "title": "Leaf Node",
     "category": "Mindmap",
     "preferred": true,
@@ -129,11 +129,11 @@ Represents a `- ✅` list item in the mindmap (a leaf).
 ### DOM structure
 
 ```html
-<div class="leaf-node" data-status="pending" data-bottleneck="standard">
-  <span class="leaf-node__status">⬜</span>
-  <span class="leaf-node__topic">test /morphmap-review</span>
-  <a class="leaf-node__spec" href="#" data-path="specs/e2e/review.spec.md">📎</a>
-  <span class="leaf-node__bottleneck" data-bottleneck="standard">⚪</span>
+<div class="mind-node" data-status="pending" data-bottleneck="standard">
+  <span class="mind-node__status">⬜</span>
+  <span class="mind-node__topic">test /morphmap-review</span>
+  <a class="mind-node__spec" href="#" data-path="specs/e2e/review.spec.md">📎</a>
+  <span class="mind-node__bottleneck" data-bottleneck="standard">⚪</span>
 </div>
 ```
 

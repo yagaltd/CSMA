@@ -21,7 +21,7 @@ export class SelectionController {
   /**
    * @param {object} opts
    * @param {HTMLElement} opts.container — the canvas element receiving events
-   * @param {HTMLElement} opts.nodeLayer — the div containing branch-node / leaf-node elements
+   * @param {HTMLElement} opts.nodeLayer — the div containing mind-node elements
    * @param {function(string):void} [opts.onSelect] — called with nodeId on single select
    * @param {function(string[]):void} [opts.onMultiSelect] — called with nodeIds on multi-select change
    * @param {function(string, string):Promise<void>} [opts.onEditCommit] — called with (nodeId, newTopic)
@@ -166,7 +166,7 @@ export class SelectionController {
     this._editOriginalText = el.textContent || '';
 
     // Find the topic element inside the node
-    const topicEl = el.querySelector('.branch-node__topic, .leaf-node__topic');
+    const topicEl = el.querySelector('.mind-node__topic');
     const targetEl = topicEl || el;
 
     // Save original display

@@ -28,13 +28,26 @@ import { SelectionController } from './SelectionController.js';
 import { ViewportController } from './ViewportController.js';
 import { KeyboardHandler } from './KeyboardHandler.js';
 import { BoxSelector } from './BoxSelector.js';
+import { renderMindmapNodes } from '../ui/MindmapRenderer.js';
 import { ClipboardManager } from './ClipboardManager.js';
 import { ContextMenu } from '../ui/ContextMenu.js';
 import { FocusController } from './FocusController.js';
+// CullingCore / RenderScheduler available from ../../layout/ for opt-in use.
 
 const ACTIVE_MAP_KEY = 'mindmap:active';
 const SCHEMA_BRANCH = 'mindmap/branch';
 const SCHEMA_LEAF = 'mindmap/leaf';
+
+// Branch hue palette — cycled through for auto-assigned per-branch colors.
+// Hues chosen to be visually distinct, theme-agnostic (CSS derives actual
+// colors from the hue via hsl() with light/dark-aware lightness values).
+const BRANCH_HUES = [210, 30, 175, 340, 130, 50, 275, 160];
+let _nextHueIdx = 0;
+function _nextBranchHue() {
+  const h = BRANCH_HUES[_nextHueIdx % BRANCH_HUES.length];
+  _nextHueIdx++;
+  return h;
+}
 
 function generateId(prefix = 'n') {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -56,6 +69,7 @@ function makeRoot(name) {
     children: [],
     expanded: true,
     direction: 0,
+    branchHue: BRANCH_HUES[0], // root always blue
     metadata: { leafCount: 0, doneCount: 0 },
     updatedAt: now()
   };
@@ -71,6 +85,7 @@ function makeBranch(topic, meta = {}) {
     children: [],
     expanded: true,
     direction: 0,
+    branchHue: meta.branchHue || _nextBranchHue(),
     metadata: { leafCount: 0, doneCount: 0, ...(meta.metadata || {}) },
     updatedAt: now()
   };
@@ -83,6 +98,7 @@ function makeLeaf(topic, meta = {}) {
     schemaType: SCHEMA_LEAF,
     status: meta.status || 'pending',
     children: [],
+    branchHue: meta.branchHue || _nextBranchHue(),
     metadata: {
       specPath: meta.specPath || null,
       bottleneck: meta.bottleneck || 'standard',
@@ -96,28 +112,186 @@ function makeLeaf(topic, meta = {}) {
 
 export class MindmapService {
   static SURFACE_CSS = `
-.mm-canvas { position: relative; width: 100%; height: 100%; min-height: 320px; overflow: hidden; outline: none; user-select: none; touch-action: none; background: var(--mindmap-canvas-bg, #fafafa); }
-.mm-surface-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-.mm-surface-nodes { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+/* ── Canvas ─────────────────────────────────────────────────── */
+.mm-canvas {
+  position: relative; width: 100%; height: 100%; min-height: 320px;
+  overflow: hidden; outline: none; user-select: none; touch-action: none;
+  background: var(--mindmap-canvas-bg, var(--background, #fafafa));
+}
+.mm-surface-svg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; overflow: visible;
+}
+.mm-surface-nodes {
+  position: absolute; top: 0; left: 0; transform-origin: 0 0;
+}
 .mm-canvas[data-read-only] { pointer-events: none; }
-.mm-surface-nodes [data-selected] { outline: 2px solid var(--accent); outline-offset: 2px; }
-/* Toolbar surface (Wave 2) — composed from the CSMA button component. */
-.mm-toolbar { position: absolute; top: var(--space-sm); left: var(--space-sm); z-index: 5; display: flex; gap: var(--space-xs); flex-wrap: wrap; align-items: center; padding: var(--space-xs); background: color-mix(in srgb, var(--surface) 88%, transparent); border: 1px solid var(--border); border-radius: var(--radius-md); pointer-events: auto; }
+.mm-surface-nodes [data-selected] {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+
+/* ── Node base (shared) ─────────────────────────────────────── */
+.mm-surface-nodes .mm-node {
+  box-sizing: border-box; position: absolute;
+  min-width: 0; min-height: 0; overflow: hidden;
+  font-family: var(--font-family-base, system-ui);
+  transition: box-shadow var(--duration-fast, 120ms) ease,
+              opacity var(--duration-fast, 120ms) ease;
+}
+/* All nodes: rounded rect, tinted background, left accent border */
+.mm-surface-nodes .mm-node {
+  display: flex; align-items: center; gap: 4px;
+  padding: 4px 8px;
+  background: hsl(var(--mm-hue, 210), 70%, 95%);
+  border: 1px solid hsl(var(--mm-hue, 210), 50%, 65%);
+  border-left-width: 3px;
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  cursor: pointer;
+}
+.mm-node[data-kind="root"] {
+  background: hsl(var(--mm-hue, 210), 60%, 90%);
+  border: 2px solid hsl(var(--mm-hue, 210), 50%, 50%);
+  border-radius: var(--radius-lg, 12px);
+  padding: 6px 12px;
+  font-weight: var(--font-weight-bold, 700);
+}
+/* Dark */
+[data-theme="dark"] .mm-surface-nodes .mm-node,
+[data-theme="dark-storm"] .mm-surface-nodes .mm-node {
+  background: hsl(var(--mm-hue, 210), 25%, 14%);
+  border-color: hsl(var(--mm-hue, 210), 40%, 35%);
+}
+[data-theme="dark"] .mm-node[data-kind="root"],
+[data-theme="dark-storm"] .mm-node[data-kind="root"] {
+  background: hsl(var(--mm-hue, 210), 20%, 18%);
+  border-color: hsl(var(--mm-hue, 210), 50%, 45%);
+}
+
+/* ── Status dot ─────────────────────────────────────────────── */
+.mm-node__status {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: hsl(var(--mm-hue, 210), 40%, 60%);
+}
+.mm-node[data-status="done"] .mm-node__status {
+  background: var(--success, #22c55e);
+}
+.mm-node[data-status="in_progress"] .mm-node__status {
+  background: hsl(var(--mm-hue, 210), 70%, 45%);
+}
+.mm-node[data-status="blocked"] .mm-node__status {
+  background: var(--destructive, #ef4444);
+}
+
+/* ── Topic text ─────────────────────────────────────────────── */
+.mm-node__topic {
+  font-size: var(--font-size-sm, 13px);
+  font-weight: var(--font-weight-semibold, 600);
+  line-height: 1.3;
+  color: var(--foreground);
+  flex: 1;
+}
+.mm-node[data-kind="root"] .mm-node__topic {
+  font-size: var(--font-size-base, 15px);
+  font-weight: var(--font-weight-bold, 700);
+}
+.mm-node[data-status="done"] .mm-node__topic {
+  text-decoration: line-through; opacity: 0.6;
+}
+
+/* ── Tag ────────────────────────────────────────────────────── */
+.mm-node__tag {
+  font-size: 10px; font-weight: 500;
+  padding: 0 4px; border-radius: 3px;
+  background: hsl(var(--mm-hue, 210), 60%, 88%);
+  color: hsl(var(--mm-hue, 210), 60%, 30%);
+  text-transform: lowercase;
+}
+[data-theme="dark"] .mm-node__tag,
+[data-theme="dark-storm"] .mm-node__tag {
+  background: hsl(var(--mm-hue, 210), 30%, 25%);
+  color: hsl(var(--mm-hue, 210), 50%, 75%);
+}
+
+/* ── Collapse button ────────────────────────────────────────── */
+.mm-node__collapse {
+  position: absolute; left: -14px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; border-radius: 50%; padding: 0;
+  background: var(--surface); border: 1px solid hsl(var(--mm-hue, 210), 50%, 65%);
+  cursor: pointer; font-size: 8px; line-height: 12px; text-align: center;
+  color: hsl(var(--mm-hue, 210), 50%, 40%); z-index: 2;
+}
+.mm-node__collapse:hover {
+  background: hsl(var(--mm-hue, 210), 60%, 50%);
+  border-color: hsl(var(--mm-hue, 210), 60%, 50%);
+  color: #fff;
+}
+.mm-node__collapse::before { content: "▾"; }
+.mm-node[data-collapsed="true"] .mm-node__collapse::before { content: "▸"; }
+/* Hide collapse when no children */
+.mm-node:not([data-has-children="true"]) .mm-node__collapse { display: none; }
+
+/* ── Connectors ─────────────────────────────────────────────── */
+.connector-line {
+  stroke: hsl(var(--mm-hue, 210), 50%, 60%);
+  stroke-width: 2; stroke-linecap: round; fill: none;
+}
+.connector-line[data-link-kind="main"] { stroke-width: 2.5; }
+.connector-line[data-status="done"] { opacity: 0.3; }
+.connector-line[data-status="blocked"] { stroke: var(--destructive, #ef4444); }
+[data-theme="dark"] .connector-line,
+[data-theme="dark-storm"] .connector-line {
+  stroke: hsl(var(--mm-hue, 210), 45%, 50%);
+}
+
+/* ── Arrow cross-links ──────────────────────────────────────── */
+.arrow-line {
+  fill: none; stroke: hsl(var(--mm-hue, 210), 40%, 50%);
+  stroke-width: 1.5; stroke-dasharray: 4 3; pointer-events: stroke; cursor: pointer;
+}
+.arrow-line[data-selected] { stroke-width: 2.5; stroke-dasharray: none; }
+.mm-arrow-head { fill: hsl(var(--mm-hue, 210), 40%, 50%); }
+
+/* ── Toolbar ────────────────────────────────────────────────── */
+.mm-toolbar {
+  position: absolute; top: var(--space-sm); left: var(--space-sm); z-index: 5;
+  display: flex; gap: var(--space-xs); flex-wrap: wrap; align-items: center;
+  padding: var(--space-xs);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  pointer-events: auto;
+}
 .mm-toolbar .button { pointer-events: auto; }
-/* Insert previews (NodeDragHandler) — token-styled. */
+
+/* ── Focus ──────────────────────────────────────────────────── */
+.mm-canvas[data-mode="focus"] .mm-surface-nodes .mm-node:not([data-in-focus]) { opacity: 0.25; filter: saturate(0.55); }
+.mm-canvas[data-mode="focus"] .mm-surface-svg .connector-line:not([data-in-focus]) { opacity: 0.12; }
+.mm-focus-pill {
+  position: absolute; bottom: var(--space-sm); left: 50%; transform: translateX(-50%); z-index: 6;
+  display: flex; gap: var(--space-xs); align-items: center;
+  padding: var(--space-xs) var(--space-sm);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border: 1px solid var(--border); border-radius: var(--radius-md);
+  pointer-events: auto;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 12%, transparent);
+}
+.mm-focus-pill .badge { font-size: var(--font-size-xs, 12px); }
+
+/* ── Drag ghost ─────────────────────────────────────────────── */
+.mindmap-drag-ghost {
+  position: fixed; z-index: 10001; pointer-events: none;
+  padding: 4px 8px; border-radius: var(--radius-sm, 4px);
+  background: var(--surface); border: 1px dashed var(--accent);
+  font-size: var(--font-size-sm, 14px); white-space: nowrap;
+}
 .insert-preview-in { outline: 2px solid var(--accent); outline-offset: 3px; }
-.insert-preview-before, .insert-preview-after { position: absolute; left: 0; right: 0; height: 3px; background: var(--accent); border-radius: 2px; z-index: 9999; pointer-events: none; }
+.insert-preview-before, .insert-preview-after {
+  position: absolute; left: 0; right: 0; height: 3px;
+  background: var(--accent); border-radius: 2px;
+  z-index: 9999; pointer-events: none;
+}
 .insert-preview-before { top: -2px; }
 .insert-preview-after { bottom: -2px; }
-.mindmap-drag-ghost { position: fixed; z-index: 10001; pointer-events: none; padding: 4px 8px; border-radius: var(--radius-sm, 4px); background: var(--surface); border: 1px dashed var(--accent); font-size: var(--font-size-sm, 14px); white-space: nowrap; }
-/* Focus mode (Wave 3) — token-driven, no inline styles / literal colors. */
-.mm-surface-svg .connector-line { pointer-events: stroke; cursor: pointer; }
-.mm-canvas[data-mode="focus"] .mm-surface-nodes .branch-node:not([data-in-focus]) { opacity: 0.25; filter: saturate(0.55); }
-.mm-canvas[data-mode="focus"] .mm-surface-svg .connector-line:not([data-in-focus]) { opacity: 0.12; }
-.mm-surface-svg .connector-line[data-in-focus] { stroke: var(--accent); stroke-width: 3; }
-.mm-surface-nodes .branch-node[data-in-focus] { outline: 2px solid var(--accent); outline-offset: 2px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent)) 25%, transparent); }
-.mm-focus-pill { position: absolute; bottom: var(--space-sm); left: 50%; transform: translateX(-50%); z-index: 6; display: flex; gap: var(--space-xs); align-items: center; padding: var(--space-xs) var(--space-sm); background: color-mix(in srgb, var(--surface) 92%, transparent); border: 1px solid var(--border); border-radius: var(--radius-md); pointer-events: auto; box-shadow: 0 2px 8px color-mix(in srgb, var(--foreground) 12%, transparent); }
-.mm-focus-pill .badge { font-size: var(--font-size-xs, 12px); }
 `;
 
   constructor(eventBus) {
@@ -473,6 +647,10 @@ export class MindmapService {
       parent.children = [];
     }
     const branch = makeBranch(topic, meta);
+    // Inherit branch hue from parent if not explicitly set.
+    if (meta.branchHue == null && parent.branchHue != null) {
+      branch.branchHue = parent.branchHue;
+    }
     branch.direction = parent.direction;
     parent.children = parent.children || [];
     parent.children.push(branch);
@@ -544,6 +722,10 @@ export class MindmapService {
       parent.children = [];
     }
     const leaf = makeLeaf(topic, meta);
+    // Inherit branch hue from parent if not explicitly set.
+    if (meta.branchHue == null && parent.branchHue != null) {
+      leaf.branchHue = parent.branchHue;
+    }
     leaf.direction = parent.direction;
     parent.children = parent.children || [];
     parent.children.push(leaf);
@@ -577,6 +759,10 @@ export class MindmapService {
     const previousStatus = node.status;
     const before = { ...node };
     Object.assign(node, changes, { updatedAt: now() });
+    // Invalidate cached text width when topic or tag changes.
+    if ('topic' in changes || 'tag' in changes) {
+      delete node._cachedWidth;
+    }
     if (changes.metadata) {
       node.metadata = { ...(node.metadata || {}), ...changes.metadata };
     }
@@ -1270,6 +1456,32 @@ export class MindmapService {
     return typeof map.meta.layoutDirection === 'number' ? map.meta.layoutDirection : 1;
   }
 
+  // ─── Text measurement (canvas-based, no DOM reflow) ──────────────
+
+  static _meterCanvas = null;
+  static _meterCtx = null;
+
+  static _getMeterCtx() {
+    if (!MindmapService._meterCanvas) {
+      MindmapService._meterCanvas = (typeof document !== 'undefined')
+        ? document.createElement('canvas')
+        : { getContext: () => null };
+      MindmapService._meterCtx = MindmapService._meterCanvas.getContext('2d');
+    }
+    return MindmapService._meterCtx;
+  }
+
+  /** Shared text-measurement: approximate width for a 14px system-ui string. */
+  static measureTextWidth(text, opts = {}) {
+    const ctx = MindmapService._getMeterCtx();
+    if (!ctx) return (String(text || '').length * 8 + 24);
+    const weight = opts.weight || '400';
+    const size = opts.size || 14;
+    const family = opts.family || 'system-ui, -apple-system, sans-serif';
+    ctx.font = `${weight} ${size}px ${family}`;
+    return ctx.measureText(String(text || '')).width + 1.5;
+  }
+
   // ─── Layout convenience (renderers call this) ────────────────────
 
   layout(mapId, options = {}) {
@@ -1278,6 +1490,25 @@ export class MindmapService {
     // Inject the map's layout direction (numeric 0/1/2/3) so LayoutEngine
     // can select the DOWN vs SIDE branch. Caller options override if set.
     const opts = { direction: map.meta.layoutDirection ?? 1, ...options };
+    // Default sizing: fixed unless callbacks provided.
+    if (!opts.getWidth) {
+      const svc = this;
+      opts.getWidth = (node) => {
+        if (node._cachedWidth == null) {
+          const topicW = MindmapService.measureTextWidth(node.topic || 'Untitled');
+          const tagW = node.tag ? MindmapService.measureTextWidth(node.tag) + 28 : 0;
+          const noteW = (node.metadata?.note || node.notes) ? 24 : 0;
+          node._cachedWidth = Math.ceil(Math.max(64, topicW + tagW + noteW + 36));
+        }
+        return node._cachedWidth;
+      };
+    }
+    if (!opts.getHeight) {
+      opts.getHeight = () => 48;
+    }
+    // Pass spacing to LayoutEngine (does not bloat node dimensions).
+    if (opts.columnGap == null) opts.columnGap = options.columnGap ?? 80;
+    if (opts.siblingGap == null) opts.siblingGap = options.siblingGap ?? 12;
     return layoutTree(map.root, opts);
   }
 
@@ -1389,9 +1620,7 @@ export class MindmapService {
       pill.hidden = !active;
       pillCount.textContent = active ? `${s.focusIds?.length || 0} focused` : '0';
     };
-    copyMdBtn.addEventListener('click', () => focus.copyContext('markdown'));
-    copyJsonBtn.addEventListener('click', () => focus.copyContext('json'));
-    exitPillBtn.addEventListener('click', () => focus.clearFocus());
+    // Pill button listeners attached after focus is created (see below).
     // Stop toolbar pointer/keyboard events from reaching the canvas handlers
     // (drag / pan / context-menu / keyboard) attached below.
     for (const ev of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'wheel', 'contextmenu', 'keydown', 'keyup', 'click']) {
@@ -1414,78 +1643,17 @@ export class MindmapService {
       return { x: minX, y: minY, w: Math.max(1, maxX - minX), h: Math.max(1, maxY - minY) };
     };
 
-    // ── Render via catalog components (branch-node / leaf-node / connector-line) ──
+    // ── Render via catalog components (mind-node / connector-line) ──
     const render = () => {
       const mapId = resolvedMapId || service._activeMapId;
       if (!mapId) return;
-      const { nodes } = service.layout(mapId);
-      const paths = service.connectorPaths(mapId);
-      nodeLayer.replaceChildren();
-      svgLayer.replaceChildren();
-      for (const n of nodes) {
-        const node = service.findNode(n.id, { mapId });
-        const el = doc.createElement('div');
-        el.className = n.kind === 'leaf' ? 'leaf-node' : 'branch-node';
-        el.dataset.nodeId = n.id;
-        el.dataset.kind = n.kind;
-        el.dataset.status = n.status || 'pending';
-        el.style.position = 'absolute';
-        el.style.boxSizing = 'border-box';
-        el.style.left = `${n.x}px`;
-        el.style.top = `${n.y}px`;
-        el.style.width = `${n.w}px`;
-        el.style.height = `${n.h}px`;
-        if (n.kind === 'leaf') {
-          const statusDot = doc.createElement('span');
-          statusDot.className = 'leaf-node__status';
-          const topic = doc.createElement('span');
-          topic.className = 'leaf-node__topic';
-          topic.textContent = topicOf(n.id) || '';
-          el.append(statusDot, topic);
-          if (node?.metadata?.bottleneck) el.dataset.bottleneck = node.metadata.bottleneck;
-        } else {
-          const header = doc.createElement('div');
-          header.className = 'branch-node__header';
-          const statusDot = doc.createElement('span');
-          statusDot.className = 'branch-node__status';
-          const topic = doc.createElement('span');
-          topic.className = 'branch-node__topic';
-          topic.textContent = topicOf(n.id) || n.kind;
-          header.append(statusDot, topic);
-          if (node?.tag) {
-            const tag = doc.createElement('span');
-            tag.className = 'branch-node__tag';
-            tag.textContent = node.tag;
-            header.append(tag);
-          }
-          el.append(header);
-          if (n.kind === 'branch' && node?.children?.length > 0) {
-            const collapsed = node.expanded === false;
-            el.dataset.collapsed = collapsed ? 'true' : 'false';
-            const exp = doc.createElement('button');
-            exp.type = 'button';
-            exp.className = 'branch-node__collapse';
-            exp.setAttribute('aria-label', collapsed ? 'Expand branch' : 'Collapse branch');
-            exp.addEventListener('pointerdown', async (ev) => {
-              ev.stopPropagation(); ev.preventDefault();
-              await service.collapse(n.id, !collapsed, { mapId });
-              renderAfterMut();
-            });
-            el.append(exp);
-          }
-        }
-        nodeLayer.append(el);
-      }
-      for (const { d, link } of paths) {
-        const p = doc.createElementNS('http://www.w3.org/2000/svg', 'path');
-        p.setAttribute('d', d);
-        p.setAttribute('data-link-kind', link.kind);
-        p.setAttribute('data-child-id', link.to);
-        const child = nodes.find((x) => x.id === link.to);
-        if (child) p.setAttribute('data-status', child.status);
-        p.classList.add('connector-line');
-        svgLayer.append(p);
-      }
+
+      renderMindmapNodes(nodeLayer, svgLayer, service, mapId, {
+        onToggleCollapse: async (id, next) => {
+          await service.collapse(id, next, { mapId: resolvedMapId });
+          renderAfterMut();
+        },
+      });
       // Cross-link arrows (§11) — recomputed every render from fresh layout rects.
       const arrowDefs = doc.createElementNS('http://www.w3.org/2000/svg', 'defs');
       const marker = doc.createElementNS('http://www.w3.org/2000/svg', 'marker');
@@ -1547,6 +1715,13 @@ export class MindmapService {
     });
     const viewport = new ViewportController({ container: canvas, nodeLayer, connectorLayer: svgLayer, eventBus: service.eventBus, mapId: resolvedMapId });
     const focus = new FocusController({ service, eventBus: service.eventBus, nodeLayer, svgLayer, mapId: resolvedMapId, getRoot: () => service._getMap(resolvedMapId)?.root, onChange: updatePill });
+
+    // ── Attach pill button listeners (focus now available) ──────────
+    copyMdBtn.addEventListener('click', () => focus.copyContext('markdown'));
+    copyJsonBtn.addEventListener('click', () => focus.copyContext('json'));
+    exitPillBtn.addEventListener('click', () => focus.clearFocus());
+
+    // CullingCore available for opt-in use (see src/modules/layout/).
     service.eventBus.subscribe('MINDMAP_FOCUS_REQUESTED', (e) => {
       if (e?.mapId && e.mapId !== resolvedMapId) return;
       if (e?.focusIds?.length) focus.focusNodes(e.focusIds, { scope: e.scope || 'branch' });

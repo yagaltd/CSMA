@@ -10,7 +10,7 @@
   cursor: pointer;
 }
 
-.mm-canvas[data-mode="focus"] .mm-surface-nodes .branch-node:not([data-in-focus]) {
+.mm-canvas[data-mode="focus"] .mm-surface-nodes .mind-node:not([data-in-focus]) {
   opacity: 0.25;
   filter: saturate(0.55);
 }
@@ -24,10 +24,10 @@
   stroke-width: 3;
 }
 
-.mm-surface-nodes .branch-node[data-in-focus] {
+.mm-surface-nodes .mind-node[data-in-focus] {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent)) 25%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 
 .mm-focus-pill {

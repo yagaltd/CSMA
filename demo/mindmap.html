@@ -6,8 +6,7 @@
   <title>mindmap - demo v2</title>
   <link rel="stylesheet" href="/src/generated/tokens.css" />
   <!-- CSMA catalog components mapped from the demo's legacy .mm-node / .mm-connector -->
-  <link rel="stylesheet" href="/src/ui/components/branch-node/branch-node.css" />
-  <link rel="stylesheet" href="/src/ui/components/leaf-node/leaf-node.css" />
+  <link rel="stylesheet" href="/src/ui/components/mind-node/mind-node.css" />
   <link rel="stylesheet" href="/src/ui/components/connector-line/connector-line.css" />
   <link rel="stylesheet" href="/src/ui/components/button/button.css" />
   <link rel="stylesheet" href="/src/ui/components/theme-toggle/theme-toggle.css" />
@@ -24,19 +23,10 @@
       border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--mindmap-canvas-bg);
     }
     .status-line { font-family: monospace; font-size: 12px; color: var(--foreground-muted); padding: 8px 12px; background: var(--background); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-top: 12px; min-height: 2em; white-space: pre-wrap; }
-    /* Expander (catalog .branch-node__collapse) positioned at the node's side. */
-    .branch-node .branch-node__collapse {
-      position: absolute; right: -20px; top: 50%; transform: translateY(-50%);
-      width: 16px; height: 16px; border-radius: 50%; padding: 0;
-      background: var(--surface); border: 2px solid var(--border); cursor: pointer;
-      font-size: 11px; line-height: 11px; text-align: center; color: var(--foreground-muted);
-      z-index: 2;
-    }
-    .branch-node .branch-node__collapse:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-foreground); }
-    /* Mobile touch targets: meet 44x44 minimum (check:responsive) */
+    /* Collapse button: surface CSS covers this; demo override for larger touch target on mobile */
     @media (max-width: 768px) {
       .toolbar .button, .toolbar select, .mm-toolbar .button { min-height: 44px; min-width: 44px; }
-      .branch-node .branch-node__collapse { min-width: 44px; min-height: 44px; }
+      .mind-node .mind-node__collapse { min-width: 44px; min-height: 44px; }
     }
   </style>
 </head>

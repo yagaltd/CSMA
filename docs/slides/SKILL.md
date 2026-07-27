@@ -24,7 +24,7 @@ Slides sit in CSMA's **layered rendering model**:
 LAYER 3  SlideDeckService   next / prev / build / presenter — owns navigation
 LAYER 2  Slide layouts       cover, bento, stat-grid, …  (24 factories)
 LAYER 1  aiui composer       mount / unmount / setState   ← rendering pipeline
-LAYER 0  CSMA components     button, card, badge, branch-node, …
+LAYER 0  CSMA components     button, card, badge, mind-node, …
 ```
 
 The deck **state machine** (Layer 3) is slide-specific and stays. The

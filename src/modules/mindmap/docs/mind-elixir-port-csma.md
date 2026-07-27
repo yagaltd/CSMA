@@ -31,7 +31,7 @@ and hand-rolls a parallel mindmap**:
    `#888`, `#fafafa`, `#d0d0d0` — bypassing the CSMA token system.
 4. **Custom `.mm-*` DOM instead of catalog components.** Nodes are
    `.mm-node`, connectors `.mm-connector`, expander `.mm-expander`. The catalog
-   already has `branch-node` / `leaf-node` / `connector-line` built for this
+   already has `mind-node` / `mind-node` / `connector-line` built for this
    exact purpose (and they were mapped in `demo-catalog-mapping.md`).
 
 ### Upstream itself also diverged (why we can't copy it verbatim)
@@ -53,8 +53,8 @@ feature* layer onto it.** Do **not** adopt upstream's flex `me-*` tree.
 ## 2. Goal & non-goals
 
 **Goal:** a mindmap surface that (a) is pure DOM/SVG, (b) is styled entirely
-from `tokens.css`, (c) renders through catalog components `branch-node` /
-`leaf-node` / `connector-line`, and (d) uses the module's own interaction
+from `tokens.css`, (c) renders through catalog components `mind-node` /
+`mind-node` / `connector-line`, and (d) uses the module's own interaction
 helpers + CSMA modules — with `demo/mindmap.html` reduced to a thin harness
 around `svc.mountSurface()`.
 
@@ -77,7 +77,7 @@ app / demo
          ├─ KeyboardHandler           → Tab/Enter/Del/Ctrl+Z/Y/PgUp/Dn
          ├─ ui/ContextMenu.js          → add child/parent/sibling…
          ├─ ConnectorGeometry         → SVG <path> (connector-line)
-         └─ ai-ui mount               → branch-node / leaf-node / connector-line
+         └─ ai-ui mount               → mind-node / mind-node / connector-line
 ```
 All of these already exist as **complete, implemented classes** in
 `src/modules/mindmap/` — they are *not* stubs and need no logic moved into
@@ -97,7 +97,7 @@ this is wiring + de-hexing + catalog swap.**
 | Upstream (mind-elixir) | CSMA target | Action |
 |---|---|---|
 | `utils/layout.ts` + `me-*` flex tree | `services/LayoutEngine.js` | **Reuse** (absolute rects — keep) |
-| `utils/dom.ts` `shapeTpc` (topic shape) | `branch-node` / `leaf-node` inner structure | **Refactor** demo DOM → catalog (done in `demo-catalog-mapping.md`) |
+| `utils/dom.ts` `shapeTpc` (topic shape) | `mind-node` / `mind-node` inner structure | **Refactor** demo DOM → catalog (done in `demo-catalog-mapping.md`) |
 | `utils/svg.ts` `createLine` / `generateBranch.ts` connector math | `services/ConnectorGeometry.js` | **Reuse** (already ported) |
 | `plugin/nodeDraggable.ts` + `mouse.ts` + `interact.ts` | `services/NodeDragHandler.js` | **Wire**; move demo drag here; `.insert-preview` token-styled |
 | `plugin/contextMenu.ts` + `.less` | `ui/ContextMenu.js` | **Wire** to `MindmapService` ops + `mindmap-en.json` |
@@ -122,7 +122,7 @@ Delete every hardcoded hex in the demo. Map upstream's theme vars onto CSMA toke
 | `--bgcolor` (map bg) | `--mindmap-canvas-bg` (or `--surface`) | demo already referenced `--mindmap-canvas-bg` |
 | `--main-color` (node border) | `--border` | status override via below |
 | `--main-bgcolor` (node bg) | `--surface` | |
-| status border / stroke | `--primary` (in_progress), `--success` (done), `--destructive` (blocked/failed) | catalog `branch-node`/`leaf-node`/`connector-line` already do this |
+| status border / stroke | `--primary` (in_progress), `--success` (done), `--destructive` (blocked/failed) | catalog `mind-node`/`mind-node`/`connector-line` already do this |
 | root / active emphasis | `--accent` (or `--primary`) | |
 | `--node-gap-x/y`, `--main-gap-x/y` | **owned by `LayoutEngine` constants**, not CSS | absolute model → spacing comes from layout math, not flex gaps |
 | `--map-padding` | `--space-lg` | container padding |
@@ -141,22 +141,22 @@ CSMA keeps **flat, absolutely-positioned** nodes (one element per node,
 
 ```html
 <!-- branch / root -->
-<div class="branch-node" data-kind="root|branch" data-status="…"
+<div class="mind-node" data-kind="root|branch" data-status="…"
      data-tag="…" data-collapsed="true|false" data-node-id="…"
      style="left:..;top:..;width:..;height:..">
-  <div class="branch-node__header">
-    <span class="branch-node__status"></span>
-    <span class="branch-node__topic">topic</span>
-    <span class="branch-node__tag">tag</span>
+  <div class="mind-node__header">
+    <span class="mind-node__status"></span>
+    <span class="mind-node__topic">topic</span>
+    <span class="mind-node__tag">tag</span>
   </div>
-  <button class="branch-node__collapse" aria-label="Collapse"></button>
+  <button class="mind-node__collapse" aria-label="Collapse"></button>
 </div>
 
 <!-- leaf -->
-<div class="leaf-node" data-status="…" data-bottleneck="blocking|risky"
+<div class="mind-node" data-status="…" data-bottleneck="blocking|risky"
      data-node-id="…" style="left:..;top:..;width:..;height:..">
-  <span class="leaf-node__status"></span>
-  <span class="leaf-node__topic">topic</span>
+  <span class="mind-node__status"></span>
+  <span class="mind-node__topic">topic</span>
 </div>
 
 <!-- connector (SVG, not canvas) -->
@@ -193,7 +193,7 @@ documented gap.
 ## 8. Concrete refactor steps
 
 1. **(done)** Demo node DOM → catalog classes — `docs/demo-catalog-mapping.md`.
-2. **(done partly)** Add `branch-node.css` / `leaf-node.css` / `connector-line.css`
+2. **(done partly)** Add `mind-node.css` / `mind-node.css` / `connector-line.css`
    `<link>`s to the demo; remove `.mm-node`/`.mm-connector`/`.mm-expander` rules.
 3. **De-hex.** Delete `#4f90f2/#bbb/#888/#fafafa/#d0d0d0` from demo CSS;
    route through tokens (`--accent`, `--border`, `--surface`, `--mindmap-canvas-bg`,
@@ -226,10 +226,10 @@ documented gap.
    component; bind `setLayoutDirection`, zoom (ViewportController), fullscreen.
 8. **mountSurface is canonical.** Confirm `mountSurface(surfaceId, container, props)`
    (MindmapService line ~1066) internally uses LayoutEngine + ConnectorGeometry
-   + the handlers above + ai-ui mount of `branch-node`/`leaf-node`/`connector-line`.
+   + the handlers above + ai-ui mount of `mind-node`/`mind-node`/`connector-line`.
    Demo becomes: `const svc = serviceManager.get('mindmap'); svc.mountSurface('mm', canvasEl);`.
-9. **ai-ui manifest.** Verify `aiui/manifest.json` lists `branch-node`,
-   `leaf-node`, `connector-line` as mountable (it does) so `mountSurface`
+9. **ai-ui manifest.** Verify `aiui/manifest.json` lists `mind-node`,
+   `mind-node`, `connector-line` as mountable (it does) so `mountSurface`
    can compose them.
 10. **Verify.** `npm run check:design` + `npm run check:responsive`;
     open demo; confirm no `<canvas>` in live UI, all colors resolve to tokens.
@@ -257,7 +257,7 @@ documented gap.
 
 - [ ] No `<canvas>` element in live mindmap UI (SVG connectors only).
 - [ ] Zero hardcoded hex in demo/module CSS; all colors are token vars.
-- [ ] Nodes render as `branch-node` / `leaf-node`; connectors as `connector-line`.
+- [ ] Nodes render as `mind-node` / `mind-node`; connectors as `connector-line`.
 - [ ] Drag, context menu, keyboard, zoom/pan, undo/redo, multi-select all
       route through module helpers (no inline listeners in demo).
 - [ ] `svc.mountSurface()` is the only mount entry; demo is a thin harness.

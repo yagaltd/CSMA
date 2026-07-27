@@ -72,8 +72,8 @@ mindmap.toMarkdown(mapId, { filter: { status: ['blocked'] } });
   and `HISTORY_OP_REDONE` to reverse / re-apply state.
 - `agent-context` — three serializers registered on init, dispatched via
   the runtime `SerializerRegistry`.
-- `ai-ui` — `branch-node`, `leaf-node`, `connector-line` components are
-  in the catalog and mountable via `applyOp({spec:{component:'branch-node'}})`.
+- `ai-ui` — `mind-node`, `mind-node`, `connector-line` components are
+  in the catalog and mountable via `applyOp({spec:{component:'mind-node'}})`.
 - `storage` — IDB primitive wrapped by `MindmapStore`.
 
 ## Attribution

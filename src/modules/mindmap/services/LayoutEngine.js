@@ -1,330 +1,532 @@
 /**
- * LayoutEngine — pure-function mindmap tree layout.
+ * LayoutEngine — pure-function mindmap tree layout using the
+ * non-layered tidy tree algorithm (Buchheim et al., "Improving Walker's
+ * Algorithm to Run in Linear Time").
  *
- * Attribution: inspired by mind-elixir-core's tree-direction model
- * (LEFT | RIGHT | SIDE constants, left/right balance assignment in
- * layout.ts, the `--node-gap-x` gap knob). mind-elixir's actual layout
- * is CSS-driven via `me-*` custom elements; no pure layout function
- * exists upstream to port verbatim. This module is a fresh ES
- * implementation that returns absolute rectangles so CSMA can render
- * with its own components via ai-ui. See vendor/MIND_ELIXIR_LICENSE.
+ * Ported from mindmap-layouts (MIT, leungwensen) and adapted for CSMA's
+ * NodeObj model with collapse support, variable node sizing, and the
+ * CSMA direction system (0 = left, 1 = right, 2 = balanced side, 3 = down).
+ *
+ * The core algorithm (firstWalk / secondWalk) uses contour threads to
+ * pack subtrees as close as possible. Separation is resolved by comparing
+ * left/right subtree outlines — siblings with mismatched shapes (tall +
+ * short) no longer waste space at a fixed gap.
  *
  * Public surface:
  *   layout(root, options) → { nodes, links, bounds }
  *
  * Returned `nodes[i]` shape:
- *   { id, x, y, w, h, depth, direction, kind, status, collapsed }
- *     - kind: 'root' | 'branch' | 'leaf'
- *     - direction: 0 (right) | 1 (left) | undefined for DOWN layout
+ *   { id, x, y, w, h, depth, direction, kind, status, collapsed, hasChildren }
  *
  * Returned `links[i]` shape:
  *   { from, to, kind: 'main' | 'sub', direction }
- *     - 'main' connects root to its direct children
- *     - 'sub'  connects any non-root parent to its children
  *
  * Returned `bounds` shape:
- *   { x, y, w, h } — axis-aligned bounding rectangle of the laid-out tree.
+ *   { x, y, w, h }
  */
 
+// ─── Direction constants ────────────────────────────────────────────
+
 export const DIRECTION = Object.freeze({
-  SIDE: 'side', // root in middle, children split left/right
-  DOWN: 'down' // root on top, children stacked below
+  SIDE: 'side',
+  DOWN: 'down'
 });
 
 export const SIDE_LEFT = 0;
 export const SIDE_RIGHT = 1;
 
+// ─── Defaults ───────────────────────────────────────────────────────
+
 const DEFAULTS = {
   direction: DIRECTION.SIDE,
   nodeWidth: 180,
   nodeHeight: 44,
-  columnGap: 80, // horizontal gap between depth levels (--node-gap-x analogue)
-  siblingGap: 16, // vertical gap between sibling subtrees
-  branchGap: 32, // extra vertical gap between top-level branches
+  columnGap: 80,
+  siblingGap: 16,
+  branchGap: 32,
   collapsedWidth: 180,
   collapsedHeight: 44
 };
 
-/**
- * Assign SIDE directions to root's children, balancing left/right.
- * Favors RIGHT on ties (mindmap convention — most branches grow rightward).
- * Mutates a copy; pure with respect to the input.
- */
-function assignSideDirections(children) {
-  let leftCount = 0;
-  let rightCount = 0;
-  return children.map((child) => {
-    let dir = child.direction;
-    if (dir !== SIDE_LEFT && dir !== SIDE_RIGHT) {
-      dir = leftCount < rightCount ? SIDE_LEFT : SIDE_RIGHT;
+export const LAYOUT_DEFAULTS = DEFAULTS;
+
+// ─── Text measurement (approximate) ─────────────────────────────────
+
+function textWidth(text) {
+  if (!text) return 40;
+  return Math.max(40, String(text).length * 8 + 24);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// WrappedTree — internal node for the tidy tree algorithm
+// ═══════════════════════════════════════════════════════════════════════
+
+class WrappedTree {
+  constructor(w, h, y, c = []) {
+    this.w = w;         // orthogonal dimension (algorithm positions this)
+    this.h = h;         // along-depth dimension
+    this.y = y;         // depth position (set by layer / assignDepth)
+    this.c = c;         // child WrappedTrees
+    this.cs = c.length;
+
+    this.x = 0;         // final orthogonal position
+    this.prelim = 0;    // preliminary position
+    this.mod = 0;       // modifier accumulated by ancestors
+    this.shift = 0;     // distributed spacing adjustment
+    this.change = 0;    // residual distribution
+    this.tl = null;     // left thread
+    this.tr = null;     // right thread
+    this.el = null;     // extreme left of subtree
+    this.er = null;     // extreme right of subtree
+    this.msel = 0;      // modifier sum at extreme left
+    this.mser = 0;      // modifier sum at extreme right
+  }
+
+  /**
+   * Build WrappedTree from a CSMA NodeObj subtree.
+   * @param {object} node - CSMA NodeObj (with _ly depth set by assignDepth)
+   * @param {Function} gw - getWidth(node) → total width
+   * @param {Function} gh - getHeight(node) → total height
+   * @param {boolean} isH - horizontal layout
+   */
+  static fromNode(node, gw, gh, isH) {
+    const collapsed = node.expanded === false;
+    const kids = (!collapsed && Array.isArray(node.children)) ? node.children : [];
+    const c = kids.map((k) => WrappedTree.fromNode(k, gw, gh, isH));
+    const w = gw(node);
+    const h = gh(node);
+    if (isH) {
+      // Horizontal: depth → x-axis. Algorithm positions y-axis.
+      // WrappedTree.w = height (orthogonal), .h = width (depth), .y = node._ly (x position)
+      return new WrappedTree(h, w, node._ly, c);
     }
-    if (dir === SIDE_LEFT) leftCount += 1;
-    else rightCount += 1;
-    return { ...child, direction: dir };
-  });
+    // Vertical: depth → y-axis. Algorithm positions x-axis.
+    return new WrappedTree(w, h, node._ly, c);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Core algorithm: non-layered tidy tree (Walker / Buchheim et al.)
+// Ported from mindmap-layouts/lib/algorithms/non-layered-tidy-tree.js (MIT)
+// ═══════════════════════════════════════════════════════════════════════
+
+function firstWalk(t) {
+  if (t.cs === 0) { setExtremes(t); return; }
+  firstWalk(t.c[0]);
+  let ih = updateIYL(bottom(t.c[0].el), 0, null);
+  for (let i = 1; i < t.cs; ++i) {
+    firstWalk(t.c[i]);
+    const min = bottom(t.c[i].er);
+    separate(t, i, ih);
+    ih = updateIYL(min, i, ih);
+  }
+  positionRoot(t);
+  setExtremes(t);
+}
+
+function setExtremes(t) {
+  if (t.cs === 0) { t.el = t; t.er = t; t.msel = t.mser = 0; }
+  else {
+    t.el = t.c[0].el; t.msel = t.c[0].msel;
+    t.er = t.c[t.cs - 1].er; t.mser = t.c[t.cs - 1].mser;
+  }
+}
+
+function separate(t, i, ih) {
+  let sr = t.c[i - 1]; let mssr = sr.mod;
+  let cl = t.c[i];      let mscl = cl.mod;
+  while (sr !== null && cl !== null) {
+    if (bottom(sr) > ih.low) ih = ih.nxt;
+    const dist = (mssr + sr.prelim + sr.w) - (mscl + cl.prelim);
+    if (dist > 0) { mscl += dist; moveSubtree(t, i, ih.index, dist); }
+    const sy = bottom(sr); const cy = bottom(cl);
+    if (sy <= cy) { sr = nextRightContour(sr); if (sr !== null) mssr += sr.mod; }
+    if (sy >= cy) { cl = nextLeftContour(cl);   if (cl !== null) mscl += cl.mod; }
+  }
+  if (!sr && !!cl) setLeftThread(t, i, cl, mscl);
+  else if (!!sr && !cl) setRightThread(t, i, sr, mssr);
+}
+
+function moveSubtree(t, i, si, dist) {
+  t.c[i].mod += dist; t.c[i].msel += dist; t.c[i].mser += dist;
+  distributeExtra(t, i, si, dist);
+}
+
+function nextLeftContour(t)  { return t.cs === 0 ? t.tl : t.c[0]; }
+function nextRightContour(t) { return t.cs === 0 ? t.tr : t.c[t.cs - 1]; }
+function bottom(t)           { return t.y + t.h; }
+
+function setLeftThread(t, i, cl, modsumcl) {
+  const li = t.c[0].el; li.tl = cl;
+  const diff = (modsumcl - cl.mod) - t.c[0].msel;
+  li.mod += diff; li.prelim -= diff;
+  t.c[0].el = t.c[i].el; t.c[0].msel = t.c[i].msel;
+}
+
+function setRightThread(t, i, sr, modsumsr) {
+  const ri = t.c[i].er; ri.tr = sr;
+  const diff = (modsumsr - sr.mod) - t.c[i].mser;
+  ri.mod += diff; ri.prelim -= diff;
+  t.c[i].er = t.c[i - 1].er; t.c[i].mser = t.c[i - 1].mser;
+}
+
+function positionRoot(t) {
+  t.prelim = (
+    t.c[0].prelim + t.c[0].mod + t.c[t.cs - 1].mod +
+    t.c[t.cs - 1].prelim + t.c[t.cs - 1].w
+  ) / 2 - t.w / 2;
+}
+
+function secondWalk(t, modsum) {
+  modsum += t.mod; t.x = t.prelim + modsum;
+  addChildSpacing(t);
+  for (let i = 0; i < t.cs; i++) secondWalk(t.c[i], modsum);
+}
+
+function distributeExtra(t, i, si, dist) {
+  if (si !== i - 1) {
+    const nr = i - si;
+    t.c[si + 1].shift += dist / nr;
+    t.c[i].shift -= dist / nr;
+    t.c[i].change -= dist - dist / nr;
+  }
+}
+
+function addChildSpacing(t) {
+  let d = 0, modsumdelta = 0;
+  for (let i = 0; i < t.cs; i++) {
+    d += t.c[i].shift; modsumdelta += d + t.c[i].change;
+    t.c[i].mod += modsumdelta;
+  }
+}
+
+function updateIYL(low, index, ih) {
+  while (ih !== null && low >= ih.low) ih = ih.nxt;
+  return { low, index, nxt: ih };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Tree utilities
+// ═══════════════════════════════════════════════════════════════════════
+
+/** Shift the orthogonal coordinate of entire subtree. */
+function shiftOrtho(node, move, isH) {
+  if (isH) node.y += move; else node.x += move;
+  if (Array.isArray(node.children)) node.children.forEach((c) => shiftOrtho(c, move, isH));
+}
+
+/** Minimum orthogonal coordinate in subtree. */
+function minOrtho(node, isH) {
+  let res = isH ? node.y : node.x;
+  if (Array.isArray(node.children)) {
+    node.children.forEach((c) => { res = Math.min(res, minOrtho(c, isH)); });
+  }
+  return res;
+}
+
+/** Normalize so orthogonal coordinates start at 0. */
+function normalizeOrtho(node, isH) {
+  const min = minOrtho(node, isH);
+  if (min < 0) shiftOrtho(node, -min, isH);
 }
 
 /**
- * Compute the vertical extent (height) of a subtree.
- * Collapsed nodes have no expanded children → height is a single node.
- * In SIDE direction, height = max(nodeHeight, sum of children heights + gaps).
- * In DOWN direction, height = nodeHeight + columnGap + sum of children heights + gaps.
+ * Assign depth positions along the primary axis.
+ * `colGap` is added between levels (does NOT affect node size).
  */
-function measureSubtreeHeight(node, options, isDown = false) {
-  const isCollapsed = node.expanded === false;
-  const children = !isCollapsed && Array.isArray(node.children) ? node.children : [];
-  if (children.length === 0) {
-    return options.nodeHeight;
-  }
-  const gap = options.siblingGap;
-  let childrenTotal = 0;
-  for (let i = 0; i < children.length; i += 1) {
-    childrenTotal += measureSubtreeHeight(children[i], options, isDown);
-    if (i > 0) childrenTotal += gap;
-  }
-  if (isDown) {
-    // In DOWN layout, children stack below the parent vertically.
-    return options.nodeHeight + options.columnGap + childrenTotal;
-  }
-  // In SIDE layout, children stack alongside the parent; subtree height is
-  // the max of own height and the stack of children.
-  return Math.max(options.nodeHeight, childrenTotal);
+function assignDepth(node, isH, gw, gh, directionTag, colGap, d = 0) {
+  node._ly = d;
+  node._dir = directionTag;
+  const dim = isH ? gw(node) : gh(node);
+  d += dim + (colGap || 0);
+  const collapsed = node.expanded === false;
+  const kids = (!collapsed && Array.isArray(node.children)) ? node.children : [];
+  for (const k of kids) assignDepth(k, isH, gw, gh, directionTag, colGap, d);
 }
 
 /**
- * Recursive placement. Assigns x/y to each node and emits links.
- * `xOrigin` is the column assigned to this node's left edge.
- * `yOrigin` is the top edge available for this subtree.
- * Returns the consumed height (for sibling stacking).
+ * Map WrappedTree positions back to node coordinates.
+ * Horizontal: wt.x → node.y (orthogonal), node._ly → node.x (depth).
+ * Vertical:   wt.x → node.x (orthogonal), node._ly → node.y (depth).
  */
-function placeNode(node, parent, xOrigin, yOrigin, depth, kind, direction, options, outNodes, outLinks) {
-  const isCollapsed = node.expanded === false;
-  const width = options.nodeWidth;
-  const height = options.nodeHeight;
-  const isDown = direction === undefined;
+function applyPositions(node, wt, isH) {
+  if (isH) { node.x = node._ly; node.y = wt.x; }
+  else     { node.x = wt.x;    node.y = node._ly; }
+  const collapsed = node.expanded === false;
+  const kids = (!collapsed && Array.isArray(node.children)) ? node.children : [];
+  for (let i = 0; i < kids.length; i++) applyPositions(kids[i], wt.c[i], isH);
+}
 
-  const placed = {
+/** Mirror a right-growing tree to grow leftward. Mutates in-place. */
+function mirrorRightToLeft(node, gw) {
+  let left = Infinity, right = -Infinity;
+  const walkBB = (n) => {
+    const w = n._w || gw(n);
+    left = Math.min(left, n.x); right = Math.max(right, n.x + w);
+    if (Array.isArray(n.children)) n.children.forEach(walkBB);
+  };
+  walkBB(node);
+  const bbw = right - left;
+  const walkMirror = (n) => {
+    const w = n._w || gw(n);
+    n.x = left - (n.x - left) - w + bbw;
+    if (Array.isArray(n.children)) n.children.forEach(walkMirror);
+  };
+  walkMirror(node);
+}
+
+/**
+ * Compute bounding box of a set of children (not including their parent).
+ * Nodes must have `_w` / `_h` set (or use gw/gh).
+ */
+function childrenBounds(children, gw, gh) {
+  let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
+  const walk = (n) => {
+    const w = n._w || gw(n); const h = n._h || gh(n);
+    l = Math.min(l, n.x); t = Math.min(t, n.y);
+    r = Math.max(r, n.x + w); b = Math.max(b, n.y + h);
+    if (Array.isArray(n.children)) n.children.forEach(walk);
+  };
+  children.forEach(walk);
+  return { left: l, top: t, right: r, bottom: b, width: r - l, height: b - t };
+}
+
+/** Translate a subtree. */
+function translateTree(node, tx, ty) {
+  if (tx) { const w = (n) => { n.x += tx; if (n.children) n.children.forEach(w); }; w(node); }
+  if (ty) { const w = (n) => { n.y += ty; if (n.children) n.children.forEach(w); }; w(node); }
+}
+
+/** Clone a NodeObj tree (shallow copy nodes, deep copy children arrays). */
+function cloneTree(node) {
+  const c = Array.isArray(node.children) ? node.children.map(cloneTree) : [];
+  return { ...node, children: c };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Node kind from schemaType
+// ═══════════════════════════════════════════════════════════════════════
+
+function nodeKind(node) {
+  if (node._isRoot) return 'root';
+  if (node.schemaType === 'mindmap/leaf') return 'leaf';
+  return 'branch';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Collect output nodes and links
+// ═══════════════════════════════════════════════════════════════════════
+
+function collectNodes(node, dirTag, outNodes, outLinks, parentInfo, gw, gh, depth) {
+  const w = node._w || gw(node);
+  const h = node._h || gh(node);
+  const collapsed = node.expanded === false;
+  const kids = (!collapsed && Array.isArray(node.children)) ? node.children : [];
+  const kind = node._isRoot ? 'root' : nodeKind(node);
+
+  outNodes.push({
     id: node.id,
-    x: xOrigin,
-    y: yOrigin + (measureSubtreeHeight(node, options, isDown) - height) / 2,
-    w: width,
-    h: height,
+    x: node.x, y: node.y,
+    w, h,
     depth,
     kind,
-    direction,
+    direction: dirTag,
     status: node.status || 'pending',
-    collapsed: isCollapsed === true,
-    hasChildren: Array.isArray(node.children) && node.children.length > 0
-  };
-  outNodes.push(placed);
+    collapsed,
+    hasChildren: kids.length > 0
+  });
 
-  if (parent) {
+  if (parentInfo) {
     outLinks.push({
-      from: parent.id,
+      from: parentInfo.id,
       to: node.id,
-      kind: parent.kind === 'root' ? 'main' : 'sub',
-      direction
+      kind: parentInfo.kind === 'root' ? 'main' : 'sub',
+      direction: dirTag
     });
   }
 
-  if (isCollapsed || !Array.isArray(node.children) || node.children.length === 0) {
-    return measureSubtreeHeight(node, options, isDown);
+  for (const child of kids) {
+    collectNodes(child, dirTag, outNodes, outLinks,
+      { id: node.id, kind }, gw, gh, depth + 1);
   }
-
-  const gap = depth === 0 ? options.branchGap : options.siblingGap;
-  const childKind = node.schemaType === 'mindmap/branch' && depth === 0 ? 'branch' : kind === 'branch' ? 'leaf' : kind;
-
-  if (isDown) {
-    // DOWN: children stack vertically below parent at the same x (no horizontal indent).
-    const childX = xOrigin;
-    const childDepth = depth + 1;
-    let totalChildrenHeight = 0;
-    for (let i = 0; i < node.children.length; i += 1) {
-      totalChildrenHeight += measureSubtreeHeight(node.children[i], options, true);
-      if (i > 0) totalChildrenHeight += gap;
-    }
-    let cursorY = yOrigin + height + options.columnGap;
-    cursorY = yOrigin + height + options.columnGap;
-    for (let i = 0; i < node.children.length; i += 1) {
-      if (i > 0) cursorY += gap;
-      const child = node.children[i];
-      const consumed = placeNode(
-        child,
-        { id: node.id, kind },
-        childX,
-        cursorY,
-        childDepth,
-        childKind,
-        undefined,
-        options,
-        outNodes,
-        outLinks
-      );
-      cursorY += consumed;
-    }
-    return measureSubtreeHeight(node, options, true);
-  }
-
-  // SIDE: children at the next column in the chosen direction.
-  const childX = direction === SIDE_LEFT ? xOrigin - options.columnGap - width : xOrigin + width + options.columnGap;
-  const childDepth = depth + 1;
-
-  let cursorY = yOrigin;
-  const totalChildrenHeight = node.children.reduce((acc, c, i) => {
-    const h = measureSubtreeHeight(c, options, false);
-    return acc + h + (i > 0 ? gap : 0);
-  }, 0);
-  // Center the children block vertically under/over the parent.
-  cursorY = yOrigin + (measureSubtreeHeight(node, options, false) - totalChildrenHeight) / 2;
-
-  for (let i = 0; i < node.children.length; i += 1) {
-    if (i > 0) cursorY += gap;
-    const child = node.children[i];
-    const consumed = placeNode(
-      child,
-      { id: node.id, kind },
-      childX,
-      cursorY,
-      childDepth,
-      childKind,
-      direction,
-      options,
-      outNodes,
-      outLinks
-    );
-    cursorY += consumed;
-  }
-
-  return measureSubtreeHeight(node, options, false);
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// Run tidy tree on a single-direction subtree
+// ═══════════════════════════════════════════════════════════════════════
+
+function runTidyTree(rootNode, directionTag, gw, gh, ghOut, colGap) {
+  const isH = directionTag !== undefined; // undefined → DOWN (vertical)
+
+  // 1. Assign depth positions (uses gh = with sibling gap for algorithm spacing).
+  assignDepth(rootNode, isH, gw, gh, directionTag, colGap);
+
+  // 2. Build WrappedTree.
+  const wt = WrappedTree.fromNode(rootNode, gw, gh, isH);
+
+  // 3. Run the algorithm.
+  firstWalk(wt);
+  secondWalk(wt, 0);
+
+  // 4. Map back.
+  applyPositions(rootNode, wt, isH);
+
+  // 5. Normalize to non-negative orthogonal coordinates.
+  normalizeOrtho(rootNode, isH);
+
+  // 6. Store OUTPUT dimensions (ghOut = without sibling gap, for rendering).
+  const storeDims = (n) => { n._w = gw(n); n._h = ghOut(n); if (n.children) n.children.forEach(storeDims); };
+  storeDims(rootNode);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Public: layout
+// ═══════════════════════════════════════════════════════════════════════
 
 /**
  * Lay out a mindmap tree.
  *
- * @param {object} root - Root NodeObj (with `children`, `direction`, etc.)
+ * @param {object} root - Root NodeObj
  * @param {object} [options]
+ * @param {number|string} [options.direction=1] - 0=left, 1=right, 2=side, 3=down
+ * @param {Function} [options.getWidth]  - (node) → total node width
+ * @param {Function} [options.getHeight] - (node) → total node height
  * @returns {{nodes: object[], links: object[], bounds: object}}
  */
 export function layout(root, options = {}) {
   if (!root || typeof root !== 'object') {
     throw new Error('[LayoutEngine] layout() requires a root NodeObj');
   }
-  const opts = { ...DEFAULTS, ...options };
-  const nodes = [];
-  const links = [];
 
-  // Root placeholder so root's children get 'main' links.
-  const rootParent = null;
+  const dir = options.direction ?? 1;
+  const baseW = options.nodeWidth ?? DEFAULTS.nodeWidth;
+  const baseH = options.nodeHeight ?? DEFAULTS.nodeHeight;
+  const colGap = options.columnGap ?? DEFAULTS.columnGap;
+  const sibGap = options.siblingGap ?? DEFAULTS.siblingGap;
 
-  if (opts.direction === 3 || opts.direction === DIRECTION.DOWN) {
-    // Top-down: everyone on one column stack below root.
-    placeNode(root, rootParent, 0, 0, 0, 'root', undefined, opts, nodes, links);
-  } else {
-    // SIDE: balance children into left/right subtrees.
-    const balancedChildren = assignSideDirections(root.children || []);
-    // Synthesise a root with balanced children so child placement uses each child's direction.
-    const syntheticRoot = { ...root, children: balancedChildren };
+  // Dimension functions. Default: fixed size unless callbacks provided.
+  const gw = options.getWidth  || ((n) => baseW);
+  // Height includes sibling gap so the algorithm spaces siblings apart.
+  const ghRaw = options.getHeight || ((n) => baseH);
+  const gh = (n) => ghRaw(n) + sibGap;
 
-    // First place root at origin so its rectangle exists.
-    const rootHeight = opts.nodeHeight;
-    nodes.push({
-      id: syntheticRoot.id,
-      x: 0,
-      y: 0,
-      w: opts.nodeWidth,
-      h: rootHeight,
-      depth: 0,
-      kind: 'root',
-      direction: undefined,
-      status: syntheticRoot.status || 'pending',
-      collapsed: syntheticRoot.expanded === false,
-      hasChildren: balancedChildren.length > 0
-    });
+  const isDown = dir === 3 || dir === DIRECTION.DOWN;
+  const isSide = dir === 2 || dir === DIRECTION.SIDE;
+  const isLeft = dir === 0;
 
-    // Compute total height needed across both sides to center root.
-    const leftChildren = balancedChildren.filter((c) => c.direction === SIDE_LEFT);
-    const rightChildren = balancedChildren.filter((c) => c.direction === SIDE_RIGHT);
+  const outNodes = [];
+  const outLinks = [];
 
-    const sideHeight = (kids, gap) =>
-      kids.reduce((acc, k, i) => acc + measureSubtreeHeight(k, opts) + (i > 0 ? gap : 0), 0);
-    const leftHeight = sideHeight(leftChildren, opts.branchGap);
-    const rightHeight = sideHeight(rightChildren, opts.branchGap);
-    const totalSideHeight = Math.max(leftHeight, rightHeight, rootHeight);
+  // ── Top-down layout ──────────────────────────────────────────────
+  if (isDown) {
+    const r = cloneTree(root);
+    r._isRoot = true;
+    runTidyTree(r, undefined, gw, gh, ghRaw, colGap);
+    collectNodes(r, undefined, outNodes, outLinks, null, gw, ghRaw, 0);
+  }
 
-    // Re-center root vertically.
-    nodes[0].y = (totalSideHeight - rootHeight) / 2;
+  // ── Single-direction (left or right) ─────────────────────────────
+  else if (!isSide) {
+    const directionTag = isLeft ? SIDE_LEFT : SIDE_RIGHT;
+    const r = cloneTree(root);
+    r._isRoot = true;
+    runTidyTree(r, SIDE_RIGHT, gw, gh, ghRaw, colGap); // algorithm always grows rightward
+    if (isLeft) mirrorRightToLeft(r, gw);
+    collectNodes(r, directionTag, outNodes, outLinks, null, gw, ghRaw, 0);
+  }
 
-    // Place right side (children grow to the right).
-    let cursorY = (totalSideHeight - rightHeight) / 2;
-    const rightX = opts.nodeWidth + opts.columnGap;
-    for (let i = 0; i < rightChildren.length; i += 1) {
-      if (i > 0) cursorY += opts.branchGap;
-      const child = rightChildren[i];
-      const consumed = placeNode(
-        child,
-        { id: syntheticRoot.id, kind: 'root' },
-        rightX,
-        cursorY,
-        1,
-        'branch',
-        SIDE_RIGHT,
-        opts,
-        nodes,
-        links
-      );
-      cursorY += consumed;
+  // ── Balanced side layout ─────────────────────────────────────────
+  else {
+    const allChildren = Array.isArray(root.children) ? [...root.children] : [];
+    const rightKids = allChildren.filter(c => c.direction !== SIDE_LEFT);
+    const leftKids = allChildren.filter(c => c.direction === SIDE_LEFT);
+    // If all children are undirected, balance them.
+    if (rightKids.length === allChildren.length || leftKids.length === allChildren.length) {
+      const split = Math.round(allChildren.length / 2);
+      rightKids.length = 0;
+      leftKids.length = 0;
+      for (let i = 0; i < allChildren.length; i++) {
+        if (i < split) rightKids.push(allChildren[i]);
+        else leftKids.push(allChildren[i]);
+      }
     }
 
-    // Place left side (children grow to the left; x decreasing).
-    cursorY = (totalSideHeight - leftHeight) / 2;
-    const leftX = -opts.columnGap - opts.nodeWidth;
-    for (let i = 0; i < leftChildren.length; i += 1) {
-      if (i > 0) cursorY += opts.branchGap;
-      const child = leftChildren[i];
-      const consumed = placeNode(
-        child,
-        { id: syntheticRoot.id, kind: 'root' },
-        leftX,
-        cursorY,
-        1,
-        'branch',
-        SIDE_LEFT,
-        opts,
-        nodes,
-        links
-      );
-      cursorY += consumed;
+    // Virtual roots for each side — same dimensions as main root.
+    const rw = gw(root);
+    const rh = gh(root);
+
+    const rightVirt = { ...root, children: rightKids.map(cloneTree), _isRoot: true };
+    const leftVirt  = { ...root, children: leftKids.map(cloneTree),  _isRoot: true };
+
+    if (rightKids.length > 0) {
+      runTidyTree(rightVirt, SIDE_RIGHT, gw, gh, ghRaw, colGap);
+
+      // Children x starts at rw (virtual root width). That's exactly where
+      // they should sit relative to the main root — no X shift needed.
+      // Center children block vertically on main root center.
+      const bb = childrenBounds(rightVirt.children, gw, ghRaw);
+      const shiftY = rh / 2 - (bb.top + bb.bottom) / 2;
+      if (shiftY) translateTree(rightVirt, 0, shiftY);
+
+      for (const child of rightVirt.children) {
+        collectNodes(child, SIDE_RIGHT, outNodes, outLinks,
+          { id: root.id, kind: 'root' }, gw, ghRaw, 1);
+      }
+    }
+
+    if (leftKids.length > 0) {
+      runTidyTree(leftVirt, SIDE_RIGHT, gw, gh, ghRaw, colGap); // temporary rightward
+      mirrorRightToLeft(leftVirt, gw);
+
+      // After mirror, children are to the left of the virtual root.
+      // Position rightmost child edge at -colGap from root's left edge.
+      const bb = childrenBounds(leftVirt.children, gw, ghRaw);
+      const shiftX = -colGap - bb.right;
+      const shiftY = rh / 2 - (bb.top + bb.bottom) / 2;
+      translateTree(leftVirt, shiftX, shiftY);
+
+      for (const child of leftVirt.children) {
+        collectNodes(child, SIDE_LEFT, outNodes, outLinks,
+          { id: root.id, kind: 'root' }, gw, ghRaw, 1);
+      }
+    }
+
+    // Add main root node.
+    outNodes.unshift({
+      id: root.id, x: 0, y: 0, w: rw, h: rh,
+      depth: 0, kind: 'root', direction: undefined,
+      status: root.status || 'pending',
+      collapsed: root.expanded === false,
+      hasChildren: allChildren.length > 0
+    });
+
+    // Center root vertically among its children.
+    if (outNodes.length > 1) {
+      let minY = Infinity, maxY = -Infinity;
+      for (let i = 1; i < outNodes.length; i++) {
+        minY = Math.min(minY, outNodes[i].y);
+        maxY = Math.max(maxY, outNodes[i].y + outNodes[i].h);
+      }
+      const centerY = (minY + maxY) / 2;
+      outNodes[0].y = Math.round(centerY - rh / 2);
     }
   }
 
-  // Compute bounds.
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
-  for (const n of nodes) {
+  // ── Compute bounds ───────────────────────────────────────────────
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const n of outNodes) {
     if (n.x < minX) minX = n.x;
     if (n.y < minY) minY = n.y;
     if (n.x + n.w > maxX) maxX = n.x + n.w;
     if (n.y + n.h > maxY) maxY = n.y + n.h;
   }
-  if (!Number.isFinite(minX)) {
-    minX = 0;
-    minY = 0;
-    maxX = 0;
-    maxY = 0;
-  }
+  if (!Number.isFinite(minX)) { minX = 0; minY = 0; maxX = 0; maxY = 0; }
   const bounds = { x: minX, y: minY, w: maxX - minX, h: maxY - minY };
 
-  return { nodes, links, bounds };
+  return { nodes: outNodes, links: outLinks, bounds };
 }
 
-/**
- * Recompute layout with new options without re-walking input — utility
- * for resize / theme changes. Returns the same shape as layout().
- */
+/** Alias for API compatibility. */
 export function relayout(root, options = {}) {
   return layout(root, options);
 }
-
-export const LAYOUT_DEFAULTS = DEFAULTS;

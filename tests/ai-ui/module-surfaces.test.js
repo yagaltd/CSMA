@@ -265,10 +265,10 @@ describe('aiui module surfaces — MindmapService.mountSurface', () => {
     expect(nodes.length).toBe(3); // root + 2 branches
     const rootEl = tempHost.querySelector('.mm-node[data-kind="root"]');
     expect(rootEl).not.toBeNull();
-    expect(rootEl.textContent).toBe('Roadmap');
+    expect(rootEl.querySelector('.mind-node__topic').textContent).toBe('Roadmap');
 
     // SVG connector layer populated.
-    expect(tempHost.querySelectorAll('path.mm-connector').length).toBe(2);
+    expect(tempHost.querySelectorAll('path.connector-line').length).toBe(2);
 
     // Cleanup empties the container.
     cleanup();

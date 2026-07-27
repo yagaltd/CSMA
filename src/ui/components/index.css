@@ -25,8 +25,7 @@
 @import './color-token-list/color-token-list.css';
 
 /* Mindmap primitives */
-@import './branch-node/branch-node.css';
-@import './leaf-node/leaf-node.css';
+@import './mind-node/mind-node.css';
 @import './connector-line/connector-line.css';
 @import './mindmap-focus/mindmap-focus.css';
 @import './arrow-line/arrow-line.css';

@@ -102,7 +102,7 @@ export class FocusController {
     if (this.isActive) canvas?.setAttribute('data-mode', 'focus');
     else canvas?.removeAttribute('data-mode');
 
-    this._nodeLayer.querySelectorAll('.branch-node[data-node-id]').forEach((el) => {
+    this._nodeLayer.querySelectorAll('.mind-node[data-node-id]').forEach((el) => {
       if (eff.has(el.dataset.nodeId)) el.setAttribute('data-in-focus', '');
       else el.removeAttribute('data-in-focus');
     });

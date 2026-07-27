@@ -122,7 +122,7 @@ export class FocusController {
 ```
 
 `apply()` is idempotent and cheap: it queries the live DOM
-(`.branch-node[data-node-id]`, `.connector-line[data-child-id]`) and toggles
+(`.mind-node[data-node-id]`, `.connector-line[data-child-id]`) and toggles
 `[data-in-focus]` by membership in `effectiveIds`, and sets
 `nodeLayer.parentElement[data-mode="focus"]` when active.
 
@@ -133,20 +133,20 @@ export class FocusController {
 Token-driven only (no inline styles — CSMA rule). Add a small
 `src/ui/components/mindmap-focus/mindmap-focus.css` (or append to the existing
 focus section in `MindmapService`'s injected style). Reuse existing tokens and
-the existing ring pattern from `branch-node.css:60`
+the existing ring pattern from `mind-node.css:60`
 (`box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary, var(--accent)) 35%, transparent)`).
 
 ```css
 /* canvas root carries data-mode="focus" while a focus is active */
-.mm-canvas[data-mode="focus"] .branch-node:not([data-in-focus]) {
+.mm-canvas[data-mode="focus"] .mind-node:not([data-in-focus]) {
   opacity: 0.25;
   filter: saturate(0.55);
 }
 .mm-canvas[data-mode="focus"] .connector-line:not([data-in-focus]) {
   opacity: 0.12;
 }
-.branch-node[data-in-focus] {
-  /* reuse the existing accent ring from branch-node.css */
+.mind-node[data-in-focus] {
+  /* reuse the existing accent ring from mind-node.css */
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary, var(--accent)) 35%, transparent);
 }
 ```
@@ -284,7 +284,7 @@ A delegated click listener on `svgLayer` reads `data-child-id` from the clicked
 does not yet expose it). Low-risk, one-line-per-path change.
 
 ### 8.2 Alt+Click node → toggle into focus set (multi)
-`Alt+Click` (or `Option+Click`) on a `.branch-node` calls
+`Alt+Click` (or `Option+Click`) on a `.mind-node` calls
 `focus.toggleFocus(nodeId)`. Lets the user assemble a disjoint focus set
 (parented or not) — e.g. focus both "Auth" and "Billing" branches at once.
 Plain click keeps normal selection behavior ( SelectionController handles
@@ -366,7 +366,7 @@ focus is ephemeral view state, not an undoable mutation.
 | `ui/ContextMenu.js` | `cm-focus`, `cm-focus-add` items → `FocusController` | — |
 | `contracts/mindmap-contracts.js` | `MINDMAP_FOCUS_CHANGED` + payload contract | near line 102 |
 | `ui/components/mindmap-focus/mindmap-focus.css` | `[data-mode="focus"]` dimming + ring + pill styles (token-driven) | — |
-| `ui/components/branch-node/branch-node.css` | (reuse existing ring; no change required) | 60 |
+| `ui/components/mind-node/mind-node.css` | (reuse existing ring; no change required) | 60 |
 | `demo/mindmap.html` | **no change** — focus arrives via `mountSurface` | — |
 | `services/MindmapService.js` (init) | register `mindmap.search` agentContext provider (~172–190); add `svc.search()` wrapper | 172 |
 | `services/Search.js` | reuse as-is; optionally surface ancestor `path` on matches | 34 |
@@ -382,7 +382,7 @@ user clicks connector (data-child-id = C)
   → compute effectiveIds = ancestors(C→root) ∪ {C} ∪ descendants(C)
   → _publish(MINDMAP_FOCUS_CHANGED)
   → render() rebuilds DOM → focus.apply()
-       • .branch-node[data-node-id] ∈ effectiveIds  → [data-in-focus]
+       • .mind-node[data-node-id] ∈ effectiveIds  → [data-in-focus]
        • .connector-line[data-child-id] ∈ effectiveIds → [data-in-focus]
        • nodeLayer.parent[data-mode="focus"]
   → user clicks "Copy markdown"

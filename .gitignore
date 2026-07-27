@@ -33,3 +33,6 @@ Desktop.ini
 
 # pi-subagents per-session tooling artifacts
 .pi-subagents/
+
+# local planning doc — excluded; a fresh repo will own it
+rebuild_minmap.md

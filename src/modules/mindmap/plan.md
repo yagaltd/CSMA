@@ -43,7 +43,7 @@ bottom of this file under **Archived design (superseded)**.
 - **Consumes:**
   - `history` — undo/redo + op log
   - `agent-context` — registers serializers for the `maps` store
-  - `ai-ui` — secure component composer (mounts `branch-node`, etc.)
+  - `ai-ui` — secure component composer (mounts `mind-node`, etc.)
   - `storage` — IDB primitive
   - `runtime/EventBus`, `runtime/Contracts`, `runtime/ModuleManager`
 - **Consumed by:** tile host shells / compositors (future), MCP bridge (future).
@@ -78,8 +78,8 @@ src/modules/mindmap/
     └── MIND_ELIXIR_LICENSE              ← MIT, attribution for the port
 
 src/ui/components/
-├── branch-node/      { manifest.json, branch-node.css, branch-node.demo.html }
-├── leaf-node/        { manifest.json, leaf-node.css, leaf-node.demo.html }
+├── mind-node/      { manifest.json, mind-node.css, mind-node.demo.html }
+├── mind-node/        { manifest.json, mind-node.css, mind-node.demo.html }
 └── connector-line/   { manifest.json, connector-line.css, connector-line.demo.html }
 ```
 
@@ -251,7 +251,7 @@ output bytes.
 
 ### Phase 2 — Components (Type I, CSS-only state)
 
-1. Run `npm run create-component branch-node`, `leaf-node`,
+1. Run `npm run create-component mind-node`, `mind-node`,
    `connector-line`.
 2. Author CSS per the spec in `plan/components.md` (existing file, kept).
    States via `data-status`. All visual variables come from generated
@@ -277,14 +277,14 @@ valid payloads.
 ### Phase 4 — Render loop (ai-ui integration)
 
 1. On `loadMap`, traverse tree, call `LayoutEngine`, then ask `ai-ui` to
-   mount `branch-node` / `leaf-node` components at computed positions.
+   mount `mind-node` / `mind-node` components at computed positions.
 2. Draw `connector-line` SVG paths via `ConnectorGeometry` into a single
    SVG layer.
 3. On any `MINDMAP_*` event, recompute affected layout region and update
    DOM via `ai-ui` ops (no full re-render).
 
 **Test:** `tests/mindmap/render.test.js` (jsdom) — after `addBranch`,
-the DOM contains one new branch-node element with correct
+the DOM contains one new mind-node element with correct
 `data-status`; after `removeNode`, the element is gone.
 
 ### Phase 5 — Undo/redo + collapse + status
@@ -308,7 +308,7 @@ round-trip.
 > with a ghost element, insert-preview indicators, and edge auto-scroll.
 > Phase 14 below replaces this phase entirely.
 
-1. ~~Implement HTML5 drag-drop on `branch-node` / `leaf-node`~~ —
+1. ~~Implement HTML5 drag-drop on `mind-node` / `mind-node`~~ —
    **replaced** by pointer-event drag in Phase 14.
 2. ~~On drop, call `moveNode`~~ — kept, but trigger is pointer-up on ghost.
 
@@ -363,7 +363,7 @@ matching branches/leaves.
 `handleDoubleClick`, `nodeOperation.ts` → `beginEdit`. The demo has
 no way to select a node by clicking it or edit its text in place.
 
-1. Add `selected` data attribute to branch-node / leaf-node CSS
+1. Add `selected` data attribute to mind-node / mind-node CSS
    (outline + accent colour from design tokens).
 2. Single-click on a node → clear previous selection, set `data-selected`
    on the clicked element, fire `MINDMAP_NODE_SELECTED` event.
@@ -762,5 +762,5 @@ removed; the rejected approach is summarised above for historical
 reference.
 
 The original `plan/components.md` file is **kept** — the component specs
-(branch-node, leaf-node, connector-line) are still accurate. Only the
+(mind-node, mind-node, connector-line) are still accurate. Only the
 module-integration sections of the old README are superseded.

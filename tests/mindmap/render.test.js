@@ -54,7 +54,7 @@ describe('mindmap render helpers (jsdom)', () => {
     expect(paths[0].d.startsWith('M ')).toBe(true);
   });
 
-  it('mounting components manually: branch-node element reflects data-status', async () => {
+  it('mounting components manually: mind-node element reflects data-status', async () => {
     // Simulates what ai-ui would do: create a DOM element with the right attributes.
     const mapId = await svc.createMap('m');
     const root = svc._getMap(mapId).root;
@@ -62,7 +62,7 @@ describe('mindmap render helpers (jsdom)', () => {
     await svc.updateStatus(branch.id, 'in_progress');
 
     const el = document.createElement('div');
-    el.className = 'branch-node';
+    el.className = 'mind-node';
     el.dataset.status = branch.status;
     el.dataset.tag = branch.tag;
     el.dataset.nodeId = branch.id;

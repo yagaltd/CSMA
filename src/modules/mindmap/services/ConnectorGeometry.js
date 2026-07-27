@@ -51,23 +51,21 @@ export function main(rect, ctx) {
     return roundedVertical(x1, y1, x2, y2);
   }
 
-  let x1 = pL + pW / 2;
+  // Anchor at parent edge → child edge (matching MMW behaviour).
+  let x1, x2;
+  if (direction === DIRECTION_CLASS.LHS) {
+    x1 = pL;         // parent left edge
+    x2 = cL + cW;    // child right edge
+  } else {
+    x1 = pL + pW;    // parent right edge
+    x2 = cL;         // child left edge
+  }
   const y1 = pT + pH / 2;
-  let x2;
-  if (direction === DIRECTION_CLASS.LHS) {
-    x2 = cL + cW;
-  } else {
-    x2 = cL;
-  }
   const y2 = cT + cH / 2;
-  const pct = Math.abs(y2 - y1) / containerHeight;
-  const offset = (1 - pct) * 0.25 * (pW / 2);
-  if (direction === DIRECTION_CLASS.LHS) {
-    x1 = x1 - pW / 10 - offset;
-  } else {
-    x1 = x1 + pW / 10 + offset;
-  }
-  return `M ${x1} ${y1} Q ${x1} ${y2} ${x2} ${y2}`;
+
+  // Cubic Bézier from parent edge to child edge, curving at midpoint.
+  const mx = (x1 + x2) / 2;
+  return `M ${x1} ${y1} C ${mx} ${y1} ${mx} ${y2} ${x2} ${y2}`;
 }
 
 /**
@@ -138,10 +136,15 @@ export function rectFromNodes(parent, child) {
 
 /**
  * Map a LayoutEngine link to a generateBranch direction class.
- * LayoutEngine uses 0 (right) / 1 (left); DOWN layouts emit undefined.
+ * LayoutEngine uses 0 (child on left of parent) / 1 (child on right).
+ * DOWN layouts emit undefined.
+ *
+ * Connector naming (LHS / RHS) is from the PARENT perspective:
+ *   LHS = branch grows LEFT  → parent's left edge connects to child
+ *   RHS = branch grows RIGHT → parent's right edge connects to child
  */
 export function directionClassFor(link) {
-  if (link.direction === 1) return DIRECTION_CLASS.LHS;
-  if (link.direction === 0) return DIRECTION_CLASS.RHS;
+  if (link.direction === 0) return DIRECTION_CLASS.LHS;
+  if (link.direction === 1) return DIRECTION_CLASS.RHS;
   return DIRECTION_CLASS.DOWN;
 }
