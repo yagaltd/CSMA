@@ -198,13 +198,35 @@
   cursor: crosshair;
 }
 
+/* When not drawing, individual strokes are selectable by clicking
+   on their stroke line. Clicks between strokes pass through to
+   the slide below (pointer-events: none on the SVG container). */
+.slide-annotator:not([data-active="true"]) .slide-annotation {
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
 .slide-annotation {
   stroke: currentColor;
   fill: none;
+  transition: stroke 120ms ease, stroke-width 120ms ease;
+}
+
+/* Hover preview — slightly brighter before clicking */
+.slide-annotator:not([data-active="true"]) .slide-annotation:hover {
+  stroke-width: 5;
+  filter: drop-shadow(0 0 3px var(--color-accent-soft, rgba(37, 99, 235, 0.25)));
 }
 
 .slide-annotation[data-color="currentColor"] {
   color: var(--primary);
+}
+
+/* Selected stroke — persistent highlight */
+.slide-annotation[data-selected="true"] {
+  stroke: var(--color-accent, #2563eb) !important;
+  stroke-width: 5;
+  filter: drop-shadow(0 0 8px var(--color-accent-soft, rgba(37, 99, 235, 0.5)));
 }
 
 /* Highlight a specific annotation stroke (📍 pin click) */

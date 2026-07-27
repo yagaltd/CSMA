@@ -45,9 +45,70 @@ export function initAnnotator(container, eventBus, service) {
         for (const stroke of (strokes || [])) {
             const path = buildPath(stroke);
             if (stroke.hidden) path.style.display = 'none';
+            // Reflect selection state
+            if (stroke.id === selectedStrokeId) {
+                path.dataset.selected = 'true';
+            }
+            // Click to select a stroke when not in drawing mode
+            path.addEventListener('click', (e) => {
+                if (svg.dataset.active === 'true') return;
+                e.stopPropagation();
+                selectStroke(stroke.id);
+            });
             svg.appendChild(path);
         }
     };
+
+    // ── Stroke selection ────────────────────────────────────────────
+
+    let selectedStrokeId = null;
+
+    function selectStroke(strokeId) {
+        if (selectedStrokeId === strokeId) return;
+        if (selectedStrokeId) {
+            const prev = svg.querySelector('#' + CSS.escape(selectedStrokeId));
+            if (prev) prev.dataset.selected = 'false';
+        }
+        selectedStrokeId = strokeId;
+        const path = svg.querySelector('#' + CSS.escape(strokeId));
+        if (path) path.dataset.selected = 'true';
+    }
+
+    function deselectAll() {
+        if (!selectedStrokeId) return;
+        const path = svg.querySelector('#' + CSS.escape(selectedStrokeId));
+        if (path) path.dataset.selected = 'false';
+        selectedStrokeId = null;
+    }
+
+    // Deselect when clicking anywhere outside a stroke path
+    doc.addEventListener('click', (e) => {
+        if (!selectedStrokeId) return;
+        if (svg.dataset.active === 'true') return;
+        const clickedPath = e.target.closest('.slide-annotation');
+        if (!clickedPath || !svg.contains(clickedPath)) {
+            deselectAll();
+        }
+    });
+
+    // Delete key removes the selected stroke
+    doc.addEventListener('keydown', (e) => {
+        if (!selectedStrokeId) return;
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+            const tag = doc.activeElement?.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+            if (doc.activeElement?.isContentEditable) return;
+            e.preventDefault();
+            const id = selectedStrokeId;
+            deselectAll();
+            if (service && typeof service.removeStrokeById === 'function') {
+                service.removeStrokeById(id);
+            }
+        }
+        if (e.key === 'Escape') {
+            deselectAll();
+        }
+    });
 
     subs.push(eventBus.subscribe('ANNOTATION_UPDATED', (payload) => {
         const idx = service?.index;
