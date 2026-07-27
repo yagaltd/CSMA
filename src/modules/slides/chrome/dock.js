@@ -43,7 +43,10 @@ export function initDock(container, eventBus, service, opts = {}) {
         { label: 'Toggle grid',    symbol: '▦', intent: 'INTENT_SLIDE_TOGGLE_GRID' },
         useCommentsDrawer
             ? { label: 'Comments on current slide', symbol: '💬', intent: 'INTENT_COMMENTS_OPEN_DRAWER' }
-            : { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' }
+            : { label: 'Toggle comments on current slide (Phase 2.2)', symbol: '💬', intent: 'INTENT_SLIDE_TOGGLE_COMMENTS' },
+        ...(useCommentsDrawer ? [
+            { label: 'Pin a comment on an element', symbol: '📌', intent: 'INTENT_COMMENTS_START_PICK' }
+        ] : [])
     ];
 
     const toolDefsPostNav = [
@@ -112,9 +115,8 @@ export function initDock(container, eventBus, service, opts = {}) {
         if (!btn) return;
         const intent = btn.dataset.intent;
         if (!intent) return;
-        // The comments-drawer intent needs the current slide scope, unlike the
-        // generic timestamp-only publishes.
-        if (intent === 'INTENT_COMMENTS_OPEN_DRAWER') {
+        // The comments-drawer and pin-picker intents need the current slide scope.
+        if (intent === 'INTENT_COMMENTS_OPEN_DRAWER' || intent === 'INTENT_COMMENTS_START_PICK') {
             eventBus.publish(intent, { scope: scopeOf(service.index), timestamp: Date.now() });
             return;
         }

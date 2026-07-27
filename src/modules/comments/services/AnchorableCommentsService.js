@@ -137,7 +137,7 @@ export class AnchorableCommentsService extends CommentsService {
     // ── anchor-aware CRUD ───────────────────────────────────────────────
 
     /** Create an anchored (root) comment. Throws on an invalid anchor shape. */
-    add({ scope, anchor, body, author, type } = {}) {
+    add({ scope, anchor, body, author, type, status } = {}) {
         if (typeof body !== 'string' || body.length === 0) {
             throw new Error('AnchorableCommentsService.add: body is required');
         }
@@ -151,7 +151,7 @@ export class AnchorableCommentsService extends CommentsService {
             parent_id: null,
             body,
             author: author ?? null,
-            status: 'open',
+            status: status ?? 'open',
             type: type ?? 'user',
             created_at: now
         });
@@ -181,7 +181,7 @@ export class AnchorableCommentsService extends CommentsService {
             parent_id: parent.id,
             body,
             author: options.author ?? null,
-            status: 'open',
+            status: options.status ?? 'open',
             type: options.type ?? 'user',
             created_at: now
         });

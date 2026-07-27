@@ -29,6 +29,7 @@ import { spec, getComposer } from '../../ai-ui/specHelpers.js';
 
 const FILTERS = [
     { value: 'open', label: 'Open' },
+    { value: 'activity', label: 'Activity' },
     { value: 'all', label: 'All' }
 ];
 
@@ -420,16 +421,23 @@ export function createCommentsDrawer({
         let items = service.getByScope(currentScope) || [];
         items = items.filter((c) => c.status !== 'deleted');
         if (filter === 'open') {
-            items = items.filter((c) => c.status === 'open' || c.status === 'reopened');
+            items = items.filter((c) => (c.status === 'open' || c.status === 'reopened') && c.type !== 'system');
+        } else if (filter === 'activity') {
+            items = items.filter((c) => c.type === 'system' || c.type === 'annotation');
         }
         return items;
     }
 
     function buildEmpty() {
+        const messages = {
+            open: 'No open comments.',
+            activity: 'No activity yet.',
+            all: 'No comments yet.'
+        };
         return getComposer().mountTree(spec('div', {
             className: 'csma-comments-empty',
             attrs: { role: 'status' },
-            text: filter === 'open' ? 'No open comments.' : 'No comments yet.'
+            text: messages[filter] || 'No comments.'
         }), null, { documentRef: doc });
     }
 

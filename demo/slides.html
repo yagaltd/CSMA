@@ -232,32 +232,33 @@
           anchor: { anchor_type: 'element', anchor: { id: elementId } },
           body: `Changed ${elLabel} from "${truncated(previousValue)}" to "${truncated(value)}"`,
           author: { name: 'System' },
-          type: 'system'
+          type: 'system',
+          status: 'resolved'  // auto-resolved: informational only, no review needed
         });
       });
-      // Drawing strokes: create a system comment when a stroke is committed (mouse release)
+      // Drawing strokes: create an annotation comment (type 'annotation', not 'system')
+      // so it appears in "Open" for review and can be resolved to hide the stroke.
       eventBus.subscribe('INTENT_ANNOTATION_STROKE', (payload) => {
         const scope = scopeOf(service.index);
         const pointCount = payload?.points?.length || 0;
         if (pointCount === 0) return;
         const strokeId = service._lastStrokeId;
         if (!strokeId) return;
-        // Element-anchored so the 📍 locate button appears automatically
         anchorableComments.add({
           scope,
           anchor: { anchor_type: 'element', anchor: { id: strokeId } },
           body: 'Drew an annotation (' + pointCount + ' point' + (pointCount !== 1 ? 's' : '') + ')',
           author: { name: 'System' },
-          type: 'system',
-          data: { strokeId }
+          type: 'annotation',
+          data: { strokeId }  // for resolve/reopen/delete → hide/show/remove stroke
         });
       });
-      // Delete drawing system comment → remove the stroke from the slide
+      // Delete annotation comment → remove the stroke from the slide
       eventBus.subscribe('COMMENT_REMOVED', (payload) => {
         const commentId = payload?.id;
         if (!commentId) return;
         const comment = anchorableComments.comments.get(String(commentId));
-        if (!comment || comment.type !== 'system') return;
+        if (!comment || comment.type !== 'annotation') return;
         const strokeId = comment?.data?.strokeId;
         if (strokeId) service.removeStrokeById(strokeId);
       });
@@ -271,16 +272,30 @@
         const comment = anchorableComments.comments.get(String(payload?.id));
         if (comment?.data?.strokeId) service.showStroke(comment.data.strokeId);
       });
-      // 📍 Pin click on a drawing comment → highlight the stroke on the slide
+      // 📍 Pin click → highlight the element (stroke or text) on the slide
       eventBus.subscribe('INTENT_COMMENTS_FOCUS', (payload) => {
         const comment = anchorableComments.comments.get(String(payload?.id));
+        if (!comment) return;
+        // Drawing stroke highlight
         const strokeId = comment?.data?.strokeId;
-        if (!strokeId) return;
-        const path = document.getElementById(strokeId);
-        if (path) {
-          path.dataset.highlighted = 'true';
-          try { path.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch { /* best-effort */ }
-          setTimeout(() => { if (path) path.dataset.highlighted = 'false'; }, 2000);
+        if (strokeId) {
+          const path = document.getElementById(strokeId);
+          if (path) {
+            path.dataset.highlighted = 'true';
+            try { path.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch { /* best-effort */ }
+            setTimeout(() => { if (path) path.dataset.highlighted = 'false'; }, 2000);
+            return;
+          }
+        }
+        // Text element highlight (for text edit system comments)
+        const anchorId = comment?.anchor?.id;
+        if (anchorId) {
+          const el = document.getElementById(anchorId);
+          if (el) {
+            el.classList.add('csma-inline-edit-active');
+            try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch { /* best-effort */ }
+            setTimeout(() => el.classList.remove('csma-inline-edit-active'), 2000);
+          }
         }
       });
     }
