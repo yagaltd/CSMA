@@ -240,12 +240,12 @@
         const scope = scopeOf(service.index);
         const pointCount = payload?.points?.length || 0;
         if (pointCount === 0) return;
-        // Read the stroke ID that addStroke() generated
-        const strokes = service.getStrokes(service.index);
-        const strokeId = strokes.length > 0 ? strokes[strokes.length - 1].id : null;
+        const strokeId = service._lastStrokeId;
+        if (!strokeId) return;
+        // Element-anchored so the 📍 locate button appears automatically
         anchorableComments.add({
           scope,
-          anchor: { anchor_type: 'element', anchor: { selector: '[data-comments-scope="' + scope.replace(/"/g, '\\"') + '"]' } },
+          anchor: { anchor_type: 'element', anchor: { id: strokeId } },
           body: 'Drew an annotation (' + pointCount + ' point' + (pointCount !== 1 ? 's' : '') + ')',
           author: { name: 'System' },
           type: 'system',
@@ -260,6 +260,28 @@
         if (!comment || comment.type !== 'system') return;
         const strokeId = comment?.data?.strokeId;
         if (strokeId) service.removeStrokeById(strokeId);
+      });
+      // Resolve drawing comment → hide the stroke from the slide
+      eventBus.subscribe('COMMENT_RESOLVED', (payload) => {
+        const comment = anchorableComments.comments.get(String(payload?.id));
+        if (comment?.data?.strokeId) service.hideStroke(comment.data.strokeId);
+      });
+      // Reopen drawing comment → show the stroke again
+      eventBus.subscribe('COMMENT_REOPENED', (payload) => {
+        const comment = anchorableComments.comments.get(String(payload?.id));
+        if (comment?.data?.strokeId) service.showStroke(comment.data.strokeId);
+      });
+      // 📍 Pin click on a drawing comment → highlight the stroke on the slide
+      eventBus.subscribe('INTENT_COMMENTS_FOCUS', (payload) => {
+        const comment = anchorableComments.comments.get(String(payload?.id));
+        const strokeId = comment?.data?.strokeId;
+        if (!strokeId) return;
+        const path = document.getElementById(strokeId);
+        if (path) {
+          path.dataset.highlighted = 'true';
+          try { path.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch { /* best-effort */ }
+          setTimeout(() => { if (path) path.dataset.highlighted = 'false'; }, 2000);
+        }
       });
     }
 

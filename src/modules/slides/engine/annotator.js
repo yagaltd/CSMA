@@ -137,6 +137,7 @@ function buildPath(stroke) {
     path.setAttribute('stroke-linecap', 'round');
     path.setAttribute('stroke-linejoin', 'round');
     path.setAttribute('d', toPathData(stroke.points || []));
+    if (stroke.id) path.setAttribute('id', stroke.id);
     return path;
 }
 

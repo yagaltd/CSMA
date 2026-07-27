@@ -25,6 +25,7 @@ export class SlideDeckService {
         this.clicks = 0;
         this.maxClicks = new Map();      // slide index → max build steps
         this.annotations = new Map();    // slide index → Stroke[]
+        this.hiddenStrokes = new Set();  // stroke IDs that are resolved/hidden
         this.notes = new Map();          // slide index → string
         this.listeners = [];             // EventBus unsubscribe fns
 
@@ -298,7 +299,8 @@ export class SlideDeckService {
             width: Number.isFinite(width) ? width : 3
         });
         this.annotations.set(idx, list);
-        this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: list });
+        this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: this.getStrokes(idx) });
+        this._lastStrokeId = id;
         return id;
     }
 
@@ -309,7 +311,7 @@ export class SlideDeckService {
             if (pos !== -1) {
                 list.splice(pos, 1);
                 this.annotations.set(idx, list);
-                this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: [...list] });
+                this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: this.getStrokes(idx) });
                 return true;
             }
         }
@@ -318,7 +320,18 @@ export class SlideDeckService {
 
     getStrokes(slide) {
         const idx = Number.isFinite(slide) ? slide : this.index;
-        return this.annotations.get(idx) || [];
+        const all = this.annotations.get(idx) || [];
+        return all.filter((s) => !this.hiddenStrokes.has(s.id));
+    }
+
+    hideStroke(strokeId) {
+        this.hiddenStrokes.add(String(strokeId));
+        this.eventBus.publish('ANNOTATION_UPDATED', { slide: this.index, strokes: this.getStrokes(this.index) });
+    }
+
+    showStroke(strokeId) {
+        this.hiddenStrokes.delete(String(strokeId));
+        this.eventBus.publish('ANNOTATION_UPDATED', { slide: this.index, strokes: this.getStrokes(this.index) });
     }
 
     clearAnnotations(slide) {
@@ -333,12 +346,14 @@ export class SlideDeckService {
         if (list.length === 0) return;
         list.pop();
         this.annotations.set(idx, list);
-        this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: list });
+        this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: this.getStrokes(idx) });
     }
 
     getAnnotations(slide) {
+        // Return only visible strokes (not hidden by resolved comments)
         const idx = Number.isFinite(slide) ? slide : this.index;
-        return this.annotations.get(idx) || [];
+        const all = this.annotations.get(idx) || [];
+        return all.filter((s) => !this.hiddenStrokes.has(s.id));
     }
 
     // ─── Notes ───────────────────────────────────────────────────────
