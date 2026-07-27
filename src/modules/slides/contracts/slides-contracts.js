@@ -147,6 +147,13 @@ export const SlidesContracts = {
         description: 'Undo the last annotation stroke on a slide'
     }, object({ slide: number(), timestamp: optional(number()) })),
 
+    INTENT_ANNOTATION_STROKE_DELETE: contract({
+        version: 1, type: 'intent', owner: 'slides',
+        lifecycle: 'active', stability: 'stable', compliance: 'public',
+        security: { rateLimits: SLOW_RATE },
+        description: 'A stroke was deleted by the user — clean up linked comment'
+    }, object({ strokeId: string(), timestamp: optional(number()) })),
+
     // ─── Generic undo/redo intents (shared with InlineTextEditor) ────
 
     INTENT_UNDO: contract({

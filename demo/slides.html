@@ -262,6 +262,17 @@
         const strokeId = comment?.data?.strokeId;
         if (strokeId) service.removeStrokeById(strokeId);
       });
+      // Delete stroke via keyboard → remove the linked comment
+      eventBus.subscribe('INTENT_ANNOTATION_STROKE_DELETE', (payload) => {
+        const strokeId = payload?.strokeId;
+        if (!strokeId) return;
+        for (const c of anchorableComments.comments.values()) {
+          if (c.data?.strokeId === strokeId && c.status !== 'deleted') {
+            anchorableComments.delete(c.id);
+            break;
+          }
+        }
+      });
       // Resolve drawing comment → hide the stroke from the slide
       eventBus.subscribe('COMMENT_RESOLVED', (payload) => {
         const comment = anchorableComments.comments.get(String(payload?.id));

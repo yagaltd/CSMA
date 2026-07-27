@@ -110,6 +110,8 @@ export function initAnnotator(container, eventBus, service) {
             if (service && typeof service.removeStrokeById === 'function') {
                 service.removeStrokeById(id);
             }
+            // Signal so the comment linked to this stroke can be cleaned up
+            eventBus.publish('INTENT_ANNOTATION_STROKE_DELETE', { strokeId: id, timestamp: Date.now() });
         }
         if (e.key === 'Escape') {
             deselectAll();
