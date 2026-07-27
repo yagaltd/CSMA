@@ -26,6 +26,7 @@ export class SlideDeckService {
         this.maxClicks = new Map();      // slide index → max build steps
         this.annotations = new Map();    // slide index → Stroke[]
         this.hiddenStrokes = new Set();  // stroke IDs that are resolved/hidden
+        this._undoneStrokes = [];        // redo stack for drawing strokes
         this.notes = new Map();          // slide index → string
         this.listeners = [];             // EventBus unsubscribe fns
 
@@ -117,6 +118,7 @@ export class SlideDeckService {
         sub('INTENT_ANNOTATION_UNDO',   (p) => this.undoStroke(p?.slide));
         // Generic undo/redo — shared with InlineTextEditor for dock ↩/↪ buttons
         sub('INTENT_UNDO', () => this.undoStroke());
+        sub('INTENT_REDO', () => this.redoStroke());
 
         sub('INTENT_SLIDE_NOTE_UPDATE', (p) => this.updateNote(p?.slide, p?.text));
 
@@ -301,6 +303,7 @@ export class SlideDeckService {
         this.annotations.set(idx, list);
         this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: this.getStrokes(idx) });
         this._lastStrokeId = id;
+        this._undoneStrokes = [];  // new stroke invalidates redo history
         return id;
     }
 
@@ -326,12 +329,26 @@ export class SlideDeckService {
 
     hideStroke(strokeId) {
         this.hiddenStrokes.add(String(strokeId));
-        this.eventBus.publish('ANNOTATION_UPDATED', { slide: this.index, strokes: this.getStrokes(this.index) });
+        const slideIdx = this._findStrokeSlide(strokeId);
+        if (slideIdx >= 0) {
+            this.eventBus.publish('ANNOTATION_UPDATED', { slide: slideIdx, strokes: this.getStrokes(slideIdx) });
+        }
     }
 
     showStroke(strokeId) {
         this.hiddenStrokes.delete(String(strokeId));
-        this.eventBus.publish('ANNOTATION_UPDATED', { slide: this.index, strokes: this.getStrokes(this.index) });
+        const slideIdx = this._findStrokeSlide(strokeId);
+        if (slideIdx >= 0) {
+            this.eventBus.publish('ANNOTATION_UPDATED', { slide: slideIdx, strokes: this.getStrokes(slideIdx) });
+        }
+    }
+
+    /** Find which slide contains the given stroke ID. Returns -1 if not found. */
+    _findStrokeSlide(strokeId) {
+        for (const [idx, list] of this.annotations) {
+            if (list.some((s) => s.id === strokeId)) return idx;
+        }
+        return -1;
     }
 
     clearAnnotations(slide) {
@@ -344,9 +361,19 @@ export class SlideDeckService {
         const idx = Number.isFinite(slide) ? slide : this.index;
         const list = this.annotations.get(idx) || [];
         if (list.length === 0) return;
-        list.pop();
+        const popped = list.pop();
+        this._undoneStrokes.push({ slide: idx, stroke: popped });
         this.annotations.set(idx, list);
         this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: this.getStrokes(idx) });
+    }
+
+    redoStroke() {
+        if (this._undoneStrokes.length === 0) return;
+        const entry = this._undoneStrokes.pop();
+        const list = this.annotations.get(entry.slide) || [];
+        list.push(entry.stroke);
+        this.annotations.set(entry.slide, list);
+        this.eventBus.publish('ANNOTATION_UPDATED', { slide: entry.slide, strokes: this.getStrokes(entry.slide) });
     }
 
     getAnnotations(slide) {
