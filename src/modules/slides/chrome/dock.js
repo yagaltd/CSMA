@@ -29,11 +29,16 @@ export function initDock(container, eventBus, service, opts = {}) {
 
     const commentsService = opts.commentsService || null;
     const useCommentsDrawer = Boolean(commentsService);
+    const enableUndoRedo = Boolean(opts.enableUndoRedo);
     const scopeOf = (idx) => 'deck:slide-' + (Number.isFinite(idx) ? idx : (service.index || 0));
 
     const publish = (name) => () => eventBus.publish(name, { timestamp: Date.now() });
 
     const toolDefsPreNav = [
+        ...(enableUndoRedo ? [
+            { label: 'Undo', symbol: '↩', intent: 'INTENT_UNDO' },
+            { label: 'Redo', symbol: '↪', intent: 'INTENT_REDO' },
+        ] : []),
         { label: 'Toggle sidebar', symbol: '☰', intent: 'INTENT_SLIDE_TOGGLE_RAIL' },
         { label: 'Toggle grid',    symbol: '▦', intent: 'INTENT_SLIDE_TOGGLE_GRID' },
         useCommentsDrawer

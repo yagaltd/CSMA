@@ -24,6 +24,9 @@
   <link rel="stylesheet" href="../src/modules/archetypes/overlay-manager/overlay-manager.css">
   <link rel="stylesheet" href="../src/modules/comments/ui/comments-drawer.css">
   <link rel="stylesheet" href="../src/modules/comments/ui/comments-marker.css">
+
+  <!-- Phase 3.0 — inline text editing (double-click / F2) -->
+  <link rel="stylesheet" href="../src/modules/visual-editor/ui/inline-edit.css">
 </head>
 <body>
   <div id="deck-root"></div>
@@ -197,7 +200,7 @@
     }
 
     // Opt into drawer mode: the dock chat button now opens the drawer + shows a badge.
-    mountDeck(document.getElementById('deck-root'), service, eventBus, { composer, commentsService: anchorableComments });
+    mountDeck(document.getElementById('deck-root'), service, eventBus, { composer, commentsService: anchorableComments, enableUndoRedo: true });
 
     // Element picker: click "Element" in the drawer, then click any slide
     // content to start a comment anchored to that exact element. Bound to the
@@ -207,8 +210,66 @@
       eventBus, container: deckRoot, getScope: () => scopeOf(service.index), overlayManager
     });
 
+    // ── Phase 3.0 — inline text editing (double-click or F2) ────────
+    import { createInlineTextEditor } from '../src/modules/visual-editor/ui/InlineTextEditor.js';
+    const enableEditLogging = true; // auto-log confirmed edits as system comments
+    const inlineEditor = createInlineTextEditor({
+      container: deckRoot,
+      eventBus,
+      filter: (el) => !el.closest('.noir-dock, .slide-rail, .slide-grid, .csma-overlay-backdrop, .csma-comments-') // skip chrome
+    });
+
+    // ── Auto-log confirmed edits as system comments ──────────────
+    if (enableEditLogging) {
+      // Text edits: create a system comment when user saves an inline text change
+      eventBus.subscribe('INTENT_ELEMENT_EDITED', ({ elementId, tagName, value, previousValue }) => {
+        const scope = scopeOf(service.index);
+        if (!elementId || !value || value === previousValue) return;
+        const elLabel = tagName ? `<${tagName}>` : 'text';
+        const truncated = (s) => s.length > 60 ? s.slice(0, 57) + '…' : s;
+        anchorableComments.add({
+          scope,
+          anchor: { anchor_type: 'element', anchor: { id: elementId } },
+          body: `Changed ${elLabel} from "${truncated(previousValue)}" to "${truncated(value)}"`,
+          author: { name: 'System' },
+          type: 'system'
+        });
+      });
+      // Drawing strokes: create a system comment when a stroke is committed (mouse release)
+      eventBus.subscribe('INTENT_ANNOTATION_STROKE', (payload) => {
+        const scope = scopeOf(service.index);
+        const pointCount = payload?.points?.length || 0;
+        if (pointCount === 0) return;
+        // Read the stroke ID that addStroke() generated
+        const strokes = service.getStrokes(service.index);
+        const strokeId = strokes.length > 0 ? strokes[strokes.length - 1].id : null;
+        anchorableComments.add({
+          scope,
+          anchor: { anchor_type: 'element', anchor: { selector: '[data-comments-scope="' + scope.replace(/"/g, '\\"') + '"]' } },
+          body: 'Drew an annotation (' + pointCount + ' point' + (pointCount !== 1 ? 's' : '') + ')',
+          author: { name: 'System' },
+          type: 'system',
+          data: { strokeId }
+        });
+      });
+      // Delete drawing system comment → remove the stroke from the slide
+      eventBus.subscribe('COMMENT_REMOVED', (payload) => {
+        const commentId = payload?.id;
+        if (!commentId) return;
+        const comment = anchorableComments.comments.get(String(commentId));
+        if (!comment || comment.type !== 'system') return;
+        const strokeId = comment?.data?.strokeId;
+        if (strokeId) service.removeStrokeById(strokeId);
+      });
+    }
+
+    // Listen for inline edits and update the slide config in-memory
+    eventBus.subscribe('INTENT_ELEMENT_EDITED', ({ elementId, value, previousValue }) => {
+      console.log('[inline-edit] text saved', { elementId, value, previousValue });
+    });
+
     // Expose for debugging
-    window.deck = { service, eventBus, comments, anchorableComments, commentsDrawer, commentsPopup, commentsPicker, overlayManager, composer };
+    window.deck = { service, eventBus, comments, anchorableComments, commentsDrawer, commentsPopup, commentsPicker, overlayManager, composer, inlineEditor };
 
     // Phase 2.2 diagnostics - log the wiring state so users can verify in console
     console.log('[Phase 2.2] wiring:', {

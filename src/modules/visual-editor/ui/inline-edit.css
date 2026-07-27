@@ -1,0 +1,85 @@
+/* ─────────────────────────────────────────────────────────────────────
+   InlineTextEditor — Phase 3.0
+   Token-driven. Floating toolbar + active element state.
+   No inline styles at runtime; state via .csma-inline-edit-* classes.
+   ───────────────────────────────────────────────────────────────────── */
+
+/* ── Active element (while contentEditable) ─────────────────────────── */
+.csma-inline-edit-active {
+    outline: 2px solid var(--color-accent, #2563eb) !important;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--color-accent-soft, rgba(37, 99, 235, 0.18));
+    border-radius: 2px;
+    cursor: text;
+    /* Inherit all visual styling from the element itself — only the outline changes */
+}
+
+.csma-inline-edit-active:focus {
+    outline: 2px solid var(--color-accent, #2563eb) !important;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--color-accent-soft, rgba(37, 99, 235, 0.18));
+}
+
+/* ── Floating toolbar ───────────────────────────────────────────────── */
+.csma-inline-edit-toolbar {
+    position: fixed;
+    z-index: var(--z-popover, 200);
+    pointer-events: auto;
+    animation: csma-overlay-fadein 120ms ease;
+}
+
+.csma-inline-edit-toolbar-inner {
+    display: flex;
+    gap: 2px;
+    background: var(--color-surface-raised, #fff);
+    border: 1px solid var(--color-border, rgba(0, 0, 0, 0.14));
+    border-radius: var(--radius-md, 0.5rem);
+    box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.2));
+    padding: 4px;
+    /* Prevent the toolbar from being caught in a parent's backdrop-filter */
+    isolation: isolate;
+}
+
+/* ── Toolbar buttons ────────────────────────────────────────────────── */
+.csma-inline-edit-btn {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm, 0.375rem);
+    background: transparent;
+    font-size: var(--font-size-base, 1rem);
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 100ms ease, color 100ms ease, border-color 100ms ease;
+}
+
+.csma-inline-edit-btn--save {
+    color: var(--color-success-strong, #15803d);
+}
+.csma-inline-edit-btn--save:hover {
+    background: var(--color-success-soft, rgba(22, 163, 74, 0.14));
+    border-color: var(--color-success-soft, rgba(22, 163, 74, 0.25));
+}
+
+.csma-inline-edit-btn--cancel {
+    color: var(--color-text-tertiary, #777);
+}
+.csma-inline-edit-btn--cancel:hover {
+    background: var(--color-surface-muted, rgba(0, 0, 0, 0.05));
+    color: var(--color-text-primary, #111);
+    border-color: var(--color-border, rgba(0, 0, 0, 0.14));
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .csma-inline-edit-toolbar {
+        animation: none;
+    }
+    .csma-inline-edit-btn {
+        transition: none;
+    }
+}

@@ -50,6 +50,7 @@ export { initSelectionOverlay } from './rendering/SelectionOverlay.js';
 export { createNodeGapInserter } from './rendering/NodeGapInserter.js';
 export { initEditorToolbar } from './ui/EditorToolbar.js';
 export { initCommentSidebar } from './ui/CommentSidebar.js';
+export { createInlineTextEditor } from './ui/InlineTextEditor.js';
 
 export { initAnnotationHighlights } from './rendering/AnnotationHighlights.js';
 // Re-export commands

@@ -114,6 +114,8 @@ export class SlideDeckService {
         sub('INTENT_ANNOTATION_STROKE', (p) => this.addStroke(p));
         sub('INTENT_ANNOTATION_CLEAR',  (p) => this.clearAnnotations(p?.slide));
         sub('INTENT_ANNOTATION_UNDO',   (p) => this.undoStroke(p?.slide));
+        // Generic undo/redo — shared with InlineTextEditor for dock ↩/↪ buttons
+        sub('INTENT_UNDO', () => this.undoStroke());
 
         sub('INTENT_SLIDE_NOTE_UPDATE', (p) => this.updateNote(p?.slide, p?.text));
 
@@ -288,13 +290,35 @@ export class SlideDeckService {
         const idx = Number.isFinite(slide) ? slide : this.index;
         if (!Array.isArray(points) || points.length === 0) return;
         const list = this.annotations.get(idx) || [];
+        const id = 'stroke-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
         list.push({
+            id,
             points: points.map((p) => ({ x: Number(p?.x) || 0, y: Number(p?.y) || 0 })),
             color: typeof color === 'string' ? color : 'currentColor',
             width: Number.isFinite(width) ? width : 3
         });
         this.annotations.set(idx, list);
         this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: list });
+        return id;
+    }
+
+    removeStrokeById(strokeId) {
+        if (typeof strokeId !== 'string' || !strokeId) return false;
+        for (const [idx, list] of this.annotations) {
+            const pos = list.findIndex((s) => s.id === strokeId);
+            if (pos !== -1) {
+                list.splice(pos, 1);
+                this.annotations.set(idx, list);
+                this.eventBus.publish('ANNOTATION_UPDATED', { slide: idx, strokes: [...list] });
+                return true;
+            }
+        }
+        return false;
+    }
+
+    getStrokes(slide) {
+        const idx = Number.isFinite(slide) ? slide : this.index;
+        return this.annotations.get(idx) || [];
     }
 
     clearAnnotations(slide) {

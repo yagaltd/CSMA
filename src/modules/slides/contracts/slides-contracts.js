@@ -147,6 +147,34 @@ export const SlidesContracts = {
         description: 'Undo the last annotation stroke on a slide'
     }, object({ slide: number(), timestamp: optional(number()) })),
 
+    // ─── Generic undo/redo intents (shared with InlineTextEditor) ────
+
+    INTENT_UNDO: contract({
+        version: 1, type: 'intent', owner: 'slides',
+        lifecycle: 'active', stability: 'stable', compliance: 'public',
+        security: { rateLimits: SLOW_RATE },
+        description: 'Undo the last confirmed action (text edit or drawing stroke)'
+    }, object({ timestamp: optional(number()) })),
+
+    INTENT_REDO: contract({
+        version: 1, type: 'intent', owner: 'slides',
+        lifecycle: 'active', stability: 'stable', compliance: 'public',
+        security: { rateLimits: SLOW_RATE },
+        description: 'Redo the last undone action (text edit or drawing stroke)'
+    }, object({ timestamp: optional(number()) })),
+
+    INTENT_ELEMENT_EDITED: contract({
+        version: 1, type: 'event', owner: 'slides',
+        lifecycle: 'active', stability: 'experimental', compliance: 'public',
+        description: 'An inline text edit was confirmed (Save clicked or blur committed)'
+    }, object({
+        elementId: string(),
+        tagName: optional(string()),
+        value: string(),
+        previousValue: string(),
+        timestamp: number()
+    })),
+
     // ─── Note intents ─────────────────────────────────────────────────
 
     INTENT_SLIDE_NOTE_UPDATE: contract({
