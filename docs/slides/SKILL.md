@@ -311,7 +311,7 @@ hierarchy, spacing, typography first.**
 ## 11. Build and present (CLI — separate package, deferred)
 
 ```bash
-npx csma-slides build deck.json      # → dist/index.html + assets
+npx csma-slides build deck.json      # → public/index.html + assets
 npx csma-slides present              # → opens browser with presenter mode
 npx csma-slides export png --output slides/
 npx csma-slides deploy --target cloudflare-pages

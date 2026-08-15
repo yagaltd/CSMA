@@ -844,9 +844,9 @@ The agent never writes JS, CSS, or HTML for slides. It writes a single JSON conf
 
 ```bash
 # Agent runs:
-npx csma-slides build deck.json --output dist/
-# → produces dist/index.html (CSMA + slides module + injected config)
-# → dist/assets/*.js, dist/assets/*.css
+npx csma-slides build deck.json --output public/
+# → produces public/index.html (CSMA + slides module + injected config)
+# → public/assets/*.js, public/assets/*.css
 
 npx csma-slides export png --output slides/
 # → produces slides/slide-01.png ... slides/slide-NN.png
@@ -1467,7 +1467,7 @@ because a slide "feels plain" — fix hierarchy, spacing, typography first.
 ```bash
 # Agent runs these after writing deck.json:
 npx csma-slides build deck.json
-# → compiles JSON → HTML + JS + CSS in dist/
+# → compiles JSON → HTML + JS + CSS in public/
 
 npx csma-slides present
 # → opens browser with presenter mode ready

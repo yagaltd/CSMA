@@ -272,6 +272,27 @@ describe('Phase 3.1-A — data-grid lifecycle', () => {
     });
   });
 
+  it('regression: fetchData rows actually render (loadData clears isLoading)', async () => {
+    const container = document.createElement('section');
+    document.body.appendChild(container);
+    const grid = createDataGrid(container, vi.fn(), {
+      columns: GRID_COLUMNS,
+      fetchData: async () => [{ id: 'f1', name: 'Fetched', age: 7 }]
+    });
+    // Before the fix, loadData() left isLoading=true so renderVisibleRows()
+    // bailed and fetched rows never appeared in the DOM.
+    await vi.waitFor(() => {
+      const rows = container.querySelectorAll('.csma-datagrid__row');
+      expect(rows).toHaveLength(1);
+    });
+    const row = container.querySelector('.csma-datagrid__row');
+    expect(row.dataset.rowId).toBe('f1');
+    expect(row.querySelectorAll('.csma-datagrid__cell')[0].textContent).toBe('Fetched');
+    expect(grid.getData()).toEqual([{ id: 'f1', name: 'Fetched', age: 7 }]);
+    // Loading overlay is dismissed once data lands.
+    expect(container.querySelector('.csma-datagrid').getAttribute('data-state')).toBeNull();
+  });
+
   it('legacy fetch option still loads via the deprecation shim', async () => {
     const container = document.createElement('section');
     document.body.appendChild(container);

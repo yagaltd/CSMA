@@ -38,7 +38,7 @@ Module boundary:
   `edge-search`, `feature-flags`, `content-prefetch`, and `ab-testing`
 - do not put backend authority or deployment orchestration into CSMA modules
 
-- `loadOptionalFeatures` (`src/runtime/features.js`) loads enabled modules in
+- `loadOptionalFeatures` (`docs/legacy/features.js`) loads enabled modules in
   dependency waves: independent modules run under `Promise.all`, while
   ordered edges remain sequential (network → sync → optimistic; captcha/form
   before auth-ui/checkout; consent before analytics/notifications; router

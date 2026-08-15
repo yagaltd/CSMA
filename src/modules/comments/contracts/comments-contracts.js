@@ -1,4 +1,4 @@
-import { object, string, number, array, any, optional, nullable, enums, size } from '../../../runtime/validation/index.js';
+import { object, looseObject, string, number, array, any, optional, nullable, enums, size } from '../../../runtime/validation/index.js';
 import { contract } from '../../../runtime/Contracts.js';
 
 // Rate-limit buckets (reuse the NAV_RATE / SLOW_RATE convention from slides).
@@ -11,14 +11,42 @@ const COMMENT_NAV_RATE = { requests: 10, windowMs: 1000, scope: 'session' };
  * Permissive anchor-envelope schema used by intent contracts.
  *
  * The contract validates the envelope shape (anchor_type is one of the three
- * known primitives and an `anchor` payload is present). Strict per-type anchor
- * validation (element: selector XOR id, text: path+start+end, point: x+y) lives
- * in AnchorableCommentsService.validateAnchorShape so it can throw clear errors
- * with the offending field name.
+ * known primitives and an `anchor` payload object is present). Strict per-type
+ * anchor validation (element: selector XOR id, text: path+start+end, point:
+ * x+y) lives in AnchorableCommentsService.validateAnchorShape so it can throw
+ * clear errors with the offending field name.
+ *
+ * The per-type anchor fields are declared as optional entries of a
+ * looseObject: unknown extension keys are preserved, so host-specific anchors
+ * still pass the envelope check and the security checker's broad-schema rule
+ * stays satisfied (no unbounded `any()` struct).
  */
 const anchorEnvelope = object({
     anchor_type: enums(['element', 'text', 'point']),
-    anchor: any()
+    anchor: looseObject({
+        id: optional(size(string(), 1, 200)),       // element
+        selector: optional(size(string(), 1, 500)), // element
+        path: optional(array(any())),               // text
+        start: optional(number()),                  // text
+        end: optional(number()),                    // text
+        x: optional(number()),                      // point
+        y: optional(number()),                      // point
+        scope: optional(size(string(), 1, 200))     // point (optional scope)
+    })
+});
+
+/**
+ * Shaped comment author. Real publishers today send { name }, { id } or
+ * { id, name }; displayName/avatar/role are accepted because the
+ * drawer/popup renderers read name || displayName || id (and hosts may attach
+ * richer identities later).
+ */
+const commentAuthor = object({
+    id: optional(size(string(), 1, 160)),
+    name: optional(size(string(), 1, 160)),
+    displayName: optional(size(string(), 1, 160)),
+    avatar: optional(size(string(), 1, 500)),
+    role: optional(size(string(), 1, 80))
 });
 
 export const CommentsContracts = {
@@ -59,7 +87,7 @@ export const CommentsContracts = {
         scope: optional(size(string(), 1, 200)),
         anchor: anchorEnvelope,
         body: size(string(), 1, 20000),
-        author: optional(object()),
+        author: optional(commentAuthor),
         timestamp: number()
     })),
     INTENT_COMMENT_REPLY: contract({
@@ -70,7 +98,7 @@ export const CommentsContracts = {
     }, object({
         parentId: string(),
         body: size(string(), 1, 20000),
-        author: optional(object()),
+        author: optional(commentAuthor),
         scope: optional(size(string(), 1, 200)),
         timestamp: number()
     })),

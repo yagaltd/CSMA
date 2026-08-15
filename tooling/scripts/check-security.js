@@ -21,7 +21,7 @@ import { dirname, join, relative, resolve } from 'path';
  * Set CSMA_ENFORCE_CONTRACTS=1 in the environment (Phase 1 flips the
  * default) to turn drift into a FAIL with exit code 1.
  */
-const ENFORCE_CONTRACTS_DEFAULT = false;
+const ENFORCE_CONTRACTS_DEFAULT = true;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -125,6 +125,35 @@ function checkCsp() {
     };
 }
 
+const DOM_SINK_RE = /\.(innerHTML|outerHTML)|insertAdjacentHTML\s*\(/;
+
+/**
+ * True when a file contains a real DOM sink outside comments and typeof
+ * capability probes.
+ *
+ * False positives this filters (both occur in
+ * src/modules/slides/engine/thumbnails.js):
+ *   - pure comment lines (a docstring mention of outerHTML)
+ *   - typeof guards (`typeof slideEl.outerHTML !== 'string'`) — reading a
+ *     property inside typeof is a capability probe, not a write
+ *
+ * Known limitation (documented per plan convention): a sink name inside a
+ * string literal, or in a trailing comment on a code line, still counts as a
+ * sink. The allowlist in checkDomSinks covers the two approved writers.
+ */
+function contentHasRealDomSink(content) {
+    for (const line of content.split('\n')) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        if (trimmed.startsWith('//') || trimmed.startsWith('*') || trimmed.startsWith('/*')) continue;
+        // Strip typeof probes (identifier/member expression, optionally
+        // compared against a literal) before matching sinks.
+        const code = line.replace(/typeof\s+[\w$][\w$.[\]()'"`-]*\s*(?:!==?|===?)\s*['"][^'"]*['"]/g, '');
+        if (DOM_SINK_RE.test(code)) return true;
+    }
+    return false;
+}
+
 function checkDomSinks() {
     const allowed = new Set([
         'src/utils/sanitize.js',
@@ -132,12 +161,30 @@ function checkDomSinks() {
     ]);
     const offenders = walk(join(projectRoot, 'src'))
         .map((file) => [relative(projectRoot, file), fs.readFileSync(file, 'utf8')])
-        .filter(([file, content]) => !allowed.has(file) && /\.(innerHTML|outerHTML)|insertAdjacentHTML\s*\(/.test(content))
+        .filter(([file, content]) => !allowed.has(file) && contentHasRealDomSink(content))
         .map(([file]) => file);
     return {
         name: 'unsafe DOM sinks',
         pass: offenders.length === 0,
         message: offenders.length ? offenders.join(', ') : 'no unapproved HTML sinks in src'
+    };
+}
+
+/**
+ * Plan item 3.2 — console.log is banned in src/ (allowlist is empty by
+ * design; demos are teaching material and are not scanned). U2 owns the
+ * sweep of remaining call sites.
+ */
+function checkConsoleLogs() {
+    const allowed = new Set([]);
+    const offenders = walk(join(projectRoot, 'src'))
+        .map((file) => [relative(projectRoot, file), fs.readFileSync(file, 'utf8')])
+        .filter(([file, content]) => !allowed.has(file) && /console\.log\s*\(/.test(content))
+        .map(([file]) => file);
+    return {
+        name: 'console.log ban',
+        pass: offenders.length === 0,
+        message: offenders.length ? offenders.join(', ') : 'no console.log calls in src'
     };
 }
 
@@ -279,6 +326,7 @@ function checkSensitiveStorage() {
 const checks = [
     checkCsp,
     checkDomSinks,
+    checkConsoleLogs,
     checkTokenStorage,
     checkContracts,
     checkCachePolicy,

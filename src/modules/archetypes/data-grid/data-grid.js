@@ -545,6 +545,7 @@ export function createDataGrid(container, emit, options = {}) {
         try {
             const result = await dataFetcher({ sortColumn, sortDirection });
             rows = Array.isArray(result) ? result : (result?.rows || result?.data || []);
+            isLoading = false;
             if (rows.length === 0) {
                 setState('empty');
             } else {
