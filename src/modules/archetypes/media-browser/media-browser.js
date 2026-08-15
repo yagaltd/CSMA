@@ -159,20 +159,54 @@ export function createMediaBrowser(container, emit, options = {}) {
         });
     }
 
+    /**
+     * Image-URL policy for the media browser.
+     *
+     * mountTree's attribute whitelist (AIUIComposerService.isSafeUrl) only
+     * accepts http/https/mailto/tel URLs, so data:/blob: thumbnails cannot be
+     * mounted as `src` attributes. The media browser renders thumbnail URLs
+     * supplied by the embedding app, so it applies those URLs as DOM
+     * *properties* (post-mount) instead — and enforces its own image-only
+     * policy here: http(s), same-origin relative paths, blob:, and data:image/*
+     * are renderable; everything else (javascript:, etc.) falls back to the
+     * placeholder icon.
+     */
+    function isRenderableImageUrl(value) {
+        if (typeof value !== 'string' || value.length === 0) return false;
+        try {
+            const url = new URL(value, globalThis.location?.origin || 'http://localhost');
+            if (url.protocol === 'http:' || url.protocol === 'https:' || url.protocol === 'blob:') return true;
+            if (url.protocol === 'data:') return /^data:image\//i.test(value);
+            return false;
+        } catch {
+            return false;
+        }
+    }
+
     function buildItemSpec(item) {
         const cardAttrs = { role: 'option', tabindex: '0' };
         if (selectedIds.has(item.id)) cardAttrs['aria-selected'] = 'true';
 
         const children = [];
-        if (item.thumbnail || item.src) {
-            children.push(spec('img', {
+        const imageSrc = item.thumbnail || item.src;
+        if (isRenderableImageUrl(imageSrc)) {
+            const imgSpec = {
                 className: 'csma-media__thumbnail',
-                attrs: {
-                    src: item.thumbnail || item.src,
-                    alt: item.name || item.label || ''
-                    // NOTE: 'loading' is set as a DOM PROPERTY post-mount
-                }
-            }));
+                attrs: { alt: item.name || item.label || '' }
+                // NOTE: 'loading' is set as a DOM PROPERTY post-mount
+            };
+            if (composer.isSafeUrl(imageSrc)) {
+                // Composer-safe URL (http/https/mailto/tel + same-origin
+                // relative paths) — mount as a validated attribute so the
+                // golden DOM keeps its `src` attribute.
+                imgSpec.attrs.src = imageSrc;
+            } else {
+                // data:/blob: URLs are safe for <img> but rejected by the
+                // composer's attribute whitelist — carry them on an inert
+                // data-* attribute and apply as a DOM property post-mount.
+                imgSpec.dataset = { imgSrc: imageSrc };
+            }
+            children.push(spec('img', imgSpec));
         } else {
             children.push(buildPlaceholderSpec(item));
         }
@@ -202,6 +236,11 @@ export function createMediaBrowser(container, emit, options = {}) {
         const img = card.querySelector('img.csma-media__thumbnail');
         if (img) {
             img.loading = 'lazy';
+            // Apply data:/blob: thumbnails as a DOM property (see
+            // isRenderableImageUrl above). Already validated before it ever
+            // reaches a data-* attribute, so assignment cannot execute script.
+            const propertySrc = img.dataset.imgSrc;
+            if (propertySrc) img.src = propertySrc;
             img.addEventListener('error', () => {
                 img.style.display = 'none';
                 const { root: phRoot, cleanup } = composer.mountTree(buildPlaceholderSpec(item), card);

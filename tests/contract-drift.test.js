@@ -10,7 +10,8 @@ import {
     scanPublishCalls,
     collectPublishedNames,
     findContractDrift,
-    loadContractCollections
+    loadContractCollections,
+    mergeContractExports
 } from '../tooling/scripts/check-security.js';
 
 const FIXTURE = `
@@ -64,6 +65,31 @@ describe('findContractDrift', () => {
         expect(drift.unregistered).toEqual({});
         expect(drift.distinctUnregistered).toBe(0);
         expect(drift.totalOccurrences).toBe(0);
+    });
+});
+
+describe('mergeContractExports', () => {
+    // Deterministic fixture test for the share-contracts regression: the merge
+    // helper is the part of the loader whose behavior was previously order/
+    // walk-dependent. Pinning it with a pure fixture means the contract
+    // survives even if the filesystem walk is perturbed by concurrent edits.
+    const SHARE_LIMITS = { REQUEST: 60, WINDOW_MS: 60000 };
+    const ShareContractsFixture = {
+        SHARE_COMPLETED: { type: 'event', schema: {} },
+        SHARE_FAILED: { type: 'event', schema: {} }
+    };
+
+    it('merges contract-shaped exports and skips non-contract helpers', () => {
+        const merged = mergeContractExports({ ShareContracts: ShareContractsFixture, SHARE_LIMITS });
+        expect(merged.SHARE_COMPLETED).toBeDefined();
+        expect(merged.SHARE_FAILED).toBeDefined();
+        expect(merged.REQUEST).toBeUndefined();
+        expect(merged.WINDOW_MS).toBeUndefined();
+    });
+
+    it('falls back to the first plain object export when nothing is contract-shaped', () => {
+        const merged = mergeContractExports({ ONLY_LIMITS: SHARE_LIMITS, OTHER: { A: 1 } });
+        expect(merged).toEqual({ REQUEST: 60, WINDOW_MS: 60000 });
     });
 });
 

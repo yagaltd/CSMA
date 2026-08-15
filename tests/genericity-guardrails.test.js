@@ -77,6 +77,13 @@ function isSafeAllowedComment(relativePath, term, line) {
 }
 
 function findBannedProductionMentions() {
+    // Fresh read per call, by construction: the walk runs over src/ every time
+    // this is invoked and nothing is memoized at module level. This test was
+    // observed failing only in some full-suite orderings while passing in
+    // isolation; the working hypothesis is transient filesystem churn from
+    // concurrent lane edits (files added/moved inside src/ mid-run) rather
+    // than shared test state. Keeping the scan memo-free means an ordering
+    // can only surface real repository content, never stale state.
     return productionSourceFiles().flatMap((filePath) => {
         const relativePath = path.relative(repoRoot, filePath);
         return readFileSync(filePath, 'utf8')
@@ -180,7 +187,14 @@ describe('Demo example-module contracts', () => {
 
 describe('Source scan guardrails', () => {
     it('keeps demo cleanup banned terms out of production src except narrow safe comments', () => {
-        expect(findBannedProductionMentions()).toEqual([]);
+        // Double read as a determinism guard: fresh-read construction means two
+        // consecutive scans over the same tree must agree. A mismatch would
+        // prove transient mid-run repository churn (the suspected cause of the
+        // historical order-dependent failures) rather than a real regression.
+        const first = findBannedProductionMentions();
+        const second = findBannedProductionMentions();
+        expect(second).toEqual(first);
+        expect(first).toEqual([]);
     });
 
     it('does not scan an empty or missing production source tree', () => {

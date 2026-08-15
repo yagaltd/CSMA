@@ -20,6 +20,7 @@
         "api:guide": "npx -y modern-web-guidance@latest",
         "test": "vitest",
         "test:browser-smoke": "playwright test tests/browser/sw-smoke.spec.js",
+        "test:browser-console": "playwright test --config playwright.console.config.js",
         "test:contracts": "vitest run tests/contracts.test.js",
         "test:validation": "vitest run tests/validation.test.js",
         "tokens": "node tooling/scripts/generate-tokens.js",

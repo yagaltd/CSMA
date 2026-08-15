@@ -116,7 +116,10 @@ function checkCsp() {
     const html = read('demo/index.html');
     const match = html.match(/Content-Security-Policy[^>]*content="([^"]*)"/);
     const csp = match?.[1] || '';
-    const required = ["default-src 'self'", "script-src 'self'", "object-src 'none'", "base-uri 'self'", "frame-ancestors 'none'", "connect-src 'self'"];
+    // frame-ancestors is deliberately absent: the directive is ignored when
+    // delivered via a <meta> CSP (Chrome logs a console error), so demo pages
+    // enforce it via headers only (src/runtime/SecurityPolicy.js).
+    const required = ["default-src 'self'", "script-src 'self'", "object-src 'none'", "base-uri 'self'", "connect-src 'self'"];
     const missing = required.filter((directive) => !csp.includes(directive));
     return {
         name: 'strict CSP template',
@@ -249,7 +252,7 @@ export async function loadContractCollections() {
  * are not missed; fall back to the first plain object export if
  * nothing looks contract-shaped.
  */
-function mergeContractExports(mod) {
+export function mergeContractExports(mod) {
     const records = Object.values(mod).filter((value) => value && typeof value === 'object' && !Array.isArray(value));
     const contractShaped = records.filter((record) => Object.values(record).some((entry) => entry?.type === 'event' || entry?.type === 'intent'));
     return Object.assign({}, ...(contractShaped.length ? contractShaped : records.slice(0, 1)));

@@ -45,12 +45,22 @@ serviceManager.register('editorSession', editorSession, {
 });
 
 // ── Demo Sync Relay Bridge ─────────────────────────────────────
+// The relay is OPT-IN: add ?relay=1 to the page URL to enable it. Opening a
+// WebSocket to a dead port makes Chrome emit an unskippable console error
+// ("WebSocket connection ... failed") even with an onerror handler attached,
+// which would fail the console-guard browser test on the default page load.
+// See start.sh for the two-server + relay setup.
+const RELAY_ENABLED = new URLSearchParams(window.location.search).get('relay') === '1';
 const statusEl = document.getElementById('connection-status');
 let ws = null;
 let incomingFromRemote = false;
 let commentService = null;
 
 function connectRelay() {
+    if (!RELAY_ENABLED) {
+        setStatus('idle', 'Relay off — open with ?relay=1 to enable sync');
+        return;
+    }
     try {
         ws = new WebSocket(RELAY_WS);
     } catch (err) {

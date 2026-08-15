@@ -3,9 +3,17 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!--
+            style-src carries a single hash: the auth honeypot input
+            (src/modules/auth-ui/ui/auth-panel.js createHoneypot) applies a
+            fixed inline style. The hash (Chrome-recommended strict alternative
+            to 'unsafe-inline') allows exactly that one declaration block; if
+            the honeypot styles ever change, Chrome's violation message reports
+            the new hash to paste here.
+        -->
         <meta
             http-equiv="Content-Security-Policy"
-            content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; connect-src 'self'"
+            content="default-src 'self'; script-src 'self'; style-src 'self' 'sha256-0iy+5jmg/CiJvLrNj8hAOxrnwjJSSqzeQAuA5oNvouA='; img-src 'self' data:; object-src 'none'; base-uri 'self'; connect-src 'self'"
         />
         <title>CSMA Todo App</title>
         <link rel="stylesheet" href="app.css" />
