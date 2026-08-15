@@ -3,7 +3,7 @@
  * All event/intent schemas with validation
  * Now using our forked validation library!
  */
-import { object, string, number, boolean, enums, optional, size, array, any } from './validation/index.js';
+import { object, string, number, boolean, enums, optional, size, array, any, record, looseObject } from './validation/index.js';
 
 /**
  * Helper function for creating contracts with full ECCA metadata
@@ -234,6 +234,23 @@ const CoreContracts = {
             pattern: string(),
             count: number(),
             reason: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    CACHE_PERSIST_FAILED: {
+        version: 1,
+        type: 'event',
+        owner: 'cache-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'internal',
+        description: 'Published when a cache write fails to persist (quota/storage failure); the key is demoted to memory-only for the session',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: looseObject({
+            key: string(),
+            error: string(),
             timestamp: number()
         })
     },
@@ -1553,6 +1570,353 @@ const CoreContracts = {
             registry: enums(['commands', 'navigation', 'panels', 'adapters', 'views']),
             moduleId: string(),
             contributionId: string(),
+            timestamp: number()
+        })
+    },
+
+    // ChannelManager Events
+    CHANNEL_SUBSCRIBED: {
+        version: 1,
+        type: 'event',
+        owner: 'channel-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A channel subscription became active',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            id: string(),
+            params: any(),
+            timestamp: optional(number())
+        })
+    },
+
+    CHANNEL_UNSUBSCRIBED: {
+        version: 1,
+        type: 'event',
+        owner: 'channel-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A channel subscription was torn down',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            id: string(),
+            params: any(),
+            source: string(),
+            timestamp: optional(number())
+        })
+    },
+
+    CHANNEL_COMMAND_REQUEST: {
+        version: 1,
+        type: 'event',
+        owner: 'channel-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A transport command (filter/resend) was requested for a channel subscription',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            id: string(),
+            params: any(),
+            command: string(),
+            args: any(),
+            timestamp: optional(number())
+        })
+    },
+
+    CHANNEL_ACCESS_REVOKED: {
+        version: 1,
+        type: 'event',
+        owner: 'channel-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Access to a channel was revoked for a subscription',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            id: string(),
+            params: any(),
+            timestamp: optional(number())
+        })
+    },
+
+    CHANNEL_SERVER_CLOSE: {
+        version: 1,
+        type: 'event',
+        owner: 'channel-manager',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'The server closed a channel subscription (published by ChannelManager after teardown and by transports with the raw close message)',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        // looseObject: the transport publishes the raw protocol message (e.g. a
+        // `type: 'channel.close'` field) while ChannelManager republishes a subset.
+        schema: looseObject({
+            channel: string(),
+            params: optional(any()),
+            code: optional(number()),
+            reason: optional(string()),
+            timestamp: optional(number())
+        })
+    },
+
+    // APIWrapper Observability Events
+    API_REQUEST_START: {
+        version: 1,
+        type: 'event',
+        owner: 'api-wrapper',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'An API request began executing',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            requestId: number(),
+            method: string(),
+            endpoint: string(),
+            attempt: number(),
+            timestamp: number()
+        })
+    },
+
+    API_REQUEST_SUCCESS: {
+        version: 1,
+        type: 'event',
+        owner: 'api-wrapper',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'An API request completed successfully',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            requestId: number(),
+            method: string(),
+            endpoint: string(),
+            status: number(),
+            duration: number(),
+            timestamp: number()
+        })
+    },
+
+    API_REQUEST_ERROR: {
+        version: 1,
+        type: 'event',
+        owner: 'api-wrapper',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'An API request failed (HTTP error, abort, or network failure)',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            requestId: number(),
+            method: string(),
+            endpoint: string(),
+            status: optional(number()),
+            error: string(),
+            duration: number(),
+            timestamp: number()
+        })
+    },
+
+    API_REQUEST_RETRY: {
+        version: 1,
+        type: 'event',
+        owner: 'api-wrapper',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'An API request is being retried after a failure',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            method: string(),
+            endpoint: string(),
+            attempt: number(),
+            maxRetries: number(),
+            delay: number(),
+            timestamp: number()
+        })
+    },
+
+    // FormValidator Observability Events
+    FORM_VALIDATION_PASSED: {
+        version: 1,
+        type: 'event',
+        owner: 'form-validator',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A full form passed validation',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            formId: string(),
+            data: any(),
+            duration: number(),
+            timestamp: number()
+        })
+    },
+
+    FORM_VALIDATION_FAILED: {
+        version: 1,
+        type: 'event',
+        owner: 'form-validator',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A full form failed validation',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            formId: string(),
+            errors: record(string(), array(string())),
+            duration: number(),
+            timestamp: number()
+        })
+    },
+
+    FIELD_VALIDATION_STARTED: {
+        version: 1,
+        type: 'event',
+        owner: 'form-validator',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A single field began validation',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            formId: string(),
+            fieldName: string(),
+            timestamp: number()
+        })
+    },
+
+    FIELD_VALIDATION_PASSED: {
+        version: 1,
+        type: 'event',
+        owner: 'form-validator',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A single field passed validation',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            formId: string(),
+            fieldName: string(),
+            value: any(),
+            duration: number(),
+            timestamp: number()
+        })
+    },
+
+    FIELD_VALIDATION_FAILED: {
+        version: 1,
+        type: 'event',
+        owner: 'form-validator',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A single field failed validation',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            formId: string(),
+            fieldName: string(),
+            errors: array(string()),
+            duration: number(),
+            timestamp: number()
+        })
+    },
+
+    // DataAggregator Observability Events
+    DATA_AGGREGATION_STARTED: {
+        version: 1,
+        type: 'event',
+        owner: 'data-aggregator',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A data composition began (compose or waterfall mode)',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            name: string(),
+            sourceCount: number(),
+            mode: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    DATA_AGGREGATION_COMPLETED: {
+        version: 1,
+        type: 'event',
+        owner: 'data-aggregator',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A data composition completed (compose, waterfall, or race mode)',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            name: string(),
+            results: any(),
+            errors: record(string(), any()),
+            duration: optional(number()),
+            successCount: optional(number()),
+            errorCount: optional(number()),
+            mode: optional(string()),
+            winner: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    DATA_AGGREGATION_FAILED: {
+        version: 1,
+        type: 'event',
+        owner: 'data-aggregator',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'A data composition failed (waterfall or race mode)',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            name: string(),
+            error: string(),
+            duration: optional(number()),
+            mode: optional(string()),
+            timestamp: number()
+        })
+    },
+
+    // CrossTabLeader Event
+    LEADER_STATE_CHANGED: {
+        version: 1,
+        type: 'event',
+        owner: 'cross-tab-leader',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Cross-tab leadership role changed for this tab',
+        security: { rateLimits: { requests: 600, windowMs: 60000, scope: 'session' } },
+
+        schema: object({
+            tabId: string(),
+            role: enums(['leader', 'follower']),
+            leaderTabId: optional(string()),
+            reason: string(),
             timestamp: number()
         })
     },
