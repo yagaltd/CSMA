@@ -1893,62 +1893,6 @@ export const componentCatalog = {
       "children": [],
       "template": "<div class=\"toggle-grid\"></div>"
     }
-  },
-  "video-player": {
-    "id": "video-player",
-    "owner": "video",
-    "alias": "video-player",
-    "title": "Video Player",
-    "category": "Module Surface",
-    "type": "II",
-    "moduleId": "video",
-    "surfaceId": "video-player",
-    "path": "src/modules/video/aiui",
-    "manifestPath": "src/modules/video/aiui/manifest.json",
-    "preferred": false,
-    "summary": "Mountable video player. Delegates to the video module's runtime service once the video module ships.",
-    "propsSchema": {
-      "src": "string",
-      "poster": "string",
-      "muted": "string",
-      "autoplay": "string"
-    },
-    "defaultSlot": "default",
-    "slots": {
-      "default": {
-        "selector": ":root",
-        "allowedChildren": []
-      }
-    },
-    "allowedChildren": [],
-    "behavior": {
-      "role": "module-surface",
-      "events": [],
-      "targetActions": [],
-      "intentMap": {}
-    },
-    "style": {
-      "surfaceAware": true,
-      "supportsVariant": false,
-      "supportsSize": false,
-      "supportsTone": false
-    },
-    "textTargets": {},
-    "dependencies": {
-      "runtime": [
-        "video"
-      ],
-      "components": []
-    },
-    "contracts": {
-      "published": [],
-      "subscribed": []
-    },
-    "render": {
-      "kind": "module",
-      "tag": "div",
-      "className": "aiui-surface aiui-surface--video-player"
-    }
   }
 };
 

@@ -60,7 +60,7 @@ export function renderMedia(mediaConfig) {
             return spec('div', { className: 'media-chart', dataset: { chartType: mediaConfig.chartType || 'bar' } });
         case 'surface': {
             // Phase 2.2 — embed any aiui catalog surface (comments-thread,
-            // video-player, chart-display, future modules).
+            // chart-display, future modules).
             // The composer resolves the component via mountSurface.
             const name = mediaConfig.component;
             if (!name || typeof name !== 'string') return null;

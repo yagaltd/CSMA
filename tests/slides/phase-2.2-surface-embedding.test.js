@@ -2,7 +2,7 @@
  * Phase 2.2 unit tests — surface embedding in slide layouts.
  *
  * Tests the substrate that lets a slide embed any aiui surface
- * (comments-thread, video-player, chart-display) via the
+ * (comments-thread, chart-display) via the
  * `media: { type: 'surface', component, props }` slot.
  *
  * Unit-level only — no full deck mount. Visual verification is manual
@@ -201,9 +201,9 @@ describe('SlideDeckService.setSlideMedia', () => {
         const svc = new SlideDeckService(eventBus);
         svc.init({ slides: [{ type: 'split' }, { type: 'split' }] });
 
-        const ok = svc.setSlideMedia(1, { type: 'surface', component: 'video-player', props: { src: 'x.mp4' } });
+        const ok = svc.setSlideMedia(1, { type: 'surface', component: 'comments-thread', props: { threadId: 'slide-2' } });
         expect(ok).toBe(true);
-        expect(svc.slides[1].media.component).toBe('video-player');
+        expect(svc.slides[1].media.component).toBe('comments-thread');
         expect(events.some(e => e.name === 'SLIDE_MEDIA_CHANGED')).toBe(true);
     });
 

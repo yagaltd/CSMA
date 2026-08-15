@@ -5,7 +5,7 @@
 > **Docs:** `docs/typeset/SKILL.md`  
 > **Demo:** `demo/typeset-demo.html`  
 > **Depends on:** `src/generated/tokens.css` (consumes tokens, never creates them)  
-> **Consumed by:** slides module, video module (future), MorphEditor, any CSMA app rendering markdown
+> **Consumed by:** slides module, MorphEditor, any CSMA app rendering markdown
 
 ---
 
@@ -962,5 +962,4 @@ Same `.slide-typeset`, different `--ts-size` tuned for 1920×1080:
 - `../../demo/index.html` — existing CSMA demo (UI chrome, not prose)
 - `../../../vibe/hyperframes/` — HyperFrames reference (slideshow mode)
 - `../../modules/slides/plan.md` — slides module plan (consumes typeset)
-- `../../modules/video/plan.md` — video module plan (future, consumes typeset)
 - `https://ui.shadcn.com/docs/typeset` — shadcn/typeset (prior art)

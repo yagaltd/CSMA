@@ -10,7 +10,7 @@ import { collectAIUIComponentCatalog } from '../../tooling/scripts/generate-ai-u
 import { CommentsService } from '../../src/modules/comments/services/CommentsService.js';
 import { ChartsService } from '../../src/modules/charts/services/ChartsService.js';
 
-const MODULE_SURFACES = ['comments-thread', 'video-player', 'chart-display'];
+const MODULE_SURFACES = ['comments-thread', 'chart-display'];
 
 function fakeServiceManager(map) {
   return { get: (id) => (Object.prototype.hasOwnProperty.call(map, id) ? map[id] : null) };
@@ -40,7 +40,7 @@ function makeSurfaceManifest(id, moduleId) {
 }
 
 describe('aiui module surfaces — catalog', () => {
-  it('generated catalog contains all 3 module surfaces with module metadata', () => {
+  it('generated catalog contains all module surfaces with module metadata', () => {
     for (const id of MODULE_SURFACES) {
       expect(componentCatalog[id], `missing surface ${id}`).toBeDefined();
       const entry = componentCatalog[id];
@@ -51,7 +51,6 @@ describe('aiui module surfaces — catalog', () => {
 
     expect(componentCatalog['comments-thread'].moduleId).toBe('comments');
     expect(componentCatalog['chart-display'].moduleId).toBe('charts');
-    expect(componentCatalog['video-player'].moduleId).toBe('video');
   });
 
   it('module surfaces are registered on the composer catalog', () => {
@@ -194,21 +193,21 @@ describe('aiui module surfaces — composer resolution', () => {
 
   it('throws a clear error when the owning module is not loaded', () => {
     const bus = new EventBus();
-    // serviceManager with no 'video' service registered.
+    // serviceManager with no 'comments' service registered.
     const composer = new AIUIComposerService(bus, fakeServiceManager({}));
 
     expect(() =>
-      composer.compose({ component: 'video-player', props: { src: 'https://example.com/v.mp4' } }, { documentRef: document })
-    ).toThrow(/video.*not loaded/);
+      composer.compose({ component: 'comments-thread', props: { threadId: 't1' } }, { documentRef: document })
+    ).toThrow(/comments.*not loaded/);
   });
 
   it('throws when the owning service does not implement mountSurface', () => {
     const bus = new EventBus();
-    // 'video' resolves to an object lacking mountSurface.
-    const composer = new AIUIComposerService(bus, fakeServiceManager({ video: { notAsurface: true } }));
+    // 'comments' resolves to an object lacking mountSurface.
+    const composer = new AIUIComposerService(bus, fakeServiceManager({ comments: { notAsurface: true } }));
 
     expect(() =>
-      composer.compose({ component: 'video-player' }, { documentRef: document })
+      composer.compose({ component: 'comments-thread' }, { documentRef: document })
     ).toThrow(/does not expose mountSurface/);
   });
 
