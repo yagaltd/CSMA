@@ -216,21 +216,43 @@ export async function loadContractCollections() {
             if (!file.endsWith('-contracts.js')) continue;
             const relative = relativeFromRoot(join(contractsDir, file));
             const mod = await import(pathToFileURL(join(contractsDir, file)).href);
-            // A contracts file may export more than one plain object
-            // (share-contracts.js exports ShareContracts + SHARE_LIMITS).
-            // Merge every contract-shaped export (any entry whose value has
-            // type 'event' | 'intent') so registered names in helper exports
-            // are not missed; fall back to the first plain object export if
-            // nothing looks contract-shaped.
-            const records = Object.values(mod).filter((value) => value && typeof value === 'object' && !Array.isArray(value));
-            const contractShaped = records.filter((record) => Object.values(record).some((entry) => entry?.type === 'event' || entry?.type === 'intent'));
-            const merged = Object.assign({}, ...(contractShaped.length ? contractShaped : records.slice(0, 1)));
+            const merged = mergeContractExports(mod);
+            if (Object.keys(merged).length === 0) continue;
+            collections.push({ source: relative, contracts: merged });
+        }
+    }
+
+    // Phase 6.3 — runtime contract groups moved from Contracts.js into
+    // src/runtime/contracts/*.js (Contracts.js is now the merge facade).
+    // Walk the same shape the module walk above uses so the drift check
+    // still sees every runtime-owned event name.
+    const runtimeContractsDir = join(projectRoot, 'src/runtime/contracts');
+    if (fs.existsSync(runtimeContractsDir)) {
+        for (const file of fs.readdirSync(runtimeContractsDir)) {
+            if (!file.endsWith('-contracts.js')) continue;
+            const relative = relativeFromRoot(join(runtimeContractsDir, file));
+            const mod = await import(pathToFileURL(join(runtimeContractsDir, file)).href);
+            const merged = mergeContractExports(mod);
             if (Object.keys(merged).length === 0) continue;
             collections.push({ source: relative, contracts: merged });
         }
     }
 
     return collections;
+}
+
+/**
+ * A contracts file may export more than one plain object
+ * (share-contracts.js exports ShareContracts + SHARE_LIMITS).
+ * Merge every contract-shaped export (any entry whose value has
+ * type 'event' | 'intent') so registered names in helper exports
+ * are not missed; fall back to the first plain object export if
+ * nothing looks contract-shaped.
+ */
+function mergeContractExports(mod) {
+    const records = Object.values(mod).filter((value) => value && typeof value === 'object' && !Array.isArray(value));
+    const contractShaped = records.filter((record) => Object.values(record).some((entry) => entry?.type === 'event' || entry?.type === 'intent'));
+    return Object.assign({}, ...(contractShaped.length ? contractShaped : records.slice(0, 1)));
 }
 
 function relativeFromRoot(fullPath) {

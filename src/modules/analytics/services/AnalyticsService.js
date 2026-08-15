@@ -7,6 +7,7 @@ import { uid } from '../../../utils/id.js';
 import { EventClassifier } from './EventClassifier.js';
 import { EventAggregator } from './EventAggregator.js';
 import { SecurityScanner } from './SecurityScanner.js';
+import { AnalyticsTransport } from './analyticsTransport.js';
 
 
 const ANALYTICS_DB_NAME = 'csma-analytics';
@@ -65,6 +66,7 @@ export class AnalyticsService {
         this._idbReady = null;
 
         this.fetchLaterController = null;
+        this.transport = new AnalyticsTransport(this);
         this.pipelineConfig = mergePipelineConfig(options.pipeline);
         this.classifier = new EventClassifier({
             rules: this.pipelineConfig.classifier.rules,
@@ -348,68 +350,18 @@ export class AnalyticsService {
     }
 
     async flushViaTransport(payload, onSuccess, { preferDeferred = false } = {}) {
-        const body = JSON.stringify(payload);
-
-        if (preferDeferred && this.flushViaFetchLater(body, onSuccess)) {
-            return;
-        }
-
-        if (preferDeferred && this.flushViaBeacon(body, onSuccess)) {
-            return;
-        }
-
-        const response = await fetch(this.analyticsEndpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body,
-            keepalive: true
-        });
-
-        if (!response.ok) {
-            throw new Error(`Server responded with ${response.status}`);
-        }
-
-        onSuccess?.();
+        // Delegated to AnalyticsTransport (Phase 6.7 extraction).
+        return this.transport.flush(payload, onSuccess, { preferDeferred });
     }
 
     flushViaFetchLater(body, onSuccess) {
-        if (typeof globalThis.fetchLater !== 'function' || typeof AbortController === 'undefined') {
-            return false;
-        }
-
-        try {
-            this.fetchLaterController?.abort?.();
-            this.fetchLaterController = new AbortController();
-            globalThis.fetchLater(this.analyticsEndpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body,
-                signal: this.fetchLaterController.signal,
-                activateAfter: 0
-            });
-            onSuccess?.();
-            return true;
-        } catch {
-            return false;
-        }
+        // Delegated to AnalyticsTransport (Phase 6.7 extraction).
+        return this.transport.flushViaFetchLater(body, onSuccess);
     }
 
     flushViaBeacon(body, onSuccess) {
-        if (typeof navigator === 'undefined' || typeof navigator.sendBeacon !== 'function') {
-            return false;
-        }
-
-        try {
-            const blob = new Blob([body], { type: 'application/json' });
-            if (navigator.sendBeacon(this.analyticsEndpoint, blob)) {
-                onSuccess?.();
-                return true;
-            }
-        } catch {
-            // Fall through to fetch keepalive.
-        }
-
-        return false;
+        // Delegated to AnalyticsTransport (Phase 6.7 extraction).
+        return this.transport.flushViaBeacon(body, onSuccess);
     }
 
     startBatchTimer() {

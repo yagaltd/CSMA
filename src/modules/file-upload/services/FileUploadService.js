@@ -1,4 +1,6 @@
 import { uid } from '../../../utils/id.js';
+import { snapshot, snapshotFromCheckpoint, startedPayload, progressPayload, completedPayload, failedPayload, pausedPayload, resumedPayload, cancelledPayload } from './uploadPayloads.js';
+import { CheckpointPersistence } from './adapters/CheckpointPersistence.js';
 
 const DEFAULT_OPTIONS = {
     chunkSize: 64 * 1024,
@@ -21,15 +23,7 @@ function isAbortError(error) {
     return error?.name === 'AbortError' || error?.code === 'ABORT_ERR' || error?.message === 'AbortError';
 }
 
-function clone(value) {
-    return value ? JSON.parse(JSON.stringify(value)) : value;
-}
 
-function toErrorMessage(error) {
-    if (!error) return 'Unknown upload error';
-    if (typeof error === 'string') return error;
-    return error.message || String(error);
-}
 
 export class FileUploadService {
     constructor(eventBus, options = {}) {
@@ -48,6 +42,7 @@ export class FileUploadService {
         this.subscriptions = [];
         this._syncQueueRegistered = false;
         this._persistReady = null;
+        this.persistence = new CheckpointPersistence(this);
     }
 
     async init(options = {}) {
@@ -328,27 +323,9 @@ export class FileUploadService {
         }
     }
 
-    async _preparePersistence() {
-        if (this._persistReady) {
-            return this._persistReady;
-        }
-
-        this._persistReady = (async () => {
-            if (this.storage?.init && !this.storage?.getItem) {
-                try {
-                    await this.storage.init({
-                        [this.options.checkpointStore]: {
-                            keyPath: 'fileId',
-                            autoIncrement: false
-                        }
-                    });
-                } catch {
-                    // Best effort only.
-                }
-            }
-        })();
-
-        return this._persistReady;
+async _preparePersistence() {
+        // Delegated to CheckpointPersistence (Phase 6.5 extraction).
+        return this.persistence.init();
     }
 
     _bindIntentHandlers() {
@@ -579,161 +556,29 @@ export class FileUploadService {
         await this._persistCheckpoint(session);
     }
 
-    async _storeSource(session) {
-        if (!this.fileSystem?.store || !session.file) {
-            return null;
-        }
-
-        const sourceRef = this._sourceRef(session.fileId);
-        try {
-            const stored = await this.fileSystem.store(session.file, {
-                id: sourceRef,
-                title: session.fileName,
-                category: 'file-upload',
-                description: 'Upload source staging file',
-                extra: {
-                    fileId: session.fileId
-                }
-            });
-            session.sourceRef = stored?.id || stored?.handle || sourceRef;
-            return session.sourceRef;
-        } catch {
-            return null;
-        }
+async _storeSource(session) {
+        // Delegated to CheckpointPersistence (Phase 6.5 extraction).
+        return this.persistence.storeSource(session);
     }
 
-    async _restoreSource(checkpoint) {
-        if (checkpoint?.file) {
-            return checkpoint.file;
-        }
-
-        const sourceRef = checkpoint?.sourceRef;
-        if (!sourceRef || !this.fileSystem?.retrieve) {
-            return null;
-        }
-
-        try {
-            const result = await this.fileSystem.retrieve(sourceRef, { withMetadata: false });
-            if (result?.file) {
-                return result.file;
-            }
-            return result;
-        } catch {
-            return null;
-        }
+async _restoreSource(checkpoint) {
+        // Delegated to CheckpointPersistence (Phase 6.5 extraction).
+        return this.persistence.restoreSource(checkpoint);
     }
 
-    async _persistCheckpoint(session) {
-        const checkpoint = this._checkpointPayload(session);
-        session.checkpoint = checkpoint;
-
-        if (this.storage?.setItem) {
-            try {
-                this.storage.setItem(this._storageKey(session.fileId), JSON.stringify(checkpoint));
-            } catch {
-                // Best effort.
-            }
-        } else if (this.storage?.update || this.storage?.add) {
-            try {
-                if (this.storage.update) {
-                    await this.storage.update(this.options.checkpointStore, checkpoint);
-                } else {
-                    await this.storage.add(this.options.checkpointStore, checkpoint);
-                }
-            } catch {
-                // Best effort.
-            }
-        }
-
-        if (this.fileSystem?.store) {
-            try {
-                const blob = new Blob([JSON.stringify(checkpoint)], { type: 'application/json' });
-                await this.fileSystem.store(blob, {
-                    id: this._checkpointRef(session.fileId),
-                    title: `${session.fileName}.checkpoint.json`,
-                    category: 'file-upload-checkpoint',
-                    extra: {
-                        fileId: session.fileId
-                    }
-                });
-            } catch {
-                // Best effort.
-            }
-        }
+async _persistCheckpoint(session) {
+        // Delegated to CheckpointPersistence (Phase 6.5 extraction).
+        return this.persistence.persistCheckpoint(session);
     }
 
-    async _readCheckpoint(fileId) {
-        const inMemory = this._checkpointFromMemory(fileId);
-        if (inMemory) {
-            return inMemory;
-        }
-
-        if (this.storage?.getItem) {
-            try {
-                const raw = this.storage.getItem(this._storageKey(fileId));
-                if (raw) {
-                    return JSON.parse(raw);
-                }
-            } catch {
-                // Best effort.
-            }
-        } else if (this.storage?.get) {
-            try {
-                const record = await this.storage.get(this.options.checkpointStore, fileId);
-                if (record) {
-                    return record;
-                }
-            } catch {
-                // Best effort.
-            }
-        }
-
-        if (this.fileSystem?.retrieve) {
-            try {
-                const result = await this.fileSystem.retrieve(this._checkpointRef(fileId), { withMetadata: false });
-                if (!result) {
-                    return null;
-                }
-
-                const text = await this._readText(result);
-                return text ? JSON.parse(text) : null;
-            } catch {
-                return null;
-            }
-        }
-
-        return null;
+async _readCheckpoint(fileId) {
+        // Delegated to CheckpointPersistence (Phase 6.5 extraction).
+        return this.persistence.readCheckpoint(fileId);
     }
 
-    async _clearCheckpoint(fileId) {
-        const checkpoint = this._checkpointFromMemory(fileId);
-
-        if (this.storage?.removeItem) {
-            try {
-                this.storage.removeItem(this._storageKey(fileId));
-            } catch {
-                // Best effort.
-            }
-        }
-
-        if (this.storage?.delete) {
-            try {
-                await this.storage.delete(this.options.checkpointStore, fileId);
-            } catch {
-                // Best effort.
-            }
-        }
-
-        if (this.fileSystem?.delete) {
-            const refs = [this._checkpointRef(fileId), checkpoint?.sourceRef].filter(Boolean);
-            for (const ref of refs) {
-                try {
-                    await this.fileSystem.delete(ref);
-                } catch {
-                    // Best effort.
-                }
-            }
-        }
+async _clearCheckpoint(fileId) {
+        // Delegated to CheckpointPersistence (Phase 6.5 extraction).
+        return this.persistence.clearCheckpoint(fileId);
     }
 
     _checkpointFromMemory(fileId) {
@@ -772,133 +617,39 @@ export class FileUploadService {
     }
 
     _snapshot(session) {
-        return {
-            fileId: session.fileId,
-            fileName: session.fileName,
-            fileSize: session.fileSize,
-            fileType: session.fileType,
-            status: session.status,
-            attempts: session.attempts,
-            loaded: session.loaded,
-            total: session.total,
-            progress: session.progress,
-            chunkSize: session.chunkSize,
-            resumable: session.resumable,
-            uploadGrant: session.uploadGrant ? {
-                grantId: session.uploadGrant.grantId,
-                expiresAt: session.uploadGrant.expiresAt
-            } : null,
-            sourceRef: session.sourceRef,
-            checkpoint: session.checkpoint ? clone(session.checkpoint) : null,
-            error: session.error ? toErrorMessage(session.error) : null,
-            reason: session.pauseReason || session.cancelReason || null,
-            updatedAt: session.updatedAt,
-            createdAt: session.createdAt
-        };
+        return snapshot(session);
     }
 
     _snapshotFromCheckpoint(checkpoint) {
-        return {
-            fileId: checkpoint.fileId,
-            fileName: checkpoint.fileName,
-            fileSize: checkpoint.fileSize,
-            fileType: checkpoint.fileType,
-            status: checkpoint.status || 'paused',
-            attempts: checkpoint.attempts || 0,
-            loaded: checkpoint.loaded || 0,
-            total: checkpoint.total || checkpoint.fileSize || 0,
-            progress: checkpoint.progress || 0,
-            chunkSize: checkpoint.chunkSize,
-            resumable: true,
-            sourceRef: checkpoint.sourceRef || null,
-            checkpoint: clone(checkpoint),
-            error: null,
-            reason: null,
-            updatedAt: checkpoint.updatedAt || Date.now(),
-            createdAt: checkpoint.createdAt || checkpoint.updatedAt || Date.now()
-        };
+        return snapshotFromCheckpoint(checkpoint);
     }
 
     _startedPayload(session) {
-        return {
-            fileId: session.fileId,
-            fileName: session.fileName,
-            fileSize: session.fileSize,
-            fileType: session.fileType,
-            timestamp: Date.now()
-        };
+        return startedPayload(session);
     }
 
     _progressPayload(session) {
-        return {
-            fileId: session.fileId,
-            progress: session.progress,
-            loaded: session.loaded,
-            total: session.total,
-            timestamp: Date.now()
-        };
+        return progressPayload(session);
     }
 
     _completedPayload(session, result) {
-        const payload = {
-            fileId: session.fileId,
-            fileName: session.fileName,
-            fileSize: session.fileSize,
-            fileType: session.fileType,
-            result: result || { uploaded: true },
-            timestamp: Date.now()
-        };
-
-        if (session.previewUrl) {
-            payload.previewUrl = session.previewUrl;
-        }
-
-        return payload;
+        return completedPayload(session, result);
     }
 
     _failedPayload(session, error) {
-        return {
-            fileId: session.fileId,
-            fileName: session.fileName,
-            error: toErrorMessage(error),
-            timestamp: Date.now()
-        };
+        return failedPayload(session, error);
     }
 
     _pausedPayload(session, reason) {
-        return {
-            fileId: session.fileId,
-            progress: session.progress,
-            loaded: session.loaded,
-            total: session.total,
-            timestamp: Date.now(),
-            reason: reason || session.pauseReason || 'manual'
-        };
+        return pausedPayload(session, reason);
     }
 
     _resumedPayload(session, reason) {
-        const payload = {
-            fileId: session.fileId,
-            progress: session.progress,
-            loaded: session.loaded,
-            total: session.total,
-            timestamp: Date.now()
-        };
-
-        const value = reason || session.pauseReason;
-        if (value) {
-            payload.reason = value;
-        }
-
-        return payload;
+        return resumedPayload(session, reason);
     }
 
     _cancelledPayload(session, reason) {
-        return {
-            fileId: session.fileId,
-            timestamp: Date.now(),
-            reason: reason || session.cancelReason || 'manual'
-        };
+        return cancelledPayload(session, reason);
     }
 
     _publish(eventName, payload) {
