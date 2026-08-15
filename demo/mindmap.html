@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; connect-src 'self'"
+  />
   <title>mindmap - demo v2</title>
   <link rel="stylesheet" href="/src/generated/tokens.css" />
   <!-- CSMA catalog components mapped from the demo's legacy .mm-node / .mm-connector -->
@@ -13,22 +17,7 @@
   <link rel="stylesheet" href="/src/style/base.css" />
   <link rel="stylesheet" href="/src/style/foundation/layout.css" />
   <link rel="stylesheet" href="/src/style/foundation/motion.css" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    body { background: var(--background); color: var(--foreground); margin: 0; padding: 16px; }
-    .toolbar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
-    .toolbar select { padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--foreground); cursor: pointer; font: inherit; font-size: 13px; }
-    .canvas {
-      position: relative; width: 100%; height: 70vh; overflow: hidden;
-      border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--mindmap-canvas-bg);
-    }
-    .status-line { font-family: monospace; font-size: 12px; color: var(--foreground-muted); padding: 8px 12px; background: var(--background); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-top: 12px; min-height: 2em; white-space: pre-wrap; }
-    /* Collapse button: surface CSS covers this; demo override for larger touch target on mobile */
-    @media (max-width: 768px) {
-      .toolbar .button, .toolbar select, .mm-toolbar .button { min-height: 44px; min-width: 44px; }
-      .mind-node .mind-node__collapse { min-width: 44px; min-height: 44px; }
-    }
-  </style>
+  <link rel="stylesheet" href="mindmap.css" />
 </head>
 <body>
   <h1>mindmap - demo v2</h1>
@@ -50,101 +39,6 @@
   <div class="canvas" id="canvas" tabindex="0"></div>
   <pre class="status-line" id="status">Loading…</pre>
 
-  <script type="module">
-    import { MindmapService } from '/src/modules/mindmap/services/MindmapService.js';
-    import { HistoryService } from '/src/modules/history/services/HistoryService.js';
-    import { applyStoredTheme, registerThemeToggle } from '/src/style/theme/theme-manager.js';
-
-    // EventBus stub - must expose subscribe/publish (names MindmapService expects)
-    const bus = { _s: new Map(),
-      subscribe(n,fn) { if(!this._s.has(n))this._s.set(n,[]); this._s.get(n).push(fn); },
-      unsubscribe() {},
-      publish(n,p) { (this._s.get(n)||[]).forEach(fn=>fn(p)); }
-    };
-    const mem = { init:async()=>{}, getAll:async()=>[], put:async()=>{}, clear:async()=>{} };
-    const history = new HistoryService(bus);
-    await history.init({ store: mem });
-    const svc = new MindmapService(bus);
-    svc.init({ storage: null, history });
-
-    const canvas = document.getElementById('canvas');
-    const statusEl = document.getElementById('status');
-    const mapSelect = document.getElementById('map-select');
-    let activeMap = null;
-    let surface = null;
-    function status(m) { statusEl.textContent = m; }
-
-    // CSMA theme toggle - cycles light / dark / contrast, persists to localStorage
-    applyStoredTheme();
-    const themeToggleBtn = document.querySelector('[data-theme-toggle]');
-    if (themeToggleBtn) {
-      const themeLabel = themeToggleBtn.querySelector('[data-theme-label]');
-      const syncLabel = (theme) => { if (themeLabel) themeLabel.textContent = `Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`; };
-      syncLabel(document.documentElement.getAttribute('data-theme') || 'light');
-      registerThemeToggle(themeToggleBtn, ({ theme, next }) => {
-        themeToggleBtn.dataset.themeActive = theme;
-        themeToggleBtn.setAttribute('aria-label', `Switch to ${next} theme`);
-        syncLabel(theme);
-      });
-    }
-
-    // All rendering + interaction handlers live inside mountSurface (Wave 2).
-    // The demo is a thin harness: it owns map data/seed and the status line.
-    function mountMap(id) {
-      if (surface) surface(); // cleanup previous surface
-      surface = svc.mountSurface('mindmap-canvas', canvas, { mapId: id });
-    }
-
-    async function refreshMapList() {
-      const maps = await svc.listMaps();
-      mapSelect.replaceChildren();
-      for (const m of maps) {
-        const o = document.createElement('option');
-        o.value = m.id; o.textContent = m.name;
-        mapSelect.appendChild(o);
-      }
-      if (activeMap) mapSelect.value = activeMap;
-    }
-
-    document.getElementById('new-map').onclick = async () => {
-      activeMap = await svc.createMap(`Map ${Date.now() % 1000}`);
-      await refreshMapList();
-      mapSelect.value = activeMap;
-      mountMap(activeMap);
-      status('new map');
-    };
-    mapSelect.onchange = () => {
-      activeMap = mapSelect.value;
-      mountMap(activeMap);
-      status('switched map');
-    };
-    document.getElementById('undo-btn').onclick = async () => {
-      await svc.undo();
-      if (surface) surface.render();
-      status('undo');
-    };
-    document.getElementById('redo-btn').onclick = async () => {
-      await svc.redo();
-      if (surface) surface.render();
-      status('redo');
-    };
-    document.getElementById('md-btn').onclick = () => { status(svc.toMarkdown(activeMap) || '(empty)'); };
-
-    // ─── Seed ────────────────────────────────────────────────────
-    activeMap = await svc.createMap('Sample map');
-    await svc.setLayoutDirection(2); // side layout: children on both left and right
-    const r = svc._getMap(activeMap).root;
-    const b1 = await svc.addBranch(r.id, 'e2e-test', { tag: 'phase' });
-    await svc.addLeaf(b1.id, 'init + plan verified');
-    await svc.addLeaf(b1.id, 'scout: recon');
-    const b2 = await svc.addBranch(r.id, 'docs', { tag: 'module' });
-    await svc.addLeaf(b2.id, 'write readme');
-    const b3 = await svc.addBranch(r.id, 'ui', { tag: 'feature' });
-    await svc.addLeaf(b3.id, 'selection');
-    await svc.addLeaf(b3.id, 'keyboard');
-    await refreshMapList();
-    mountMap(activeMap);
-    status('ready - click nodes, double-click to edit, drag to move, right-click for menu, arrow keys to navigate; toolbar: zoom / fit / layout / fullscreen');
-  </script>
+  <script type="module" src="mindmap.js"></script>
 </body>
 </html>

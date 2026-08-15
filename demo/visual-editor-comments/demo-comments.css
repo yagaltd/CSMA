@@ -90,3 +90,26 @@ body {
     position: relative;
     min-height: inherit;
 }
+
+/* Page-level overrides externalized from index.html so the page can
+   ship a strict CSP (style-src 'self'). */
+
+/* Force light theme for demo - overrides any token/dark-mode variables */
+html, body, #app, .demo-main, .demo-editor,
+.ve-editor-surface, .ve-document-root, .ve-node,
+.ve-node-array-container, .ve-text-property {
+    background: var(--surface) !important;
+    color: var(--foreground) !important;
+}
+.ve-text-property {
+    padding: 8px 12px !important;
+    margin: 2px 0 !important;
+    border-radius: 4px !important;
+    font-size: 15px !important;
+    line-height: 1.6 !important;
+}
+.ve-text-property:focus {
+    background: var(--surface-muted) !important;
+    outline: 2px solid var(--accent) !important;
+    outline-offset: -2px !important;
+}
