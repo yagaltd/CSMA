@@ -21,9 +21,9 @@ const COMPONENT_PAGES = readdirSync(COMPONENT_DIR, { withFileTypes: true })
   .filter((e) => e.isDirectory())
   .map((e) => `/src/ui/components/${e.name}/${e.name}.demo.html`);
 
-// Guard pages whose demo file does not exist on disk (e.g.
-// src/ui/components/chat and drawing are plan-only stubs). A missing page
-// would 404 (vite fallback) and fail for the wrong reason.
+// Guard pages whose demo file does not exist on disk (plan-only stub
+// directories have no demo file). A missing page would 404 (vite fallback)
+// and fail for the wrong reason.
 const PAGES = [...DEMO_PAGES, ...COMPONENT_PAGES].filter((pagePath) =>
   existsSync(path.resolve(pagePath.slice(1)))
 );
