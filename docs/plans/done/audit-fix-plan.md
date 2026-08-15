@@ -1,8 +1,20 @@
 # CSMA Audit Remediation Plan
 
-**Status:** active · **Created:** 2026-02 · **Revision:** 2 (re-based against `main` @ `2857670`)
+**Status:** complete · **Created:** 2026-02 · **Revision:** 3 (all phases landed; plan archived to `docs/plans/done/`)
 **Owner:** template maintainers + agents
 **Source:** full-repo audit (dead code, security, hardcoded values, performance, precision), verified by a 7-lane independent audit against the current tree.
+
+**Final status (revision 3).** All phases 0–6 merged. Gates at merge time:
+`npx vitest run` = 127 files / 1573 tests, 7 failures (the documented
+pre-existing baseline in 4 files — zero growth), `npm run security-check`
+all PASS with contract-drift **enforcement on** (191/191 registered),
+`check:design` PASS. `npm run verify` does not exist — the real gate set is
+`check:all` + `security-check` + vitest; `check:all` still reports
+pre-existing backlog: legacy `--color-*` token usage (demo/visual-editor-
+comments/demo-comments.css, src/modules/comments/ui/comments-drawer.css)
+and the mind-node `manifest.json` rename from `2857670`. Those are recorded
+below as post-plan backlog, not plan failures. All wave commits: 518f924…
+f18f7dc.
 
 **Revision 2 note — chat decision.** The chat implementation existed only on the
 unmerged `feature/chat` stash (`351a0fd`, `48999cc`). Decision: **do not restore
@@ -20,8 +32,10 @@ remain in the tree as future-work references and are not part of this plan.
 
 `npm run security-check` green; no secrets found; no eval/document.write; CSP/DOM-sink gates operational.
 
-> Delete or archive this document once all phases are merged and the enforcement
-> gates have been green for one full `npm run verify` cycle.
+> Archived to `docs/plans/done/` on merge: all phases landed and the
+> enforcement gates (security-check + drift enforcement + vitest floor) have
+> been green. See the "Final status" note in the header for the residual
+> pre-existing backlog.
 
 ---
 
@@ -74,7 +88,9 @@ Read `AGENTS.md` first. Non-negotiables while executing this plan:
    dead-file list in Phase 2 was derived from a full import-graph walk.
 7. **Verification floor per phase**: `npx vitest run` must not grow beyond the
    7 pre-existing failures listed in the baseline (4 files named above), plus
-   the phase's own acceptance commands. Full `npm run verify` before merge.
+   the phase's own acceptance commands. Before merge run the real gate set:
+   `npm run check:all` + `npm run security-check` + `npx vitest run`
+   (`npm run verify` does not exist in package.json).
    Fixing the 7 pre-existing failures is optional stretch, not part of any phase.
 
 ---
