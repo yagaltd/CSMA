@@ -15,6 +15,7 @@
  */
 
 import { initToastSystem } from './components/toast/toast.js';
+import { initCountUpSystem } from './components/count-up/count-up.js';
 
 export function initUI(eventBus) {
   if (!eventBus) return () => {};
@@ -23,6 +24,9 @@ export function initUI(eventBus) {
 
   // Type II: Toast — EventBus-driven notifications
   cleanups.push(initToastSystem(eventBus));
+
+  // Type II: Count Up — viewport-triggered number animation
+  cleanups.push(initCountUpSystem(eventBus));
 
   // Add your component init functions here:
   // cleanups.push(initYourComponent(eventBus));

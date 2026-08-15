@@ -52,3 +52,10 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
 }
+
+.toggle-card[disabled],
+.toggle-card[aria-disabled="true"],
+.toggle-card[data-disabled="true"] {
+  cursor: not-allowed;
+  opacity: var(--opacity-disabled);
+}

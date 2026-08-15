@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Count Up Demo</title>
+    <link rel="stylesheet" href="../../../style/main.css" />
+    <link rel="stylesheet" href="./count-up.css" />
+  </head>
+  <body>
+    <main class="stack" data-gap="lg" style="max-width: 24rem; margin: 2rem auto;">
+      <h1 class="section-header__title">Count Up</h1>
+      <p class="section-header__description">Animated number counter on viewport entry.</p>
+      <span class="count-up-target" data-count-up data-number="1280" data-suffix=" users"></span>
+      <span class="count-up-target" data-count-up data-number="99.9" data-decimals="1" data-suffix="%"></span>
+    </main>
+    <script type="module">
+      import { initCountUpSystem } from './count-up.js';
+      initCountUpSystem(null);
+    </script>
+  </body>
+</html>

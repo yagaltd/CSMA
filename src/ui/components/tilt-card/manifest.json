@@ -1,36 +1,92 @@
 {
-    "id": "tilt-card",
-    "name": "Tilt Card",
-    "version": "1.0.0",
-    "description": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
+  "id": "tilt-card",
+  "name": "Tilt Card",
+  "version": "1.0.0",
+  "description": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
+  "type": "I",
+  "category": "motion",
+  "component": {
+    "name": "tilt-card",
     "type": "I",
+    "owner": "ui-service",
+    "lifecycle": "active",
+    "stability": "stable"
+  },
+  "exports": {
+    "js": "./tilt-card.js",
+    "css": "./tilt-card.css"
+  },
+  "aiUi": {
+    "enabled": true,
+    "alias": "tilt-card",
+    "title": "Tilt Card",
     "category": "motion",
-    "component": {
-        "name": "tilt-card",
-        "type": "I",
-        "lifecycle": "active",
-        "stability": "stable"
+    "preferred": true,
+    "summary": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
+    "template": "<div class=\"tilt-card\" data-tilt></div>",
+    "propsSchema": {
+      "maxDegrees": {
+        "type": "number",
+        "default": 6
+      }
     },
-    "exports": {
-        "js": "./tilt-card.js",
-        "css": "./tilt-card.css"
+    "defaultSlot": "default",
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
     },
-    "aiUi": {
-        "enabled": true,
-        "alias": "tilt-card",
-        "title": "Tilt Card",
-        "category": "motion",
-        "summary": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
-        "propsSchema": {
-            "maxDegrees": { "type": "number", "default": 6 }
-        },
-        "render": {
-            "tag": "div",
-            "className": "tilt-card"
-        },
-        "behavior": {
-            "role": "interactive",
-            "events": ["pointerenter", "pointermove", "pointerleave"]
-        }
+    "allowedChildren": [],
+    "render": {
+      "kind": "element",
+      "tag": "div",
+      "className": "tilt-card",
+      "attributes": {},
+      "children": [],
+      "template": "<div class=\"tilt-card\"></div>"
+    },
+    "behavior": {
+      "role": "interactive",
+      "events": [
+        "pointerenter",
+        "pointermove",
+        "pointerleave"
+      ],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".tilt-card"
+    },
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [
+        ".tilt-card__title"
+      ],
+      "description": [
+        ".tilt-card__description"
+      ],
+      "label": []
     }
+  },
+  "contracts": {
+    "published": [],
+    "subscribed": []
+  },
+  "dependencies": {
+    "runtime": [],
+    "components": []
+  },
+  "metadata": {
+    "description": "Card that tilts in perspective toward the pointer on hover. JS sets --tilt-x/--tilt-y custom properties; CSS applies the transform."
+  },
+  "eccac": {
+    "version": "1.0.0",
+    "spec": "1.0.0"
+  }
 }

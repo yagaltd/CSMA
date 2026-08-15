@@ -10,13 +10,13 @@
   <style>
     body { font-family: system-ui, sans-serif; padding: 24px; background: var(--background, #fff); color: var(--foreground, #111); }
     .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 24px; }
-    h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: #888; }
+    h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--foreground-muted); }
   </style>
 </head>
 <body>
   <h1>mind-node demo</h1>
 
-  <h2>leaves (no children — data-has-children absent)</h2>
+  <h2>leaves (no children, data-has-children absent)</h2>
   <div class="row">
     <div class="mind-node" data-status="pending" data-bottleneck="standard">
       <span class="mind-node__status"></span><span class="mind-node__topic">test /morphmap-review</span>

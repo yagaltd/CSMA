@@ -1,9 +1,80 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2026-07-09T02:57:06.769Z",
+  "generatedAt": "2026-08-15T06:18:17.821Z",
   "source": "src/ui/components/*/{manifest.json,*.css,*.demo.html}",
-  "totalComponents": 18,
+  "totalComponents": 23,
   "components": [
+    {
+      "id": "arrow-line",
+      "alias": "arrow-line",
+      "title": "Arrow Line",
+      "category": "mindmap",
+      "type": "I",
+      "visualRole": "indicator",
+      "preferred": false,
+      "lifecycle": "active",
+      "stability": "stable",
+      "manifestPath": "src/ui/components/arrow-line/manifest.json",
+      "cssPath": "src/ui/components/arrow-line/arrow-line.css",
+      "demoPath": "src/ui/components/arrow-line/arrow-line.demo.html",
+      "summary": "Mindmap cross-link arrow connector",
+      "propsSchema": {},
+      "defaultSlot": "default",
+      "slots": {
+        "default": {
+          "selector": ":root",
+          "allowedChildren": []
+        }
+      },
+      "allowedChildren": [],
+      "behavior": {
+        "role": "display",
+        "events": [],
+        "targetActions": [],
+        "intentMap": {},
+        "fieldValue": null,
+        "eventTargetSelector": ".arrow-line"
+      },
+      "style": {
+        "surfaceAware": false,
+        "supportsVariant": false,
+        "supportsSize": false,
+        "supportsTone": false
+      },
+      "textTargets": {
+        "title": [],
+        "description": [],
+        "label": []
+      },
+      "contracts": {
+        "published": [],
+        "subscribed": []
+      },
+      "dependencies": {
+        "runtime": [],
+        "components": []
+      },
+      "template": "<svg class=\"arrow-line\" viewBox=\"0 0 100 50\"></svg>",
+      "render": {
+        "kind": "element",
+        "tag": "svg",
+        "className": "arrow-line",
+        "attributes": {},
+        "children": [],
+        "template": "<svg class=\"arrow-line\" viewBox=\"0 0 100 50\"></svg>"
+      },
+      "states": [],
+      "variants": [],
+      "sizes": [],
+      "tones": [],
+      "shapes": [],
+      "dataStates": [],
+      "tokensUsed": [
+        "accent",
+        "destructive"
+      ],
+      "demoIncludesComponentName": true
+    },
     {
       "id": "badge",
       "alias": "badge",
@@ -601,7 +672,7 @@
         "space-sm",
         "surface-muted"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "color-token-list",
@@ -692,7 +763,169 @@
         "space-xs",
         "surface-muted"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
+    },
+    {
+      "id": "connector-line",
+      "alias": "connector-line",
+      "title": "Connector Line",
+      "category": "Mindmap",
+      "type": "I",
+      "visualRole": "indicator",
+      "preferred": true,
+      "lifecycle": "stable",
+      "stability": "stable",
+      "manifestPath": "src/ui/components/connector-line/manifest.json",
+      "cssPath": "src/ui/components/connector-line/connector-line.css",
+      "demoPath": "src/ui/components/connector-line/connector-line.demo.html",
+      "summary": "SVG path between parent and child nodes, styled by data-status",
+      "propsSchema": {
+        "d": "string",
+        "status": "string"
+      },
+      "defaultSlot": "default",
+      "slots": {
+        "default": {
+          "selector": ":root",
+          "allowedChildren": []
+        }
+      },
+      "allowedChildren": [],
+      "behavior": {
+        "role": "decoration",
+        "events": [],
+        "targetActions": [],
+        "intentMap": {},
+        "fieldValue": null,
+        "eventTargetSelector": ".connector-line"
+      },
+      "style": {
+        "surfaceAware": false,
+        "supportsVariant": false,
+        "supportsSize": false,
+        "supportsTone": false
+      },
+      "textTargets": {
+        "title": [],
+        "description": [],
+        "label": []
+      },
+      "contracts": {
+        "published": [],
+        "subscribed": []
+      },
+      "dependencies": {
+        "runtime": [],
+        "components": []
+      },
+      "template": "<path class=\"connector-line\" data-status=\"pending\" d=\"\" />",
+      "render": {
+        "kind": "svg",
+        "tag": "path",
+        "className": "connector-line",
+        "attributes": {
+          "d": {
+            "prop": "d"
+          },
+          "data-status": {
+            "prop": "status"
+          }
+        },
+        "children": [],
+        "template": "<path class=\"connector-line\" data-status=\"pending\" d=\"\" />"
+      },
+      "states": [],
+      "variants": [],
+      "sizes": [],
+      "tones": [],
+      "shapes": [],
+      "dataStates": [],
+      "tokensUsed": [
+        "accent",
+        "border"
+      ],
+      "demoIncludesComponentName": true
+    },
+    {
+      "id": "count-up",
+      "alias": "count-up",
+      "title": "Count Up",
+      "category": "motion",
+      "type": "II",
+      "visualRole": "indicator",
+      "preferred": true,
+      "lifecycle": "active",
+      "stability": "stable",
+      "manifestPath": "src/ui/components/count-up/manifest.json",
+      "cssPath": "src/ui/components/count-up/count-up.css",
+      "demoPath": "src/ui/components/count-up/count-up.demo.html",
+      "summary": "Animated number counter that counts from 0 to a target value on viewport entry. Respects prefers-reduced-motion.",
+      "propsSchema": {
+        "figure": {
+          "type": "object",
+          "required": true
+        },
+        "durationMs": {
+          "type": "number"
+        },
+        "startOnEnter": {
+          "type": "boolean"
+        }
+      },
+      "defaultSlot": "default",
+      "slots": {
+        "default": {
+          "selector": ":root",
+          "allowedChildren": []
+        }
+      },
+      "allowedChildren": [],
+      "behavior": {
+        "role": "display",
+        "events": [],
+        "targetActions": [],
+        "intentMap": {},
+        "fieldValue": null,
+        "eventTargetSelector": ".count-up-target"
+      },
+      "style": {
+        "surfaceAware": false,
+        "supportsVariant": false,
+        "supportsSize": false,
+        "supportsTone": false
+      },
+      "textTargets": {
+        "title": [],
+        "description": [],
+        "label": []
+      },
+      "contracts": {
+        "published": [],
+        "subscribed": []
+      },
+      "dependencies": {
+        "runtime": [
+          "EventBus"
+        ],
+        "components": []
+      },
+      "template": "<span class=\"count-up-target\" data-count-up>0</span>",
+      "render": {
+        "kind": "element",
+        "tag": "span",
+        "className": "count-up-target",
+        "attributes": {},
+        "children": [],
+        "template": "<span class=\"count-up-target\" data-count-up>0</span>"
+      },
+      "states": [],
+      "variants": [],
+      "sizes": [],
+      "tones": [],
+      "shapes": [],
+      "dataStates": [],
+      "tokensUsed": [],
+      "demoIncludesComponentName": true
     },
     {
       "id": "field",
@@ -966,6 +1199,82 @@
       "demoIncludesComponentName": true
     },
     {
+      "id": "mindmap-focus",
+      "alias": "mindmap-focus",
+      "title": "Mindmap Focus",
+      "category": "mindmap",
+      "type": "I",
+      "visualRole": "indicator",
+      "preferred": false,
+      "lifecycle": "active",
+      "stability": "stable",
+      "manifestPath": "src/ui/components/mindmap-focus/manifest.json",
+      "cssPath": "src/ui/components/mindmap-focus/mindmap-focus.css",
+      "demoPath": "src/ui/components/mindmap-focus/mindmap-focus.demo.html",
+      "summary": "Mindmap focus/isolation mode surface styles",
+      "propsSchema": {},
+      "defaultSlot": "default",
+      "slots": {
+        "default": {
+          "selector": ":root",
+          "allowedChildren": []
+        }
+      },
+      "allowedChildren": [],
+      "behavior": {
+        "role": "display",
+        "events": [],
+        "targetActions": [],
+        "intentMap": {},
+        "fieldValue": null,
+        "eventTargetSelector": ".mm-surface-svg"
+      },
+      "style": {
+        "surfaceAware": false,
+        "supportsVariant": false,
+        "supportsSize": false,
+        "supportsTone": false
+      },
+      "textTargets": {
+        "title": [],
+        "description": [],
+        "label": []
+      },
+      "contracts": {
+        "published": [],
+        "subscribed": []
+      },
+      "dependencies": {
+        "runtime": [],
+        "components": []
+      },
+      "template": "<div class=\"mm-surface-svg\"></div>",
+      "render": {
+        "kind": "element",
+        "tag": "div",
+        "className": "mm-surface-svg",
+        "attributes": {},
+        "children": [],
+        "template": "<div class=\"mm-surface-svg\"></div>"
+      },
+      "states": [],
+      "variants": [],
+      "sizes": [],
+      "tones": [],
+      "shapes": [],
+      "dataStates": [],
+      "tokensUsed": [
+        "accent",
+        "border",
+        "foreground",
+        "radius-md",
+        "space-sm",
+        "space-xs",
+        "surface"
+      ],
+      "demoIncludesComponentName": true
+    },
+    {
       "id": "radio-group",
       "alias": "radio-group",
       "title": "Radio Group",
@@ -1064,7 +1373,7 @@
         "space-2xs",
         "space-sm"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "radio-option",
@@ -1187,7 +1496,7 @@
         "surface",
         "surface-muted"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "section-header",
@@ -1281,7 +1590,7 @@
         "line-height-body",
         "space-md"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "shortcut-list",
@@ -1357,7 +1666,7 @@
       "tokensUsed": [
         "space-2xs"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "shortcut-row",
@@ -1459,7 +1768,7 @@
         "space-xs",
         "surface-muted"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "slider",
@@ -1585,7 +1894,7 @@
         "radius-full",
         "space-sm"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "swatch",
@@ -1659,21 +1968,25 @@
       },
       "states": [],
       "variants": [
+        "accent",
         "dark",
-        "dracula",
         "light",
-        "nord"
+        "surface"
       ],
       "sizes": [],
       "tones": [],
       "shapes": [],
       "dataStates": [],
       "tokensUsed": [
+        "accent",
+        "accent-foreground",
+        "background",
         "border",
         "radius-sm",
+        "surface",
         "surface-muted"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "theme-toggle",
@@ -1775,6 +2088,89 @@
         "shadow-sm",
         "space-sm",
         "surface"
+      ],
+      "demoIncludesComponentName": true
+    },
+    {
+      "id": "tilt-card",
+      "alias": "tilt-card",
+      "title": "Tilt Card",
+      "category": "motion",
+      "type": "I",
+      "visualRole": "indicator",
+      "preferred": true,
+      "lifecycle": "active",
+      "stability": "stable",
+      "manifestPath": "src/ui/components/tilt-card/manifest.json",
+      "cssPath": "src/ui/components/tilt-card/tilt-card.css",
+      "demoPath": "src/ui/components/tilt-card/tilt-card.demo.html",
+      "summary": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
+      "propsSchema": {
+        "maxDegrees": {
+          "type": "number",
+          "default": 6
+        }
+      },
+      "defaultSlot": "default",
+      "slots": {
+        "default": {
+          "selector": ":root",
+          "allowedChildren": []
+        }
+      },
+      "allowedChildren": [],
+      "behavior": {
+        "role": "interactive",
+        "events": [
+          "pointerenter",
+          "pointermove",
+          "pointerleave"
+        ],
+        "targetActions": [],
+        "intentMap": {},
+        "fieldValue": null,
+        "eventTargetSelector": ".tilt-card"
+      },
+      "style": {
+        "surfaceAware": false,
+        "supportsVariant": false,
+        "supportsSize": false,
+        "supportsTone": false
+      },
+      "textTargets": {
+        "title": [
+          ".tilt-card__title"
+        ],
+        "description": [
+          ".tilt-card__description"
+        ],
+        "label": []
+      },
+      "contracts": {
+        "published": [],
+        "subscribed": []
+      },
+      "dependencies": {
+        "runtime": [],
+        "components": []
+      },
+      "template": "<div class=\"tilt-card\" data-tilt></div>",
+      "render": {
+        "kind": "element",
+        "tag": "div",
+        "className": "tilt-card",
+        "attributes": {},
+        "children": [],
+        "template": "<div class=\"tilt-card\"></div>"
+      },
+      "states": [],
+      "variants": [],
+      "sizes": [],
+      "tones": [],
+      "shapes": [],
+      "dataStates": [],
+      "tokensUsed": [
+        "ease-out-quart"
       ],
       "demoIncludesComponentName": true
     },
@@ -2012,6 +2408,7 @@
         "template": "<button class=\"toggle-card\" data-state=\"inactive\"><div class=\"toggle-card__preview\"></div><span class=\"toggle-card__label\">Option</span></button>"
       },
       "states": [
+        "disabled",
         "focus-visible",
         "hover"
       ],
@@ -2031,6 +2428,7 @@
         "foreground",
         "foreground-muted",
         "motion-duration-fast",
+        "opacity-disabled",
         "primary",
         "radius-md",
         "ring",
@@ -2040,7 +2438,7 @@
         "surface",
         "surface-muted"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     },
     {
       "id": "toggle-grid",
@@ -2121,7 +2519,7 @@
       "tokensUsed": [
         "space-sm"
       ],
-      "demoIncludesComponentName": false
+      "demoIncludesComponentName": true
     }
   ]
 }

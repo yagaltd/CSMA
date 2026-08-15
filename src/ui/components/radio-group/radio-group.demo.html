@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Radio Group Demo</title>
+    <link rel="stylesheet" href="../../../style/main.css" />
+    <link rel="stylesheet" href="../radio-option/radio-option.css" />
+    <link rel="stylesheet" href="./radio-group.css" />
+  </head>
+  <body>
+    <main class="stack" data-gap="lg" style="max-width: 24rem; margin: 2rem auto;">
+      <h1 class="section-header__title">Radio Group</h1>
+      <p class="section-header__description">Mutually exclusive option selector.</p>
+      <div class="radio-group" role="radiogroup" aria-label="Theme">
+        <label class="radio-option"><input type="radio" name="theme" value="light" checked /><span>Light</span></label>
+        <label class="radio-option"><input type="radio" name="theme" value="dark" /><span>Dark</span></label>
+        <label class="radio-option"><input type="radio" name="theme" value="contrast" /><span>Contrast</span></label>
+      </div>
+    </main>
+  </body>
+</html>

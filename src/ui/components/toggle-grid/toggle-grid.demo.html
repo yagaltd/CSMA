@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toggle Grid Demo</title>
+    <link rel="stylesheet" href="../../../style/main.css" />
+    <link rel="stylesheet" href="../../toggle-card/toggle-card.css" />
+    <link rel="stylesheet" href="./toggle-grid.css" />
+  </head>
+  <body>
+    <main class="stack" data-gap="lg" style="max-width: 40rem; margin: 2rem auto;">
+      <h1 class="section-header__title">Toggle Grid</h1>
+      <p class="section-header__description">Responsive grid container for card-style toggle options.</p>
+      <div class="toggle-grid" style="grid-template-columns: repeat(2, 1fr);">
+        <button class="toggle-card" data-state="inactive"><span class="toggle-card__label">Option one</span></button>
+        <button class="toggle-card" data-state="active"><span class="toggle-card__label">Option two</span></button>
+        <button class="toggle-card" data-state="inactive"><span class="toggle-card__label">Option three</span></button>
+        <button class="toggle-card" data-state="inactive"><span class="toggle-card__label">Option four</span></button>
+      </div>
+    </main>
+  </body>
+</html>

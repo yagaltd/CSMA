@@ -105,6 +105,29 @@ export function mountCountUp(target, figure, opts = {}) {
     };
 }
 
+/**
+ * Initialize the count-up system (Type II lifecycle).
+ *
+ * Auto-mounts every [data-count-up] element in the document. The eventBus
+ * parameter is part of the Type II contract; count-up itself needs no events.
+ *
+ * @param {import('../../../runtime/EventBus.js').EventBus} _eventBus
+ * @returns {() => void} cleanup
+ */
+export function initCountUpSystem(_eventBus) {
+    const doc = typeof document !== 'undefined' ? document : null;
+    const win = typeof window !== 'undefined' ? window : null;
+    if (!doc || !win) return () => {};
+    const targets = Array.from(doc.querySelectorAll('[data-count-up]'));
+    const cleanups = targets.map((el) => mountCountUp(el, {
+        number: Number(el.dataset.number ?? el.textContent),
+        decimals: Number.isFinite(Number(el.dataset.decimals)) ? Number(el.dataset.decimals) : undefined,
+        prefix: el.dataset.prefix || '',
+        suffix: el.dataset.suffix || '',
+    }, { startOnEnter: el.dataset.startOnEnter !== 'false' }));
+    return () => cleanups.forEach((fn) => fn());
+}
+
 function prefersReducedMotion(win) {
     try {
         return win.matchMedia && win.matchMedia('(prefers-reduced-motion: reduce)').matches;

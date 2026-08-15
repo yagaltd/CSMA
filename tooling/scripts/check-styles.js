@@ -396,6 +396,11 @@ function validateComponentManifests() {
     const demoPath = join(componentRoot, `${entry}.demo.html`);
     const manifestPath = join(componentRoot, 'manifest.json');
 
+    // Skip plan-only stub directories (design notes, no component files yet).
+    if (!existsSync(cssPath) && !existsSync(jsPath) && !existsSync(manifestPath)) {
+      return;
+    }
+
     if (!existsSync(manifestPath)) {
       addFinding(relRoot, 1, 'Component is missing manifest.json.', 'manifest.json');
       return;
