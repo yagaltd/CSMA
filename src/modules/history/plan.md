@@ -26,7 +26,7 @@ But its naming and event surface are coupled to backend sync semantics
 (`markAcked`, `markFailed`, `getPending`, `updatePayload` are sync concerns,
 not history concerns). Three upcoming consumers need the log without the
 sync baggage: `mindmap` (local-only undo/redo), `visual-editor` (already
-reinvents this in `engine/Transaction.js` + `commands/UndoCommand.js`),
+reinvents this in `engine/Transaction.js`, its own history stack),
 and `optimistic-sync` itself (which should layer sync on top of a generic
 log, not own the log).
 

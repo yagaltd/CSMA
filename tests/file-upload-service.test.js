@@ -2,7 +2,7 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { EventBus } from '../src/runtime/EventBus.js';
 import { createFileUploadService } from '../src/modules/file-upload/services/FileUploadService.js';
-import { createFileUploadService as createLegacyFileUploadService } from '../src/services/FileUploadService.js';
+import { createFileUploadService as createLegacyFileUploadService } from '../src/modules/file-upload/services/FileUploadService.js';
 import { FileUploadContracts } from '../src/modules/file-upload/contracts/file-upload-contracts.js';
 
 function createMemoryStorage() {

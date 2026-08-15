@@ -53,8 +53,6 @@ export { initCommentSidebar } from './ui/CommentSidebar.js';
 export { createInlineTextEditor } from './ui/InlineTextEditor.js';
 
 export { initAnnotationHighlights } from './rendering/AnnotationHighlights.js';
-// Re-export commands
-export { CommandRegistry } from './commands/CommandRegistry.js';
 export { KeyMapper, defineDefaultKeymap } from './input/KeyMapper.js';
 
 // Re-export adapter

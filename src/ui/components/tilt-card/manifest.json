@@ -5,11 +5,22 @@
     "description": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
     "type": "I",
     "category": "motion",
+    "component": {
+        "name": "tilt-card",
+        "type": "I",
+        "lifecycle": "active",
+        "stability": "stable"
+    },
     "exports": {
         "js": "./tilt-card.js",
         "css": "./tilt-card.css"
     },
     "aiUi": {
+        "enabled": true,
+        "alias": "tilt-card",
+        "title": "Tilt Card",
+        "category": "motion",
+        "summary": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
         "propsSchema": {
             "maxDegrees": { "type": "number", "default": 6 }
         },

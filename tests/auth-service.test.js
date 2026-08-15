@@ -1,5 +1,5 @@
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
-import { createAuthService } from '../src/services/core/AuthService.js';
+import { createAuthService } from '../src/modules/auth/services/AuthService.js';
 import { AuthContracts } from '../src/modules/auth/contracts/auth-contracts.js';
 
 function createMemoryStorage() {

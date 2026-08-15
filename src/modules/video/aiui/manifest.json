@@ -1,5 +1,5 @@
 {
-  "_note": "FORWARD DECLARATION — the video module has no runtime service yet (see ../plan.md). This manifest describes the intended aiui surface so any composition can declare it. Mounting resolves to a no-op cleanup stub until VideoCompositionService is implemented.",
+  "_note": "FORWARD DECLARATION — the video module has no runtime service yet (see ../plan.md). This manifest describes the intended aiui surface so any composition can declare it. Mounting resolves to a no-op cleanup stub until the video module's runtime service is implemented.",
   "eccac": {
     "version": "1.0.0",
     "spec": "1.0.0"
@@ -30,7 +30,7 @@
     "title": "Video Player",
     "category": "Module Surface",
     "preferred": false,
-    "summary": "Mountable video player. Delegates to VideoCompositionService.mountSurface once the video module ships.",
+    "summary": "Mountable video player. Delegates to the video module's runtime service once the video module ships.",
     "propsSchema": {
       "src": "string",
       "poster": "string",

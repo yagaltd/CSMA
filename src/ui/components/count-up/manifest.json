@@ -5,11 +5,22 @@
     "description": "Animated number counter that counts from 0 to a target value on viewport entry. Respects prefers-reduced-motion.",
     "type": "II",
     "category": "motion",
+    "component": {
+        "name": "count-up",
+        "type": "II",
+        "lifecycle": "active",
+        "stability": "stable"
+    },
     "exports": {
         "js": "./count-up.js",
         "css": "./count-up.css"
     },
     "aiUi": {
+        "enabled": true,
+        "alias": "count-up",
+        "title": "Count Up",
+        "category": "motion",
+        "summary": "Animated number counter that counts from 0 to a target value on viewport entry. Respects prefers-reduced-motion.",
         "propsSchema": {
             "figure": { "type": "object", "required": true },
             "durationMs": { "type": "number" },

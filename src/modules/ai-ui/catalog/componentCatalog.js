@@ -118,129 +118,6 @@ export const componentCatalog = {
       "template": "<span class=\"badge\" data-variant=\"soft-primary\">Primary</span>\n<span class=\"badge\" data-variant=\"soft-success\">Success</span>\n<span class=\"badge\" data-variant=\"soft-warning\">Warning</span>\n<span class=\"badge\" data-variant=\"soft-danger\">Danger</span>\n<span class=\"badge\" data-variant=\"soft-info\">Info</span>"
     }
   },
-  "mind-node": {
-    "id": "mind-node",
-    "owner": "core",
-    "alias": "mind-node",
-    "title": "Mind Node",
-    "category": "Mindmap",
-    "type": "I",
-    "moduleId": null,
-    "surfaceId": "mind-node",
-    "path": "src/ui/components/mind-node",
-    "manifestPath": "src/ui/components/mind-node/manifest.json",
-    "preferred": true,
-    "summary": "Adaptive mindmap node — renders as a leaf or a branch from data-has-children",
-    "propsSchema": {
-      "topic": "string",
-      "status": "string",
-      "tag": "string",
-      "kind": "string",
-      "hasChildren": "boolean",
-      "collapsed": "boolean",
-      "childCount": "number",
-      "doneCount": "number",
-      "bottleneck": "string"
-    },
-    "defaultSlot": "default",
-    "slots": {
-      "default": {
-        "selector": ":root",
-        "allowedChildren": []
-      }
-    },
-    "allowedChildren": [],
-    "behavior": {
-      "role": "container",
-      "events": [],
-      "targetActions": [],
-      "intentMap": {},
-      "fieldValue": null,
-      "eventTargetSelector": ".mind-node"
-    },
-    "style": {
-      "surfaceAware": true,
-      "supportsVariant": false,
-      "supportsSize": false,
-      "supportsTone": false
-    },
-    "textTargets": {
-      "topic": [
-        ".mind-node__topic"
-      ],
-      "tag": [
-        ".mind-node__tag"
-      ],
-      "count": [
-        ".mind-node__count"
-      ]
-    },
-    "dependencies": {
-      "runtime": [],
-      "components": [
-        "connector-line"
-      ]
-    },
-    "contracts": {
-      "published": [],
-      "subscribed": []
-    },
-    "template": "<div class=\"mind-node\" data-status=\"pending\" data-tag=\"module\"><span class=\"mind-node__status\"></span><span class=\"mind-node__topic\">Topic</span><span class=\"mind-node__tag\">module</span><button class=\"mind-node__collapse\" aria-label=\"Collapse\" type=\"button\"></button><span class=\"mind-node__count\">0/0</span></div>",
-    "render": {
-      "kind": "element",
-      "tag": "div",
-      "className": "mind-node",
-      "attributes": {
-        "data-status": {
-          "prop": "status"
-        },
-        "data-tag": {
-          "prop": "tag"
-        },
-        "data-kind": {
-          "prop": "kind"
-        },
-        "data-has-children": {
-          "prop": "hasChildren"
-        },
-        "data-collapsed": {
-          "prop": "collapsed"
-        },
-        "data-bottleneck": {
-          "prop": "bottleneck"
-        }
-      },
-      "children": [
-        {
-          "tag": "span",
-          "className": "mind-node__status"
-        },
-        {
-          "tag": "span",
-          "className": "mind-node__topic",
-          "textProp": "topic"
-        },
-        {
-          "tag": "span",
-          "className": "mind-node__tag",
-          "textProp": "tag"
-        },
-        {
-          "tag": "button",
-          "className": "mind-node__collapse",
-          "attributes": {
-            "aria-label": "Collapse",
-            "type": "button"
-          }
-        },
-        {
-          "tag": "span",
-          "className": "mind-node__count"
-        }
-      ],
-      "template": "<div class=\"mind-node\" data-status=\"pending\" data-tag=\"module\"><span class=\"mind-node__status\"></span><span class=\"mind-node__topic\">Topic</span><span class=\"mind-node__tag\">module</span><button class=\"mind-node__collapse\" aria-label=\"Collapse\" type=\"button\"></button><span class=\"mind-node__count\">0/0</span></div>"
-    }
-  },
   "button": {
     "id": "button",
     "owner": "core",
@@ -801,6 +678,53 @@ export const componentCatalog = {
       "template": "<path class=\"connector-line\" data-status=\"pending\" d=\"\" />"
     }
   },
+  "count-up": {
+    "id": "count-up",
+    "owner": "core",
+    "alias": "count-up",
+    "title": "Count Up",
+    "category": "motion",
+    "type": "II",
+    "moduleId": null,
+    "surfaceId": "count-up",
+    "path": "src/ui/components/count-up",
+    "manifestPath": "src/ui/components/count-up/manifest.json",
+    "preferred": false,
+    "summary": "Animated number counter that counts from 0 to a target value on viewport entry. Respects prefers-reduced-motion.",
+    "propsSchema": {
+      "figure": {
+        "type": "object",
+        "required": true
+      },
+      "durationMs": {
+        "type": "number"
+      },
+      "startOnEnter": {
+        "type": "boolean"
+      }
+    },
+    "defaultSlot": "default",
+    "slots": {},
+    "allowedChildren": [],
+    "behavior": {
+      "role": "display",
+      "events": []
+    },
+    "style": {},
+    "textTargets": {},
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "render": {
+      "tag": "span",
+      "className": "count-up-target"
+    }
+  },
   "field": {
     "id": "field",
     "owner": "core",
@@ -1045,8 +969,21 @@ export const componentCatalog = {
     "behavior": {
       "role": "module-surface",
       "events": [],
-      "targetActions": [],
-      "intentMap": {}
+      "targetActions": [
+        {
+          "action": "mindmap.search",
+          "description": "Fuzzy search mindmap nodes by topic / status / tag"
+        },
+        {
+          "action": "mindmap.focus",
+          "description": "Isolate a branch by node id(s)"
+        }
+      ],
+      "intentMap": {
+        "searchNodes": "mindmap.search",
+        "isolateBranch": "mindmap.focus",
+        "listArrows": "mindmap.arrow"
+      }
     },
     "style": {
       "surfaceAware": true,
@@ -1728,6 +1665,51 @@ export const componentCatalog = {
       "template": "<button class=\"theme-toggle\" type=\"button\" data-theme-toggle data-theme-active=\"light\"><span class=\"theme-toggle__icons\" aria-hidden=\"true\"><span class=\"theme-icon theme-icon--sun\">☀</span><span class=\"theme-icon theme-icon--moon\">◐</span><span class=\"theme-icon theme-icon--contrast\">◫</span></span><span class=\"theme-toggle__label\">Theme</span></button>"
     }
   },
+  "tilt-card": {
+    "id": "tilt-card",
+    "owner": "core",
+    "alias": "tilt-card",
+    "title": "Tilt Card",
+    "category": "motion",
+    "type": "I",
+    "moduleId": null,
+    "surfaceId": "tilt-card",
+    "path": "src/ui/components/tilt-card",
+    "manifestPath": "src/ui/components/tilt-card/manifest.json",
+    "preferred": false,
+    "summary": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
+    "propsSchema": {
+      "maxDegrees": {
+        "type": "number",
+        "default": 6
+      }
+    },
+    "defaultSlot": "default",
+    "slots": {},
+    "allowedChildren": [],
+    "behavior": {
+      "role": "interactive",
+      "events": [
+        "pointerenter",
+        "pointermove",
+        "pointerleave"
+      ]
+    },
+    "style": {},
+    "textTargets": {},
+    "dependencies": {
+      "runtime": [],
+      "components": []
+    },
+    "contracts": {
+      "published": [],
+      "subscribed": []
+    },
+    "render": {
+      "tag": "div",
+      "className": "tilt-card"
+    }
+  },
   "toast": {
     "id": "toast",
     "owner": "core",
@@ -2008,7 +1990,7 @@ export const componentCatalog = {
     "path": "src/modules/video/aiui",
     "manifestPath": "src/modules/video/aiui/manifest.json",
     "preferred": false,
-    "summary": "Mountable video player. Delegates to VideoCompositionService.mountSurface once the video module ships.",
+    "summary": "Mountable video player. Delegates to the video module's runtime service once the video module ships.",
     "propsSchema": {
       "src": "string",
       "poster": "string",
