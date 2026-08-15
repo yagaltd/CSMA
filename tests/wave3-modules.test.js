@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EventBus } from '../src/runtime/EventBus.js';
 import { Contracts } from '../src/runtime/Contracts.js';
 import { createRuntimeState, syncWindowRuntime } from '../src/runtime/bootstrap.js';
-import { loadOptionalFeatures } from '../src/runtime/features.js';
+import { loadOptionalFeatures } from '../docs/legacy/features.js';
 import { PermissionsUIService } from '../src/modules/permissions-ui/index.js';
 import { ChartsService } from '../src/modules/charts/index.js';
 import { AdminAuditLogService } from '../src/modules/admin-audit-log/index.js';

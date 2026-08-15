@@ -242,7 +242,7 @@ export class DataAggregator {
 
     log(...args) {
         if (this.debug) {
-            console.log('[DataAggregator]', ...args);
+            console.debug('[DataAggregator]', ...args);
         }
     }
 }

@@ -1,8 +1,15 @@
-import { initConsentUI } from '../modules/consent/ui/consent-ui.js';
-import { auditPage } from './seoAudit.js';
-import { buildLogEndpoint } from '../style/theme/theme-helpers.js';
-import { resolveSsmaBaseUrl, resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from './ssma.js';
-import { assertProductionSecurityPolicy, resolveSecurityPolicy } from './SecurityPolicy.js';
+/**
+ * LEGACY — quarantined from src/runtime/features.js (audit plan 3.4, decision D1).
+ * SSMA-era full-runtime feature matrix; kept as documentation/reference only.
+ * Not imported by any src/ runtime path or demo. Bootstrap story lives in
+ * src/runtime/bootstrap.js; demos hand-roll their wiring.
+ * See docs/legacy/README.md.
+ */
+import { initConsentUI } from '../../src/modules/consent/ui/consent-ui.js';
+import { auditPage } from '../../src/runtime/seoAudit.js';
+import { buildLogEndpoint } from '../../src/style/theme/theme-helpers.js';
+import { resolveSsmaBaseUrl, resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from '../../src/runtime/ssma.js';
+import { assertProductionSecurityPolicy, resolveSecurityPolicy } from '../../src/runtime/SecurityPolicy.js';
 
 function resolveOptionalSsmaEndpoint(path, override, runtimeConfig = {}) {
     if (override) {
@@ -427,7 +434,7 @@ export async function loadOptionalFeatures(state, {
         }),
 
         FEATURES.THREAD_MANAGER && runFeature('[ThreadManager] Failed to load:', async () => {
-            const { threadManager } = await import('../runtime/ThreadManager.js');
+            const { threadManager } = await import('../../src/runtime/ThreadManager.js');
             const csma = ensureCsma();
             csma.threadManager = threadManager;
             console.log('[ThreadManager] Web Worker management enabled');
@@ -459,7 +466,7 @@ export async function loadOptionalFeatures(state, {
         }),
 
         FEATURES.DATA_AGGREGATOR && runFeature('[DataAggregator] Failed to load:', async () => {
-            const { createDataAggregator } = await import('../services/core/DataAggregator.js');
+            const { createDataAggregator } = await import('../../src/services/core/DataAggregator.js');
             const dataAggregator = createDataAggregator(eventBus, {
                 timeout: 30000,
                 retries: 2,
@@ -470,7 +477,7 @@ export async function loadOptionalFeatures(state, {
         }),
 
         FEATURES.FORM_VALIDATOR && runFeature('[FormValidator] Failed to load:', async () => {
-            const { createFormValidator } = await import('../services/core/FormValidator.js');
+            const { createFormValidator } = await import('../../src/services/core/FormValidator.js');
             const formValidator = createFormValidator(eventBus, {
                 debounceDelay: 300,
                 debug: import.meta.env.DEV
@@ -497,8 +504,8 @@ export async function loadOptionalFeatures(state, {
             csma.anchorableComments = anchorableComments;
 
             if (documentRef?.body && anchorableComments) {
-                const { createOverlayManager } = await import('../modules/archetypes/overlay-manager/index.js');
-                const { createCommentsDrawer } = await import('../modules/comments/index.js');
+                const { createOverlayManager } = await import('../../src/modules/archetypes/overlay-manager/index.js');
+                const { createCommentsDrawer } = await import('../../src/modules/comments/index.js');
                 const overlayManager = createOverlayManager(documentRef.body, null, { documentRef });
                 const commentsDrawer = createCommentsDrawer({
                     eventBus,
@@ -836,7 +843,7 @@ export async function loadOptionalFeatures(state, {
     // Wave L: cacheManager (INDEXEDDB may already be loaded; backend is flag-driven)
     if (cacheManagerEnabled) {
         await runFeature('[CacheManager] Failed to load:', async () => {
-            const { createCacheManager } = await import('../services/core/CacheManager.js');
+            const { createCacheManager } = await import('../../src/services/core/CacheManager.js');
             const cacheConfig = cloneRuntimeSection(runtimeConfig.cache, {});
             const cacheManager = createCacheManager(eventBus, {
                 backend: cacheConfig.backend || offlineCacheConfig.backend || (FEATURES.INDEXEDDB ? 'indexeddb' : 'localStorage'),
@@ -855,7 +862,7 @@ export async function loadOptionalFeatures(state, {
     // API wrapper after data-table wave (preserves prior relative timing vs data-table)
     if (FEATURES.API_WRAPPER) {
         await runFeature('[APIWrapper] Failed to load:', async () => {
-            const { createAPIWrapper } = await import('../services/core/APIWrapper.js');
+            const { createAPIWrapper } = await import('../../src/services/core/APIWrapper.js');
             const apiWrapper = createAPIWrapper(eventBus, {
                 baseURL: apiBaseUrl,
                 timeout: 10000,

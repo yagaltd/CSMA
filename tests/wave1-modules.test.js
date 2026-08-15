@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { EventBus } from '../src/runtime/EventBus.js';
 import { Contracts } from '../src/runtime/Contracts.js';
 import { createRuntimeState, syncWindowRuntime } from '../src/runtime/bootstrap.js';
-import { loadOptionalFeatures } from '../src/runtime/features.js';
+import { loadOptionalFeatures } from '../docs/legacy/features.js';
 import { FeatureFlagsService } from '../src/modules/feature-flags/index.js';
 import { ContentPrefetchService } from '../src/modules/content-prefetch/index.js';
 import { CmsContentService } from '../src/modules/cms-content/index.js';

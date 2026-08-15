@@ -22,7 +22,7 @@ const response = await agentContext.get({
   format: 'markdown',
   data: someNodeTree
 });
-console.log(response.text);
+console.debug(response.text);
 ```
 
 ## Registering a serializer (feature module)

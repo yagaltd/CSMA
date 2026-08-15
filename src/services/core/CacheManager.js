@@ -22,6 +22,10 @@ export class CacheManager {
         this.memoryCache = new Map();
         this.ttls = new Map();
 
+        // Session memory-only fallback for keys whose persistent write
+        // failed (e.g. localStorage quota exceeded). See set().
+        this.persistFallback = new Map();
+
         // Statistics
         this.stats = {
             hits: 0,
@@ -72,6 +76,7 @@ export class CacheManager {
         } finally {
             this.memoryCache.clear();
             this.ttls.clear();
+            this.persistFallback.clear();
             this.initialized = false;
         }
     }
@@ -128,7 +133,19 @@ export class CacheManager {
         this.ttls.set(key, expiresAt);
 
         // Store in persistent backend
-        await this.storage.set(key, value);
+        try {
+            await this.storage.set(key, value);
+        } catch (error) {
+            // Persistence failed (e.g. localStorage quota exceeded): demote
+            // the key to a session memory-only map so it still reads back,
+            // and emit CACHE_PERSIST_FAILED for observability.
+            this.persistFallback.set(key, value);
+            this._publish('CACHE_PERSIST_FAILED', {
+                key,
+                error: error?.message || String(error),
+                timestamp: Date.now()
+            });
+        }
 
         this.stats.sets++;
 
@@ -151,6 +168,7 @@ export class CacheManager {
 
         this.memoryCache.delete(key);
         this.ttls.delete(key);
+        this.persistFallback.delete(key);
         await this.storage.delete(key);
 
         this.stats.deletes++;
@@ -316,6 +334,7 @@ export class CacheManager {
         const keys = await this._keys();
         this.memoryCache.clear();
         this.ttls.clear();
+        this.persistFallback.clear();
         await this.storage.clear();
 
         this.stats.invalidations++;
@@ -381,6 +400,23 @@ export class CacheManager {
             this.ttls.delete(key);
         }
 
+        // Serve the session memory-only fallback for keys whose persist
+        // failed earlier, when the regular stores no longer have them.
+        if (this.persistFallback.has(key)) {
+            if (!expired && !this.isExpired(key)) {
+                this.stats.hits++;
+                const value = this.persistFallback.get(key);
+                this.memoryCache.set(key, value);
+                return {
+                    hit: true,
+                    source: 'memory',
+                    value,
+                    ttlRemaining: this._ttlRemaining(key)
+                };
+            }
+            this.persistFallback.delete(key);
+        }
+
         this.stats.misses++;
         this.log('Cache miss:', key);
         return { hit: false, source: 'miss', value: undefined, ttlRemaining: 0 };
@@ -388,7 +424,7 @@ export class CacheManager {
 
     async _keys() {
         const storageKeys = typeof this.storage.keys === 'function' ? await this.storage.keys() : [];
-        const keys = new Set([...storageKeys, ...this.memoryCache.keys()]);
+        const keys = new Set([...storageKeys, ...this.memoryCache.keys(), ...this.persistFallback.keys()]);
         return Array.from(keys);
     }
 
@@ -426,7 +462,7 @@ export class CacheManager {
 
     log(...args) {
         if (this.debug) {
-            console.log('[CacheManager]', ...args);
+            console.debug('[CacheManager]', ...args);
         }
     }
 }
@@ -495,8 +531,11 @@ class LocalStorageBackend {
 
             localStorage.setItem(this.prefix + key, JSON.stringify(value));
         } catch (error) {
-            // Quota exceeded
+            // Quota exceeded (or storage unavailable): warn and rethrow so
+            // CacheManager can demote the key to memory-only and emit
+            // CACHE_PERSIST_FAILED.
             console.warn('LocalStorage quota exceeded:', error);
+            throw error;
         }
     }
 

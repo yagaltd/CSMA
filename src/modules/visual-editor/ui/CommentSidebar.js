@@ -55,7 +55,7 @@ export function initCommentSidebar(eventBus, commentService) {
                 endOffset,
                 text: range.toString()
             };
-            console.log('[CommentSidebar] Selection saved:', savedSelection.path.join('.'), `"${savedSelection.text.slice(0, 30)}"`);
+            console.debug('[CommentSidebar] Selection saved:', savedSelection.path.join('.'), `"${savedSelection.text.slice(0, 30)}"`);
         }
     }
     let isOpen = false;
@@ -200,10 +200,10 @@ export function initCommentSidebar(eventBus, commentService) {
                     start_offset: savedSelection.startOffset,
                     end_offset: savedSelection.endOffset
                 };
-                console.log('[CommentSidebar] Using saved text anchor:', anchor);
+                console.debug('[CommentSidebar] Using saved text anchor:', anchor);
                 savedSelection = null; // consume it
             } else {
-                console.log('[CommentSidebar] No saved selection, creating document-level comment');
+                console.debug('[CommentSidebar] No saved selection, creating document-level comment');
             }
 
             try {

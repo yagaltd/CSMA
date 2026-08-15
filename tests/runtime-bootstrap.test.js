@@ -2,7 +2,7 @@
 import './helpers/storage-polyfill.js';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createRuntimeState, destroyRuntimeState, syncWindowRuntime } from '../src/runtime/bootstrap.js';
-import { loadOptionalFeatures } from '../src/runtime/features.js';
+import { loadOptionalFeatures } from '../docs/legacy/features.js';
 
 describe('runtime bootstrap', () => {
     beforeEach(() => {

@@ -52,7 +52,7 @@ export function initToastSystem(eventBus) {
     return () => { };
   }
 
-  console.log('[Toast] Initializing CSMA Toast system...');
+  console.debug('[Toast] Initializing CSMA Toast system...');
 
   // Subscribe to toast show intents
   const unsubscribe = eventBus.subscribe('INTENT_TOAST_SHOW', (payload) => {
@@ -75,12 +75,12 @@ export function initToastSystem(eventBus) {
     }
   });
 
-  console.log('[Toast] Toast system initialized ✓');
+  console.debug('[Toast] Toast system initialized ✓');
 
   // Return cleanup function
   return () => {
     unsubscribe();
-    console.log('[Toast] Toast system cleaned up');
+    console.debug('[Toast] Toast system cleaned up');
   };
 }
 

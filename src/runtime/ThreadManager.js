@@ -58,7 +58,7 @@ class ThreadManager {
             this.messageHandlers.set(workerId, new Set());
 
             if (import.meta.env && import.meta.env.DEV) {
-                console.log(`ThreadManager: Spawned worker ${workerId}`);
+                console.debug(`ThreadManager: Spawned worker ${workerId}`);
             }
             return workerId;
 
@@ -123,7 +123,7 @@ class ThreadManager {
         this.messageHandlers.delete(workerId);
 
         if (import.meta.env && import.meta.env.DEV) {
-            console.log(`ThreadManager: Terminated worker ${workerId}`);
+            console.debug(`ThreadManager: Terminated worker ${workerId}`);
         }
     }
 
@@ -150,7 +150,7 @@ class ThreadManager {
         handlers.forEach(handler => this.subscribe(workerId, handler));
 
         if (import.meta.env && import.meta.env.DEV) {
-            console.log(`ThreadManager: Restarted worker ${workerId}`);
+            console.debug(`ThreadManager: Restarted worker ${workerId}`);
         }
         return workerId;
     }
@@ -189,7 +189,7 @@ class ThreadManager {
      */
     terminateAll() {
         if (import.meta.env && import.meta.env.DEV) {
-            console.log('ThreadManager: Terminating all workers...');
+            console.debug('ThreadManager: Terminating all workers...');
         }
         for (const workerId of this.workers.keys()) {
             this.terminate(workerId);

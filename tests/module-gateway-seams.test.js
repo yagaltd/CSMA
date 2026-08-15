@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { createRuntimeState, syncWindowRuntime } from '../src/runtime/bootstrap.js';
-import { loadOptionalFeatures } from '../src/runtime/features.js';
+import { loadOptionalFeatures } from '../docs/legacy/features.js';
 import { CartService } from '../src/modules/cart/index.js';
 import { FeatureFlagsService } from '../src/modules/feature-flags/index.js';
 import { EdgeSearchService } from '../src/modules/edge-search/index.js';

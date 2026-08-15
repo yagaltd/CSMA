@@ -346,7 +346,7 @@ export class FormValidator {
 
     log(...args) {
         if (this.debug) {
-            console.log('[FormValidator]', ...args);
+            console.debug('[FormValidator]', ...args);
         }
     }
 }

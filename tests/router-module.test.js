@@ -5,7 +5,7 @@ import { Contracts } from '../src/runtime/Contracts.js';
 import { RouterContracts } from '../src/modules/router/contracts/router-contracts.js';
 import { RouterService } from '../src/modules/router/services/RouterService.js';
 import { createRuntimeState } from '../src/runtime/bootstrap.js';
-import { loadOptionalFeatures } from '../src/runtime/features.js';
+import { loadOptionalFeatures } from '../docs/legacy/features.js';
 
 describe('RouterService', () => {
     it('matches dynamic params and renders through the configured renderer', async () => {

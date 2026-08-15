@@ -5,7 +5,7 @@ import EventBus from '../src/runtime/EventBus.js';
 import { ServiceManager } from '../src/runtime/ServiceManager.js';
 import { AdapterRegistry } from '../src/runtime/AdapterRegistry.js';
 import { createRuntimeState } from '../src/runtime/bootstrap.js';
-import { loadOptionalFeatures } from '../src/runtime/features.js';
+import { loadOptionalFeatures } from '../docs/legacy/features.js';
 import { FlexSearchAdapter, SearchModuleService, createSearchService } from '../src/modules/search/index.js';
 
 function createAdapterRegistry(adapter = new FlexSearchAdapter()) {

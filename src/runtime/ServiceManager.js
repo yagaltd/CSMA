@@ -5,6 +5,12 @@
  * health status, and initialization metrics for better observability.
  */
 
+function devLog(...args) {
+    if (import.meta.env?.DEV) {
+        console.debug(...args);
+    }
+}
+
 class ServiceManager {
     constructor(eventBus) {
         this.services = new Map(); // Map<name, ServiceContext>
@@ -59,7 +65,7 @@ class ServiceManager {
 
         this.services.set(name, context);
         this.registrationOrder.push(name);
-        console.log(`ServiceManager: Registered service ${name} (v${context.metadata.version})`);
+        devLog(`ServiceManager: Registered service ${name} (v${context.metadata.version})`);
         return service;
     }
 
@@ -103,7 +109,7 @@ class ServiceManager {
      * Start all services with dependency resolution
      */
     async startAll() {
-        console.log('Starting all services...');
+        devLog('Starting all services...');
 
         // Sort services by dependency order
         const sorted = this._topologicalSort();
@@ -122,7 +128,7 @@ class ServiceManager {
                     context.health.status = 'running';
                     context.health.lastCheck = Date.now();
 
-                    console.log(`Service ${name} initialized in ${context.health.initTime}ms.`);
+                    devLog(`Service ${name} initialized in ${context.health.initTime}ms.`);
                 } catch (e) {
                     context.health.status = 'failed';
                     context.health.errorCount++;
@@ -135,7 +141,7 @@ class ServiceManager {
             }
         }
 
-        console.log('All services started.');
+        devLog('All services started.');
         this._printHealthReport();
     }
 
@@ -251,19 +257,19 @@ class ServiceManager {
      * Print health report to console
      */
     _printHealthReport() {
-        console.log('\n=== Service Health Report ===');
+        devLog('\n=== Service Health Report ===');
         const statuses = this.getAllStatus();
 
         statuses.forEach(s => {
             const icon = s.status === 'running' ? '✓' : s.status === 'failed' ? '✗' : '○';
             const time = s.initTime ? `(${s.initTime}ms)` : '';
-            console.log(`${icon} ${s.name} v${s.version} - ${s.status} ${time}`);
+            devLog(`${icon} ${s.name} v${s.version} - ${s.status} ${time}`);
 
             if (s.dependencies.length > 0) {
-                console.log(`  └─ deps: ${s.dependencies.join(', ')}`);
+                devLog(`  └─ deps: ${s.dependencies.join(', ')}`);
             }
         });
-        console.log('============================\n');
+        devLog('============================\n');
     }
 }
 

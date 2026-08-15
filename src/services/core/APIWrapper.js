@@ -337,7 +337,7 @@ export class APIWrapper {
 
     log(...args) {
         if (this.debug) {
-            console.log('[APIWrapper]', ...args);
+            console.debug('[APIWrapper]', ...args);
         }
     }
 }
