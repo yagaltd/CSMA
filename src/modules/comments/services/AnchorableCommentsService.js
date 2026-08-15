@@ -48,6 +48,8 @@ export class AnchorableCommentsService extends CommentsService {
         this.persist = true;
         this._persistTimer = null;
         this._seq = 0;
+        /** Ids mutated since the last persist flush — flush writes only these. */
+        this._dirty = new Set();
     }
 
     /** Injected by ServiceManager.register so init() can resolve the storage service. */
@@ -157,6 +159,7 @@ export class AnchorableCommentsService extends CommentsService {
             created_at: now
         });
         this.comments.set(comment.id, comment);
+        this._dirty.add(comment.id);
         this._schedulePersist();
         this.publish();
         this._emit('COMMENT_ADDED', { comment, timestamp: now });
@@ -188,6 +191,7 @@ export class AnchorableCommentsService extends CommentsService {
             created_at: now
         });
         this.comments.set(comment.id, comment);
+        this._dirty.add(comment.id);
         this._schedulePersist();
         this.publish();
         this._emit('COMMENT_ADDED', { comment, timestamp: now });
@@ -201,6 +205,7 @@ export class AnchorableCommentsService extends CommentsService {
         const now = Date.now();
         const next = { ...c, status: 'resolved', resolved_at: now, resolved_by: resolvedBy };
         this.comments.set(c.id, next);
+        this._dirty.add(c.id);
         this._schedulePersist();
         this.publish();
         this._emit('COMMENT_RESOLVED', { id: c.id, resolvedBy, resolvedAt: now, timestamp: now });
@@ -214,6 +219,7 @@ export class AnchorableCommentsService extends CommentsService {
         const now = Date.now();
         const next = { ...c, status: 'reopened', resolved_at: null, resolved_by: null };
         this.comments.set(c.id, next);
+        this._dirty.add(c.id);
         this._schedulePersist();
         this.publish();
         this._emit('COMMENT_REOPENED', { id: c.id, timestamp: now });
@@ -231,6 +237,7 @@ export class AnchorableCommentsService extends CommentsService {
         const changes = { body, edited_at: now };
         const next = { ...c, ...changes };
         this.comments.set(c.id, next);
+        this._dirty.add(c.id);
         this._schedulePersist();
         this.publish();
         this._emit('COMMENT_UPDATED', { id: c.id, changes, timestamp: now });
@@ -244,6 +251,7 @@ export class AnchorableCommentsService extends CommentsService {
         const now = Date.now();
         const next = { ...c, status: 'deleted' };
         this.comments.set(c.id, next);
+        this._dirty.add(c.id);
         this._schedulePersist();
         this.publish();
         this._emit('COMMENT_REMOVED', { id: c.id, timestamp: now });
@@ -288,6 +296,17 @@ export class AnchorableCommentsService extends CommentsService {
         return count;
     }
 
+    /**
+     * Base-class bulk load (remote/local feed): drop pending dirty marks so a
+     * later flush cannot resurrect records that `load()` replaced. Loaded
+     * records are clean — persistence is driven by the CRUD mutations above,
+     * which is the only path that schedules a flush.
+     */
+    load(comments = []) {
+        this._dirty.clear();
+        return super.load(comments);
+    }
+
     // ── persistence ─────────────────────────────────────────────────────
 
     _schedulePersist() {
@@ -301,9 +320,16 @@ export class AnchorableCommentsService extends CommentsService {
 
     async _flushPersist() {
         if (!this.persist || !this.storage) return;
+        // Snapshot + clear up front: mutations that land while the writes are
+        // in flight re-mark themselves dirty and are flushed on the next tick.
+        const dirty = [...this._dirty];
+        this._dirty.clear();
+        if (dirty.length === 0) return;
         try {
-            for (const c of this.comments.values()) {
-                await this.storage.update(this.storeName, c);
+            for (const id of dirty) {
+                const record = this.comments.get(id);
+                if (!record) continue; // removed from the map since marked dirty
+                await this.storage.update(this.storeName, record);
             }
         } catch (err) {
             console.warn('[comments] persist write failed:', err?.message);
@@ -320,6 +346,7 @@ export class AnchorableCommentsService extends CommentsService {
                     const normalized = this.normalize(it);
                     this.comments.set(normalized.id, normalized);
                 }
+                this._dirty.clear();
                 this.publish();
             }
         } catch (err) {

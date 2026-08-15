@@ -263,6 +263,33 @@ describe('Phase 4.0 — AnchorableCommentsService', () => {
         }
     });
 
+    it('mutation flush writes only the dirty record, not the full store', async () => {
+        const storage = makeFakeStorage();
+        const s = new AnchorableCommentsService(bus());
+        await s.init({ storage });
+        const a = s.add({ scope: 's', anchor: elementAnchor('a'), body: 'one' });
+        s.add({ scope: 's', anchor: elementAnchor('b'), body: 'two' });
+        s.add({ scope: 's', anchor: elementAnchor('c'), body: 'three' });
+        await s._flushPersist(); // baseline flush: all three are dirty
+
+        // Spy on the backend, then mutate a single record.
+        const spy = vi.spyOn(storage, 'update');
+        s.edit(a.id, 'edited body');
+        await s._flushPersist();
+
+        // Exactly one write: the edited record. The other two stay untouched.
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(spy.mock.calls[0][0]).toBe('comments');
+        expect(spy.mock.calls[0][1]).toMatchObject({ id: a.id, body: 'edited body' });
+
+        // A flush with nothing dirty writes nothing.
+        await s._flushPersist();
+        expect(spy).toHaveBeenCalledTimes(1);
+
+        spy.mockRestore();
+        s.destroy();
+    });
+
     it('falls back to in-memory when storage.init rejects', async () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
         const failing = { ...makeFakeStorage(), async init() { throw new Error('boom'); } };
