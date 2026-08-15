@@ -5,12 +5,12 @@ import { contract } from '../../../runtime/Contracts.js';
  * Layout module — EventBus contracts.
  *
  * These are lightweight utility contracts. The layout module itself
- * publishes RENDER_SCHEDULED / RENDER_COMPLETE; consumer modules
- * may publish VIEWPORT_CHANGED to inform culling.
+ * publishes 'render:scheduled' / 'render:complete' (RenderScheduler);
+ * consumer modules may publish VIEWPORT_CHANGED to inform culling.
  */
 
 export const LayoutContracts = {
-  RENDER_SCHEDULED: contract({
+  'render:scheduled': contract({
     version: 1,
     type: 'event',
     owner: 'layout',
@@ -23,7 +23,7 @@ export const LayoutContracts = {
     dirtyIds: array(string())
   })),
 
-  RENDER_COMPLETE: contract({
+  'render:complete': contract({
     version: 1,
     type: 'event',
     owner: 'layout',
