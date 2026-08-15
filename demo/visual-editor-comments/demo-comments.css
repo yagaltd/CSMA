@@ -18,8 +18,8 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 12px 20px;
-    background: var(--color-surface, #fff);
-    border-bottom: 1px solid var(--color-border, #e5e7eb);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
 }
 
 .demo-header h1 {
@@ -36,19 +36,19 @@ body {
 }
 
 .demo-status--connected {
-    background: var(--color-green-100, #dcfce7);
-    color: var(--color-green-700, #15803d);
+    background: var(--success-soft);
+    color: var(--success-foreground);
 }
 
 .demo-status--connecting,
 .demo-status--idle {
-    background: var(--color-amber-100, #fef3c7);
-    color: var(--color-amber-700, #b45309);
+    background: var(--warning-soft);
+    color: var(--warning-foreground);
 }
 
 .demo-status--disconnected {
-    background: var(--color-red-100, #fee2e2);
-    color: var(--color-red-700, #b91c1c);
+    background: var(--error-soft);
+    color: var(--error-foreground);
 }
 
 .demo-main {

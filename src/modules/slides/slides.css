@@ -217,15 +217,15 @@
 
 /* Selected stroke — blue outline */
 .slide-annotation[data-selected="true"] {
-  stroke: var(--color-accent, #2563eb) !important;
+  stroke: var(--accent) !important;
   stroke-width: 4;
 }
 
 /* Highlight a specific annotation stroke (📍 pin click) */
 .slide-annotation[data-highlighted="true"] {
-  stroke: var(--color-accent, #2563eb) !important;
+  stroke: var(--accent) !important;
   stroke-width: 5;
-  filter: drop-shadow(0 0 6px var(--color-accent-soft, rgba(37, 99, 235, 0.4)));
+  filter: drop-shadow(0 0 6px var(--accent-soft));
   transition: stroke 180ms ease, stroke-width 180ms ease, filter 180ms ease;
 }
 

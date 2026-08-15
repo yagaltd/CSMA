@@ -475,11 +475,11 @@ export function initCommentSidebar(eventBus, commentService) {
                 const skeleton = document.createElement('div');
                 skeleton.className = 've-comment-card ve-comment-card--skeleton';
                 const bar1 = document.createElement('div');
-                bar1.style.cssText = 'height:14px;width:60%;background:var(--color-border,#e5e7eb);border-radius:4px;margin-bottom:8px';
+                bar1.style.cssText = 'height:14px;width:60%;background:var(--border);border-radius:4px;margin-bottom:8px';
                 const bar2 = document.createElement('div');
-                bar2.style.cssText = 'height:14px;width:80%;background:var(--color-border,#e5e7eb);border-radius:4px;margin-bottom:8px';
+                bar2.style.cssText = 'height:14px;width:80%;background:var(--border);border-radius:4px;margin-bottom:8px';
                 const bar3 = document.createElement('div');
-                bar3.style.cssText = 'height:14px;width:40%;background:var(--color-border,#e5e7eb);border-radius:4px';
+                bar3.style.cssText = 'height:14px;width:40%;background:var(--border);border-radius:4px';
                 skeleton.appendChild(bar1);
                 skeleton.appendChild(bar2);
                 skeleton.appendChild(bar3);

@@ -315,10 +315,12 @@ css += '  --input: var(--border);\n';
 css += '  --ring: var(--primary);\n';
 css += '\n  /* Soft Color Variants */\n';
 css += '  --primary-soft: color-mix(in srgb, var(--primary) 16%, transparent);\n';
+css += '  --accent-soft: color-mix(in srgb, var(--accent) 12%, var(--surface) 88%);\n';
 css += '  --info-soft: color-mix(in srgb, var(--info) 12%, var(--surface) 88%);\n';
 css += '  --success-soft: color-mix(in srgb, var(--success) 12%, var(--surface) 88%);\n';
 css += '  --warning-soft: color-mix(in srgb, var(--warning) 14%, var(--surface) 86%);\n';
 css += '  --destructive-soft: color-mix(in srgb, var(--destructive) 12%, var(--surface) 88%);\n';
+css += '  --error-soft: color-mix(in srgb, var(--error) 12%, var(--surface) 88%);\n';
 css += '}\n\n';
 
 // Dark theme
@@ -339,10 +341,12 @@ css += '  --input: var(--border);\n';
 css += '  --ring: var(--primary);\n';
 css += '\n  /* Soft Color Variants */\n';
 css += '  --primary-soft: color-mix(in srgb, var(--primary) 16%, transparent);\n';
+css += '  --accent-soft: color-mix(in srgb, var(--accent) 12%, var(--surface) 88%);\n';
 css += '  --info-soft: color-mix(in srgb, var(--info) 12%, var(--surface) 88%);\n';
 css += '  --success-soft: color-mix(in srgb, var(--success) 12%, var(--surface) 88%);\n';
 css += '  --warning-soft: color-mix(in srgb, var(--warning) 14%, var(--surface) 86%);\n';
 css += '  --destructive-soft: color-mix(in srgb, var(--destructive) 12%, var(--surface) 88%);\n';
+css += '  --error-soft: color-mix(in srgb, var(--error) 12%, var(--surface) 88%);\n';
 css += '}\n\n';
 
 // Additional themes
@@ -367,10 +371,12 @@ for (const themeName of THEME_NAMES) {
   css += '  --ring: var(--primary);\n';
   css += '\n  /* Soft Color Variants */\n';
   css += '  --primary-soft: color-mix(in srgb, var(--primary) 16%, transparent);\n';
+  css += '  --accent-soft: color-mix(in srgb, var(--accent) 12%, var(--surface) 88%);\n';
   css += '  --info-soft: color-mix(in srgb, var(--info) 12%, var(--surface) 88%);\n';
   css += '  --success-soft: color-mix(in srgb, var(--success) 12%, var(--surface) 88%);\n';
   css += '  --warning-soft: color-mix(in srgb, var(--warning) 14%, var(--surface) 86%);\n';
   css += '  --destructive-soft: color-mix(in srgb, var(--destructive) 12%, var(--surface) 88%);\n';
+  css += '  --error-soft: color-mix(in srgb, var(--error) 12%, var(--surface) 88%);\n';
   css += '}\n\n';
 }
 

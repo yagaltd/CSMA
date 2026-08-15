@@ -609,75 +609,6 @@ export const componentCatalog = {
       "className": "aiui-surface aiui-surface--comments-thread"
     }
   },
-  "connector-line": {
-    "id": "connector-line",
-    "owner": "core",
-    "alias": "connector-line",
-    "title": "Connector Line",
-    "category": "Mindmap",
-    "type": "I",
-    "moduleId": null,
-    "surfaceId": "connector-line",
-    "path": "src/ui/components/connector-line",
-    "manifestPath": "src/ui/components/connector-line/manifest.json",
-    "preferred": true,
-    "summary": "SVG path between parent and child nodes, styled by data-status",
-    "propsSchema": {
-      "d": "string",
-      "status": "string"
-    },
-    "defaultSlot": "default",
-    "slots": {
-      "default": {
-        "selector": ":root",
-        "allowedChildren": []
-      }
-    },
-    "allowedChildren": [],
-    "behavior": {
-      "role": "decoration",
-      "events": [],
-      "targetActions": [],
-      "intentMap": {},
-      "fieldValue": null,
-      "eventTargetSelector": ".connector-line"
-    },
-    "style": {
-      "surfaceAware": false,
-      "supportsVariant": false,
-      "supportsSize": false,
-      "supportsTone": false
-    },
-    "textTargets": {
-      "title": [],
-      "description": [],
-      "label": []
-    },
-    "dependencies": {
-      "runtime": [],
-      "components": []
-    },
-    "contracts": {
-      "published": [],
-      "subscribed": []
-    },
-    "template": "<path class=\"connector-line\" data-status=\"pending\" d=\"\" />",
-    "render": {
-      "kind": "svg",
-      "tag": "path",
-      "className": "connector-line",
-      "attributes": {
-        "d": {
-          "prop": "d"
-        },
-        "data-status": {
-          "prop": "status"
-        }
-      },
-      "children": [],
-      "template": "<path class=\"connector-line\" data-status=\"pending\" d=\"\" />"
-    }
-  },
   "count-up": {
     "id": "count-up",
     "owner": "core",
@@ -689,7 +620,7 @@ export const componentCatalog = {
     "surfaceId": "count-up",
     "path": "src/ui/components/count-up",
     "manifestPath": "src/ui/components/count-up/manifest.json",
-    "preferred": false,
+    "preferred": true,
     "summary": "Animated number counter that counts from 0 to a target value on viewport entry. Respects prefers-reduced-motion.",
     "propsSchema": {
       "figure": {
@@ -704,25 +635,50 @@ export const componentCatalog = {
       }
     },
     "defaultSlot": "default",
-    "slots": {},
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
     "allowedChildren": [],
     "behavior": {
       "role": "display",
-      "events": []
+      "events": [],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".count-up-target"
     },
-    "style": {},
-    "textTargets": {},
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [],
+      "description": [],
+      "label": []
+    },
     "dependencies": {
-      "runtime": [],
+      "runtime": [
+        "EventBus"
+      ],
       "components": []
     },
     "contracts": {
       "published": [],
       "subscribed": []
     },
+    "template": "<span class=\"count-up-target\" data-count-up>0</span>",
     "render": {
+      "kind": "element",
       "tag": "span",
-      "className": "count-up-target"
+      "className": "count-up-target",
+      "attributes": {},
+      "children": [],
+      "template": "<span class=\"count-up-target\" data-count-up>0</span>"
     }
   },
   "field": {
@@ -939,73 +895,6 @@ export const componentCatalog = {
         }
       },
       "template": "<input class=\"input\" type=\"email\" name=\"email\" placeholder=\"name@company.com\" autocomplete=\"email\" />"
-    }
-  },
-  "mindmap-canvas": {
-    "id": "mindmap-canvas",
-    "owner": "mindmap",
-    "alias": "mindmap-canvas",
-    "title": "Mindmap Canvas",
-    "category": "Module Surface",
-    "type": "II",
-    "moduleId": "mindmap",
-    "surfaceId": "mindmap-canvas",
-    "path": "src/modules/mindmap/aiui",
-    "manifestPath": "src/modules/mindmap/aiui/manifest.json",
-    "preferred": false,
-    "summary": "Mountable mindmap canvas that delegates rendering to MindmapService.mountSurface",
-    "propsSchema": {
-      "mapId": "string",
-      "readOnly": "string"
-    },
-    "defaultSlot": "default",
-    "slots": {
-      "default": {
-        "selector": ":root",
-        "allowedChildren": []
-      }
-    },
-    "allowedChildren": [],
-    "behavior": {
-      "role": "module-surface",
-      "events": [],
-      "targetActions": [
-        {
-          "action": "mindmap.search",
-          "description": "Fuzzy search mindmap nodes by topic / status / tag"
-        },
-        {
-          "action": "mindmap.focus",
-          "description": "Isolate a branch by node id(s)"
-        }
-      ],
-      "intentMap": {
-        "searchNodes": "mindmap.search",
-        "isolateBranch": "mindmap.focus",
-        "listArrows": "mindmap.arrow"
-      }
-    },
-    "style": {
-      "surfaceAware": true,
-      "supportsVariant": false,
-      "supportsSize": false,
-      "supportsTone": false
-    },
-    "textTargets": {},
-    "dependencies": {
-      "runtime": [
-        "mindmap"
-      ],
-      "components": []
-    },
-    "contracts": {
-      "published": [],
-      "subscribed": []
-    },
-    "render": {
-      "kind": "module",
-      "tag": "div",
-      "className": "aiui-surface aiui-surface--mindmap-canvas"
     }
   },
   "radio-group": {
@@ -1676,7 +1565,7 @@ export const componentCatalog = {
     "surfaceId": "tilt-card",
     "path": "src/ui/components/tilt-card",
     "manifestPath": "src/ui/components/tilt-card/manifest.json",
-    "preferred": false,
+    "preferred": true,
     "summary": "Perspective tilt on hover. JS sets CSS custom properties (--tilt-x, --tilt-y); CSS applies the transform.",
     "propsSchema": {
       "maxDegrees": {
@@ -1685,7 +1574,12 @@ export const componentCatalog = {
       }
     },
     "defaultSlot": "default",
-    "slots": {},
+    "slots": {
+      "default": {
+        "selector": ":root",
+        "allowedChildren": []
+      }
+    },
     "allowedChildren": [],
     "behavior": {
       "role": "interactive",
@@ -1693,10 +1587,27 @@ export const componentCatalog = {
         "pointerenter",
         "pointermove",
         "pointerleave"
-      ]
+      ],
+      "targetActions": [],
+      "intentMap": {},
+      "fieldValue": null,
+      "eventTargetSelector": ".tilt-card"
     },
-    "style": {},
-    "textTargets": {},
+    "style": {
+      "surfaceAware": false,
+      "supportsVariant": false,
+      "supportsSize": false,
+      "supportsTone": false
+    },
+    "textTargets": {
+      "title": [
+        ".tilt-card__title"
+      ],
+      "description": [
+        ".tilt-card__description"
+      ],
+      "label": []
+    },
     "dependencies": {
       "runtime": [],
       "components": []
@@ -1705,9 +1616,14 @@ export const componentCatalog = {
       "published": [],
       "subscribed": []
     },
+    "template": "<div class=\"tilt-card\" data-tilt></div>",
     "render": {
+      "kind": "element",
       "tag": "div",
-      "className": "tilt-card"
+      "className": "tilt-card",
+      "attributes": {},
+      "children": [],
+      "template": "<div class=\"tilt-card\"></div>"
     }
   },
   "toast": {

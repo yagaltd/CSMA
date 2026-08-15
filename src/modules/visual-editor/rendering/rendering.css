@@ -91,7 +91,7 @@
 
 .ve-text-property:empty::before {
     content: attr(placeholder);
-    color: var(--color-text-tertiary, #9ca3af);
+    color: var(--foreground-muted);
 }
 
 .ve-text-property[data-state="editing"]:focus {

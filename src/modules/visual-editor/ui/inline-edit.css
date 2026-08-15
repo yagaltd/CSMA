@@ -6,18 +6,18 @@
 
 /* ── Active element (while contentEditable) ─────────────────────────── */
 .csma-inline-edit-active {
-    outline: 2px solid var(--color-accent, #2563eb) !important;
+    outline: 2px solid var(--accent) !important;
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px var(--color-accent-soft, rgba(37, 99, 235, 0.18));
+    box-shadow: 0 0 0 4px var(--accent-soft);
     border-radius: 2px;
     cursor: text;
     /* Inherit all visual styling from the element itself — only the outline changes */
 }
 
 .csma-inline-edit-active:focus {
-    outline: 2px solid var(--color-accent, #2563eb) !important;
+    outline: 2px solid var(--accent) !important;
     outline-offset: 2px;
-    box-shadow: 0 0 0 4px var(--color-accent-soft, rgba(37, 99, 235, 0.18));
+    box-shadow: 0 0 0 4px var(--accent-soft);
 }
 
 /* ── Floating toolbar ───────────────────────────────────────────────── */
@@ -31,8 +31,8 @@
 .csma-inline-edit-toolbar-inner {
     display: flex;
     gap: 2px;
-    background: var(--color-surface-raised, #fff);
-    border: 1px solid var(--color-border, rgba(0, 0, 0, 0.14));
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md, 0.5rem);
     box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.2));
     padding: 4px;
@@ -58,20 +58,20 @@
 }
 
 .csma-inline-edit-btn--save {
-    color: var(--color-success-strong, #15803d);
+    color: var(--success-foreground);
 }
 .csma-inline-edit-btn--save:hover {
-    background: var(--color-success-soft, rgba(22, 163, 74, 0.14));
-    border-color: var(--color-success-soft, rgba(22, 163, 74, 0.25));
+    background: var(--success-soft);
+    border-color: var(--success-soft);
 }
 
 .csma-inline-edit-btn--cancel {
-    color: var(--color-text-tertiary, #777);
+    color: var(--foreground-muted);
 }
 .csma-inline-edit-btn--cancel:hover {
-    background: var(--color-surface-muted, rgba(0, 0, 0, 0.05));
-    color: var(--color-text-primary, #111);
-    border-color: var(--color-border, rgba(0, 0, 0, 0.14));
+    background: var(--surface-muted);
+    color: var(--foreground);
+    border-color: var(--border);
 }
 
 /* ── Reduced motion ────────────────────────────────────────────────── */
