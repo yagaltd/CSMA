@@ -1,8 +1,7 @@
 /**
  * Viewport — scroll-aware viewport rect tracking for any scrollable DOM element.
  *
- * Generic. No CSMA dependencies. Used by MorphEditor (1D vertical scrolling)
- * and mindmap (2D pan/zoom via ViewportController wrapper).
+ * Generic. No CSMA dependencies. Used by MorphEditor (1D vertical scrolling).
  *
  * Always reads live scroll positions from the DOM — never caches stale values.
  * Supports both top-down and bottom-up content orientation.
@@ -68,7 +67,7 @@ export class Viewport {
   }
 
   /**
-   * 2D viewport rect (for pan/zoom consumers like mindmap).
+   * 2D viewport rect for pan/zoom consumers.
    * @param {{ x?: number, y?: number, scale?: number }} [transform]
    *   - transform.x / transform.y: pan offset in world pixels
    *   - transform.scale: zoom level (default 1)

@@ -17,7 +17,7 @@ import { ContributionRegistry } from './ContributionRegistry.js';
  *     store: 'maps',
  *     format: 'markdown',
  *     fn: serializeMapToMarkdown,        // function OR string export name
- *     label: 'Mindmap (markdown)',
+ *     label: 'Notes (markdown)',
  *     default: true
  *   }
  */

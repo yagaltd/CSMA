@@ -38,7 +38,7 @@ import { AIUIComposerService } from '../../ai-ui/services/AIUIComposerService.js
 // Lazy default composer used by renderSlide()/buildSlide() when no composer is
 // supplied. It has no EventBus / serviceManager, so it can mount raw-HTML spec
 // trees (all current layouts) but NOT module surfaces. Callers that embed
-// module surfaces (comments/video/charts/mindmap) must pass a real composer
+// module surfaces (comments/video/charts) must pass a real composer
 // via opts.composer (e.g. mountDeck passes the app composer).
 let _defaultComposer = null;
 function getDefaultComposer() {

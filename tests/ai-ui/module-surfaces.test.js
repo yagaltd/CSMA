@@ -1,7 +1,7 @@
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import EventBus from '../../src/runtime/EventBus.js';
 import { AIUIComposerService } from '../../src/modules/ai-ui/services/AIUIComposerService.js';
@@ -9,9 +9,8 @@ import { componentCatalog } from '../../src/modules/ai-ui/catalog/componentCatal
 import { collectAIUIComponentCatalog } from '../../tooling/scripts/generate-ai-ui-catalog.js';
 import { CommentsService } from '../../src/modules/comments/services/CommentsService.js';
 import { ChartsService } from '../../src/modules/charts/services/ChartsService.js';
-import { MindmapService } from '../../src/modules/mindmap/services/MindmapService.js';
 
-const MODULE_SURFACES = ['comments-thread', 'video-player', 'chart-display', 'mindmap-canvas'];
+const MODULE_SURFACES = ['comments-thread', 'video-player', 'chart-display'];
 
 function fakeServiceManager(map) {
   return { get: (id) => (Object.prototype.hasOwnProperty.call(map, id) ? map[id] : null) };
@@ -41,7 +40,7 @@ function makeSurfaceManifest(id, moduleId) {
 }
 
 describe('aiui module surfaces — catalog', () => {
-  it('generated catalog contains all 4 module surfaces with module metadata', () => {
+  it('generated catalog contains all 3 module surfaces with module metadata', () => {
     for (const id of MODULE_SURFACES) {
       expect(componentCatalog[id], `missing surface ${id}`).toBeDefined();
       const entry = componentCatalog[id];
@@ -52,7 +51,6 @@ describe('aiui module surfaces — catalog', () => {
 
     expect(componentCatalog['comments-thread'].moduleId).toBe('comments');
     expect(componentCatalog['chart-display'].moduleId).toBe('charts');
-    expect(componentCatalog['mindmap-canvas'].moduleId).toBe('mindmap');
     expect(componentCatalog['video-player'].moduleId).toBe('video');
   });
 
@@ -235,48 +233,5 @@ describe('aiui module surfaces — composer resolution', () => {
     );
     expect(el.getAttribute('data-aiui-surface')).toBe('chart-display');
     expect(el.querySelector('canvas')).not.toBeNull();
-  });
-});
-
-describe('aiui module surfaces — MindmapService.mountSurface', () => {
-  let tempHost;
-  afterEach(() => {
-    tempHost?.remove();
-    tempHost = null;
-  });
-
-  it('mounts nodes and connectors into a container and cleans up', async () => {
-    const bus = new EventBus();
-    const svc = new MindmapService(bus);
-    svc.init({ storage: null });
-
-    const mapId = await svc.createMap('Roadmap');
-    const root = svc._getMap(mapId).root;
-    await svc.addBranch(root.id, 'Q1 launch');
-    await svc.addBranch(root.id, 'Q2 launch');
-
-    tempHost = document.createElement('section');
-    document.body.append(tempHost);
-
-    const cleanup = svc.mountSurface('mindmap-canvas', tempHost, { mapId });
-
-    // Node layer populated from the layout.
-    const nodes = tempHost.querySelectorAll('.mm-node');
-    expect(nodes.length).toBe(3); // root + 2 branches
-    const rootEl = tempHost.querySelector('.mm-node[data-kind="root"]');
-    expect(rootEl).not.toBeNull();
-    expect(rootEl.querySelector('.mind-node__topic').textContent).toBe('Roadmap');
-
-    // SVG connector layer populated.
-    expect(tempHost.querySelectorAll('path.connector-line').length).toBe(2);
-
-    // Cleanup empties the container.
-    cleanup();
-    expect(tempHost.querySelector('.mm-node')).toBeNull();
-  });
-
-  it('mountSurface throws for an unknown surface id', () => {
-    const svc = new MindmapService(new EventBus());
-    expect(() => svc.mountSurface('nope', document.createElement('div'))).toThrow(/unknown surface/);
   });
 });

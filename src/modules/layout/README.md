@@ -17,7 +17,7 @@ Generic viewport tracking, culling, and render scheduling utilities for CSMA sur
 
 ## Runtime Integration
 
-Not loaded by the runtime; consumer modules (e.g. MorphEditor, mindmap) import
+Not loaded by the runtime; consumer modules (e.g. MorphEditor) import
 the utilities they need directly. Zero dependencies on other CSMA modules.
 
 ## Storage / Side Effects

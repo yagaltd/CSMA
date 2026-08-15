@@ -5,7 +5,7 @@
  * Prefers `crypto.randomUUID()`; falls back to a time + `Math.random`
  * token for environments without the Crypto API. An optional prefix is
  * prepended with a `-` separator. Callers that need a different separator
- * (e.g. the mindmap `n_` node-id convention) wrap the call themselves.
+ * wrap the call themselves.
  */
 
 /**

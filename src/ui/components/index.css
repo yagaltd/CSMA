@@ -24,10 +24,5 @@
 @import './swatch/swatch.css';
 @import './color-token-list/color-token-list.css';
 
-/* Mindmap primitives */
-@import './mind-node/mind-node.css';
-@import './connector-line/connector-line.css';
-@import './mindmap-focus/mindmap-focus.css';
-@import './arrow-line/arrow-line.css';
 @import './tilt-card/tilt-card.css';
 @import './count-up/count-up.css';

@@ -12,7 +12,6 @@ import { LayoutContracts } from './contracts/layout-contracts.js';
  * Consumers:
  *
  *   - MorphEditor: Viewport (1D vertical), CullingCore (1D), RenderScheduler.
- *   - mindmap: Viewport.getVisibleRect2D, CullingCore (2D pan/zoom), RenderScheduler.
  *   - Any scroll-heavy surface: drop in the utilities you need.
  *
  * No ServiceManager registration — these are instantiated directly by

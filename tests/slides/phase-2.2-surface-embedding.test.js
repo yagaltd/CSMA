@@ -2,7 +2,7 @@
  * Phase 2.2 unit tests — surface embedding in slide layouts.
  *
  * Tests the substrate that lets a slide embed any aiui surface
- * (comments-thread, video-player, chart-display, mindmap-canvas) via the
+ * (comments-thread, video-player, chart-display) via the
  * `media: { type: 'surface', component, props }` slot.
  *
  * Unit-level only — no full deck mount. Visual verification is manual
@@ -48,7 +48,7 @@ describe('split layout — surface embedding (Phase 2.2)', () => {
     });
 
     it('defaults props to {} when omitted', () => {
-        const out = renderMedia({ type: 'surface', component: 'mindmap-canvas' });
+        const out = renderMedia({ type: 'surface', component: 'comments-thread' });
         expect(out.props).toEqual({});
     });
 

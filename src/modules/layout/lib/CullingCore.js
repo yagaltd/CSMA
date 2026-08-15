@@ -18,7 +18,7 @@
  *   const vr = culling.getVisibleRect1D(viewportHeight);
  *   const visible = blockLayout.getBlocksInRange(vr.top, vr.bottom);
  *
- *   // 2D pan/zoom (mindmap)
+ *   // 2D pan/zoom
  *   const culling = new CullingCore({
  *     getPanX: () => viewportController.panX,
  *     getPanY: () => viewportController.panY,

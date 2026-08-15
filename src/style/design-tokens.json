@@ -799,84 +799,6 @@
         },
         "$type": "dimension"
       }
-    },
-    "mindmap": {
-      "nodeBg": {
-        "$value": "var(--surface)",
-        "$type": "color"
-      },
-      "nodeBorder": {
-        "$value": "var(--border)",
-        "$type": "color"
-      },
-      "nodeRadius": {
-        "$value": "{primitives.radius.md}",
-        "$type": "dimension"
-      },
-      "nodePaddingX": {
-        "$value": "{primitives.spacing.md}",
-        "$type": "dimension"
-      },
-      "nodePaddingY": {
-        "$value": "{primitives.spacing.sm}",
-        "$type": "dimension"
-      },
-      "nodeFontSize": {
-        "$value": "{primitives.typography.fontSize.base}",
-        "$type": "dimension"
-      },
-      "rootBg": {
-        "$value": "var(--primary)",
-        "$type": "color"
-      },
-      "rootColor": {
-        "$value": "var(--primary-foreground)",
-        "$type": "color"
-      },
-      "rootFontSize": {
-        "$value": "{primitives.typography.fontSize.lg}",
-        "$type": "dimension"
-      },
-      "connectorStroke": {
-        "$value": "var(--border)",
-        "$type": "color"
-      },
-      "connectorWidth": {
-        "$value": "2",
-        "$type": "dimension"
-      },
-      "connectorDone": {
-        "$value": "var(--success)",
-        "$type": "color"
-      },
-      "selectionOutline": {
-        "$value": "var(--primary)",
-        "$type": "color"
-      },
-      "selectionWidth": {
-        "$value": "2px",
-        "$type": "dimension"
-      },
-      "expanderSize": {
-        "$value": "1.25rem",
-        "$type": "dimension"
-      },
-      "expanderColor": {
-        "$value": "var(--foreground-muted)",
-        "$type": "color"
-      },
-      "ghostOpacity": {
-        "$value": "0.5",
-        "$type": "number"
-      },
-      "insertPreviewColor": {
-        "$value": "var(--primary)",
-        "$type": "color"
-      },
-      "canvasBg": {
-        "$value": "var(--background)",
-        "$type": "color"
-      }
     }
   },
   "themes": {
@@ -1128,7 +1050,31 @@
           "$description": "Backdrop behind modals and overlays",
           "$type": "color"
         },
-        "$type": "color"
+        "$type": "color",
+        "error": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.58,
+              0.17,
+              25
+            ]
+          },
+          "$type": "color",
+          "$description": "Danger color for errors and destructive feedback"
+        },
+        "errorForeground": {
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.725,
+              0.11,
+              0.11
+            ]
+          },
+          "$type": "color",
+          "$description": "Dark danger variant for text/icons on error-soft surfaces"
+        }
       },
       "$extensions": {
         "com.csma.colorScheme": "light"
@@ -1382,7 +1328,31 @@
           "$description": "Backdrop behind modals and carousels",
           "$type": "color"
         },
-        "$type": "color"
+        "$type": "color",
+        "error": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.62,
+              0.17,
+              25
+            ]
+          },
+          "$type": "color",
+          "$description": "Danger color for errors and destructive feedback"
+        },
+        "errorForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.62,
+              0.17,
+              25
+            ]
+          },
+          "$type": "color",
+          "$description": "Danger text/icon variant visible on dark surfaces"
+        }
       },
       "$extensions": {
         "com.csma.colorScheme": "dark"
@@ -1652,6 +1622,30 @@
             "alpha": 0.75
           },
           "$description": "Backdrop behind modals"
+        },
+        "error": {
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.969,
+              0.463,
+              0.557
+            ]
+          },
+          "$type": "color",
+          "$description": "Danger color for errors and destructive feedback"
+        },
+        "errorForeground": {
+          "$value": {
+            "colorSpace": "srgb",
+            "components": [
+              0.969,
+              0.463,
+              0.557
+            ]
+          },
+          "$type": "color",
+          "$description": "Danger text/icon variant visible on dark surfaces"
         }
       }
     },
@@ -1904,6 +1898,30 @@
             ],
             "alpha": 0.75
           }
+        },
+        "error": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.2,
+              25
+            ]
+          },
+          "$type": "color",
+          "$description": "Danger color for errors and destructive feedback (high-contrast red)"
+        },
+        "errorForeground": {
+          "$value": {
+            "colorSpace": "oklch",
+            "components": [
+              0.7,
+              0.2,
+              25
+            ]
+          },
+          "$type": "color",
+          "$description": "Danger text/icon variant visible on dark surfaces"
         }
       }
     }
