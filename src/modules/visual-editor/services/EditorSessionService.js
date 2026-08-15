@@ -1,4 +1,5 @@
 import Transaction from '../engine/Transaction.js';
+import { uid } from '../../../utils/id.js';
 import { createDocumentDraft, applyOpToDraft } from '../engine/TransactionOps.js';
 import { validateDocumentSchema } from '../engine/DocumentSchema.js';
 import { validateDocument } from '../engine/DocumentModel.js';
@@ -233,7 +234,7 @@ export class EditorSessionService {
     generateId() {
         const id = this.config?.generate_id
             ? this.config.generate_id()
-            : `node_${crypto.randomUUID()}`;
+            : uid('node');
         if (!isIdValid(id)) {
             throw new Error(
                 `Generated node ID ${JSON.stringify(id)} is invalid.`

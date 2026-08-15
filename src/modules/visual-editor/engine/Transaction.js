@@ -17,6 +17,7 @@
  */
 
 import { docGet, docPropertyType, docKind, docInspect } from './DocumentModel.js';
+import { uid } from '../../../utils/id.js';
 import { createDocumentDraft, applyOpToDraft, cascadeDeleteUnreferencedNodes } from './TransactionOps.js';
 import { fillNodeDefaults } from './DocumentDefaults.js';
 import { validateNode, isIdValid } from './NodeValidator.js';
@@ -129,7 +130,7 @@ export default class Transaction {
      */
     generateId() {
         const generate = this.config.generate_id;
-        const id = generate ? generate() : `node_${crypto.randomUUID()}`;
+        const id = generate ? generate() : uid('node');
         if (!isIdValid(id)) {
             throw new Error(
                 `Generated node ID ${JSON.stringify(id)} is invalid. ` +

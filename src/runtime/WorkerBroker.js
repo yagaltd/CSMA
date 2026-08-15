@@ -1,3 +1,5 @@
+import { uid } from '../utils/id.js';
+
 const DEFAULT_LIMITS = Object.freeze({
     maxRequestBytes: 256 * 1024,
     maxResponseBytes: 256 * 1024,
@@ -12,7 +14,6 @@ const DEFAULT_LIMITS = Object.freeze({
 const SAFE_IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const FORBIDDEN_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
 const encoder = new TextEncoder();
-let fallbackRequestSequence = 0;
 
 export class WorkerBrokerError extends Error {
     constructor(code, message) {
@@ -127,9 +128,7 @@ function requireIdentifier(value, field) {
 }
 
 function createRequestId() {
-    if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
-    fallbackRequestSequence += 1;
-    return `worker-request-${Date.now().toString(36)}-${fallbackRequestSequence.toString(36)}`;
+    return uid('worker-request');
 }
 
 function resolveWorkerDescriptor(entry, allowedUrls) {

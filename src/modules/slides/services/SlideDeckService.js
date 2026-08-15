@@ -14,6 +14,8 @@
  * follows along. No leader election — single-presenter assumption.
  */
 
+import { uid } from '../../../utils/id.js';
+
 const SYNC_CHANNEL = 'csma-slides-sync';
 const NOTES_STORAGE_PREFIX = 'csma-slides-notes-';
 
@@ -292,7 +294,7 @@ export class SlideDeckService {
         const idx = Number.isFinite(slide) ? slide : this.index;
         if (!Array.isArray(points) || points.length === 0) return;
         const list = this.annotations.get(idx) || [];
-        const id = 'stroke-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+        const id = uid('stroke');
         list.push({
             id,
             points: points.map((p) => ({ x: Number(p?.x) || 0, y: Number(p?.y) || 0 })),

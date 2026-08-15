@@ -1,5 +1,6 @@
 import { CrdtReducerRegistry } from './CrdtReducerRegistry.js';
 import { SyncStateTracker } from './SyncStateTracker.js';
+import { uid } from '../../../utils/id.js';
 
 export class OptimisticSyncService {
     constructor(eventBus) {
@@ -458,10 +459,7 @@ export class OptimisticSyncService {
     }
 
     static _createTabId() {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
-        }
-        return `proxy-${Math.random().toString(16).slice(2)}`;
+        return uid('proxy');
     }
 
     static _shouldUseProxyStorage(windowRef) {

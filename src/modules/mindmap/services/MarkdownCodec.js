@@ -1,3 +1,5 @@
+import { uid } from '../../../utils/id.js';
+
 /**
  * MarkdownCodec — serialization of a NodeObj tree to / from compact text.
  *
@@ -193,7 +195,7 @@ export class MarkdownCodec {
     if (typeof markdownText !== 'string' || markdownText.length === 0) return null;
     const lines = markdownText.split('\n');
     const root = {
-      id: options.rootId || `root_${Date.now().toString(36)}`,
+      id: options.rootId || `root_${uid()}`,
       topic: options.rootTopic || 'Imported map',
       schemaType: 'mindmap/branch',
       status: 'pending',
@@ -283,7 +285,7 @@ export class MarkdownCodec {
 
   _makeNode(schemaType, payload) {
     return {
-      id: payload.id || `n_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
+      id: payload.id || `n_${uid()}`,
       topic: payload.topic,
       schemaType,
       status: payload.status,

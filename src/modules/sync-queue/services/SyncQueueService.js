@@ -1,3 +1,5 @@
+import { uid } from '../../../utils/id.js';
+
 const DEFAULT_OPTIONS = {
     persistKey: 'csma.sync.queue'
 };
@@ -136,9 +138,6 @@ export class SyncQueueService {
     }
 
     #generateId() {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
-        }
-        return `job-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return uid('job');
     }
 }

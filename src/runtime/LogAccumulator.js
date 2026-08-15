@@ -5,6 +5,7 @@
 import { LifecycleScope } from './LifecycleScope.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
 import { createSnapshot } from './diagnosticSnapshot.js';
+import { uid } from '../utils/id.js';
 
 export class LogAccumulator {
     constructor(eventBus, { errorBoundary } = {}) {
@@ -110,7 +111,7 @@ export class LogAccumulator {
     getSessionId() {
         let sessionId = sessionStorage.getItem('sessionId');
         if (!sessionId) {
-            sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            sessionId = uid();
             sessionStorage.setItem('sessionId', sessionId);
         }
         return sessionId;

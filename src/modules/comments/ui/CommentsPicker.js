@@ -23,6 +23,7 @@
  */
 
 import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { uid } from '../../../utils/id.js';
 
 export function createCommentsPicker({
     eventBus,
@@ -152,7 +153,7 @@ export function createCommentsPicker({
         publish('COMMENTS_PICK_MODE', { active: 'false', timestamp: Date.now() });
 
         // ensure a stable, re-resolvable anchor
-        if (!el.id) el.id = 'cmt-el-' + Math.random().toString(36).slice(2, 10);
+        if (!el.id) el.id = uid('cmt-el');
         const anchor = { anchor_type: 'element', anchor: { id: el.id } };
 
         if (!overlayManager) {

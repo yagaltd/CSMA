@@ -1,3 +1,5 @@
+import { uid } from '../../../utils/id.js';
+
 const DEFAULT_OPTIONS = {
     maxStack: 3
 };
@@ -99,9 +101,6 @@ export class ModalService {
     }
 
     #generateId(prefix) {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
-        }
-        return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return uid(prefix);
     }
 }

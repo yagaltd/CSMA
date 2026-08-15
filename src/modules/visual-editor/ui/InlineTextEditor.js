@@ -16,6 +16,7 @@
  */
 
 import { spec, getComposer } from '../../ai-ui/specHelpers.js';
+import { uid } from '../../../utils/id.js';
 
 const INLINE_TAGS = new Set([
     'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
@@ -213,7 +214,7 @@ export function createInlineTextEditor({
         originalText = el.textContent || '';
 
         // Ensure stable ID for the intent payload
-        if (!el.id) el.id = 'el-' + Math.random().toString(36).slice(2, 10);
+        if (!el.id) el.id = uid('el');
 
         el.contentEditable = 'true';
         el.classList.add('csma-inline-edit-active');

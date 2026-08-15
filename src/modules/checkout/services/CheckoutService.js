@@ -1,3 +1,5 @@
+import { uid } from '../../../utils/id.js';
+
 const DEFAULT_OPTIONS = {
     taxRate: 0.07,
     checkoutFormPrefix: 'checkout.form.',
@@ -408,9 +410,6 @@ export class CheckoutService {
     }
 
     #generateId(prefix) {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
-        }
-        return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return uid(prefix);
     }
 }

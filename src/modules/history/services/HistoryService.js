@@ -1,5 +1,6 @@
 import { HistoryStore, DEFAULT_DB_NAME, DEFAULT_STORE_NAME } from './HistoryStore.js';
 import { BroadcastSync, DEFAULT_CHANNEL_NAME } from './BroadcastSync.js';
+import { uid } from '../../../utils/id.js';
 
 const CRDT_TYPES = new Set(['lww-register', 'g-counter', 'pn-counter']);
 
@@ -476,9 +477,6 @@ export class HistoryService {
     }
 
     static _createId() {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
-        }
-        return `entry-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return uid('entry');
     }
 }

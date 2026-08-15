@@ -23,6 +23,7 @@
  */
 import { CommentsService } from './CommentsService.js';
 import { validateAnchorShape } from './AnchorResolver.js';
+import { uid } from '../../../utils/id.js';
 
 /**
  * IDB schema handed to the storage backend. The comments object store is keyed
@@ -47,7 +48,6 @@ export class AnchorableCommentsService extends CommentsService {
         this.storeName = 'comments';
         this.persist = true;
         this._persistTimer = null;
-        this._seq = 0;
         /** Ids mutated since the last persist flush — flush writes only these. */
         this._dirty = new Set();
     }
@@ -129,11 +129,7 @@ export class AnchorableCommentsService extends CommentsService {
     }
 
     _generateId() {
-        this._seq += 1;
-        const rnd = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
-            ? crypto.randomUUID()
-            : `${Date.now()}-${this._seq}`;
-        return `cmt-${rnd}`;
+        return uid('cmt');
     }
 
     // ── anchor-aware CRUD ───────────────────────────────────────────────

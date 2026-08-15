@@ -1,3 +1,5 @@
+import { uid } from '../utils/id.js';
+
 const DEFAULT_STORAGE_KEY = 'csma_leader_state';
 const DEFAULT_LOCK_NAME = 'csma_leader_lock';
 const DEFAULT_LEASE_MS = 5000;
@@ -261,9 +263,6 @@ export class CrossTabLeader {
     }
 
     static _createTabId() {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
-        }
-        return `tab-${Math.random().toString(36).slice(2)}`;
+        return uid('tab');
     }
 }

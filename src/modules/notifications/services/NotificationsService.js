@@ -1,4 +1,5 @@
 import { NotificationsContracts } from '../contracts/notifications-contracts.js';
+import { uid } from '../../../utils/id.js';
 
 const DEFAULT_CONSENT_CATEGORY = 'preferences';
 const DEFAULT_COPY = {
@@ -37,8 +38,6 @@ const DEFAULT_COPY = {
     clearedDescription: 'All notifications were removed.'
 };
 
-let fallbackId = 0;
-
 function createDefaultPermissionState() {
     const supported = typeof globalThis.Notification !== 'undefined' && typeof globalThis.Notification?.permission === 'string';
     return {
@@ -66,11 +65,7 @@ function now() {
 }
 
 function createId(prefix = 'notification') {
-    if (globalThis.crypto?.randomUUID) {
-        return `${prefix}-${globalThis.crypto.randomUUID()}`;
-    }
-    fallbackId += 1;
-    return `${prefix}-${now()}-${fallbackId}`;
+    return uid(prefix);
 }
 
 function normalizeString(value) {

@@ -1,3 +1,5 @@
+import { uid } from '../../../utils/id.js';
+
 const DEFAULT_OPTIONS = {
     chunkSize: 64 * 1024,
     maxFileSize: 10 * 1024 * 1024,
@@ -1137,11 +1139,7 @@ export class FileUploadService {
     }
 
     _generateId() {
-        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-            return crypto.randomUUID();
-        }
-
-        return `file-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return uid('file');
     }
 
     _createController() {

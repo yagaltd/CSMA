@@ -3,6 +3,7 @@ import { StreamProcessor } from './StreamProcessor.js';
 import { FileHandleCache } from '../utils/FileHandleCache.js';
 import { FallbackStorage } from '../utils/FallbackStorage.js';
 import { detectMimeType } from '../utils/MimeMapper.js';
+import { uid } from '../../../utils/id.js';
 
 const DEFAULT_OPTIONS = {
     metadataStoreName: 'csma-file-index',
@@ -197,10 +198,7 @@ export class FileSystemService {
     }
 
     #generateId() {
-        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-            return crypto.randomUUID();
-        }
-        return `file-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return uid('file');
     }
 
     async #ensureReady() {

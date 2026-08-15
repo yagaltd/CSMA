@@ -1,3 +1,5 @@
+import { uid } from '../../../utils/id.js';
+
 const DEFAULT_OPTIONS = {
     enablePersistence: true,
     storeKey: 'csma.location.history',
@@ -143,9 +145,6 @@ export class LocationService {
     }
 
     #generateId() {
-        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-            return crypto.randomUUID();
-        }
-        return `geo-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return uid('geo');
     }
 }

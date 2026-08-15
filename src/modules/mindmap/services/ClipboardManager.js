@@ -1,3 +1,5 @@
+import { uid } from '../../../utils/id.js';
+
 /**
  * ClipboardManager — copy, cut, and paste node trees in the CSMA mindmap.
  *
@@ -22,10 +24,7 @@ const SCHEMA_BRANCH = 'mindmap/branch';
 const SCHEMA_LEAF = 'mindmap/leaf';
 
 function generateId(prefix) {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return `${prefix}_${crypto.randomUUID()}`;
-  }
-  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+  return `${prefix}_${uid()}`;
 }
 
 export class ClipboardManager {

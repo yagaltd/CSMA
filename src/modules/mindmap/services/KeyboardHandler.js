@@ -1,3 +1,5 @@
+import { uid } from '../../../utils/id.js';
+
 /**
  * KeyboardHandler — keyboard shortcuts for the mindmap canvas.
  *
@@ -507,10 +509,7 @@ export class KeyboardHandler {
    * Generate a unique ID.
    */
   _generateId(prefix = 'n') {
-    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-      return `${prefix}_${crypto.randomUUID()}`;
-    }
-    return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    return `${prefix}_${uid()}`;
   }
 
   // ─── DOM helpers ──────────────────────────────────────────────────

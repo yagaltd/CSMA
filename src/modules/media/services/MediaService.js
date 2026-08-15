@@ -7,6 +7,7 @@
  */
 
 import { WebpCodec } from '../codecs/WebpCodec.js';
+import { uid } from '../../../utils/id.js';
 import { JpegCodec } from '../codecs/JpegCodec.js';
 import { PngCodec } from '../codecs/PngCodec.js';
 import { CanvasCodec } from '../codecs/CanvasCodec.js';
@@ -561,10 +562,7 @@ export class MediaService {
     }
 
     #generateId(prefix) {
-        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-            return crypto.randomUUID();
-        }
-        return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        return uid(prefix);
     }
 
     destroy() {

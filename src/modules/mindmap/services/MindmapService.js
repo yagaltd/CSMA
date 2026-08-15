@@ -19,6 +19,7 @@
 
 import { MindmapStore } from './MindmapStore.js';
 import { MarkdownCodec } from './MarkdownCodec.js';
+import { uid } from '../../../utils/id.js';
 import { Search } from './Search.js';
 import { layout as layoutTree } from './LayoutEngine.js';
 import { main as mainConnector, sub as subConnector, rectFromNodes, directionClassFor } from './ConnectorGeometry.js';
@@ -50,10 +51,7 @@ function _nextBranchHue() {
 }
 
 function generateId(prefix = 'n') {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return `${prefix}_${crypto.randomUUID()}`;
-  }
-  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+  return `${prefix}_${uid()}`;
 }
 
 function now() {
@@ -1307,7 +1305,7 @@ export class MindmapService {
     }
     if (!Array.isArray(map.arrows)) map.arrows = [];
     const arrow = {
-      id: `arrow-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+      id: `arrow-${uid()}`,
       from: fromId,
       to: toId,
       direction,

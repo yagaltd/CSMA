@@ -3,6 +3,7 @@
  */
 import { LifecycleScope } from '../../../runtime/LifecycleScope.js';
 import { auditPage } from '../../../runtime/seoAudit.js';
+import { uid } from '../../../utils/id.js';
 import { EventClassifier } from './EventClassifier.js';
 import { EventAggregator } from './EventAggregator.js';
 import { SecurityScanner } from './SecurityScanner.js';
@@ -826,13 +827,13 @@ export class AnalyticsService {
     }
 
     generateBatchId() {
-        return `csma-${Date.now()}-${Math.random().toString(16).slice(2, 10)}`;
+        return uid('csma');
     }
 
     getSessionId() {
         let sessionId = sessionStorage.getItem('sessionId');
         if (!sessionId) {
-            sessionId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+            sessionId = uid();
             sessionStorage.setItem('sessionId', sessionId);
         }
         return sessionId;
