@@ -9,7 +9,7 @@ Locale and translation management for multi-language apps.
 | Surface | Details |
 |---------|---------|
 | Service(s) | `I18n` |
-| Contracts | None. |
+| Contracts | `LANGUAGE_CHANGED`, `LOCALE_LOADED` |
 
 ## Runtime Integration
 

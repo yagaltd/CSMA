@@ -1,4 +1,4 @@
-import { object, string, optional, array, any, enums, number } from '../../../runtime/validation/index.js';
+import { object, string, optional, array, any, enums, number, boolean } from '../../../runtime/validation/index.js';
 import { contract } from '../../../runtime/Contracts.js';
 
 /**
@@ -241,5 +241,40 @@ export const MindmapContracts = {
     mapId: string(),
     nodeId: string(),
     committed: any()
+  })),
+
+  // ── Viewport & keyboard (ViewportController / KeyboardHandler) ───────
+
+  MINDMAP_VIEWPORT_CHANGED: contract({
+    version: 1,
+    type: 'event',
+    owner: 'mindmap',
+    lifecycle: 'active',
+    stability: 'stable',
+    compliance: 'public',
+    description: 'Published (debounced via rAF) when the viewport pan/zoom transform changes'
+  }, object({
+    mapId: string(),
+    tx: number(),
+    ty: number(),
+    scale: number()
+  })),
+
+  MINDMAP_KEYBOARD_SHORTCUT: contract({
+    version: 1,
+    type: 'event',
+    owner: 'mindmap',
+    lifecycle: 'active',
+    stability: 'stable',
+    compliance: 'public',
+    description: 'Published when a registered keyboard shortcut fires (debugging / extensibility)'
+  }, object({
+    mapId: string(),
+    shortcut: string(),
+    key: string(),
+    ctrl: boolean(),
+    meta: boolean(),
+    shift: boolean(),
+    alt: boolean()
   }))
 };

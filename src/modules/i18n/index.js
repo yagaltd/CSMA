@@ -6,6 +6,7 @@
  */
 
 import { I18n } from './services/I18n.js';
+import { I18nContracts } from './contracts/i18n-contracts.js';
 
 export const manifest = {
     id: 'i18n',
@@ -15,9 +16,14 @@ export const manifest = {
     dependencies: [],
     services: ['I18n'],
     bundleSize: '4KB',
-    contracts: []  // I18n doesn't publish events
+    contracts: [
+        'LANGUAGE_CHANGED',
+        'LOCALE_LOADED'
+    ]
 };
 
 export const services = {
     I18n
 };
+
+export const contracts = I18nContracts;

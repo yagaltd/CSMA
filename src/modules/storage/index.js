@@ -6,6 +6,7 @@
  */
 
 import { Storage } from './services/Storage.js';
+import { StorageContracts } from './contracts/storage-contracts.js';
 
 export const manifest = {
     id: 'storage',
@@ -15,9 +16,17 @@ export const manifest = {
     dependencies: [],
     services: ['Storage'],
     bundleSize: '6KB',
-    contracts: []  // Storage doesn't publish events directly
+    contracts: [
+        'STORAGE_READY',
+        'STORAGE_ADDED',
+        'STORAGE_UPDATED',
+        'STORAGE_DELETED',
+        'STORAGE_CLEARED'
+    ]
 };
 
 export const services = {
     Storage
 };
+
+export const contracts = StorageContracts;

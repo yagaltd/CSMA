@@ -17,6 +17,7 @@ export const manifest = {
         'SEARCH_QUERY_INITIATED',
         'SEARCH_RESULTS_RETURNED',
         'SEARCH_INDEX_UPDATED',
+        'SEARCH_INDEX_BATCH_UPDATED',
         'SEARCH_INDEX_CLEARED',
         'SEARCH_ERROR',
         'SEARCH_FACETS_UPDATED',

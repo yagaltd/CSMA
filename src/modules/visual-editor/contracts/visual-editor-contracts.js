@@ -5,7 +5,7 @@
  * for the visual-editor module. Validated by CSMA EventBus.
  */
 
-import { object, string, number, boolean, array, any, optional } from '../../../runtime/validation/index.js';
+import { object, string, number, boolean, array, any, optional, nullable } from '../../../runtime/validation/index.js';
 
 export const VisualEditorContracts = {
     // ===================================================================
@@ -433,6 +433,25 @@ export const VisualEditorContracts = {
             editorId: string(),
             comments: array(any()),
             timestamp: number()
+        })
+    },
+
+    /**
+     * Selection of an annotation for display (sidebar open + scroll-into-view).
+     * Published by the comment sidebar and annotation highlights; editorId
+     * is null when the annotation is document-level.
+     */
+    SELECT_ANNOTATION: {
+        version: 1,
+        type: 'event',
+        owner: 'visual-editor',
+        lifecycle: 'active',
+        stability: 'stable',
+        compliance: 'public',
+        description: 'Annotation selected for display in the comment sidebar',
+        schema: object({
+            commentId: string(),
+            editorId: optional(nullable(string()))
         })
     },
 };

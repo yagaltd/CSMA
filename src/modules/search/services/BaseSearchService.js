@@ -88,7 +88,7 @@ export class BaseSearchService {
             this.documents.set(doc.id, { ...doc });
         });
 
-        // Emit non-contract event for speed (or add contract later)
+        // Emit batch event (registered in contracts/search-contracts.js)
         this.eventBus?.publish('SEARCH_INDEX_BATCH_UPDATED', {
             count: docs.length,
             operation: 'add',

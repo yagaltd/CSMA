@@ -63,6 +63,21 @@ export const SearchContracts = {
         })
     },
 
+    SEARCH_INDEX_BATCH_UPDATED: {
+        version: 1,
+        type: 'event',
+        owner: 'search-module',
+        lifecycle: 'active',
+        stability: 'stable',
+        description: 'Published when documents are bulk-added to the index',
+
+        schema: object({
+            count: number(),
+            operation: enums(['add', 'remove']),
+            timestamp: number()
+        })
+    },
+
     SEARCH_INDEX_CLEARED: {
         version: 1,
         type: 'event',

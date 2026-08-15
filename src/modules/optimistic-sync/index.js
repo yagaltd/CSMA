@@ -1,5 +1,6 @@
 import { OptimisticSyncService } from './services/OptimisticSyncService.js';
 import { SyncTransportService } from './services/SyncTransportService.js';
+import { OptimisticSyncContracts } from './contracts/optimistic-sync-contracts.js';
 
 /**
  * optimistic-sync module — local-first intent log with optimistic syncing to SSMA.
@@ -26,8 +27,24 @@ export const manifest = {
     bundleSize: '+4KB',
     contracts: [
         'OPTIMISTIC_ACTION_RECORDED',
+        'OPTIMISTIC_ACTION_INGESTED',
         'OPTIMISTIC_ACTION_ACKED',
-        'OPTIMISTIC_ACTION_FAILED'
+        'OPTIMISTIC_ACTION_FAILED',
+        'OPTIMISTIC_ACTION_DROPPED',
+        'OPTIMISTIC_ACTION_UPDATED',
+        'OPTIMISTIC_CRDT_STATE_CHANGED',
+        'OPTIMISTIC_TRANSPORT_STATE',
+        'OPTIMISTIC_TRANSPORT_ACK',
+        'OPTIMISTIC_TRANSPORT_REPLAY',
+        'OPTIMISTIC_INVALIDATION',
+        'OPTIMISTIC_SERVER_REWORK',
+        'CHANNEL_SERVER_EVENT',
+        'CHANNEL_SERVER_SNAPSHOT',
+        'CHANNEL_SERVER_INVALIDATE',
+        'CHANNEL_SERVER_REPLAY',
+        'CHANNEL_ACCESS_DENIED',
+        'CHANNEL_COMMAND_RESULT',
+        'ISLAND_INVALIDATED'
     ]
 };
 
@@ -35,3 +52,5 @@ export const services = {
     optimisticSync: OptimisticSyncService,
     optimisticTransport: SyncTransportService
 };
+
+export const contracts = OptimisticSyncContracts;

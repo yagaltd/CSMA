@@ -9,7 +9,7 @@ IndexedDB wrapper for offline-first application data.
 | Surface | Details |
 |---------|---------|
 | Service(s) | `Storage` |
-| Contracts | None. |
+| Contracts | `STORAGE_READY`, `STORAGE_ADDED`, `STORAGE_UPDATED`, `STORAGE_DELETED`, `STORAGE_CLEARED` |
 
 ## Runtime Integration
 
