@@ -2,11 +2,26 @@
  * CSMA production security checker.
  *
  * Run: npm run security-check
+ *
+ * Also hosts the Phase 0 publish-vs-registry contract drift check:
+ *   - advisory by default (warns, exits 0)
+ *   - CSMA_ENFORCE_CONTRACTS=1 turns drift into a hard failure
+ *   - --write-baseline pins the current drift list to
+ *     tooling/generated/contract-drift-baseline.json (generated artifact,
+ *     never hand-edit; regenerate with the flag)
  */
 
 import fs from 'fs';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { dirname, join, relative } from 'path';
+import { dirname, join, relative, resolve } from 'path';
+
+/**
+ * Pass/fail switch for the contract drift check (plan item 0.1).
+ * Advisory by default: drift is reported as a WARN and the script exits 0.
+ * Set CSMA_ENFORCE_CONTRACTS=1 in the environment (Phase 1 flips the
+ * default) to turn drift into a FAIL with exit code 1.
+ */
+const ENFORCE_CONTRACTS_DEFAULT = false;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +42,64 @@ function walk(dir, files = []) {
         }
     }
     return files;
+}
+
+const PUBLISH_CALL_RE = /(?<![\w$])_?publish(Sync)?\s*\(\s*['"]([^'"]+)['"]/g;
+
+/**
+ * Extract the event names of literal publish('NAME') / publishSync('NAME')
+ * calls from one JS source file.
+ *
+ * Deliberate limitations (kept per plan item 0.1):
+ * - Dynamic publishes (publish(name) with a variable) are NOT scanned — a
+ *   regex cannot resolve them. They are skipped, not errors.
+ * - Backtick/template names and computed names are skipped the same way.
+ * - `_publish('NAME')` is included: the found occurrences are private
+ *   wrappers that forward to EventBus.publish, so they are publish sites.
+ *
+ * @param {string} content
+ * @returns {Array<{ name: string, method: string }>}
+ */
+export function scanPublishCalls(content) {
+    const sites = [];
+    for (const match of content.matchAll(PUBLISH_CALL_RE)) {
+        sites.push({ name: match[2].trim(), method: match[1] ? `publish${match[1]}` : 'publish' });
+    }
+    return sites;
+}
+
+/**
+ * Aggregate publish-site name counts across file contents.
+ * @param {string[]} fileContents
+ * @returns {Map<string, number>} event name -> occurrence count
+ */
+export function collectPublishedNames(fileContents) {
+    const counts = new Map();
+    for (const content of fileContents) {
+        for (const { name } of scanPublishCalls(content)) {
+            counts.set(name, (counts.get(name) || 0) + 1);
+        }
+    }
+    return counts;
+}
+
+/**
+ * Diff published names against the registered set.
+ * @param {Map<string, number>} publishedCounts
+ * @param {Set<string>} registeredNames
+ * @returns {{ unregistered: Record<string, number>, distinctUnregistered: number, totalOccurrences: number }}
+ */
+export function findContractDrift(publishedCounts, registeredNames) {
+    const unregistered = {};
+    let distinctUnregistered = 0;
+    let totalOccurrences = 0;
+    for (const [name, count] of publishedCounts) {
+        if (registeredNames.has(name)) continue;
+        unregistered[name] = count;
+        distinctUnregistered += 1;
+        totalOccurrences += count;
+    }
+    return { unregistered, distinctUnregistered, totalOccurrences };
 }
 
 function hasAnyStruct(struct, seen = new Set()) {
@@ -81,7 +154,7 @@ function checkTokenStorage() {
     };
 }
 
-async function loadContractCollections() {
+export async function loadContractCollections() {
     const collections = [];
     const { Contracts } = await import(pathToFileURL(join(projectRoot, 'src/runtime/Contracts.js')).href);
     collections.push({ source: 'src/runtime/Contracts.js', contracts: Contracts });
@@ -96,9 +169,17 @@ async function loadContractCollections() {
             if (!file.endsWith('-contracts.js')) continue;
             const relative = relativeFromRoot(join(contractsDir, file));
             const mod = await import(pathToFileURL(join(contractsDir, file)).href);
-            const record = Object.values(mod).find((value) => value && typeof value === 'object' && !Array.isArray(value));
-            if (!record) continue;
-            collections.push({ source: relative, contracts: record });
+            // A contracts file may export more than one plain object
+            // (share-contracts.js exports ShareContracts + SHARE_LIMITS).
+            // Merge every contract-shaped export (any entry whose value has
+            // type 'event' | 'intent') so registered names in helper exports
+            // are not missed; fall back to the first plain object export if
+            // nothing looks contract-shaped.
+            const records = Object.values(mod).filter((value) => value && typeof value === 'object' && !Array.isArray(value));
+            const contractShaped = records.filter((record) => Object.values(record).some((entry) => entry?.type === 'event' || entry?.type === 'intent'));
+            const merged = Object.assign({}, ...(contractShaped.length ? contractShaped : records.slice(0, 1)));
+            if (Object.keys(merged).length === 0) continue;
+            collections.push({ source: relative, contracts: merged });
         }
     }
 
@@ -204,19 +285,112 @@ const checks = [
     checkSensitiveStorage
 ];
 
-console.log('\nCSMA Production Security Check\n');
+/**
+ * Phase 0.1 — publish-vs-registry contract drift.
+ *
+ * Walks src/ (NOT demo/ — demos are teaching material, per plan decision D2)
+ * for literal publish('NAME') / publishSync('NAME') call sites, collects the
+ * registered names via loadContractCollections(), and reports names that are
+ * published but never registered (EventBus silently drops those).
+ */
+export async function checkContractDrift() {
+    const collections = await loadContractCollections();
+    const registered = new Set();
+    for (const { contracts } of collections) {
+        for (const name of Object.keys(contracts)) registered.add(name);
+    }
 
-let allPassed = true;
-for (const check of checks) {
-    const result = await check();
-    allPassed &&= result.pass;
-    console.log(`${result.pass ? 'PASS' : 'FAIL'} ${result.name}`);
-    console.log(`  ${result.message}`);
+    const fileContents = walk(join(projectRoot, 'src'))
+        .filter((file) => file.endsWith('.js'))
+        .map((file) => fs.readFileSync(file, 'utf8'));
+    const published = collectPublishedNames(fileContents);
+    const drift = findContractDrift(published, registered);
+
+    return {
+        name: 'contract drift (publish vs registry)',
+        ...drift,
+        registeredCount: registered.size,
+        publishedCount: published.size
+    };
 }
 
-if (!allPassed) {
-    console.log('\nSecurity check failed. Fix these issues before production deployment.\n');
-    process.exit(1);
+/**
+ * Phase 0.2 — pin the current drift list to
+ * tooling/generated/contract-drift-baseline.json. Generated artifact:
+ * never hand-edit; regenerate with --write-baseline. Phase 1 deletes it.
+ */
+export function writeContractDriftBaseline(drift) {
+    const sortedNames = Object.entries(drift.unregistered)
+        .sort(([aName, aCount], [bName, bCount]) => bCount - aCount || aName.localeCompare(bName));
+    const baseline = {
+        description: [
+            'Generated contract-drift baseline (plan item 0.2).',
+            'Produced by: node tooling/scripts/check-security.js --write-baseline.',
+            'Do not hand-edit; regenerate with the same flag. Phase 1 deletes this file.'
+        ].join(' '),
+        generatedAt: new Date().toISOString(),
+        distinctUnregisteredNames: drift.distinctUnregistered,
+        totalOccurrences: drift.totalOccurrences,
+        unregistered: Object.fromEntries(sortedNames)
+    };
+    const targetDir = join(projectRoot, 'tooling', 'generated');
+    fs.mkdirSync(targetDir, { recursive: true });
+    const target = join(targetDir, 'contract-drift-baseline.json');
+    fs.writeFileSync(target, `${JSON.stringify(baseline, null, 2)}\n`);
+    return target;
 }
 
-console.log('\nAll production security checks passed.\n');
+async function main() {
+    if (process.argv.includes('--write-baseline')) {
+        const drift = await checkContractDrift();
+        const target = writeContractDriftBaseline(drift);
+        console.log(`Wrote ${relativeFromRoot(target)}: ${drift.distinctUnregistered} distinct unregistered names, ${drift.totalOccurrences} publish sites.`);
+        return; // snapshot mode is advisory and never fails
+    }
+
+    console.log('\nCSMA Production Security Check\n');
+
+    let allPassed = true;
+    for (const check of checks) {
+        const result = await check();
+        allPassed &&= result.pass;
+        console.log(`${result.pass ? 'PASS' : 'FAIL'} ${result.name}`);
+        console.log(`  ${result.message}`);
+    }
+
+    const drift = await checkContractDrift();
+    const enforce = process.env.CSMA_ENFORCE_CONTRACTS === '1' || ENFORCE_CONTRACTS_DEFAULT;
+    if (drift.distinctUnregistered === 0) {
+        console.log(`PASS ${drift.name}`);
+        console.log(`  all ${drift.publishedCount} published event names are registered`);
+    } else if (enforce) {
+        allPassed = false;
+        console.log(`FAIL ${drift.name}`);
+        console.log(`  ${drift.distinctUnregistered} unregistered event names / ${drift.totalOccurrences} publish sites:`);
+        for (const [name, count] of Object.entries(drift.unregistered).sort(([aName, aCount], [bName, bCount]) => bCount - aCount || aName.localeCompare(bName))) {
+            console.log(`    ${name} (x${count})`);
+        }
+    } else {
+        console.log(`WARN ${drift.name} — advisory; set CSMA_ENFORCE_CONTRACTS=1 to fail on drift`);
+        console.log(`  ${drift.distinctUnregistered} unregistered event names / ${drift.totalOccurrences} publish sites:`);
+        for (const [name, count] of Object.entries(drift.unregistered).sort(([aName, aCount], [bName, bCount]) => bCount - aCount || aName.localeCompare(bName))) {
+            console.log(`    ${name} (x${count})`);
+        }
+        console.log('  (dynamic publishes — publish(variable) — are skipped by design; see scanPublishCalls comment)');
+    }
+
+    if (!allPassed) {
+        console.log('\nSecurity check failed. Fix these issues before production deployment.\n');
+        process.exit(1);
+    }
+
+    console.log('\nAll production security checks passed.\n');
+}
+
+const isDirectInvocation = process.argv[1] && pathToFileURL(resolve(process.argv[1])).href === import.meta.url;
+if (isDirectInvocation) {
+    main().catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
+}
