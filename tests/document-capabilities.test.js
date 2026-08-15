@@ -2,8 +2,8 @@
  * CSMA DocumentCapabilities Tests
  *
  * Happy-path coverage for the document-capability gate used by runtime
- * surfaces (see src/runtime/DocumentCapabilities.js). Error paths are
- * exercised indirectly through the WorkerBroker suite.
+ * surfaces (see src/runtime/DocumentCapabilities.js). Coverage is direct:
+ * this suite exercises the validator contract itself.
  */
 import { describe, it, expect } from 'vitest';
 import {

@@ -17,6 +17,7 @@
         "check:design": "node tooling/scripts/check-design.js",
         "check:responsive": "node tooling/scripts/check-responsive.js",
         "check:all": "node tooling/scripts/check-design.js && node tooling/scripts/check-styles.js && node tooling/scripts/check-responsive.js",
+        "certify:module": "node tooling/scripts/certify-module.js",
         "api:guide": "npx -y modern-web-guidance@latest",
         "test": "vitest",
         "test:browser-smoke": "playwright test tests/browser/sw-smoke.spec.js",
