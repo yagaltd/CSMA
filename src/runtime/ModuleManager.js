@@ -64,7 +64,9 @@ export class ModuleManager {
             const normalized = validateModuleDefinition(moduleId, moduleDefinition);
             manifest = normalized.manifest;
 
-            console.debug(`[ModuleManager] Loading: ${manifest.name}`);
+            if (import.meta.env?.DEV) {
+                console.debug(`[ModuleManager] Loading: ${manifest.name}`);
+            }
 
             // Register services with the SHARED ServiceManager
             for (const [serviceName, ServiceClass] of Object.entries(normalized.services)) {
@@ -99,7 +101,9 @@ export class ModuleManager {
                 contributions: this.summarizeContributions(manifest)
             });
 
-            console.debug(`[ModuleManager] ✓ ${manifest.name} loaded`);
+            if (import.meta.env?.DEV) {
+                console.debug(`[ModuleManager] ✓ ${manifest.name} loaded`);
+            }
             return this.modules.get(moduleId);
         } catch (error) {
             await this.rollbackLoad(moduleId, manifest, serviceNames, contractNames);

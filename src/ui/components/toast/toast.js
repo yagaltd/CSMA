@@ -52,7 +52,9 @@ export function initToastSystem(eventBus) {
     return () => { };
   }
 
-  console.debug('[Toast] Initializing CSMA Toast system...');
+  if (import.meta.env?.DEV) {
+    console.debug('[Toast] Initializing CSMA Toast system...');
+  }
 
   // Subscribe to toast show intents
   const unsubscribe = eventBus.subscribe('INTENT_TOAST_SHOW', (payload) => {
@@ -75,12 +77,16 @@ export function initToastSystem(eventBus) {
     }
   });
 
-  console.debug('[Toast] Toast system initialized ✓');
+  if (import.meta.env?.DEV) {
+    console.debug('[Toast] Toast system initialized ✓');
+  }
 
   // Return cleanup function
   return () => {
     unsubscribe();
-    console.debug('[Toast] Toast system cleaned up');
+    if (import.meta.env?.DEV) {
+      console.debug('[Toast] Toast system cleaned up');
+    }
   };
 }
 

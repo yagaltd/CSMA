@@ -55,7 +55,9 @@ export function initCommentSidebar(eventBus, commentService) {
                 endOffset,
                 text: range.toString()
             };
-            console.debug('[CommentSidebar] Selection saved:', savedSelection.path.join('.'), `"${savedSelection.text.slice(0, 30)}"`);
+            if (import.meta.env?.DEV) {
+                console.debug('[CommentSidebar] Selection saved:', savedSelection.path.join('.'), `"${savedSelection.text.slice(0, 30)}"`);
+            }
         }
     }
     let isOpen = false;
@@ -200,10 +202,14 @@ export function initCommentSidebar(eventBus, commentService) {
                     start_offset: savedSelection.startOffset,
                     end_offset: savedSelection.endOffset
                 };
-                console.debug('[CommentSidebar] Using saved text anchor:', anchor);
+                if (import.meta.env?.DEV) {
+                    console.debug('[CommentSidebar] Using saved text anchor:', anchor);
+                }
                 savedSelection = null; // consume it
             } else {
-                console.debug('[CommentSidebar] No saved selection, creating document-level comment');
+                if (import.meta.env?.DEV) {
+                    console.debug('[CommentSidebar] No saved selection, creating document-level comment');
+                }
             }
 
             try {
