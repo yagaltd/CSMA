@@ -1,5 +1,8 @@
 # Data Table Module
 
+> **Catalog-only module:** not wired into any demo; not yet certified. Run
+> `npm run certify:module` before relying on it.
+
 ## Purpose
 
 Remote table loading, sorting, filtering, and table error state.

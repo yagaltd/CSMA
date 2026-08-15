@@ -195,7 +195,11 @@ function rowSpec(row, index, columns, columnWidths, selectable, multiSelect, sel
 export function createDataGrid(container, emit, options = {}) {
     const {
         columns = [],
-        fetch = null,
+        fetchData = null,
+        // Deprecated alias — the old `fetch` option shadowed the global
+        // `fetch` inside this factory. Prefer `fetchData`; the shim below
+        // keeps legacy call sites working.
+        fetch: legacyFetch = null,
         data: initialData = null,
         rowHeight = ROW_HEIGHT,
         selectable = false,
@@ -208,6 +212,9 @@ export function createDataGrid(container, emit, options = {}) {
         errorMessage = 'Failed to load data',
     } = options;
 
+    // Deprecation shim: legacy `fetch` option → fetchData.
+    const dataFetcher = (fetchData !== null && fetchData !== undefined) ? fetchData : legacyFetch;
+
     const composer = getComposer();
 
     // ─── State ─────────────────────────────────────────
@@ -218,7 +225,7 @@ export function createDataGrid(container, emit, options = {}) {
     let selectedIds = new Set();
     let focusedRowIndex = -1;
     let columnWidths = {};
-    let isLoading = !initialData && fetch !== null;
+    let isLoading = !initialData && dataFetcher !== null;
     let error = null;
 
     columns.forEach((col) => {
@@ -532,11 +539,11 @@ export function createDataGrid(container, emit, options = {}) {
     // ─── Data Loading ──────────────────────────────────
 
     async function loadData() {
-        if (!fetch) return;
+        if (!dataFetcher) return;
         setState('loading');
         error = null;
         try {
-            const result = await fetch({ sortColumn, sortDirection });
+            const result = await dataFetcher({ sortColumn, sortDirection });
             rows = Array.isArray(result) ? result : (result?.rows || result?.data || []);
             if (rows.length === 0) {
                 setState('empty');
@@ -618,7 +625,7 @@ export function createDataGrid(container, emit, options = {}) {
 
     // ─── Initial Load ─────────────────────────────────
 
-    if (fetch) {
+    if (dataFetcher) {
         loadData();
     } else if (initialData) {
         if (rows.length === 0) setState('empty');

@@ -1,5 +1,8 @@
 # Network Status Module
 
+> **Catalog-only module:** not wired into any demo; not yet certified. Run
+> `npm run certify:module` before relying on it.
+
 ## Purpose
 
 Online/offline detection and latency sampling.

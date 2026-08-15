@@ -1,5 +1,8 @@
 # Sync Queue Module
 
+> **Catalog-only module:** not wired into any demo; not yet certified. Run
+> `npm run certify:module` before relying on it.
+
 ## Purpose
 
 Offline-first job queue that flushes work when network connectivity is available.

@@ -260,6 +260,31 @@ describe('Phase 3.1-A — data-grid lifecycle', () => {
     expect(container.querySelector('.csma-datagrid')).toBeNull();
   });
 
+  it('loads rows asynchronously via the fetchData option', async () => {
+    const container = document.createElement('section');
+    document.body.appendChild(container);
+    const grid = createDataGrid(container, vi.fn(), {
+      columns: GRID_COLUMNS,
+      fetchData: async () => [{ id: 'f1', name: 'Fetched', age: 7 }]
+    });
+    await vi.waitFor(() => {
+      expect(grid.getData()).toEqual([{ id: 'f1', name: 'Fetched', age: 7 }]);
+    });
+  });
+
+  it('legacy fetch option still loads via the deprecation shim', async () => {
+    const container = document.createElement('section');
+    document.body.appendChild(container);
+    const grid = createDataGrid(container, vi.fn(), {
+      columns: GRID_COLUMNS,
+      fetch: async () => ({ rows: [{ id: 'l1', name: 'Legacy', age: 9 }] })
+    });
+    await vi.waitFor(() => {
+      expect(grid.getData()).toHaveLength(1);
+    });
+    expect(grid.getData()[0].id).toBe('l1');
+  });
+
   it('emits datagrid:sort on header click', () => {
     const emit = vi.fn();
     const container = document.createElement('section');
