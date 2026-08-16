@@ -35,15 +35,15 @@ describe('FlexSearchAdapter', () => {
         await adapter.add('plain', 'alpha beta');
         await adapter.addDocument({ id: 'doc', title: 'Gamma guide', category: 'docs' });
 
-        expect(adapter.search('alpha')).toContain('plain');
-        expect(adapter.search('gamma')).toContain('doc');
+        expect(await adapter.search('alpha')).toContain('plain');
+        expect(await adapter.search('gamma')).toContain('doc');
         expect(adapter.getDocument('doc')).toEqual({ id: 'doc', title: 'Gamma guide', category: 'docs' });
 
         await adapter.remove('plain');
-        expect(adapter.search('alpha')).not.toContain('plain');
+        expect(await adapter.search('alpha')).not.toContain('plain');
 
         await adapter.clear();
-        expect(adapter.search('gamma')).toEqual([]);
+        expect(await adapter.search('gamma')).toEqual([]);
         expect(adapter.getIndexInfo()).toMatchObject({
             engine: 'flexsearch',
             variant: 'compact',
@@ -63,8 +63,8 @@ describe('FlexSearchAdapter', () => {
             metadata: { owner: 'platform', beta: true }
         });
 
-        expect(adapter.search('platform')).toEqual(['nested']);
-        expect(adapter.search('true')).toEqual(['nested']);
+        expect(await adapter.search('platform')).toEqual(['nested']);
+        expect(await adapter.search('true')).toEqual(['nested']);
     });
 
     it('restores persisted documents and clears persisted state on reset', async () => {
@@ -73,14 +73,14 @@ describe('FlexSearchAdapter', () => {
         await first.addDocument({ id: 'persisted', title: 'Saved Search Document' });
 
         const restored = new FlexSearchAdapter().init({ persistence: true, storageKey });
-        expect(restored.search('saved')).toEqual(['persisted']);
+        expect(await restored.search('saved')).toEqual(['persisted']);
         expect(restored.getIndexInfo().size).toBe(1);
 
         await restored.clear();
         expect(localStorage.getItem(storageKey)).toBeNull();
 
         const empty = new FlexSearchAdapter().init({ persistence: true, storageKey });
-        expect(empty.search('saved')).toEqual([]);
+        expect(await empty.search('saved')).toEqual([]);
     });
 });
 

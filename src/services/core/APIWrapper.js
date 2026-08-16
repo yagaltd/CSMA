@@ -12,6 +12,13 @@ export class APIWrapper {
         this.retries = options.retries || 3;
         this.debug = options.debug ?? false;
 
+        // Optional response cache (services/core/CacheManager). Opt-in:
+        // pass { cache } to enable GET response caching. When present,
+        // strategies derive from the server's Cache-Control header by default.
+        this.cache = options.cache || null;
+        this.cacheStrategy = options.cacheStrategy || 'cache-first';
+        this.cacheTtl = options.cacheTtl ?? 60000; // fallback when header silent
+
         // Interceptors
         this.requestInterceptors = [];
         this.responseInterceptors = [];
@@ -56,6 +63,7 @@ export class APIWrapper {
      * POST request
      */
     async post(endpoint, data, options = {}) {
+        await this._invalidateEndpointCache(endpoint);
         return this.request(endpoint, {
             ...options,
             method: 'POST',
@@ -67,6 +75,7 @@ export class APIWrapper {
      * PUT request
      */
     async put(endpoint, data, options = {}) {
+        await this._invalidateEndpointCache(endpoint);
         return this.request(endpoint, {
             ...options,
             method: 'PUT',
@@ -78,6 +87,7 @@ export class APIWrapper {
      * PATCH request
      */
     async patch(endpoint, data, options = {}) {
+        await this._invalidateEndpointCache(endpoint);
         return this.request(endpoint, {
             ...options,
             method: 'PATCH',
@@ -89,7 +99,32 @@ export class APIWrapper {
      * DELETE request
      */
     async delete(endpoint, options = {}) {
+        await this._invalidateEndpointCache(endpoint);
         return this.request(endpoint, { ...options, method: 'DELETE' });
+    }
+
+    /**
+     * Mutations invalidate cached GETs for the same endpoint (and query
+     * variants of it). Conservative: clears any cache entry whose key starts
+     * with the endpoint URL.
+     */
+    /**
+     * Mutations invalidate cached GETs for the same endpoint (and query
+     * variants of it) BEFORE the mutation resolves, so a follow-up GET can
+     * never race ahead of invalidation and read stale data. Conservative:
+     * clears any cache entry whose key matches the endpoint URL + query.
+     */
+    async _invalidateEndpointCache(endpoint) {
+        if (!this.cache) return;
+        const base = this.buildURL(endpoint);
+        // invalidate() takes a regex — escape the URL so it matches literally,
+        // then allow any query-string suffix (query variants of the endpoint).
+        const escaped = base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        try {
+            await this.cache.invalidate(new RegExp(`^${escaped}(\\?.*)?$`));
+        } catch {
+            // best-effort: invalidation failure must not fail the mutation
+        }
     }
 
     /**
@@ -99,12 +134,40 @@ export class APIWrapper {
         const requestId = ++this.requestCounter;
         const { retries = this.retries } = options;
 
+        // Optional GET response cache (opt-in via { cache }). Only safe,
+        // idempotent GETs participate; response Cache-Control drives
+        // storability and TTL (no-store bypasses, private = memory-only).
+        const cacheable = Boolean(
+            this.cache
+            && (options.method || 'GET').toUpperCase() === 'GET'
+            && options.cacheable !== false
+        );
+        const cacheKey = cacheable ? this._cacheKey(endpoint, options) : null;
+        if (cacheable) {
+            const cached = await this.cache.get(cacheKey).catch(() => undefined);
+            if (cached !== undefined && !this.cache.isExpired(cacheKey)) {
+                this.eventBus?.publish?.('API_REQUEST_SUCCESS', {
+                    requestId,
+                    method: 'GET',
+                    endpoint,
+                    status: 200,
+                    duration: 0,
+                    cache: 'hit',
+                    timestamp: Date.now()
+                });
+                return cached;
+            }
+        }
+
         let attempt = 0;
         let lastError;
 
         while (attempt <= retries) {
             try {
                 const result = await this.executeRequest(endpoint, options, requestId, attempt);
+                if (cacheable) {
+                    await this._storeInCache(cacheKey, options, result);
+                }
                 return result;
             } catch (error) {
                 lastError = error;
@@ -134,6 +197,58 @@ export class APIWrapper {
         }
 
         throw lastError;
+    }
+
+    /**
+     * Build the cache key for a GET endpoint: URL + sorted query params.
+     */
+    _cacheKey(endpoint, options = {}) {
+        const url = this.buildURL(endpoint);
+        const params = options.params;
+        if (!params || typeof params !== 'object') return url;
+        const qs = Object.keys(params).sort().map((k) => `${k}=${params[k]}`).join('&');
+        return qs ? `${url}?${qs}` : url;
+    }
+
+    /**
+     * Store a successful GET result, deriving policy from the response
+     * Cache-Control header when available (no-store → skip; private →
+     * memory-only; max-age → TTL). Falls back to configured defaults.
+     */
+    async _storeInCache(key, options, result) {
+        const header = this._lastCacheControl;
+        this._lastCacheControl = null;
+        let ttl = options.cacheTtl ?? this.cacheTtl;
+        let memoryOnly = false;
+
+        if (header) {
+            const cc = header.toLowerCase();
+            if (/\bno-store\b/.test(cc) || /\bno-cache\b/.test(cc)) {
+                this.eventBus?.publish?.('API_REQUEST_SUCCESS', {
+                    requestId: this.requestCounter,
+                    method: 'GET',
+                    endpoint: key,
+                    cache: 'bypass',
+                    timestamp: Date.now()
+                });
+                return; // server forbids storing
+            }
+            if (/\bprivate\b/.test(cc)) {
+                memoryOnly = true; // never persist to IDB/localStorage backends
+            }
+            const maxAge = cc.match(/(?:^|[,\s])max-age\s*=\s*(\d+)/);
+            if (maxAge) {
+                ttl = Number(maxAge[1]) * 1000;
+            }
+        }
+
+        if (memoryOnly && this.cache.storage && typeof this.cache.storage === 'object') {
+            // Bypass the persistent backend for this write: set in memory only.
+            this.cache.memoryCache?.set?.(key, { value: result });
+            this.cache.ttls?.set?.(key, Date.now() + ttl);
+            return;
+        }
+        await this.cache.set(key, result, ttl).catch(() => {});
     }
 
     /**
@@ -174,6 +289,9 @@ export class APIWrapper {
             for (const interceptor of this.responseInterceptors) {
                 response = await interceptor(response, config);
             }
+
+            // Capture Cache-Control for the optional response cache.
+            this._lastCacheControl = response.headers?.get?.('cache-control') || null;
 
             // Handle HTTP errors
             if (!response.ok) {

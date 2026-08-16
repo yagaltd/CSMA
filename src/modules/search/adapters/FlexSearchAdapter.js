@@ -1,4 +1,29 @@
-import FlexSearch from 'flexsearch';
+/**
+ * FlexSearchAdapter — search adapter over the optional `flexsearch` capability
+ * library. The library is loaded lazily via dynamic import() on first use, so
+ * importing the search module (or copying it) never carries the dependency:
+ * hosts without flexsearch get the core search service and this adapter
+ * rejects with a clear install hint. Swap in any other adapter implementing
+ * the same surface (init/add/addDocument/addDocuments/remove/clear/search/
+ * getDocument/getIndexInfo/destroy).
+ */
+
+let flexsearchModule = null;
+
+function loadFlexSearch() {
+    if (!flexsearchModule) {
+        flexsearchModule = import('flexsearch')
+            .then((mod) => mod.default || mod)
+            .catch(() => {
+                flexsearchModule = null; // allow retry after install
+                throw new Error(
+                    '[search] flexsearch is not installed. It is an optional capability dependency: '
+                    + 'run `npm install flexsearch`, or register a different search adapter.'
+                );
+            });
+    }
+    return flexsearchModule;
+}
 
 const VARIANT_CONFIG = {
     light: {
@@ -52,12 +77,15 @@ export class FlexSearchAdapter {
     #idb = null;
     #idbReady = null;
     #persistGeneration = 0;
+    #flexModule = null;
+    #engineReady = null;
 
     constructor() {
         this.options = { ...DEFAULT_OPTIONS };
         this.config = VARIANT_CONFIG.light;
         this.documents = new Map();
-        this.engine = this.#createIndex();
+        this.engine = null;
+        this.#reloadEngine();
     }
 
     init(options = {}) {
@@ -67,7 +95,7 @@ export class FlexSearchAdapter {
         };
         this.config = VARIANT_CONFIG[this.options.variant] || VARIANT_CONFIG.light;
         this.documents = new Map();
-        this.engine = this.#createIndex();
+        this.#reloadEngine();
         this.#clearPersistTimer();
         this.#persistGeneration += 1;
 
@@ -82,6 +110,7 @@ export class FlexSearchAdapter {
         if (!id) {
             throw new Error('FlexSearchAdapter.add requires an id');
         }
+        await this.#engineReady;
         const normalized = this.#normalizeContent(content);
         this.engine.add(id, normalized);
         this.documents.set(id, { id, content: normalized });
@@ -93,6 +122,7 @@ export class FlexSearchAdapter {
         if (!doc || !doc.id) {
             throw new Error('FlexSearchAdapter.addDocument requires an id');
         }
+        await this.#engineReady;
         const normalized = this.#normalizeDocument(doc);
         this.engine.add(doc.id, normalized);
         this.documents.set(doc.id, { ...doc });
@@ -116,20 +146,26 @@ export class FlexSearchAdapter {
     }
 
     async remove(id) {
+        await this.#engineReady;
         this.engine.remove(id);
         this.documents.delete(id);
         this.#noteDirty();
     }
 
     async clear() {
+        await this.#engineReady;
         this.engine = this.#createIndex();
         this.documents.clear();
         this.#clearPersistTimer();
         await this.#persist(true);
     }
 
-    search(query, options = {}) {
+    async search(query, options = {}) {
         if (!query) {
+            return [];
+        }
+        await this.#engineReady;
+        if (!this.engine) {
             return [];
         }
         const limit = typeof options.limit === 'number' ? options.limit : 20;
@@ -174,7 +210,7 @@ export class FlexSearchAdapter {
     destroy() {
         this.#clearPersistTimer();
         this.documents.clear();
-        this.engine = this.#createIndex();
+        this.#reloadEngine();
         if (this.#idb) {
             try {
                 this.#idb.close?.();
@@ -186,8 +222,16 @@ export class FlexSearchAdapter {
         }
     }
 
+    #reloadEngine() {
+        this.#engineReady = loadFlexSearch().then((FlexSearch) => {
+            this.#flexModule = FlexSearch;
+            this.engine = this.#createIndex();
+        });
+        return this.#engineReady;
+    }
+
     #createIndex() {
-        return new FlexSearch.Index({
+        return new this.#flexModule.Index({
             ...this.config,
             worker: false,
             doc: {
@@ -297,7 +341,8 @@ export class FlexSearchAdapter {
         }
     }
 
-    #restoreFromStorage() {
+    async #restoreFromStorage() {
+        await this.#engineReady;
         const key = this.#storageKey();
         const fromMemory = memorySnapshots.get(key);
         if (Array.isArray(fromMemory) && fromMemory.length) {

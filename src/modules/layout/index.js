@@ -31,4 +31,5 @@ export const manifest = {
 export { Viewport } from './lib/Viewport.js';
 export { CullingCore } from './lib/CullingCore.js';
 export { RenderScheduler } from './lib/RenderScheduler.js';
+export { yieldToMain } from './lib/yield.js';
 export { LayoutContracts } from './contracts/layout-contracts.js';
