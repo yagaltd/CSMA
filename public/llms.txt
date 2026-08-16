@@ -1,0 +1,20 @@
+# Example Product
+
+Generated project discovery file for public routes. Replace TODO placeholders with a final product summary before launch.
+
+- Product: Example Product
+- Organization: Example Organization LLC
+- Base URL: https://example.com
+- Locale: en
+- TODO: Add a short description of the site or app for downstream agents and readers.
+
+## Public Routes
+
+- https://example.com/
+- https://example.com/pricing
+- https://example.com/docs
+
+## Notes
+
+- This route inventory is generated from `project-manifest.json`.
+- TODO: Add route descriptions, support boundaries, and crawler expectations if needed.

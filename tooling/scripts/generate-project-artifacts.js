@@ -532,7 +532,7 @@ ${authSection}
 `;
 }
 
-function buildRobotsTxt(manifest) {
+export function buildRobotsTxt(manifest) {
   if (!manifest.web.indexable) {
     return 'User-agent: *\nDisallow: /\n';
   }
@@ -554,7 +554,7 @@ function escapeXml(value) {
     .replaceAll("'", '&apos;');
 }
 
-function buildSitemapXml(manifest) {
+export function buildSitemapXml(manifest) {
   const urls = manifest.web.routes.map((route) => {
     const absoluteUrl = new URL(route, `${manifest.web.baseUrl}/`).toString();
     return `  <url>\n    <loc>${escapeXml(absoluteUrl)}</loc>\n  </url>`;
@@ -567,7 +567,7 @@ ${urls.join('\n')}
 `;
 }
 
-function buildLlmsTxt(manifest) {
+export function buildLlmsTxt(manifest) {
   return `# ${manifest.organization.productName}
 
 Generated project discovery file for public routes. Replace TODO placeholders with a final product summary before launch.
@@ -684,10 +684,15 @@ export function generateProjectArtifacts({ rootDir = ROOT } = {}) {
 
   const created = [];
   const skipped = [];
+  // --force overwrites only the deterministic public/ SEO artifacts
+  // (robots/sitemap/llms). The pages/*.md drafts carry human-editable TODO
+  // placeholders and are never force-overwritten.
+  const forcePublic = process.argv.includes('--force');
 
   for (const artifact of buildArtifactPlan(validated.manifest)) {
     const targetPath = path.join(rootDir, artifact.relativePath);
-    if (existsSync(targetPath)) {
+    const isPublic = artifact.relativePath.startsWith(`${PUBLIC_DIRNAME}${path.sep}`);
+    if (existsSync(targetPath) && !(forcePublic && isPublic)) {
       skipped.push(artifact.relativePath);
       continue;
     }

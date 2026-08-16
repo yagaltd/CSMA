@@ -1,0 +1,6531 @@
+{
+  "schemaVersion": 1,
+  "counts": {
+    "total": 491,
+    "registered": 479,
+    "withPublishers": 243
+  },
+  "events": {
+    "AB_TEST_ASSIGNED": {
+      "registered": true,
+      "source": "module:ab-testing",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/ab-testing/services/AbTestingService.js"
+      ],
+      "subscribers": []
+    },
+    "AB_TEST_ERROR": {
+      "registered": true,
+      "source": "module:ab-testing",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "AB_TEST_EXPOSURE": {
+      "registered": true,
+      "source": "module:ab-testing",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/ab-testing/services/AbTestingService.js"
+      ],
+      "subscribers": []
+    },
+    "ACCORDION_INITIALIZED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "ACCORDION_TOGGLED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "ADMIN_AUDIT_LOG_ERROR": {
+      "registered": true,
+      "source": "module:admin-audit-log",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "ADMIN_AUDIT_LOG_EXPORTED": {
+      "registered": true,
+      "source": "module:admin-audit-log",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/admin-audit-log/services/AdminAuditLogService.js"
+      ],
+      "subscribers": []
+    },
+    "ADMIN_AUDIT_LOG_UPDATED": {
+      "registered": true,
+      "source": "module:admin-audit-log",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/admin-audit-log/services/AdminAuditLogService.js"
+      ],
+      "subscribers": []
+    },
+    "AGENT_CONTEXT_INVALIDATED": {
+      "registered": true,
+      "source": "module:agent-context",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/agent-context/services/AgentContextService.js"
+      ],
+      "subscribers": []
+    },
+    "AGENT_CONTEXT_QUERIED": {
+      "registered": true,
+      "source": "module:agent-context",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/agent-context/services/AgentContextService.js"
+      ],
+      "subscribers": []
+    },
+    "AGENT_CONTEXT_REGISTERED": {
+      "registered": true,
+      "source": "module:agent-context",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/agent-context/services/AgentContextService.js"
+      ],
+      "subscribers": []
+    },
+    "AGENT_CONTEXT_UNREGISTERED": {
+      "registered": true,
+      "source": "module:agent-context",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/agent-context/services/AgentContextService.js"
+      ],
+      "subscribers": []
+    },
+    "AI_CHAT_CREATED": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/ai/client/ChatSession.js"
+      ],
+      "subscribers": []
+    },
+    "AI_CHAT_RESET": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/ai/client/ChatSession.js"
+      ],
+      "subscribers": []
+    },
+    "AI_CONTEXT_FAILED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/AISearchService.js"
+      ],
+      "subscribers": []
+    },
+    "AI_CONTEXT_REQUESTED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "perUser": {
+          "requests": 5,
+          "window": 60000
+        }
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/search/services/AISearchService.js"
+      ]
+    },
+    "AI_CONTEXT_RETRIEVED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/AISearchService.js"
+      ],
+      "subscribers": []
+    },
+    "AI_GENERATE_COMPLETE": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AI_GENERATE_ERROR": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AI_GENERATE_STARTED": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AI_MESSAGE_RECEIVED": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AI_MESSAGE_SENT": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AI_MESSAGE_STREAM": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AI_PROVIDER_ERROR": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/ai/client/AIClient.js"
+      ],
+      "subscribers": []
+    },
+    "AI_PROVIDER_REGISTERED": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/ai/client/AIClient.js"
+      ],
+      "subscribers": []
+    },
+    "AI_SECURITY_VIOLATION": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AI_TOOL_CALLED": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/ai/client/AIClient.js"
+      ],
+      "subscribers": []
+    },
+    "AI_TOOL_ERROR": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/ai/client/AIClient.js"
+      ],
+      "subscribers": []
+    },
+    "AI_TOOL_RESULT": {
+      "registered": true,
+      "source": "module:ai",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/ai/client/AIClient.js"
+      ],
+      "subscribers": []
+    },
+    "ANALYTICS_BATCH_FLUSH": {
+      "registered": true,
+      "source": "module:analytics",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/analytics/services/AnalyticsService.js"
+      ],
+      "subscribers": []
+    },
+    "ANALYTICS_CONSENT_UPDATED": {
+      "registered": true,
+      "source": "module:consent",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/consent/services/ConsentService.js"
+      ],
+      "subscribers": []
+    },
+    "ANALYTICS_EVENT": {
+      "registered": true,
+      "source": "module:analytics",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/analytics/services/AnalyticsService.js"
+      ],
+      "subscribers": []
+    },
+    "ANALYTICS_FLUSH_ERROR": {
+      "registered": true,
+      "source": "module:analytics",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/analytics/services/AnalyticsService.js"
+      ],
+      "subscribers": []
+    },
+    "ANALYTICS_PAGE_VIEW": {
+      "registered": true,
+      "source": "module:analytics",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/analytics/services/AnalyticsService.js"
+      ],
+      "subscribers": []
+    },
+    "ANNOTATION_COMMENTS_LOADED": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 120,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "ANNOTATION_COMMENT_ADDED": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 120,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/visual-editor/services/AnnotationCommentService.js"
+      ],
+      "subscribers": []
+    },
+    "ANNOTATION_COMMENT_REOPENED": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 120,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "ANNOTATION_COMMENT_RESOLVED": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 120,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "ANNOTATION_COMMENT_UPDATED": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 120,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/visual-editor/services/AnnotationCommentService.js"
+      ],
+      "subscribers": []
+    },
+    "ANNOTATION_UPDATED": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": [
+        "src/modules/slides/engine/annotator.js"
+      ]
+    },
+    "API_KEY_LOGIN_SUCCEEDED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "API_REQUEST_ERROR": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/APIWrapper.js"
+      ],
+      "subscribers": []
+    },
+    "API_REQUEST_RETRY": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/APIWrapper.js"
+      ],
+      "subscribers": []
+    },
+    "API_REQUEST_START": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/APIWrapper.js"
+      ],
+      "subscribers": []
+    },
+    "API_REQUEST_SUCCESS": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/APIWrapper.js"
+      ],
+      "subscribers": []
+    },
+    "AUTH_ACCOUNT_ACTION_FAILED": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_EMAIL_VERIFIED": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_ERROR": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_LOGIN_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth-ui/services/AuthUIService.js"
+      ]
+    },
+    "AUTH_LOGIN_SUCCEEDED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_OAUTH_COMPLETED": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_OAUTH_FAILED": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_OAUTH_STARTED": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_PASSWORD_RESET_COMPLETED": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_PASSWORD_RESET_REQUESTED": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "AUTH_SESSION_UPDATED": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth-ui/services/AuthUIService.js",
+        "src/modules/checkout/services/CheckoutService.js"
+      ]
+    },
+    "AUTH_VERIFICATION_RESENT": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "BUILD_ADVANCED": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": [
+        "src/modules/slides/engine/build.js",
+        "src/modules/slides/engine/deck.js"
+      ]
+    },
+    "CACHE_HIT": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/services/core/CacheManager.js"
+      ],
+      "subscribers": []
+    },
+    "CACHE_INVALIDATED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/services/core/CacheManager.js"
+      ],
+      "subscribers": []
+    },
+    "CACHE_MISS": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/services/core/CacheManager.js"
+      ],
+      "subscribers": []
+    },
+    "CACHE_PERSIST_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/CacheManager.js"
+      ],
+      "subscribers": []
+    },
+    "CACHE_SET": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/services/core/CacheManager.js"
+      ],
+      "subscribers": []
+    },
+    "CALENDAR_RENDERED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "CAMERA_CAPTURE_COMPLETED": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "CAMERA_CAPTURE_ERROR": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "CAPTCHA_SOLVED": {
+      "registered": true,
+      "source": "module:captcha",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "CART_ERROR": {
+      "registered": true,
+      "source": "module:cart",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/cart/services/CartService.js"
+      ],
+      "subscribers": []
+    },
+    "CART_ITEM_REMOVED": {
+      "registered": true,
+      "source": "module:cart",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/cart/services/CartService.js"
+      ],
+      "subscribers": []
+    },
+    "CART_UPDATED": {
+      "registered": true,
+      "source": "module:cart",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/cart/services/CartService.js"
+      ],
+      "subscribers": []
+    },
+    "CATALOG_ERROR": {
+      "registered": true,
+      "source": "module:catalog",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/catalog/services/CatalogService.js"
+      ],
+      "subscribers": []
+    },
+    "CATALOG_FILTERS_CHANGED": {
+      "registered": true,
+      "source": "module:catalog",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/catalog/services/CatalogService.js"
+      ],
+      "subscribers": []
+    },
+    "CATALOG_ITEMS_UPDATED": {
+      "registered": true,
+      "source": "module:catalog",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/catalog/services/CatalogService.js"
+      ],
+      "subscribers": []
+    },
+    "CATALOG_ITEM_SELECTED": {
+      "registered": true,
+      "source": "module:catalog",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/catalog/services/CatalogService.js"
+      ],
+      "subscribers": []
+    },
+    "CHANNEL_ACCESS_DENIED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": []
+    },
+    "CHANNEL_ACCESS_REVOKED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/runtime/ChannelManager.js"
+      ],
+      "subscribers": []
+    },
+    "CHANNEL_COMMAND_REQUEST": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/runtime/ChannelManager.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ]
+    },
+    "CHANNEL_COMMAND_RESULT": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": []
+    },
+    "CHANNEL_SERVER_CLOSE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js",
+        "src/runtime/ChannelManager.js"
+      ],
+      "subscribers": []
+    },
+    "CHANNEL_SERVER_EVENT": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": []
+    },
+    "CHANNEL_SERVER_INVALIDATE": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/CrdtReducerRegistry.js"
+      ]
+    },
+    "CHANNEL_SERVER_REPLAY": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/CrdtReducerRegistry.js"
+      ]
+    },
+    "CHANNEL_SERVER_SNAPSHOT": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/CrdtReducerRegistry.js"
+      ]
+    },
+    "CHANNEL_SUBSCRIBED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/runtime/ChannelManager.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ]
+    },
+    "CHANNEL_UNSUBSCRIBED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/runtime/ChannelManager.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ]
+    },
+    "CHARTS_ERROR": {
+      "registered": true,
+      "source": "module:charts",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "CHARTS_UPDATED": {
+      "registered": true,
+      "source": "module:charts",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/charts/services/ChartsService.js"
+      ],
+      "subscribers": [
+        "src/modules/charts/services/ChartsService.js"
+      ]
+    },
+    "CHART_ADAPTER_READY": {
+      "registered": true,
+      "source": "module:charts",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/charts/services/ChartsService.js"
+      ],
+      "subscribers": []
+    },
+    "CHECKOUT_COMPLETED": {
+      "registered": true,
+      "source": "module:checkout",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/checkout/services/CheckoutService.js"
+      ],
+      "subscribers": []
+    },
+    "CHECKOUT_ERROR": {
+      "registered": true,
+      "source": "module:checkout",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/checkout/services/CheckoutService.js"
+      ],
+      "subscribers": []
+    },
+    "CHECKOUT_STATE_CHANGED": {
+      "registered": true,
+      "source": "module:checkout",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/checkout/services/CheckoutService.js"
+      ],
+      "subscribers": []
+    },
+    "CMS_CONTENT_ERROR": {
+      "registered": true,
+      "source": "module:cms-content",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/cms-content/services/CmsContentService.js"
+      ],
+      "subscribers": []
+    },
+    "CMS_CONTENT_LOADED": {
+      "registered": true,
+      "source": "module:cms-content",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/cms-content/services/CmsContentService.js"
+      ],
+      "subscribers": []
+    },
+    "CMS_CONTENT_PREFETCHED": {
+      "registered": true,
+      "source": "module:cms-content",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/cms-content/services/CmsContentService.js"
+      ],
+      "subscribers": []
+    },
+    "COMMAND_CLOSED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "COMMAND_EXECUTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/CommandRegistry.js"
+      ],
+      "subscribers": []
+    },
+    "COMMAND_OPENED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "COMMAND_RESULTS_UPDATED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/CommandRegistry.js"
+      ],
+      "subscribers": []
+    },
+    "COMMENTS_DRAWER_CLOSED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "COMMENTS_DRAWER_OPENED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "COMMENTS_ERROR": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "COMMENTS_PICK_MODE": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/comments/ui/CommentsPicker.js"
+      ],
+      "subscribers": []
+    },
+    "COMMENTS_UPDATED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/services/CommentsService.js"
+      ],
+      "subscribers": [
+        "src/modules/comments/services/CommentsService.js"
+      ]
+    },
+    "COMMENT_ADDED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "COMMENT_COUNT_CHANGED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/comments/ui/CommentsBadge.js",
+        "src/modules/slides/ui/CommentsBadge.js"
+      ]
+    },
+    "COMMENT_REMOVED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "demo/slides-bootstrap.js"
+      ]
+    },
+    "COMMENT_REOPENED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "demo/slides-bootstrap.js"
+      ]
+    },
+    "COMMENT_RESOLVED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "demo/slides-bootstrap.js"
+      ]
+    },
+    "COMMENT_SUBMITTED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/services/CommentsService.js"
+      ],
+      "subscribers": []
+    },
+    "COMMENT_UPDATED": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "CONSENT_ACKNOWLEDGED": {
+      "registered": true,
+      "source": "module:consent",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/consent/services/ConsentService.js"
+      ],
+      "subscribers": []
+    },
+    "CONSENT_RESET": {
+      "registered": true,
+      "source": "module:consent",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/consent/services/ConsentService.js"
+      ],
+      "subscribers": []
+    },
+    "CONSENT_UPDATED": {
+      "registered": true,
+      "source": "module:consent",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/consent/services/ConsentService.js"
+      ],
+      "subscribers": []
+    },
+    "CONTENT_PREFETCH_COMPLETED": {
+      "registered": true,
+      "source": "module:content-prefetch",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/content-prefetch/services/ContentPrefetchService.js"
+      ],
+      "subscribers": []
+    },
+    "CONTENT_PREFETCH_ERROR": {
+      "registered": true,
+      "source": "module:content-prefetch",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/content-prefetch/services/ContentPrefetchService.js"
+      ],
+      "subscribers": []
+    },
+    "CONTENT_PREFETCH_READY": {
+      "registered": true,
+      "source": "module:content-prefetch",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/content-prefetch/services/ContentPrefetchService.js"
+      ],
+      "subscribers": []
+    },
+    "CONTENT_WORKFLOW_ERROR": {
+      "registered": true,
+      "source": "module:content-workflow",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/content-workflow/services/ContentWorkflowService.js"
+      ],
+      "subscribers": []
+    },
+    "CONTENT_WORKFLOW_TRANSITIONED": {
+      "registered": true,
+      "source": "module:content-workflow",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/content-workflow/services/ContentWorkflowService.js"
+      ],
+      "subscribers": []
+    },
+    "CONTENT_WORKFLOW_UPDATED": {
+      "registered": true,
+      "source": "module:content-workflow",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/content-workflow/services/ContentWorkflowService.js"
+      ],
+      "subscribers": []
+    },
+    "CONTRACT_VIOLATION": {
+      "registered": true,
+      "source": "runtime",
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "DATA_AGGREGATION_COMPLETED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/DataAggregator.js"
+      ],
+      "subscribers": []
+    },
+    "DATA_AGGREGATION_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/DataAggregator.js"
+      ],
+      "subscribers": []
+    },
+    "DATA_AGGREGATION_STARTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/DataAggregator.js"
+      ],
+      "subscribers": []
+    },
+    "DATA_TABLE_ERROR": {
+      "registered": true,
+      "source": "module:data-table",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/data-table/services/DataTableService.js"
+      ],
+      "subscribers": []
+    },
+    "DATA_TABLE_UPDATED": {
+      "registered": true,
+      "source": "module:data-table",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/data-table/services/DataTableService.js"
+      ],
+      "subscribers": []
+    },
+    "DATE_SELECTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "DECK_DESTROYED": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": []
+    },
+    "DECK_EXPORT_COMPLETED": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "DECK_READY": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": [
+        "src/modules/slides/chrome/grid.js",
+        "src/modules/slides/chrome/rail.js"
+      ]
+    },
+    "DIRECTORY_COLLAPSED": {
+      "registered": true,
+      "source": "module:file-explorer",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-explorer/services/FileExplorerService.js"
+      ],
+      "subscribers": []
+    },
+    "DIRECTORY_EXPANDED": {
+      "registered": true,
+      "source": "module:file-explorer",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-explorer/services/FileExplorerService.js"
+      ],
+      "subscribers": []
+    },
+    "DIRECTORY_OPENED": {
+      "registered": true,
+      "source": "module:file-explorer",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-explorer/services/FileExplorerService.js"
+      ],
+      "subscribers": []
+    },
+    "DROPDOWN_CLOSED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "DROPDOWN_INITIALIZED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "DROPDOWN_OPENED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "DROPDOWN_TOGGLED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "EDGE_SEARCH_ERROR": {
+      "registered": true,
+      "source": "module:edge-search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/edge-search/services/EdgeSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "EDGE_SEARCH_RESULTS": {
+      "registered": true,
+      "source": "module:edge-search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/edge-search/services/EdgeSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "EDGE_SEARCH_SUGGESTIONS": {
+      "registered": true,
+      "source": "module:edge-search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/edge-search/services/EdgeSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "EDITOR_COMMAND_ERROR": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ],
+      "subscribers": []
+    },
+    "EDITOR_DOCUMENT_CHANGED": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ],
+      "subscribers": [
+        "src/modules/visual-editor/rendering/EditorSurface.js",
+        "src/modules/visual-editor/rendering/NodeArrayContainer.js"
+      ]
+    },
+    "EDITOR_ERROR": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "EDITOR_READY": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ],
+      "subscribers": []
+    },
+    "EDITOR_SELECTION_CHANGED": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ],
+      "subscribers": [
+        "src/modules/visual-editor/rendering/SelectionOverlay.js",
+        "src/modules/visual-editor/ui/EditorToolbar.js"
+      ]
+    },
+    "EDITOR_STATE": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ],
+      "subscribers": []
+    },
+    "EXAMPLE_MODULE_EVENT": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/modules/example-module/services/ExampleModuleService.js"
+      ],
+      "subscribers": []
+    },
+    "EXAMPLE_MODULE_VIEW_RENDERED": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/modules/example-module/services/ExampleModuleService.js"
+      ],
+      "subscribers": []
+    },
+    "EXPORT_READY": {
+      "registered": true,
+      "source": "module:import-export",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/import-export/services/ImportExportService.js"
+      ],
+      "subscribers": []
+    },
+    "FEATURE_FLAGS_ERROR": {
+      "registered": true,
+      "source": "module:feature-flags",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/feature-flags/services/FeatureFlagsService.js"
+      ],
+      "subscribers": []
+    },
+    "FEATURE_FLAGS_READY": {
+      "registered": true,
+      "source": "module:feature-flags",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/feature-flags/services/FeatureFlagsService.js"
+      ],
+      "subscribers": []
+    },
+    "FEATURE_FLAG_CHANGED": {
+      "registered": true,
+      "source": "module:feature-flags",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/feature-flags/services/FeatureFlagsService.js"
+      ],
+      "subscribers": []
+    },
+    "FIELD_VALIDATION_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/FormValidator.js"
+      ],
+      "subscribers": []
+    },
+    "FIELD_VALIDATION_PASSED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/FormValidator.js"
+      ],
+      "subscribers": []
+    },
+    "FIELD_VALIDATION_STARTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/FormValidator.js"
+      ],
+      "subscribers": []
+    },
+    "FILE_DELETED": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/FileSystem.js"
+      ],
+      "subscribers": []
+    },
+    "FILE_EXPLORER_ERROR": {
+      "registered": true,
+      "source": "module:file-explorer",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-explorer/services/FileExplorerService.js"
+      ],
+      "subscribers": []
+    },
+    "FILE_OPENED": {
+      "registered": true,
+      "source": "module:file-explorer",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "FILE_REMOVED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "FILE_RETRIEVED": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/FileSystem.js"
+      ],
+      "subscribers": []
+    },
+    "FILE_STORED": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/FileSystem.js"
+      ],
+      "subscribers": []
+    },
+    "FILE_SYSTEM_ERROR": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/FileSystem.js"
+      ],
+      "subscribers": []
+    },
+    "FILE_UPLOAD_CANCELLED": {
+      "registered": true,
+      "source": "module:file-upload",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "FILE_UPLOAD_COMPLETED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "FILE_UPLOAD_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "FILE_UPLOAD_PAUSED": {
+      "registered": true,
+      "source": "module:file-upload",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "FILE_UPLOAD_PROGRESS": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "FILE_UPLOAD_RESUMED": {
+      "registered": true,
+      "source": "module:file-upload",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "FILE_UPLOAD_RETRIED": {
+      "registered": true,
+      "source": "module:file-upload",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": []
+    },
+    "FILE_UPLOAD_STARTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "FORM_ERROR": {
+      "registered": true,
+      "source": "module:form-management",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ],
+      "subscribers": []
+    },
+    "FORM_FIELD_UPDATED": {
+      "registered": true,
+      "source": "module:form-management",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ],
+      "subscribers": []
+    },
+    "FORM_STATE_CHANGED": {
+      "registered": true,
+      "source": "module:form-management",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ],
+      "subscribers": []
+    },
+    "FORM_SUBMITTED": {
+      "registered": true,
+      "source": "module:form-management",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ],
+      "subscribers": []
+    },
+    "FORM_VALIDATION_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/FormValidator.js"
+      ],
+      "subscribers": []
+    },
+    "FORM_VALIDATION_PASSED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/services/core/FormValidator.js"
+      ],
+      "subscribers": []
+    },
+    "GEOFENCE_TRIGGERED": {
+      "registered": true,
+      "source": "module:location",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/location/services/LocationService.js"
+      ],
+      "subscribers": []
+    },
+    "HISTORY_LOG_READY": {
+      "registered": true,
+      "source": "module:history",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/history/services/HistoryService.js"
+      ],
+      "subscribers": []
+    },
+    "HISTORY_OP_RECORDED": {
+      "registered": true,
+      "source": "module:history",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/history/services/HistoryService.js",
+        "src/modules/visual-editor/lib/EphemeralHistoryLog.js"
+      ],
+      "subscribers": []
+    },
+    "HISTORY_OP_REDONE": {
+      "registered": true,
+      "source": "module:history",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/history/services/HistoryService.js",
+        "src/modules/visual-editor/lib/EphemeralHistoryLog.js"
+      ],
+      "subscribers": []
+    },
+    "HISTORY_OP_UNDONE": {
+      "registered": true,
+      "source": "module:history",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/history/services/HistoryService.js",
+        "src/modules/visual-editor/lib/EphemeralHistoryLog.js"
+      ],
+      "subscribers": []
+    },
+    "HMAC_NONCE_REQUESTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "HMAC_VERIFICATION_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "IMAGE_OPTIMIZE_COMPLETED": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "IMAGE_OPTIMIZE_ERROR": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "IMPORT_EXPORT_ERROR": {
+      "registered": true,
+      "source": "module:import-export",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "IMPORT_PREVIEW_READY": {
+      "registered": true,
+      "source": "module:import-export",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/import-export/services/ImportExportService.js"
+      ],
+      "subscribers": []
+    },
+    "INPUT_VALIDATION_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_AB_TEST_ASSIGN": {
+      "registered": true,
+      "source": "module:ab-testing",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/ab-testing/services/AbTestingService.js"
+      ]
+    },
+    "INTENT_AB_TEST_EXPOSE": {
+      "registered": true,
+      "source": "module:ab-testing",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/ab-testing/services/AbTestingService.js"
+      ]
+    },
+    "INTENT_AB_TEST_RESET": {
+      "registered": true,
+      "source": "module:ab-testing",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/ab-testing/services/AbTestingService.js"
+      ]
+    },
+    "INTENT_ACCORDION_TOGGLE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ADMIN_AUDIT_LOG_EXPORT": {
+      "registered": true,
+      "source": "module:admin-audit-log",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/admin-audit-log/services/AdminAuditLogService.js"
+      ]
+    },
+    "INTENT_ADMIN_AUDIT_LOG_FILTER": {
+      "registered": true,
+      "source": "module:admin-audit-log",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/admin-audit-log/services/AdminAuditLogService.js"
+      ]
+    },
+    "INTENT_ADMIN_AUDIT_LOG_LOAD": {
+      "registered": true,
+      "source": "module:admin-audit-log",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/admin-audit-log/services/AdminAuditLogService.js"
+      ]
+    },
+    "INTENT_ALERT_DIALOG_CLOSE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ALERT_DIALOG_OPEN": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ANNOTATION_CLEAR": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ANNOTATION_COMMENT_ADD": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 30,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ANNOTATION_COMMENT_EDIT": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 30,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ANNOTATION_COMMENT_REOPEN": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 30,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ANNOTATION_COMMENT_REPLY": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 30,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ANNOTATION_COMMENT_RESOLVE": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 30,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_ANNOTATION_STROKE": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 120,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/slides/engine/annotator.js"
+      ],
+      "subscribers": [
+        "demo/slides-bootstrap.js"
+      ]
+    },
+    "INTENT_ANNOTATION_STROKE_DELETE": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/slides/engine/annotator.js",
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": [
+        "demo/slides-bootstrap.js"
+      ]
+    },
+    "INTENT_ANNOTATION_UNDO": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_AUTH_FORGOT_PASSWORD": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_HANDLE_OAUTH_CALLBACK": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_LOGIN": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_LOGOUT": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_REFRESH_SESSION": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_REGISTER": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_RESEND_VERIFICATION": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_RESET_PASSWORD": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_START_OAUTH": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_AUTH_VERIFY_EMAIL": {
+      "registered": true,
+      "source": "module:auth",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/auth/services/AuthService.js"
+      ]
+    },
+    "INTENT_BUTTON_CLICKED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_CAMERA_CAPTURE_PHOTO": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_CAMERA_CAPTURE_VIDEO_START": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_CAMERA_CAPTURE_VIDEO_STOP": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_CART_ADD_ITEM": {
+      "registered": true,
+      "source": "module:cart",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/cart/services/CartService.js"
+      ]
+    },
+    "INTENT_CART_CLEAR": {
+      "registered": true,
+      "source": "module:cart",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/cart/services/CartService.js"
+      ]
+    },
+    "INTENT_CART_UPDATE_ITEM": {
+      "registered": true,
+      "source": "module:cart",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/cart/services/CartService.js"
+      ]
+    },
+    "INTENT_CATALOG_FILTER": {
+      "registered": true,
+      "source": "module:catalog",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/catalog/services/CatalogService.js"
+      ]
+    },
+    "INTENT_CATALOG_LOAD": {
+      "registered": true,
+      "source": "module:catalog",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/catalog/services/CatalogService.js"
+      ]
+    },
+    "INTENT_CATALOG_SELECT_ITEM": {
+      "registered": true,
+      "source": "module:catalog",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/catalog/services/CatalogService.js"
+      ]
+    },
+    "INTENT_CHART_CLEAR": {
+      "registered": true,
+      "source": "module:charts",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/charts/services/ChartsService.js"
+      ]
+    },
+    "INTENT_CHART_REGISTER_ADAPTER": {
+      "registered": true,
+      "source": "module:charts",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/charts/services/ChartsService.js"
+      ]
+    },
+    "INTENT_CHART_SET_DATA": {
+      "registered": true,
+      "source": "module:charts",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/charts/services/ChartsService.js"
+      ]
+    },
+    "INTENT_CHECKOUT_RESET": {
+      "registered": true,
+      "source": "module:checkout",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/checkout/services/CheckoutService.js"
+      ]
+    },
+    "INTENT_CHECKOUT_START": {
+      "registered": true,
+      "source": "module:checkout",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/checkout/services/CheckoutService.js"
+      ]
+    },
+    "INTENT_CHECKOUT_SUBMIT": {
+      "registered": true,
+      "source": "module:checkout",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/checkout/services/CheckoutService.js"
+      ]
+    },
+    "INTENT_CMS_CONTENT_LOAD": {
+      "registered": true,
+      "source": "module:cms-content",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/cms-content/services/CmsContentService.js"
+      ]
+    },
+    "INTENT_CMS_CONTENT_PREFETCH": {
+      "registered": true,
+      "source": "module:cms-content",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/cms-content/services/CmsContentService.js"
+      ]
+    },
+    "INTENT_COMMAND_CLOSE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_COMMAND_EXECUTE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/runtime/CommandRegistry.js"
+      ]
+    },
+    "INTENT_COMMAND_OPEN": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_COMMAND_SEARCH": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/runtime/CommandRegistry.js"
+      ]
+    },
+    "INTENT_COMMENTS_CLOSE_DRAWER": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_COMMENTS_FOCUS": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js",
+        "src/modules/comments/ui/CommentsMarker.js"
+      ],
+      "subscribers": [
+        "demo/slides-bootstrap.js"
+      ]
+    },
+    "INTENT_COMMENTS_LOAD": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/comments/services/CommentsService.js"
+      ]
+    },
+    "INTENT_COMMENTS_OPEN_DRAWER": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_COMMENTS_START_PICK": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_COMMENT_ADD": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 20,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js",
+        "src/modules/comments/ui/CommentsPicker.js",
+        "src/modules/comments/ui/CommentsPopup.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_COMMENT_DELETE": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 20,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js",
+        "src/modules/comments/ui/CommentsPopup.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_COMMENT_EDIT": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 20,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_COMMENT_MODERATE": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/comments/services/CommentsService.js"
+      ]
+    },
+    "INTENT_COMMENT_REOPEN": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 20,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js",
+        "src/modules/comments/ui/CommentsPopup.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_COMMENT_REPLY": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 20,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_COMMENT_RESOLVE": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 20,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/comments/ui/CommentsDrawer.js",
+        "src/modules/comments/ui/CommentsPopup.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_COMMENT_SUBMIT": {
+      "registered": true,
+      "source": "module:comments",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/comments/services/CommentsService.js"
+      ]
+    },
+    "INTENT_CONSENT_ACCEPT_ALL": {
+      "registered": true,
+      "source": "module:consent",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/consent/services/ConsentService.js"
+      ]
+    },
+    "INTENT_CONSENT_REJECT_OPTIONAL": {
+      "registered": true,
+      "source": "module:consent",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/consent/services/ConsentService.js"
+      ]
+    },
+    "INTENT_CONSENT_UPDATE": {
+      "registered": true,
+      "source": "module:consent",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/consent/services/ConsentService.js"
+      ]
+    },
+    "INTENT_CONTENT_PREFETCH_MANIFEST": {
+      "registered": true,
+      "source": "module:content-prefetch",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/content-prefetch/services/ContentPrefetchService.js"
+      ]
+    },
+    "INTENT_CONTENT_PREFETCH_ROUTE": {
+      "registered": true,
+      "source": "module:content-prefetch",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/content-prefetch/services/ContentPrefetchService.js"
+      ]
+    },
+    "INTENT_CONTENT_WORKFLOW_CLEAR": {
+      "registered": true,
+      "source": "module:content-workflow",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/content-workflow/services/ContentWorkflowService.js"
+      ]
+    },
+    "INTENT_CONTENT_WORKFLOW_SET": {
+      "registered": true,
+      "source": "module:content-workflow",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/content-workflow/services/ContentWorkflowService.js"
+      ]
+    },
+    "INTENT_CONTENT_WORKFLOW_TRANSITION": {
+      "registered": true,
+      "source": "module:content-workflow",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/content-workflow/services/ContentWorkflowService.js"
+      ]
+    },
+    "INTENT_DATA_TABLE_FILTER": {
+      "registered": true,
+      "source": "module:data-table",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/data-table/services/DataTableService.js"
+      ]
+    },
+    "INTENT_DATA_TABLE_LOAD": {
+      "registered": true,
+      "source": "module:data-table",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/data-table/services/DataTableService.js"
+      ]
+    },
+    "INTENT_DATA_TABLE_SORT": {
+      "registered": true,
+      "source": "module:data-table",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/data-table/services/DataTableService.js"
+      ]
+    },
+    "INTENT_DECK_EXPORT_PNG": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 2,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_DRAWER_CLOSE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_DRAWER_OPEN": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_DROPDOWN_ITEM_SELECT": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_DROPDOWN_ITEM_SELECTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_DROPDOWN_TOGGLE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_EDGE_SEARCH_QUERY": {
+      "registered": true,
+      "source": "module:edge-search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/edge-search/services/EdgeSearchService.js"
+      ]
+    },
+    "INTENT_EDGE_SEARCH_RESET": {
+      "registered": true,
+      "source": "module:edge-search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/edge-search/services/EdgeSearchService.js"
+      ]
+    },
+    "INTENT_EDGE_SEARCH_SUGGEST": {
+      "registered": true,
+      "source": "module:edge-search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/edge-search/services/EdgeSearchService.js"
+      ]
+    },
+    "INTENT_EDITOR_COMMAND": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ]
+    },
+    "INTENT_EDITOR_DESTROY": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ]
+    },
+    "INTENT_EDITOR_GET_STATE": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ]
+    },
+    "INTENT_EDITOR_INIT": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/visual-editor/services/EditorSessionService.js"
+      ]
+    },
+    "INTENT_ELEMENT_EDITED": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/visual-editor/ui/InlineTextEditor.js"
+      ],
+      "subscribers": [
+        "demo/slides-bootstrap.js"
+      ]
+    },
+    "INTENT_EXPORT_PREPARE": {
+      "registered": true,
+      "source": "module:import-export",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/import-export/services/ImportExportService.js"
+      ]
+    },
+    "INTENT_FEATURE_FLAGS_REFRESH": {
+      "registered": true,
+      "source": "module:feature-flags",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/feature-flags/services/FeatureFlagsService.js"
+      ]
+    },
+    "INTENT_FEATURE_FLAG_SET": {
+      "registered": true,
+      "source": "module:feature-flags",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/feature-flags/services/FeatureFlagsService.js"
+      ]
+    },
+    "INTENT_FILE_UPLOAD": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ]
+    },
+    "INTENT_FILE_UPLOAD_CANCEL": {
+      "registered": true,
+      "source": "module:file-upload",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ]
+    },
+    "INTENT_FILE_UPLOAD_PAUSE": {
+      "registered": true,
+      "source": "module:file-upload",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ]
+    },
+    "INTENT_FILE_UPLOAD_RESUME": {
+      "registered": true,
+      "source": "module:file-upload",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ]
+    },
+    "INTENT_FILE_UPLOAD_RETRY": {
+      "registered": true,
+      "source": "module:file-upload",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/file-upload/services/FileUploadService.js"
+      ]
+    },
+    "INTENT_FORM_REGISTER": {
+      "registered": true,
+      "source": "module:form-management",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 30,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ]
+    },
+    "INTENT_FORM_RESET": {
+      "registered": true,
+      "source": "module:form-management",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 30,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ]
+    },
+    "INTENT_FORM_SUBMIT": {
+      "registered": true,
+      "source": "module:form-management",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ]
+    },
+    "INTENT_FORM_UPDATE_FIELD": {
+      "registered": true,
+      "source": "module:form-management",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 30,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ]
+    },
+    "INTENT_GEOFENCE_ADD": {
+      "registered": true,
+      "source": "module:location",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/location/services/LocationService.js"
+      ]
+    },
+    "INTENT_GEOFENCE_REMOVE": {
+      "registered": true,
+      "source": "module:location",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/location/services/LocationService.js"
+      ]
+    },
+    "INTENT_IMAGE_OPTIMIZE": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_IMPORT_EXPORT_RESET": {
+      "registered": true,
+      "source": "module:import-export",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/import-export/services/ImportExportService.js"
+      ]
+    },
+    "INTENT_IMPORT_PREVIEW": {
+      "registered": true,
+      "source": "module:import-export",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/import-export/services/ImportExportService.js"
+      ]
+    },
+    "INTENT_INPUT_CHANGED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_LOCATION_START": {
+      "registered": true,
+      "source": "module:location",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/location/services/LocationService.js"
+      ]
+    },
+    "INTENT_LOCATION_STOP": {
+      "registered": true,
+      "source": "module:location",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/location/services/LocationService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_AUDIO_START": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_AUDIO_STOP": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_CANCEL": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_PHOTO": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_SCREEN_START": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_SCREEN_STOP": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_START": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_STOP": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_VIDEO_START": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_CAPTURE_VIDEO_STOP": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_OPTIMIZE": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_RESIZE": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MEDIA_TRANSFORM": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/media/services/MediaService.js"
+      ]
+    },
+    "INTENT_MODAL_CLOSE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/modal-system/services/ModalService.js"
+      ]
+    },
+    "INTENT_MODAL_CLOSE_ALL": {
+      "registered": true,
+      "source": "module:modal-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/modal-system/services/ModalService.js"
+      ]
+    },
+    "INTENT_MODAL_OPEN": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/modal-system/services/ModalService.js"
+      ]
+    },
+    "INTENT_NETWORK_STATUS_REFRESH": {
+      "registered": true,
+      "source": "module:network-status",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/network-status/services/NetworkStatusService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_CLEAR": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_CLOSE_CENTER": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_ENQUEUE": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_MARK_ALL_READ": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_MARK_READ": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_OPEN_CENTER": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_REMOVE": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_REQUEST_PERMISSION": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_SUBSCRIBE_PUSH": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_NOTIFICATIONS_UNSUBSCRIBE_PUSH": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ]
+    },
+    "INTENT_PAGINATION_NAVIGATE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_PAYMENT_ADAPTER_REGISTER": {
+      "registered": true,
+      "source": "module:payment-adapters",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/payment-adapters/services/PaymentAdaptersService.js"
+      ]
+    },
+    "INTENT_PAYMENT_FLOW_RESET": {
+      "registered": true,
+      "source": "module:payment-adapters",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/payment-adapters/services/PaymentAdaptersService.js"
+      ]
+    },
+    "INTENT_PAYMENT_FLOW_START": {
+      "registered": true,
+      "source": "module:payment-adapters",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/payment-adapters/services/PaymentAdaptersService.js"
+      ]
+    },
+    "INTENT_PERMISSIONS_UI_CHECK": {
+      "registered": true,
+      "source": "module:permissions-ui",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/permissions-ui/services/PermissionsUIService.js"
+      ]
+    },
+    "INTENT_PERMISSIONS_UI_CLEAR": {
+      "registered": true,
+      "source": "module:permissions-ui",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/permissions-ui/services/PermissionsUIService.js"
+      ]
+    },
+    "INTENT_PERMISSIONS_UI_SET": {
+      "registered": true,
+      "source": "module:permissions-ui",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/permissions-ui/services/PermissionsUIService.js"
+      ]
+    },
+    "INTENT_POPOVER_TOGGLE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_PROGRESS_UPDATE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_PUBLIC_FORM_SUBMIT": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_REDO": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/visual-editor/ui/InlineTextEditor.js"
+      ],
+      "subscribers": [
+        "src/modules/visual-editor/ui/InlineTextEditor.js"
+      ]
+    },
+    "INTENT_REVIEWS_LOAD": {
+      "registered": true,
+      "source": "module:reviews",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/reviews/services/ReviewsService.js"
+      ]
+    },
+    "INTENT_REVIEW_RESET": {
+      "registered": true,
+      "source": "module:reviews",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/reviews/services/ReviewsService.js"
+      ]
+    },
+    "INTENT_REVIEW_SUBMIT": {
+      "registered": true,
+      "source": "module:reviews",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/reviews/services/ReviewsService.js"
+      ]
+    },
+    "INTENT_ROUTE_NAVIGATE": {
+      "registered": true,
+      "source": "module:router",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/router/services/RouterService.js"
+      ]
+    },
+    "INTENT_SLIDER_DRAG_ENDED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDER_DRAG_STARTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDER_VALUE_CHANGED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_ESCAPE": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/slides/chrome/grid.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_FIRST": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_GO": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "demo/slides-bootstrap.js",
+        "src/modules/slides/chrome/grid.js",
+        "src/modules/slides/chrome/rail.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_HIDE_UI": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_LAST": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_NEXT": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_NOTE_UPDATE": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/slides/chrome/presenter.js"
+      ],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_OPEN_PRESENTER": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 2,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_PREV": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_TOGGLE_COMMENTS": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_TOGGLE_DRAWING": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_TOGGLE_FS": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 3,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_TOGGLE_GRID": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SLIDE_TOGGLE_RAIL": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_SYNC_QUEUE_ENQUEUE": {
+      "registered": true,
+      "source": "module:sync-queue",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/sync-queue/services/SyncQueueService.js"
+      ]
+    },
+    "INTENT_TAB_SWITCH": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "INTENT_TOAST_SHOW": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/ai-ui/catalog/componentCatalog.js",
+        "src/modules/notifications/services/NotificationsService.js"
+      ],
+      "subscribers": [
+        "src/ui/components/toast/toast.js"
+      ]
+    },
+    "INTENT_TODO_CLEAR_COMPLETED": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/todo-app.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "INTENT_TODO_CREATE": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/todo-app.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "INTENT_TODO_DELETE": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/todo-app.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "INTENT_TODO_FILTER": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/todo-app.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "INTENT_TODO_TOGGLE": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/todo-app.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "INTENT_TODO_UPDATE": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/todo-app.js"
+      ],
+      "subscribers": [
+        "demo/app.js"
+      ]
+    },
+    "INTENT_UNDO": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 5,
+        "windowMs": 1000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/visual-editor/ui/InlineTextEditor.js"
+      ],
+      "subscribers": [
+        "src/modules/visual-editor/ui/InlineTextEditor.js"
+      ]
+    },
+    "INTENT_VIEW_RENDER": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/runtime/ViewRegistry.js"
+      ]
+    },
+    "INTENT_WEBMCP_EXPOSE_TOOLS": {
+      "registered": true,
+      "source": "module:webmcp",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 10,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/webmcp/services/WebmcpService.js"
+      ]
+    },
+    "ISLAND_INVALIDATED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": []
+    },
+    "ITEM_SAVED": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/services/ExampleService.js"
+      ],
+      "subscribers": []
+    },
+    "LANGUAGE_CHANGED": {
+      "registered": true,
+      "source": "module:i18n",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/i18n/services/I18n.js"
+      ],
+      "subscribers": [
+        "src/modules/meta-manager/services/MetaManagerModuleService.js"
+      ]
+    },
+    "LEADER_STATE_CHANGED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 600,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/runtime/CrossTabLeader.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/OptimisticSyncService.js"
+      ]
+    },
+    "LOCALE_LOADED": {
+      "registered": true,
+      "source": "module:i18n",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/i18n/services/I18n.js"
+      ],
+      "subscribers": []
+    },
+    "LOCAL_DIRECTORY_LISTED": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/LocalFileAccess.js"
+      ],
+      "subscribers": []
+    },
+    "LOCAL_DIRECTORY_PICKED": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/LocalFileAccess.js"
+      ],
+      "subscribers": []
+    },
+    "LOCAL_FILE_ACCESS_ERROR": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/LocalFileAccess.js"
+      ],
+      "subscribers": []
+    },
+    "LOCAL_FILE_PICKED": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/LocalFileAccess.js"
+      ],
+      "subscribers": []
+    },
+    "LOCAL_FILE_READ": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/LocalFileAccess.js"
+      ],
+      "subscribers": []
+    },
+    "LOCAL_FILE_WRITTEN": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/LocalFileAccess.js"
+      ],
+      "subscribers": []
+    },
+    "LOCAL_PERMISSION_CHANGED": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/LocalFileAccess.js"
+      ],
+      "subscribers": []
+    },
+    "LOCAL_SAVE_FILE_PICKED": {
+      "registered": true,
+      "source": "module:file-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-system/services/LocalFileAccess.js"
+      ],
+      "subscribers": []
+    },
+    "LOCATION_ERROR": {
+      "registered": true,
+      "source": "module:location",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/location/services/LocationService.js"
+      ],
+      "subscribers": []
+    },
+    "LOCATION_UPDATED": {
+      "registered": true,
+      "source": "module:location",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/location/services/LocationService.js"
+      ],
+      "subscribers": []
+    },
+    "LOG_ENTRY": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/LogAccumulator.js"
+      ],
+      "subscribers": [
+        "src/modules/analytics/services/AnalyticsService.js"
+      ]
+    },
+    "MEDIA_CAPTURE_COMPLETED": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/media/services/MediaService.js"
+      ],
+      "subscribers": []
+    },
+    "MEDIA_CAPTURE_ERROR": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/media/services/MediaService.js"
+      ],
+      "subscribers": []
+    },
+    "MEDIA_CAPTURE_STARTED": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/media/services/MediaService.js"
+      ],
+      "subscribers": []
+    },
+    "MEDIA_CAPTURE_STOPPED": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "MEDIA_OPTIMIZE_COMPLETED": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/media/services/MediaService.js"
+      ],
+      "subscribers": []
+    },
+    "MEDIA_RESIZE_COMPLETED": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/media/services/MediaService.js"
+      ],
+      "subscribers": []
+    },
+    "MEDIA_TRANSFORM_COMPLETED": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/media/services/MediaService.js"
+      ],
+      "subscribers": []
+    },
+    "MEDIA_TRANSFORM_ERROR": {
+      "registered": true,
+      "source": "module:media",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "MENTION_AI_TASK_COMPLETED": {
+      "registered": true,
+      "source": "module:mentions",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/mentions/services/MentionBridge.js"
+      ],
+      "subscribers": [
+        "demo/visual-editor-comments/demo-sync.js"
+      ]
+    },
+    "MENTION_DETECTED": {
+      "registered": true,
+      "source": "module:mentions",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 120,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/visual-editor/services/AnnotationCommentService.js"
+      ],
+      "subscribers": [
+        "demo/visual-editor-comments/demo-sync.js",
+        "src/modules/mentions/services/MentionBridge.js"
+      ]
+    },
+    "MODAL_ERROR": {
+      "registered": true,
+      "source": "module:modal-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/modal-system/services/ModalService.js"
+      ],
+      "subscribers": []
+    },
+    "MODAL_STACK_UPDATED": {
+      "registered": true,
+      "source": "module:modal-system",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/modal-system/services/ModalService.js"
+      ],
+      "subscribers": []
+    },
+    "MODULE_CONTRIBUTION_REGISTERED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/ContributionRegistry.js"
+      ],
+      "subscribers": []
+    },
+    "MODULE_CONTRIBUTION_UNREGISTERED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/ContributionRegistry.js"
+      ],
+      "subscribers": []
+    },
+    "MODULE_LOADED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/ModuleManager.js"
+      ],
+      "subscribers": [
+        "src/modules/ai-ui/services/AIUIComposerService.js"
+      ]
+    },
+    "MODULE_UNLOADED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/ModuleManager.js"
+      ],
+      "subscribers": [
+        "src/modules/ai-ui/services/AIUIComposerService.js"
+      ]
+    },
+    "NETWORK_STATUS_CHANGED": {
+      "registered": true,
+      "source": "module:network-status",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/network-status/services/NetworkStatusService.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/OptimisticSyncService.js",
+        "src/modules/sync-queue/services/SyncQueueService.js"
+      ]
+    },
+    "NETWORK_STATUS_ERROR": {
+      "registered": true,
+      "source": "module:network-status",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/network-status/services/NetworkStatusService.js"
+      ],
+      "subscribers": []
+    },
+    "NOTIFICATIONS_CENTER_CLOSED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/ui/notifications-center.js"
+      ]
+    },
+    "NOTIFICATIONS_CENTER_OPENED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/ui/notifications-center.js"
+      ]
+    },
+    "NOTIFICATIONS_CLEARED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/ui/notifications-center.js"
+      ]
+    },
+    "NOTIFICATIONS_PERMISSION_CHANGED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ],
+      "subscribers": []
+    },
+    "NOTIFICATIONS_PUSH_SUBSCRIBED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ],
+      "subscribers": []
+    },
+    "NOTIFICATIONS_PUSH_UNSUBSCRIBED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ],
+      "subscribers": []
+    },
+    "NOTIFICATIONS_READ_ALL": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/ui/notifications-center.js"
+      ]
+    },
+    "NOTIFICATIONS_STATE_CHANGED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/notifications/services/NotificationsService.js"
+      ],
+      "subscribers": [
+        "demo/app.js",
+        "src/modules/notifications/ui/notifications-center.js"
+      ]
+    },
+    "NOTIFICATION_ENQUEUED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/ui/notifications-center.js"
+      ]
+    },
+    "NOTIFICATION_READ": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/ui/notifications-center.js"
+      ]
+    },
+    "NOTIFICATION_REMOVED": {
+      "registered": true,
+      "source": "module:notifications",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": [
+        "src/modules/notifications/ui/notifications-center.js"
+      ]
+    },
+    "OPTIMISTIC_ACTION_ACKED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncStateTracker.js"
+      ],
+      "subscribers": []
+    },
+    "OPTIMISTIC_ACTION_DROPPED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/OptimisticSyncService.js"
+      ],
+      "subscribers": []
+    },
+    "OPTIMISTIC_ACTION_FAILED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncStateTracker.js"
+      ],
+      "subscribers": []
+    },
+    "OPTIMISTIC_ACTION_INGESTED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/OptimisticSyncService.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/CrdtReducerRegistry.js"
+      ]
+    },
+    "OPTIMISTIC_ACTION_RECORDED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/OptimisticSyncService.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/CrdtReducerRegistry.js"
+      ]
+    },
+    "OPTIMISTIC_ACTION_UPDATED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/OptimisticSyncService.js"
+      ],
+      "subscribers": []
+    },
+    "OPTIMISTIC_CRDT_STATE_CHANGED": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/CrdtReducerRegistry.js"
+      ],
+      "subscribers": []
+    },
+    "OPTIMISTIC_INVALIDATION": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": []
+    },
+    "OPTIMISTIC_SERVER_REWORK": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/OptimisticSyncService.js"
+      ]
+    },
+    "OPTIMISTIC_TRANSPORT_ACK": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": []
+    },
+    "OPTIMISTIC_TRANSPORT_REPLAY": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": [
+        "src/modules/optimistic-sync/services/CrdtReducerRegistry.js"
+      ]
+    },
+    "OPTIMISTIC_TRANSPORT_STATE": {
+      "registered": true,
+      "source": "module:optimistic-sync",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": []
+    },
+    "PAGE_CHANGED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "PAGINATION_PAGE_CHANGED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "PAGINATION_SIZE_CHANGED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "PAYMENT_ADAPTER_READY": {
+      "registered": true,
+      "source": "module:payment-adapters",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/payment-adapters/services/PaymentAdaptersService.js"
+      ],
+      "subscribers": []
+    },
+    "PAYMENT_FLOW_ERROR": {
+      "registered": true,
+      "source": "module:payment-adapters",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/payment-adapters/services/PaymentAdaptersService.js"
+      ],
+      "subscribers": []
+    },
+    "PAYMENT_FLOW_STARTED": {
+      "registered": true,
+      "source": "module:payment-adapters",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/payment-adapters/services/PaymentAdaptersService.js"
+      ],
+      "subscribers": []
+    },
+    "PERMISSIONS_UI_DENIED": {
+      "registered": true,
+      "source": "module:permissions-ui",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/permissions-ui/services/PermissionsUIService.js"
+      ],
+      "subscribers": []
+    },
+    "PERMISSIONS_UI_ERROR": {
+      "registered": true,
+      "source": "module:permissions-ui",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "PERMISSIONS_UI_UPDATED": {
+      "registered": true,
+      "source": "module:permissions-ui",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/permissions-ui/services/PermissionsUIService.js"
+      ],
+      "subscribers": []
+    },
+    "POPOVER_TOGGLED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "PRESENTER_SYNC": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": [
+        "src/modules/slides/chrome/presenter.js"
+      ]
+    },
+    "PROGRESS_COMPLETED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "PROGRESS_UPDATE": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "PUBLIC_FORM_REJECTED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/form-management/services/FormManagementService.js"
+      ],
+      "subscribers": []
+    },
+    "PUBLIC_FORM_SIGNED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "REVIEWS_ERROR": {
+      "registered": true,
+      "source": "module:reviews",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [],
+      "subscribers": []
+    },
+    "REVIEWS_UPDATED": {
+      "registered": true,
+      "source": "module:reviews",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/reviews/services/ReviewsService.js"
+      ],
+      "subscribers": []
+    },
+    "REVIEW_SUBMITTED": {
+      "registered": true,
+      "source": "module:reviews",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "requests": 60,
+        "windowMs": 60000,
+        "scope": "session"
+      },
+      "publishers": [
+        "src/modules/reviews/services/ReviewsService.js"
+      ],
+      "subscribers": []
+    },
+    "ROUTE_BLOCKED": {
+      "registered": true,
+      "source": "module:router",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/router/services/RouterService.js"
+      ],
+      "subscribers": []
+    },
+    "ROUTE_CHANGED": {
+      "registered": true,
+      "source": "module:router",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "ROUTE_NAVIGATION_FAILED": {
+      "registered": true,
+      "source": "module:router",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/router/services/RouterService.js"
+      ],
+      "subscribers": []
+    },
+    "ROUTE_NAVIGATION_STARTED": {
+      "registered": true,
+      "source": "module:router",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/router/services/RouterService.js"
+      ],
+      "subscribers": []
+    },
+    "ROUTE_NOT_FOUND": {
+      "registered": true,
+      "source": "module:router",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/router/services/RouterService.js"
+      ],
+      "subscribers": []
+    },
+    "SEARCH_ERROR": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/BaseSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "SEARCH_FACETS_UPDATED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/EnhancedSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "SEARCH_INDEX_BATCH_UPDATED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/BaseSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "SEARCH_INDEX_CLEARED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/BaseSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "SEARCH_INDEX_UPDATED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/BaseSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "SEARCH_PAGINATION_CHANGED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/EnhancedSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "SEARCH_QUERY_INITIATED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": {
+        "perUser": {
+          "requests": 15,
+          "window": 60000
+        }
+      },
+      "publishers": [],
+      "subscribers": [
+        "src/modules/search/services/BaseSearchService.js"
+      ]
+    },
+    "SEARCH_RESULTS_RETURNED": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/BaseSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "SEARCH_SUGGESTIONS_READY": {
+      "registered": true,
+      "source": "module:search",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/search/services/EnhancedSearchService.js"
+      ],
+      "subscribers": []
+    },
+    "SECURITY_VIOLATION": {
+      "registered": true,
+      "source": "runtime",
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/optimistic-sync/services/SyncTransportService.js"
+      ],
+      "subscribers": []
+    },
+    "SELECTION_CHANGED": {
+      "registered": true,
+      "source": "module:file-explorer",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/file-explorer/services/FileExplorerService.js"
+      ],
+      "subscribers": []
+    },
+    "SELECT_ANNOTATION": {
+      "registered": true,
+      "source": "module:visual-editor",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/visual-editor/rendering/AnnotationHighlights.js",
+        "src/modules/visual-editor/ui/CommentSidebar.js"
+      ],
+      "subscribers": [
+        "src/modules/visual-editor/rendering/AnnotationHighlights.js",
+        "src/modules/visual-editor/ui/CommentSidebar.js"
+      ]
+    },
+    "SESSION_EXPIRED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "SHARE_COMPLETED": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/share/services/ShareService.js"
+      ],
+      "subscribers": []
+    },
+    "SHARE_FAILED": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/share/services/ShareService.js"
+      ],
+      "subscribers": []
+    },
+    "SLIDER_STATE_CHANGED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "SLIDER_VALUE_UPDATED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "SLIDE_CHANGED": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": [
+        "demo/slides-bootstrap.js",
+        "src/modules/slides/chrome/dock.js",
+        "src/modules/slides/chrome/grid.js",
+        "src/modules/slides/chrome/presenter.js",
+        "src/modules/slides/chrome/rail.js",
+        "src/modules/slides/engine/annotator.js",
+        "src/modules/slides/engine/deck.js"
+      ]
+    },
+    "SLIDE_MEDIA_CHANGED": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": [
+        "demo/slides-bootstrap.js",
+        "src/modules/slides/engine/deck.js"
+      ]
+    },
+    "STORAGE_ADDED": {
+      "registered": true,
+      "source": "module:storage",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/storage/services/Storage.js"
+      ],
+      "subscribers": []
+    },
+    "STORAGE_CLEARED": {
+      "registered": true,
+      "source": "module:storage",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/storage/services/Storage.js"
+      ],
+      "subscribers": []
+    },
+    "STORAGE_DELETED": {
+      "registered": true,
+      "source": "module:storage",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/storage/services/Storage.js"
+      ],
+      "subscribers": []
+    },
+    "STORAGE_READY": {
+      "registered": true,
+      "source": "module:storage",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/storage/services/Storage.js"
+      ],
+      "subscribers": []
+    },
+    "STORAGE_UPDATED": {
+      "registered": true,
+      "source": "module:storage",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/storage/services/Storage.js"
+      ],
+      "subscribers": []
+    },
+    "SYNC_QUEUE_ENQUEUED": {
+      "registered": true,
+      "source": "module:sync-queue",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/sync-queue/services/SyncQueueService.js"
+      ],
+      "subscribers": []
+    },
+    "SYNC_QUEUE_ERROR": {
+      "registered": true,
+      "source": "module:sync-queue",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/sync-queue/services/SyncQueueService.js"
+      ],
+      "subscribers": []
+    },
+    "SYNC_QUEUE_FLUSHED": {
+      "registered": true,
+      "source": "module:sync-queue",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/sync-queue/services/SyncQueueService.js"
+      ],
+      "subscribers": []
+    },
+    "TAB_SWITCHED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "TEXT_MAX": {
+      "registered": true,
+      "source": "module:share",
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "THEME_CHANGED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "TITLE_MAX": {
+      "registered": true,
+      "source": "module:share",
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "TOAST_DISMISSED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "TOAST_SHOWN": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/ui/components/toast/toast.js"
+      ],
+      "subscribers": []
+    },
+    "TODO_STATE_CHANGED": {
+      "registered": false,
+      "source": null,
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [
+        "demo/app.js"
+      ],
+      "subscribers": [
+        "demo/todo-app.js"
+      ]
+    },
+    "TOKEN_REFRESHED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "TOOLTIP_INITIALIZED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "UI_STATE_CHANGED": {
+      "registered": true,
+      "source": "module:slides",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/slides/services/SlideDeckService.js"
+      ],
+      "subscribers": [
+        "src/modules/slides/chrome/dock.js",
+        "src/modules/slides/chrome/grid.js",
+        "src/modules/slides/chrome/rail.js",
+        "src/modules/slides/engine/annotator.js"
+      ]
+    },
+    "URL_MAX": {
+      "registered": true,
+      "source": "module:share",
+      "schema": null,
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "USER_LOGGED_IN": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "USER_LOGGED_OUT": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "USER_REGISTERED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "VIEWPORT_CHANGED": {
+      "registered": true,
+      "source": "module:layout",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [],
+      "subscribers": []
+    },
+    "VIEW_RENDERED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/ViewRegistry.js"
+      ],
+      "subscribers": []
+    },
+    "VIEW_RENDER_FAILED": {
+      "registered": true,
+      "source": "runtime",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/runtime/ViewRegistry.js"
+      ],
+      "subscribers": []
+    },
+    "WEBMCP_TOOLS_REGISTERED": {
+      "registered": true,
+      "source": "module:webmcp",
+      "schema": {
+        "shape": "custom"
+      },
+      "rateLimits": null,
+      "publishers": [
+        "src/modules/webmcp/services/WebmcpService.js"
+      ],
+      "subscribers": []
+    }
+  }
+}

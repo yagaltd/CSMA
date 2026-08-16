@@ -1,0 +1,688 @@
+# CSMA — full content for agents (llms-full.txt)
+
+Generated from the project's static HTML surfaces (demo, showcase, frontend). Regenerate: `npm run generate:llms-full`. Never hand-edit.
+
+
+---
+
+# CSMA aiui Catalog: generation loop demo
+
+Source: demo/aiui-catalog.html
+
+# aiui Catalog: the generation loop
+## Core seed components (owner: core)
+## Module surfaces (owner: module)
+- This page proves the compose half of the CSMA component workflow: every
+      gallery card below is mounted through `AIUIComposerService`
+      from the generated `componentCatalog`, the same path slides
+      and archetypes use.
+     
+     
+       `npm run create-component  `: scaffolds manifest + CSS + preview in `src/ui/components/ /`
+- Edit the generated manifest / props to fit the brief
+- `npm run generate-ai-ui-catalog`: regenerates the catalog (generated artifact, never hand-edited)
+- Compose via the composer / aiui ops, as this page does
+- `npm run check:design` + `npm run check:styles` gates
+CSMA aiui Catalog: generation loop demo Mounted live via `composer.compose({ component: id, props })`.
+
+Registered but not mounted here: they need their owning module's service via `ServiceManager`. See the slides demo for the full `mountSurface` path.
+
+---
+
+# CSMA Archetypes Demo
+
+Source: demo/archetypes-demo.html
+
+# CSMA Archetypes Demo
+## Data Grid
+## Data Grid (Multi-Select)
+## Stats Dashboard (Chart.js)
+## Viewer (Markdown)
+## Viewer (Plain Text)
+## Editor Builder
+## Config Panel
+## Media Browser
+## Nav Tabs
+## Overlay Manager
+## HTML Content
+Sort Name Sort Age Loading Empty Error Update Data
+
+Log Selected
+
+Refresh Randomize Data
+
+Markdown HTML Loading Empty
+
+Pre-fill Submit Reset
+
+Log Values Dark Mode
+
+Clear Selection
+
+Select a tab
+
+Modal, drawer, popover, and lightbox. Overlays appear above page content.
+
+Open Modal Open Drawer Open Popover Lightbox
+
+import { createDataGrid } from '../src/modules/archetypes/data-grid/index.js'; import { createViewer } from '../src/modules/archetypes/viewer/index.js'; import { createStatsDashboard } from '../src/modules/archetypes/stats-dashboard/index.js'; import { createEditor } from '../src/modules/archetypes/editor-builder/index.js'; import { createConfigPanel } from '../src/modules/archetypes/config-panel/index.js'; import { createMediaBrowser } from '../src/modules/archetypes/media-browser/index.js'; import { createNavTabs } from '../src/modules/archetypes/nav-tabs/index.js'; import { createOverlayManager } from '../src/modules/archetypes/overlay-manager/index.js'; const log = (id, msg) => { const el = document.getElementById(id); if (el) el.textContent = msg; }; const PEOPLE = [ { id: 1, name: 'Alice', age: 30, role: 'Engineer' }, { id: 2, name: 'Bob', age: 25, role: 'Designer' }, { id: 3, name: 'Charlie', age: 35, role: 'Manager' }, { id: 4, name: 'Diana', age: 28, role: 'Engineer' }, { id: 5, name: 'Eve', age: 32, role: 'Designer' }, { id: 6, name: 'Frank', age: 40, role: 'Manager' }, { id: 7, name: 'Grace', age: 22, role: 'Intern' }, { id: 8, name: 'Hank', age: 45, role: 'Director' }, { id: 9, name: 'Iris', age: 29, role: 'Engineer' }, { id: 10, name: 'Jack', age: 33, role: 'Designer' }, { id: 11, name: 'Kate', age: 27, role: 'Manager' }, { id: 12, name: 'Leo', age: 31, role: 'Engineer' }, ]; // ─── Data Grid ──────────────────────────────────── const grid = createDataGrid(document.getElementById('grid-container'), (evt, payload) => { log('grid-log', `[${evt}] ${JSON.stringify(payload).slice(0, 100)}`); }, { columns: [ { id: 'name', label: 'Name', width: 180, sortable: true }, { id: 'age', label: 'Age', width: 80, sortable: true }, { id: 'role', label: 'Role', width: 160 }, ], data: PEOPLE, resizable: true, rowHeight: 36, }); document.getElementById('dg-sort-name').onclick = () => grid.sort('name'); document.getElementById('dg-sort-age').onclick = () => grid.sort('age'); document.getElementById('dg-loading').onclick = () => grid.setLoading(true); document.getElementById('dg-empty').onclick = () => grid.update([]); document.getElementById('dg-error').onclick = () => { grid.setLoading(false); grid.update([]); document.getElementById('grid-container').querySelector('.csma-datagrid').dataset.state = 'error'; }; document.getElementById('dg-update').onclick = () => grid.update([{ id: 100, name: 'New Alice', age: 31, role: 'VP' }, { id: 101, name: 'New Bob', age: 26, role: 'CTO' }]); // Multi-select grid const gridSel = createDataGrid(document.getElementById('grid-selectable-container'), null, { columns: [{ id: 'name', label: 'Name', width: 200 }, { id: 'role', label: 'Role', width: 180 }], data: PEOPLE.slice(0, 6), selectable: true, multiSelect: true, rowHeight: 40, onSelectionChange: (ids) => log('grid-selectable-log', `Selected: [${ids.join(', ')}]`), }); document.getElementById('dg-get-selected').onclick = () => log('grid-selectable-log', `API: ${JSON.stringify(gridSel.getSelected())}`); // ─── Stats Dashboard + Chart.js ─────────────────── let chartInstances = []; function randomData() { return { total: { value: 800 + Math.floor(Math.random() * 1200), trend: Math.round((Math.random() - 0.3) * 30) }, active: { value: 300 + Math.floor(Math.random() * 800), trend: Math.round((Math.random() - 0.5) * 20) }, storage: { value: (1.5 + Math.random() * 4) * 1e9, trend: Math.round((Math.random() - 0.2) * 15) }, uptime: { value: 99 + Math.random(), trend: Math.round((Math.random() - 0.6) * 2) }, }; } function destroyCharts() { chartInstances.forEach(c => c.destroy()); chartInstances = []; } function renderCharts() { destroyCharts(); const container = document.getElementById('stats-container'); const canvases = container.querySelectorAll('.csma-stats__chart-canvas'); if (canvases.length { const rect = c.getBoundingClientRect(); if (rect.width > 0 && rect.height > 0) { c.width = rect.width * devicePixelRatio; c.height = rect.height * devicePixelRatio; } }); // Chart 1: Daily Events (line) const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']; chartInstances.push(new Chart(canvases[0], { type: 'line', data: { labels, datasets: [{ label: 'Events', data: labels.map(() => 20 + Math.floor(Math.random() * 80)), borderColor: primary, backgroundColor: 'transparent', tension: 0.3, pointRadius: 3, }], }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 10 } }, grid: { color: gridColor } }, x: { ticks: { font: { size: 10 } }, grid: { display: false } }, }, }, })); // Chart 2: Usage Breakdown (doughnut) chartInstances.push(new Chart(canvases[1], { type: 'doughnut', data: { labels: ['Compute', 'Storage', 'Network', 'Other'], datasets: [{ data: [45, 25, 18, 12], backgroundColor: [primary, accent, info, muted], borderWidth: 0, }], }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 10 }, padding: 12 } } }, }, })); } function waitForCanvases(retries = 15) { const canvases = document.querySelectorAll('.csma-stats__chart-canvas'); if (canvases.length >= 2) { requestAnimationFrame(() => { requestAnimationFrame(() => renderCharts()); }); } else if (retries > 0) { setTimeout(() => waitForCanvases(retries - 1), 150); } } const stats = createStatsDashboard(document.getElementById('stats-container'), (evt, p) => { log('stats-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`); }, { cards: [ { id: 'total', label: 'Total Items', format: 'number', fetch: async () => randomData().total }, { id: 'active', label: 'Active Users', format: 'number', fetch: async () => randomData().active }, { id: 'storage', label: 'Storage Used', format: 'bytes', fetch: async () => randomData().storage }, { id: 'uptime', label: 'Uptime', format: 'percent', fetch: async () => randomData().uptime }, ], charts: [ { id: 'daily', label: 'Daily Events', type: 'line' }, { id: 'usage', label: 'Usage Breakdown', type: 'doughnut' }, ], }); waitForCanvases(); const refreshCharts = () => { stats.refresh(); setTimeout(() => waitForCanvases(8), 300); }; document.getElementById('sd-refresh').onclick = refreshCharts; document.getElementById('sd-randomize').onclick = refreshCharts; // ─── Viewer ─────────────────────────────────────── const viewer = createViewer(document.getElementById('viewer-container'), (evt, p) => { log('viewer-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`); }, { markdown: 'auto' }); viewer.update(`# Hello World This is a **markdown** viewer with *italic*, \`inline code\`, and [links](https://example.com). ## Features - Renders headings, lists, and blocks - Supports code blocks - Handles images and links > Blockquote: archetypes are reusable ### Code \`\`\`js const msg = 'hello csma'; console.log(msg); \`\`\` `); document.getElementById('vw-update-md').onclick = () => viewer.update('## Updated\n\nNew **markdown** content.'); document.getElementById('vw-update-html').onclick = () => viewer.update({ html: ' Rendered from **API**.
+
+' }); document.getElementById('vw-loading').onclick = () => viewer.setLoading(true); document.getElementById('vw-empty').onclick = () => viewer.update(''); const viewerPlain = createViewer(document.getElementById('viewer-plain-container'), null, { markdown: false, emptyMessage: 'Nothing here yet', }); viewerPlain.update('Plain text content with no markdown applied. Safe by default via textContent.'); // ─── Editor Builder ─────────────────────────────── const editor = createEditor(document.getElementById('editor-container'), (evt, p) => { log('editor-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`); }, { fields: [ { id: 'name', type: 'text', label: 'Name', required: true, placeholder: 'Enter name' }, { id: 'email', type: 'email', label: 'Email', required: true }, { id: 'role', type: 'select', label: 'Role', options: ['Engineer', 'Designer', 'Manager'] }, { id: 'bio', type: 'textarea', label: 'Bio', help: 'Optional' }, { id: 'notify', type: 'toggle', label: 'Notifications' }, ], onSave: async (data) => { await new Promise(r => setTimeout(r, 500)); log('editor-log', 'Saved: ' + JSON.stringify(data).slice(0, 120)); }, draftKey: 'demo-editor', }); document.getElementById('eb-set-values').onclick = () => editor.setValues({ name: 'Alice', email: 'alice@example.com', role: 'Engineer', bio: 'Senior engineer', notify: true }); document.getElementById('eb-submit').onclick = () => editor.submit(); document.getElementById('eb-reset').onclick = () => editor.reset(); // ─── Config Panel ───────────────────────────────── const config = createConfigPanel(document.getElementById('config-container'), (evt, p) => { log('config-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`); }, { sections: [ { label: 'Appearance', controls: [ { id: 'theme', type: 'select', label: 'Theme', options: ['Light', 'Dark', 'System'] }, { id: 'density', type: 'slider', label: 'Density', min: 1, max: 10, value: 5 }, { id: 'animations', type: 'toggle', label: 'Animations', value: true }, ], }, { label: 'Notifications', controls: [ { id: 'emailNotifs', type: 'toggle', label: 'Email', value: true }, { id: 'pushNotifs', type: 'toggle', label: 'Push', value: false }, ], }, { label: 'Advanced', collapsed: true, controls: [ { id: 'apiKey', type: 'text', label: 'API Key', placeholder: 'sk-...' }, { id: 'endpoint', type: 'text', label: 'Endpoint', placeholder: 'https://api.example.com' }, ], }, ], onChange: (id, value) => { log('config-log', `${id}: ${JSON.stringify(value)}`); if (id === 'theme') { if (value === 'Dark') document.documentElement.dataset.theme = 'dark'; else if (value === 'Light') document.documentElement.dataset.theme = 'light'; else delete document.documentElement.dataset.theme; } }, }); document.getElementById('cp-get-values').onclick = () => log('config-log', JSON.stringify(config.getValues())); document.getElementById('cp-set-values').onclick = () => config.setValues({ theme: 'Dark', density: '8', animations: false, emailNotifs: false }); // ─── Media Browser ──────────────────────────────── const mediaItems = [ { id: 'img1', name: 'sunset-beach.jpg', type: 'image', size: 2.4e6, date: 'Jan 15', src: 'data:image/svg+xml,' + encodeURIComponent(' ') }, { id: 'img2', name: 'mountain-lake.png', type: 'image', size: 5.1e6, date: 'Feb 20', src: 'data:image/svg+xml,' + encodeURIComponent(' ') }, { id: 'vid1', name: 'product-demo.mp4', type: 'video', size: 48e6, date: 'Mar 10' }, { id: 'doc1', name: 'Q4-report.pdf', type: 'file', size: 1.2e6, date: 'Apr 5' }, { id: 'img3', name: 'team-photo.jpg', type: 'image', size: 3.8e6, date: 'May 12', src: 'data:image/svg+xml,' + encodeURIComponent(' ') }, { id: 'doc2', name: 'meeting-notes.txt', type: 'file', size: 45e3, date: 'Jun 1' }, { id: 'vid2', name: 'tutorial-overview.mov', type: 'video', size: 120e6, date: 'Jun 15' }, { id: 'img4', name: 'brand-logo.svg', type: 'image', size: 120e3, date: 'Jul 1', src: 'data:image/svg+xml,' + encodeURIComponent(' ') }, ]; const media = createMediaBrowser(document.getElementById('media-container'), (evt, p) => { log('media-log', `[${evt}] ${JSON.stringify(p).slice(0, 100)}`); }, { items: mediaItems, selectable: true, multiSelect: true, onItemClick: (item) => { log('media-log', `Clicked: ${item.name}`); const count = document.getElementById('mb-count'); if (count) count.textContent = media.getSelected().length + ' selected'; }, }); document.getElementById('mb-clear').onclick = () => { media.update(mediaItems); log('media-log', 'Selection cleared'); }; // ─── Nav Tabs ────────────────────────────────────── const navtabs = createNavTabs(document.getElementById('navtabs-container'), (evt, p) => { log('navtabs-log', `[${evt}] Tab: ${p.id}`); const content = document.getElementById('navtabs-content'); if (content) content.textContent = `Active: ${p.tab?.label || p.id}`; }, { tabs: [ { id: 'tab1', label: 'Dashboard', active: true }, { id: 'tab2', label: 'Analytics', badge: 5 }, { id: 'tab3', label: 'Settings' }, { id: 'tab4', label: 'Reports', badge: 12 }, { id: 'tab5', label: 'Users' }, { id: 'tab6', label: 'Logs' }, ], closable: true, }); // ─── Overlay Manager ─────────────────────────────── const overlays = createOverlayManager(document.body, (evt, p) => { log('overlay-log', `[${evt}] ${p.type}`); }); document.getElementById('om-modal').onclick = () => { overlays.openModal(' This is a **modal dialog** with CSMA token-driven styling.
+
+Press Escape or click the backdrop to close.
+
+', { title: 'Modal Title', footer: ' OK ', }); }; document.getElementById('om-drawer').onclick = () => { overlays.openDrawer(' Drawer slides in from the right. Useful for settings panels and detail views.
+
+', { title: 'Settings', }); }; document.getElementById('om-popover').onclick = () => { overlays.openPopover(' Edit
+
+Share
+
+Delete
+
+', document.getElementById('om-popover')); }; document.getElementById('om-lightbox').onclick = () => { overlays.openLightbox(mediaItems[0].src, { alt: 'Sunset' }); }; // Expose for tests window.__grid = grid; window.__gridSel = gridSel; window.__stats = stats; window.__viewer = viewer; window.__viewerPlain = viewerPlain; window.__editor = editor; window.__config = config; window.__media = media; window.__navtabs = navtabs; window.__overlays = overlays; console.log('CSMA Archetypes Demo ready');
+
+---
+
+# CSMA Todo App
+
+Source: demo/index.html
+
+# Todo App
+## Activity
+## Edit task
+## Interactive module examples
+### Auth Login Form
+### Notifications Center
+### Share Action
+### Upload Drop Zone
+### 
+- CSMA Demo 
+                    
+                     
+                        A minimal app built with the CSMA template. Real
+                        EventBus, token-driven CSS, and vanilla JS.
+                     
+                 
+                 
+                     Theme 
+                 
+             
+
+             
+                 
+                 
+                     
+                         Total 
+                         0 
+                     
+                     
+                         Active 
+                         0 
+                     
+                     
+                         Done 
+                         0 
+                     
+                     
+                         Rate 
+                         0% 
+                     
+                 
+
+                 
+                     
+                         
+                         
+                             
+                                 
+                             
+                             
+                                Add
+                             
+                         
+
+                         
+                         
+                             
+                                List
+                             
+                             
+                                Board
+                             
+                         
+
+                         
+                         
+                             
+                                All
+                             
+                             
+                                Active
+                             
+                             
+                                Done
+                             
+                             
+                                Clear done
+                             
+                         
+
+                         
+                          
+                     
+
+                     
+                         
+                            
+                              
+                         
+                     
+                 
+
+                 
+                 
+                     
+                        
+                         
+                             
+                         
+                         
+                             
+                             Completed 
+                         
+                         
+                             
+                                Cancel
+                             
+                             
+                                Delete
+                             
+                             
+                                Save
+                             
+                         
+                     
+                 
+             
+
+             
+                 
+                     
+                         Modules 
+                        
+                         
+                            Real CSMA services wired into a local demo flow:
+                            auth, notifications, share, and resumable upload.
+                         
+                     
+                 
+
+                 
+                     
+                         
+                            
+                             Hybrid 
+                         
+                         
+                            Login, registration, recovery, verification,
+                            OAuth simulation, and logout through auth-ui.
+                         
+                          
+                     
+
+                     
+                         
+                            
+                             Consent-aware 
+                         
+                         
+                            Permission requests stay explicit. New items land in
+                            the in-app center and can trigger browser delivery
+                            when allowed.
+                         
+                         
+                             
+                                Request Permission
+                             
+                             
+                                Enqueue Alert
+                             
+                             
+                                Enqueue Warning
+                             
+                         
+                         
+                             Center idle 
+                             0 unread notifications. 
+                         
+                          
+                     
+
+                     
+                         
+                            
+                             Native + Clipboard 
+                         
+                         
+                            Uses the share module directly. Native share runs
+                            first; desktop browsers fall back to clipboard
+                            safely.
+                         
+                         
+                             Share text 
+                             
+                                 
+                             
+                         
+                         
+                             
+                                Share This Demo
+                             
+                         
+                         
+                             Ready 
+                             No share request yet. 
+                         
+                     
+
+                     
+                         
+                            
+                             Resumable 
+                         
+                         
+                            Drop files or browse. Upload state is driven by the
+                            real file-upload module with a local mock transport.
+                         
+                         
+                              
+                              
+                         
+                     
+                 
+             
+         
+
+         
+         
+             
+                 
+                     
+                 
+                  
+                  
+                 
+                     
+                        Edit
+                     
+                     
+                        Delete
+- 
+CSMA Todo App
+
+---
+
+# Newsletter Dashboard : CSMA Archetypes Greenfield Demo
+
+Source: demo/newsletter-dashboard.html
+
+# 📨 Newsletter Dashboard
+### Campaign Metrics
+### Active Campaigns
+### New Campaign
+### Template Gallery
+### ${row.name}
+Built with CSMA Archetypes
+
+import { createDataGrid } from '../src/modules/archetypes/data-grid/index.js'; import { createStatsDashboard } from '../src/modules/archetypes/stats-dashboard/index.js'; import { createEditor } from '../src/modules/archetypes/editor-builder/index.js'; import { createConfigPanel } from '../src/modules/archetypes/config-panel/index.js'; import { createNavTabs } from '../src/modules/archetypes/nav-tabs/index.js'; import { createMediaBrowser } from '../src/modules/archetypes/media-browser/index.js'; import { createOverlayManager } from '../src/modules/archetypes/overlay-manager/index.js'; // ─── Mock Data ─────────────────────────────────────── const CAMPAIGNS = [ { id: 1, name: 'Welcome Series', status: 'Active', sent: 1240, opens: 432, clicks: 89, date: 'Jul 1' }, { id: 2, name: 'July Promotion', status: 'Active', sent: 3200, opens: 1100, clicks: 234, date: 'Jul 3' }, { id: 3, name: 'Product Launch', status: 'Draft', sent: 0, opens: 0, clicks: 0, date: 'Jul 5' }, { id: 4, name: 'Monthly Digest', status: 'Sent', sent: 5600, opens: 2100, clicks: 450, date: 'Jun 28' }, { id: 5, name: 'Re-engagement', status: 'Active', sent: 890, opens: 120, clicks: 15, date: 'Jul 2' }, { id: 6, name: 'Onboarding Flow', status: 'Draft', sent: 0, opens: 0, clicks: 0, date: 'Jul 6' }, ]; const TEMPLATES = [ { id: 't1', name: 'Welcome Email', type: 'file', meta: 'HTML · 12KB', date: 'Jun 15' }, { id: 't2', name: 'Promo Banner', type: 'image', meta: 'PNG · 240KB', date: 'Jun 20' }, { id: 't3', name: 'Monthly Roundup', type: 'file', meta: 'HTML · 18KB', date: 'Jun 25' }, { id: 't4', name: 'Abandoned Cart', type: 'file', meta: 'HTML · 9KB', date: 'Jul 1' }, ]; // ─── Overlay Manager ────────────────────────────────── const overlays = createOverlayManager(document.body, null); // ─── Stats Dashboard ────────────────────────────────── createStatsDashboard(document.getElementById('stats-container'), null, { cards: [ { id: 'subs', label: 'Subscribers', format: 'number', fetch: async () => ({ value: 12840, trend: 8 }) }, { id: 'openRate', label: 'Open Rate', format: 'percent', fetch: async () => ({ value: 34.2, trend: -2 }) }, { id: 'ctr', label: 'Click Rate', format: 'percent', fetch: async () => ({ value: 8.1, trend: 3 }) }, { id: 'bounce', label: 'Bounce Rate', format: 'percent', fetch: async () => ({ value: 1.2, trend: -1 }) }, ], }); // ─── Campaigns Grid ─────────────────────────────────── const campaignsGrid = createDataGrid(document.getElementById('campaigns-grid'), null, { columns: [ { id: 'name', label: 'Campaign', width: 200, sortable: true }, { id: 'status', label: 'Status', width: 90 }, { id: 'sent', label: 'Sent', width: 80, sortable: true }, { id: 'opens', label: 'Opens', width: 80 }, { id: 'clicks', label: 'Clicks', width: 80 }, { id: 'date', label: 'Date', width: 80 }, ], data: CAMPAIGNS, rowHeight: 36, onRowClick: (row) => { overlays.openModal( ` Status: ${row.status}
+
+**Sent:** ${row.sent}
+
+**Opens:** ${row.opens}
+
+**Clicks:** ${row.clicks}
+
+**Date:** ${row.date}
+
+`, { title: `Campaign: ${row.name}` } ); }, }); // ─── Compose Editor ─────────────────────────────────── const editor = createEditor(document.getElementById('compose-editor'), null, { fields: [ { id: 'name', type: 'text', label: 'Campaign Name', required: true }, { id: 'subject', type: 'text', label: 'Subject Line', required: true }, { id: 'segment', type: 'select', label: 'Audience', options: ['All Subscribers', 'Active (30d)', 'New (7d)', 'Inactive (90d)'] }, { id: 'body', type: 'textarea', label: 'Email Body', required: true }, { id: 'schedule', type: 'toggle', label: 'Schedule for later' }, ], onSave: async (data) => { await new Promise(r => setTimeout(r, 600)); CAMPAIGNS.unshift({ id: Date.now(), name: data.name, status: 'Draft', sent: 0, opens: 0, clicks: 0, date: 'Today' }); campaignsGrid.update(CAMPAIGNS); }, draftKey: 'newsletter-compose', }); // ─── Nav Tabs (sidebar) ─────────────────────────────── const views = { campaigns: 'view-campaigns', compose: 'view-compose', templates: 'view-templates' }; const sidebarTabs = createNavTabs(document.getElementById('sidebar-tabs'), null, { tabs: [ { id: 'campaigns', label: 'Campaigns', active: true }, { id: 'compose', label: 'Compose' }, { id: 'templates', label: 'Templates' }, ], onTabClick: (tab) => { Object.values(views).forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; }); const target = document.getElementById(views[tab.id]); if (target) target.style.display = ''; }, }); // ─── Config Panel (sidebar) ─────────────────────────── createConfigPanel(document.getElementById('sidebar-config'), null, { sections: [{ label: 'Preferences', controls: [ { id: 'autoSave', type: 'toggle', label: 'Auto-save drafts', value: true }, { id: 'sendTest', type: 'toggle', label: 'Send test email', value: false }, { id: 'trackOpens', type: 'toggle', label: 'Track opens', value: true }, ], }], }); // ─── Templates Browser ──────────────────────────────── createMediaBrowser(document.getElementById('templates-browser'), null, { items: TEMPLATES, selectable: true, searchable: true, onItemClick: (item) => { overlays.openModal(` Template **${item.name}** selected.
+
+${item.meta}
+
+`, { title: 'Template Preview' }); }, }); console.log('Newsletter Dashboard ready : built with 7 CSMA archetypes');
+
+---
+
+# CSMA Slides - Demo Deck
+
+Source: demo/slides.html
+
+
+
+---
+
+# CSMA Typeset - Rhythm Demo
+
+Source: demo/typeset-demo.html
+
+## Rhythm Controls
+# Architecture Overview
+## The 6 Rules
+### Token Reference
+```
+const el = document.querySelector('.card');
+el.className = 'card completed';
+el.dataset.state = 'loading';
+```
+| Token | Value | Use |
+| --- | --- | --- |
+| `--space-xs` | 0.25rem | Tight gaps |
+| `--space-md` | 0.75rem | Standard gap |
+| `--space-xl` | 1.5rem | Section gaps |
+- Size:  15 px 
+       
+     
+
+     
+       Leading:  1.75  
+       
+     
+
+     
+       Flow:  1.25 em 
+       
+     
+
+     
+       Presets 
+       Docs 
+       Blog 
+       Chat 
+       Slides 
+     
+
+     
+       Font 
+       
+         System (default) 
+         Serif 
+         Mono 
+       
+     
+
+     
+       Theme 
+       
+         Dark 
+         Light 
+       
+     
+   
+
+   
+   
+     
+       
+      
+       CSMA separates concerns:  JavaScript manages state via events, CSS handles rendering.  This achieves fast DOM updates and a minimal bundle size. 
+       CSMA is  modules-first . Prefer trusted modules under `src/modules/*`, Contracts for validation and security, and lifecycle-safe load/unload through ModuleManager. 
+
+      
+       
+          State Changes = CSS Classes Only  - no inline styles for UI state
+- Define All States in CSS  - use `data-*` attributes
+- JavaScript Publishes Events, CSS Handles Rendering
+CSMA Typeset - Rhythm Demo CSMA is modules-first. Prefer trusted modules under `src/modules/*`.
+
+A component inside prose can opt out:
+
+This card keeps its own styles - typeset leaves it alone.
+
+---
+
+# CSMA - Visual Editor Comments Sync Demo
+
+Source: demo/visual-editor-comments/index.html
+
+# Visual Editor - Annotation Comments Sync
+Connecting...
+
+---
+
+# CSMA Token Showcase
+
+Source: showcase/token-showcase.html
+
+# CSMA  Token Showcase
+## Brand Colors
+### Primary
+### Secondary
+### Accent
+### Foreground
+## Surface & Text
+### Background
+### Surface
+### Surface Muted
+### Border
+## Color Pairs
+## Typography
+## Font Weights
+## Spacing
+## Layout Primitives
+### Container Widths
+### Grid Minimums
+### Sidebar Shell
+### Touch Target
+### Breakpoints
+## Radius
+## Shadows
+## Buttons
+## Cards
+### Inspection Card
+### Surface Variant
+## Fields
+## Badges & Status
+## Motion
+### Duration Ladder
+### Easing Samples
+### Transition Tokens
+CSMA Token Architecture
+
+Inspect the current generated token seed across color, typography, spacing, shape, elevation, components, motion, and themes.
+
+Light Dark Contrast
+
+--primary
+
+--primary
+
+--secondary
+
+--secondary
+
+--accent
+
+--accent
+
+--foreground
+
+--foreground
+
+--background
+
+--background
+
+--surface
+
+--surface
+
+--surface-muted
+
+--surface-muted
+
+--border
+
+--border
+
+Primary action
+
+--primary / --primary-foreground
+
+Secondary surface
+
+--secondary / --secondary-foreground
+
+Accent signal
+
+--accent / --accent-foreground
+
+Destructive
+
+--destructive / --destructive-foreground
+
+Display / --font-size-3xl **Token driven interface**
+
+Heading / --font-size-2xl **Readable hierarchy for real products**
+
+Section / --font-size-xl **Reusable sections and components**
+
+Body large / --font-size-lg CSMA keeps style decisions in generated custom properties.
+
+Body / --font-size-base This specimen uses the active token seed and current theme.
+
+Caption / --font-size-xs Token path, variable, and computed values stay inspectable.
+
+regular The same phrase at regular weight.
+
+medium The same phrase at medium weight.
+
+semibold The same phrase at semibold weight.
+
+bold The same phrase at bold weight.
+
+2xs --space-2xs
+
+**
+
+xs --space-xs
+
+**
+
+sm --space-sm
+
+**
+
+md --space-md
+
+**
+
+lg --space-lg
+
+**
+
+xl --space-xl
+
+**
+
+2xl --space-2xl
+
+**
+
+3xl --space-3xl
+
+**
+
+4xl --space-4xl
+
+**
+
+5xl --space-5xl
+
+**
+
+Constrained page measures for narrow content, default pages, and wide surfaces.
+
+narrow ** `--layout-container-narrow`
+
+default ** `--layout-container`
+
+wide ** `--layout-container-wide`
+
+Readable card widths for responsive auto-fit collections.
+
+**sm** --layout-grid-min-sm
+
+**md** --layout-grid-min-md
+
+**lg** --layout-grid-min-lg
+
+Sidebar token shown against a flexible content column.
+
+sidebar `--layout-sidebar` content
+
+Minimum interactive control size for coarse pointers.
+
+`--layout-touch-target`
+
+Viewport markers used by responsive recipes and layout utilities.
+
+** **sm** `--breakpoint-sm`
+
+** **md** `--breakpoint-md`
+
+** **lg** `--breakpoint-lg`
+
+** **xl** `--breakpoint-xl`
+
+none
+
+sm
+
+md
+
+lg
+
+xl
+
+full
+
+--shadow-xs
+
+--shadow-sm
+
+--shadow-md
+
+--shadow-lg
+
+--shadow-xl
+
+Primary Secondary Ghost Destructive Small Large
+
+Tokenized Card radius, padding, surface, border, and shadow are driven by generated CSMA variables.
+
+Inspect
+
+Muted Muted surfaces show whether the active palette has enough separation across themes.
+
+Review
+
+Default field *Error field Validation text uses semantic status color. Disabled field Primary Accent Success Warning Info Destructive instant*
+
+fast **
+
+normal **
+
+slow **
+
+enter **
+
+out-quart **
+
+out-quint **
+
+out-expo **
+
+in-out-soft **
+
+Fast Base Slow Hover or focus to inspect semantic transition timing.
+
+Source: `src/style/design-tokens.json`

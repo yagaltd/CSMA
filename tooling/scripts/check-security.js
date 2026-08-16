@@ -13,7 +13,7 @@
 
 import fs from 'fs';
 import { fileURLToPath, pathToFileURL } from 'url';
-import { dirname, join, relative, resolve } from 'path';
+import { dirname, join, relative, resolve, sep } from 'path';
 
 /**
  * Pass/fail switch for the contract drift check (plan item 0.1).
@@ -348,6 +348,115 @@ function checkSensitiveStorage() {
     };
 }
 
+function checkFrameworkImports() {
+    // React/framework reflexes and compiled artifacts are banned in src/.
+    // NOTE: `className` is deliberately NOT matched — it is the spec-node
+    // property name in the aiui composition grammar (specHelpers).
+    const pattern = /\b(useState|useEffect|useMemo|useCallback|useReducer|createRoot)\s*\(|import\s+React\b|from\s+['"](react|react-dom|svelte|vue|@angular\/core|solid-js|preact)['"]/;
+    const offenders = walk(join(projectRoot, 'src'))
+        .filter((file) => /\.(tsx|ts)$/.test(file) || file.endsWith('.jsx'))
+        .map((file) => relative(projectRoot, file));
+    const syntaxOffenders = walk(join(projectRoot, 'src'))
+        .filter((file) => /\.js$/.test(file))
+        .map((file) => [relative(projectRoot, file), fs.readFileSync(file, 'utf8')])
+        .filter(([, content]) => pattern.test(content))
+        .map(([file]) => file);
+    const all = [...new Set([...offenders, ...syntaxOffenders])];
+    return {
+        name: 'framework-free source',
+        pass: all.length === 0,
+        message: all.length ? all.join(', ') : 'no framework imports, hooks, or TS/JSX files in src'
+    };
+}
+
+function checkDependencies() {
+    // Two-tier dependency policy:
+    //   FORBIDDEN — frameworks and reactivity/state libraries (react, svelte,
+    //   vue, solid, preact, jquery…). They invert control: they call your
+    //   code, own the lifecycle, and drag an evolving ecosystem. This is the
+    //   architectural line; checkFrameworkImports enforces it in source.
+    //   ALLOWED — stable, specific capability libraries (flexsearch, chart.js
+    //   class): leaf libraries you call, isolated behind a module adapter
+    //   (see src/modules/search/adapters/, charts registerAdapter). They must
+    //   be added to `allowed` here with a recorded decision.
+    const allowed = new Set([
+        'flexsearch' // capability lib, isolated behind search's FlexSearchAdapter
+    ]);
+    const pkg = JSON.parse(fs.readFileSync(join(projectRoot, 'package.json'), 'utf8'));
+    const deps = Object.keys(pkg.dependencies || {});
+    const offenders = deps.filter((d) => !allowed.has(d));
+    return {
+        name: 'runtime dependency policy',
+        pass: offenders.length === 0,
+        message: offenders.length
+            ? `non-allowlisted runtime dependencies: ${offenders.join(', ')} (frameworks are banned outright; stable capability libraries are allowed only behind a module adapter — add to the allowlist in check-security.js with a recorded decision)`
+            : `only allowlisted capability dependencies (${deps.length}); no frameworks`
+    };
+}
+
+function checkLandmarks() {
+    // Every demo/showcase (and frontend/, when present) HTML page must expose
+    // at least one <main> landmark — demos are copyable teaching material.
+    const scopes = [join(projectRoot, 'demo'), join(projectRoot, 'showcase')];
+    const frontend = join(projectRoot, 'frontend');
+    if (fs.existsSync(frontend)) scopes.push(frontend);
+    const offenders = [];
+    for (const scope of scopes) {
+        for (const file of walk(scope)) {
+            if (!file.endsWith('.html')) continue;
+            const content = fs.readFileSync(file, 'utf8');
+            if (!/<main[\s>]/.test(content)) offenders.push(relative(projectRoot, file));
+        }
+    }
+    return {
+        name: 'page landmarks',
+        pass: offenders.length === 0,
+        message: offenders.length ? `missing <main>: ${offenders.join(', ')}` : 'every demo/showcase page has a <main> landmark'
+    };
+}
+
+function checkModuleBoundary() {
+    // Module-boundary rule: src/modules/<m> files must not import
+    // src/modules/<n> (m !== n). This keeps "copy any module" literally
+    // true and encodes the documented rule that archetypes and modules
+    // never import each other (emit boundary).
+    //
+    // Sanctioned exception: the ai-ui module is the Layer-1 composition
+    // seam (specHelpers + composer) that Layer-2 code MUST import from —
+    // architecture SKILL "Layer 2 archetype pattern".
+    const SEAM_MODULES = new Set(['ai-ui']);
+    const resolveImport = (fromFile, specifier) => {
+        const base = resolve(dirname(fromFile), specifier);
+        for (const candidate of [base, `${base}.js`, join(base, 'index.js')]) {
+            if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) return candidate;
+        }
+        return null;
+    };
+    const offenders = [];
+    const modulesRoot = join(projectRoot, 'src', 'modules');
+    for (const file of walk(modulesRoot)) {
+        const owner = relative(modulesRoot, file).split(sep)[0];
+        const content = fs.readFileSync(file, 'utf8');
+        for (const match of content.matchAll(/(?:import|from)\s+['"](\.[^'"]+)['"]/g)) {
+            const resolved = resolveImport(file, match[1]);
+            if (!resolved) continue;
+            const rel = relative(modulesRoot, resolved);
+            if (rel.startsWith('..')) continue; // runtime/, utils/, ui/ — not modules
+            const target = rel.split(sep)[0];
+            if (target !== owner && !SEAM_MODULES.has(target)) {
+                offenders.push(`${relative(projectRoot, file)} → ${match[1]}`);
+            }
+        }
+    }
+    return {
+        name: 'module boundary',
+        pass: offenders.length === 0,
+        message: offenders.length
+            ? `cross-module imports (vendor per the vendoring rule or route via EventBus/ServiceManager): ${offenders.join(', ')}`
+            : 'no module imports another module (ai-ui seam excepted)'
+    };
+}
+
 const checks = [
     checkCsp,
     checkDomSinks,
@@ -355,7 +464,11 @@ const checks = [
     checkTokenStorage,
     checkContracts,
     checkCachePolicy,
-    checkSensitiveStorage
+    checkSensitiveStorage,
+    checkFrameworkImports,
+    checkDependencies,
+    checkLandmarks,
+    checkModuleBoundary
 ];
 
 /**
