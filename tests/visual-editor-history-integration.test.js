@@ -96,10 +96,22 @@ describe('EditorSessionService ↔ history module (lazy)', () => {
     });
 
     it('exposes a historyService and starts empty', () => {
-        expect(session.historyService).toBeInstanceOf(HistoryService);
+        // Behavioral seam, not a concrete class: the session owns an
+        // EphemeralHistoryLog by default (vendored, module-boundary rule) and
+        // accepts any injected HistoryService-compatible log.
+        for (const method of ['record', 'undo', 'redo', 'canUndo', 'canRedo', 'getAll', 'updateEntry']) {
+            expect(typeof session.historyService[method]).toBe('function');
+        }
         expect(session.historyService.getAll()).toHaveLength(0);
         expect(session.canUndo).toBe(false);
         expect(session.canRedo).toBe(false);
+    });
+
+    it('accepts an injected HistoryService instance (host wiring)', () => {
+        const injected = new HistoryService(eventBus);
+        const injectedSession = new EditorSessionService(eventBus, { historyService: injected });
+        expect(injectedSession.historyService).toBe(injected);
+        expect(injectedSession.historyService).toBeInstanceOf(HistoryService);
     });
 
     it('(a) apply() records a veditor:transaction entry to the log', () => {

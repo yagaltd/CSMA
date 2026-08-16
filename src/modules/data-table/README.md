@@ -7,6 +7,21 @@
 
 Remote table loading, sorting, filtering, and table error state.
 
+## Relationship to the `data-grid` archetype
+
+Documented pairing — they are the two halves of one table surface, not
+competitors:
+
+- **`data-table` (this module)** = the data/state layer: remote fetch,
+  sort/filter state, error/loading contracts over the EventBus.
+- **`data-grid` (`src/modules/archetypes/data-grid/`)** = the presentation
+  layer: the sortable/resizable/selectable grid UI archetype, fed via its
+  `fetchData` option.
+
+Intended composition: data-table owns state and publishes; data-grid renders
+and calls back through `fetchData`. Do not add rendering to this module and do
+not grow another data/state service into the archetype.
+
 ## Public Surface
 
 | Surface | Details |

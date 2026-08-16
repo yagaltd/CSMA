@@ -4,6 +4,18 @@
 
 KPI cards, chart adapter registry, formatting, and loading/error state.
 
+## Relationship to the `stats-dashboard` archetype
+
+Complementary, not competing:
+
+- **`charts` (this module)** = the data/adapter layer: metrics queries,
+  chart adapter registry, and the embeddable `chart-display` aiui surface
+  (mountable inside slides and dashboards).
+- **`stats-dashboard` (`src/modules/archetypes/stats-dashboard/`)** = a
+  precomposed KPI dashboard layout (Layer 2). Its optional charts section
+  takes an explicit chart renderer hook — point that hook at this module's
+  adapter/surface rather than writing a bespoke renderer in the archetype.
+
 ## Runtime Integration
 
 Loaded only when its explicit feature flag is enabled. The module owns client-side state, EventBus contracts, adapters, optimistic behavior, and safe local cache behavior.

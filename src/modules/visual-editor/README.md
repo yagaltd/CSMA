@@ -149,6 +149,22 @@ See tests for schema validation, document model, transaction engine,
 undo/redo, transforms, mark operations, selection model, and integration
 with cms-content module.
 
+## Vendored components
+
+Module-boundary rule: modules do not import modules. Two vendored copies live
+under `lib/`, each documented per the vendoring rule:
+
+- `lib/MentionParser.js` — verbatim copy of
+  `src/modules/mentions/services/MentionParser.js`. Delta: none.
+- `lib/EphemeralHistoryLog.js` — trimmed, in-memory-only variant of
+  `src/modules/history/services/HistoryService.js` implementing exactly the
+  surface `EditorSessionService` consumes (record / undo / redo / canUndo /
+  canRedo / getAll / updateEntry / cursor). Delta: no persistence store, no
+  BroadcastSync, and no methods the session does not call — semantics copied
+  verbatim otherwise, including the published `HISTORY_OP_*` events. Hosts
+  wanting durable/cross-tab history inject a `HistoryService` instance via
+  the `EditorSessionService` constructor.
+
 ## Implementation Plan
 
 See `docs/visual-editor-module.md` for the full implementation plan.

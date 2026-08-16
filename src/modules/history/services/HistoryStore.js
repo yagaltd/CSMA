@@ -3,7 +3,7 @@
  *
  * Extracted verbatim from the former ActionLogService's IndexedDbActionStore
  * + MemoryActionStore. Parameterised by dbName + storeName so each consumer
- * (history default, optimistic-sync's continuation data, future mindmap ops)
+ * (history default, optimistic-sync's continuation data, future module ops)
  * can target its own IDB store.
  *
  * Storage layout: one record per entry, keyed by `entry.id`. Records carry

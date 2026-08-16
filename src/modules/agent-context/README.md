@@ -30,15 +30,15 @@ console.debug(response.text);
 Declare serializers in the module manifest:
 
 ```js
-// src/modules/mindmap/index.js
+// src/modules/<module>/index.js
 export const manifest = {
-  id: 'mindmap',
+  id: '<module>',
   // ...
   contributes: {
     contextSerializers: [
-      { store: 'map_nodes', format: 'markdown', fn: 'toMarkdown', default: true, label: 'Mindmap (markdown)' },
-      { store: 'map_nodes', format: 'ascii',    fn: 'toAscii' },
-      { store: 'map_nodes', format: 'json',     fn: 'toMinimalJson' }
+      { store: 'chart_data', format: 'markdown', fn: 'toMarkdown', default: true, label: 'Charts (markdown)' },
+      { store: 'chart_data', format: 'ascii',    fn: 'toAscii' },
+      { store: 'chart_data', format: 'json',     fn: 'toMinimalJson' }
     ]
   }
 };
@@ -50,7 +50,7 @@ serializer `fn` may be:
 
 - a function (inline)
 - a string export name — resolved against the module's service registered
-  with `serviceManager` (e.g. `'toMarkdown'` → `serviceManager.get('mindmap').toMarkdown()`)
+  with `serviceManager` (e.g. `'toMarkdown'` → `serviceManager.get('charts').toMarkdown()`)
 
 The serializer signature is:
 

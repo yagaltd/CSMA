@@ -6,7 +6,7 @@ import { HistoryContracts } from './contracts/history-contracts.js';
  *
  * Extracted from optimistic-sync's ActionLogService. Sync-agnostic: owns the
  * log only. Consumers layer their own concerns on top (optimistic-sync adds
- * acked/failed/pending tracking via SyncStateTracker; mindmap adds undo UI;
+ * acked/failed/pending tracking via SyncStateTracker; slides adds undo UI;
  * visual-editor may migrate its Transaction engine onto this later).
  *
  * Dependencies: storage (IDB primitive, used indirectly via HistoryStore).

@@ -73,7 +73,7 @@ export const SAFE_TAGS = new Set([
   'picture', 'source',
   'video', 'audio',
 
-  // ── Graphics (chart canvas + mindmap svg connectors + archetype icons) ──
+  // ── Graphics (chart canvas + svg connectors + archetype icons) ──
   // NOTE: script/iframe/object/embed are intentionally excluded (security).
   'canvas',
   'svg', 'path', 'g',

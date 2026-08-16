@@ -143,7 +143,7 @@ export class AIUIComposerService {
   // mountTree — mount a mixed spec tree (raw HTML nodes + catalog
   // component references) into a target. This is the Layer-1 entry point
   // used by Layer-2 slide layouts (and, in Phase 3, archetypes) so that any
-  // aiui surface (comments, video, charts, mindmap) can be embedded inside
+  // aiui surface (comments, charts) can be embedded inside
   // any layout alongside raw HTML structure.
   //
   // Spec node shapes (a tree may mix all of them):

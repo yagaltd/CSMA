@@ -5,7 +5,7 @@
  * All mutations go through Transaction → undo/redo.
  */
 import { addAnnotation, removeAnnotation, addNodeAnnotation, addDocumentAnnotation } from '../engine/AnnotationOps.js';
-import { MentionParser } from '../../mentions/services/MentionParser.js';
+import { MentionParser } from '../lib/MentionParser.js';
 
 const VALID_STATUSES = new Set(['open', 'resolved', 'reopened']);
 

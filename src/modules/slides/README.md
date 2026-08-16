@@ -95,9 +95,15 @@ src/modules/slides/
 ├── engine/                   ← deck, build, transitions, thumbnails, annotator
 ├── chrome/                   ← dock, rail, grid, presenter
 ├── layouts/                  ← 24 factories + _shared.js + index.js
-├── ui/                       ← count-up, tilt-card
+├── ui/                       ← count-up, tilt-card, CommentsBadge (vendored from comments)
 ├── slides.css                ← scaffold + build + transitions
 ├── dock.css                  ← chrome
 ├── layouts.css               ← per-layout
 └── print.css                 ← print media
 ```
+
+## Vendored components
+
+- `ui/CommentsBadge.js` — vendored from `src/modules/comments/ui/CommentsBadge.js`
+  (module-boundary rule: modules do not import modules). Delta: none; badge
+  styling is owned by `dock.css`, independent of the comments module's CSS.

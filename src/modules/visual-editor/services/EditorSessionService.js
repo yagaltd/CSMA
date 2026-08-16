@@ -12,7 +12,7 @@ import {
     getSelectedAnnotations
 } from '../engine/SelectionUtils.js';
 import { getReferencingNodeIds } from '../engine/ReferenceTraversal.js';
-import { HistoryService } from '../../history/services/HistoryService.js';
+import { EphemeralHistoryLog } from '../lib/EphemeralHistoryLog.js';
 /**
  * Editor Session Service — CSMA integration point for the visual editor engine.
  *
@@ -48,11 +48,12 @@ export class EditorSessionService {
         this._selection = null;
 
         /**
-         * Undo/redo log. Delegated to a HistoryService instance. When none is
-         * injected the session owns an ephemeral in-memory one (no IDB reload,
-         * no broadcast) so record/undo/redo work synchronously without a
-         * persistence-init race — matching the prior private-array semantics.
-         * @type {HistoryService}
+         * Undo/redo log. Delegated to a HistoryService instance when one is
+         * injected; otherwise the session owns an ephemeral in-memory log
+         * (EphemeralHistoryLog — vendored, no IDB reload, no broadcast) so
+         * record/undo/redo work synchronously without a persistence-init
+         * race — matching the prior private-array semantics.
+         * @type {HistoryService|EphemeralHistoryLog}
          */
         this.historyService = historyService || this._createEphemeralHistory();
         /** @type {boolean} */
@@ -624,20 +625,10 @@ export class EditorSessionService {
      * @private
      */
     _createEphemeralHistory() {
-        // No-op store so persistence is a silent fire-and-forget (no IDB, no
-        // console warnings). init() is intentionally NOT called — that avoids
-        // the async store-reload race while keeping record/undo/redo fully
-        // synchronous on the in-memory actions array.
-        const noopStore = {
-            init() { return Promise.resolve(); },
-            getAll() { return Promise.resolve([]); },
-            put() { return Promise.resolve(); },
-            delete() { return Promise.resolve(); },
-            clear() { return Promise.resolve(); }
-        };
-        const service = new HistoryService(this.eventBus);
-        service.store = noopStore;
-        return service;
+        // In-memory only: no store, no broadcast, no init() race — record /
+        // undo / redo / canUndo / canRedo / getAll operate synchronously on
+        // the in-memory actions array (persistence is not applicable).
+        return new EphemeralHistoryLog(this.eventBus);
     }
 
     /**
