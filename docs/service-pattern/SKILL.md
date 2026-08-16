@@ -414,5 +414,6 @@ For vertical modules such as `catalog`, `cart`, `reviews`, `comments`, `payment-
 3. **Stateless When Possible** -- Store minimal state, derive when possible.
 4. **Always Cleanup** -- Return cleanup function, unsubscribe from events.
 5. **Validate Everything** -- All inputs validated before processing.
-6. **Log Meaningfully** -- Use prefixed console.log for debugging.
+6. **Log Meaningfully** -- Use prefixed `console.warn` / `console.debug` for
+diagnostics. `console.log` is banned in `src/` (enforced by the security check).
 7. **Document Contracts** -- All events documented with expected payloads.

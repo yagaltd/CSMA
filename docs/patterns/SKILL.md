@@ -27,8 +27,10 @@ Pages and screens under `frontend/` are authoring surfaces, not reusable UI by
 default. Reusable UI becomes AI-discoverable only when it has explicit `aiUi`
 metadata. Core primitives use `src/ui/components/<component>/manifest.json`;
 module-scoped reusable UI uses `manifest.aiUi.components` and is discoverable
-only after that module is loaded. Component ids must be globally unique, with
-module ids namespaced like `consent.banner` or `media.video-player`.
+only after that module is loaded. Component ids must be globally unique.
+Module-owned embeddable surfaces live in `src/modules/<module>/aiui/`
+(currently `comments-thread`, `chart-display`); adapter contribution ids are
+dotted and module-prefixed (`search.flexsearch`, `captcha.cap`).
 
 The `ai-ui` module is a runtime prefab renderer for AI answers. Skills are the
 build-time authoring layer. Registered component manifests bridge those layers,
@@ -146,6 +148,7 @@ recognizable repeated motif that ordinary cards, badges, and rows cannot express
 |:-----|:-----|:--------------------|
 | Static layout, visual variants, hover/focus, disabled | Type I | CSS classes and `data-*` attributes only. |
 | Open/closed disclosure without shared app state | Type I when native HTML works | Prefer `<details>` or dialog primitives before JS. |
+| Single modal, drawer, or menu | Type I when native HTML works | Prefer `<dialog>` (`showModal()`) or `popover` attribute; use `overlay-manager` only when you need stacking, multi-overlay queues, or cross-archetype consistency. |
 | User intent changes app state | Type II | Publish `INTENT_*`, validate payload, then render from confirmed state. |
 | Async operation or loading state | Type II | Set `data-loading` or `data-state` from state transitions. |
 | Global notification | Type II | Use EventBus and toast Contracts. |
@@ -158,6 +161,58 @@ visual validation feedback, consult `docs/css/SKILL.md` to check whether modern
 CSS or native HTML primitives already cover the case with a clear fallback.
 
 ## Composing Patterns
+
+### From recipes to project page layouts
+
+Layout recipes above are prose guidance for composing one page. When the same
+page shape recurs across a project (second and third category page, another
+detail page), extract it into a **project page-layout function** instead of
+re-composing per page:
+
+- Same shape as slide layouts: a pure render function that takes a config
+  object and returns a spec tree (mounted via `spec()`/`mountTree()` from
+  `ai-ui/specHelpers.js`) — stateless, no listeners, no lifecycle.
+- Lives near the app code that shares it (project `layouts/` folder), not in
+  CSMA core. Page templates encode *this product's* page shapes and stay
+  project-specific; only cross-project interactive shells graduate to
+  `src/modules/archetypes/` (see `docs/architecture/SKILL.md` — template
+  disambiguation + extraction rule).
+- Recipe → layout mapping is direct: "Detail page" recipe becomes
+  `createDetailPageLayout(config)`, "Auth split" becomes
+  `createAuthSplitLayout(config)`, and so on. Landmarks from the recipe become
+  the layout's fixed structure.
+
+### Page landmarks
+
+Every composed page or demo surface is copyable teaching material — it must
+expose standard landmarks:
+
+- Exactly one `<main>` wrapping the primary content column (the app root or
+  grid container is usually the right element).
+- `<header>` for the page/tool chrome, `<nav>` for primary navigation,
+  `<aside>` for side content, `<footer>` for page-end content.
+- Decorative shells inside those landmarks stay `div`s — do not promote them.
+
+### Rendering containment for long lists
+
+Foundation ships utilities in `hardening/states.css` and
+`hardening/accessibility.css`. Apply them at *structural boundaries* — the
+list/grid container, not each item:
+
+- Repeated-item containers likely to grow beyond the viewport (data-grid rows,
+  decks, feeds): add `content-visibility: auto` (`.content-auto`) and pair it
+  with `contain-intrinsic-size: auto <estimated-height>` so the scrollbar does
+  not jump. Intrinsic size is per-surface (depends on row height) — set it in
+  the surface's own CSS or via a `--row-h` token, not as a blanket utility.
+- Self-contained widgets and islands (cards with internal updates, embed
+  surfaces): `.contain-content` / `.contain-layout` / `.contain-paint`.
+- Containment is an architecture decision per surface, not a design-token
+  value — tokens carry values (color/space); structure carries containment.
+- For data-driven surfaces where offscreen DOM should not exist at all
+  (large decks, grids), compose with the `layout` module utilities
+  (`CullingCore` viewport culling, `RenderScheduler` rAF coalescing,
+  `yieldToMain` for long synchronous loops) — they complement CSS containment:
+  CSS skips paint for DOM you keep; culling skips creating it.
 
 Patterns are plain semantic HTML plus CSS. Use tokens from
 `src/generated/tokens.css`, import component primitives through
@@ -186,5 +241,6 @@ Patterns are plain semantic HTML plus CSS. Use tokens from
 - Do not mutate inline styles for UI state.
 - Prefer `@container` for component-local adaptation and `@media` for page/shell breakpoints.
 - Prefer native HTML/CSS primitives such as `<details>`, `<dialog>`, or `popover` when they fit the interaction better than custom JS.
+- Compose pages with standard landmarks (`<main>`, `<header>`, `<nav>`); long repeated lists get `content-visibility` at their container boundary.
 - All spacing, color, radius, and shadows must use tokens.
 - Validate EventBus payloads with Contracts for Type II components.

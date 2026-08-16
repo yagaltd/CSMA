@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; connect-src 'self'"
+  />
+  <title>CSMA aiui Catalog: generation loop demo</title>
+  <link rel="stylesheet" href="../src/generated/tokens.css" />
+  <link rel="stylesheet" href="../src/style/base.css" />
+  <link rel="stylesheet" href="../src/style/foundation/layout.css" />
+  <link rel="stylesheet" href="../src/ui/components/index.css" />
+  <link rel="stylesheet" href="aiui-catalog.css" />
+</head>
+<body>
+  <header class="catalog-header">
+    <h1>aiui Catalog: the generation loop</h1>
+    <p>
+      This page proves the compose half of the CSMA component workflow: every
+      gallery card below is mounted through <code>AIUIComposerService</code>
+      from the generated <code>componentCatalog</code>, the same path slides
+      and archetypes use.
+    </p>
+    <ol class="loop-steps">
+      <li><code>npm run create-component &lt;name&gt;</code>: scaffolds manifest + CSS + preview in <code>src/ui/components/&lt;name&gt;/</code></li>
+      <li>Edit the generated manifest / props to fit the brief</li>
+      <li><code>npm run generate-ai-ui-catalog</code>: regenerates the catalog (generated artifact, never hand-edited)</li>
+      <li>Compose via the composer / aiui ops, as this page does</li>
+      <li><code>npm run check:design</code> + <code>npm run check:styles</code> gates</li>
+    </ol>
+  </header>
+
+  <main id="catalog-root">
+    <section aria-labelledby="core-heading">
+      <h2 id="core-heading">Core seed components (owner: core)</h2>
+      <p>Mounted live via <code>composer.compose({ component: id, props })</code>.</p>
+      <div id="core-gallery" class="gallery"></div>
+    </section>
+
+    <section aria-labelledby="surface-heading">
+      <h2 id="surface-heading">Module surfaces (owner: module)</h2>
+      <p>
+        Registered but not mounted here: they need their owning module's
+        service via <code>ServiceManager</code>. See the slides demo for the
+        full <code>mountSurface</code> path.
+      </p>
+      <ul id="surface-list" class="surface-list"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="aiui-catalog.js"></script>
+</body>
+</html>

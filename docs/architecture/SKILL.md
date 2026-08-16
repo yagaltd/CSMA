@@ -10,6 +10,139 @@ description: CSMA architecture rules, EventBus patterns, Contracts validation, c
 Core architecture knowledge and component-building rules for the CSMA
 (Client-Side Microservices Architecture) system.
 
+## The Three Axes (read this first)
+
+CSMA documentation talks about style, tiers, and behavior types as three
+orthogonal axes. Confusing them is the most common onboarding error — they
+combine freely, they do not nest.
+
+| Axis | Question it answers | Where it lives | Governed by |
+|---|---|---|---|
+| **A — Style** | How does it look? | `DESIGN.md` → `token-overrides.json` → `npm run tokens:patch` → `src/generated/tokens.css` | `docs/design/SKILL.md` |
+| **B — Composition tier** | How big a chunk am I building? | The layer cake (0–4 below) | this skill + `docs/archetypes/USAGE.md` |
+| **C — Behavior type** | Does this one component need JS? | Type I / Type II classification *within* a tier | this skill (§ Component Types) |
+
+Two clarifications that resolve most confusion:
+
+1. **Type I / Type II is not a tier.** It classifies a single component at any
+tier: Type I = pure CSS, state via `data-*`; Type II = CSS + JS with an
+`init[Name](eventBus) → cleanup` lifecycle. A primitive can be Type I
+(`badge`) or Type II (`toast`); so can a module surface.
+2. **Modules are not in the visual cake.** `src/modules/*` are state/logic
+services over the EventBus (auth, comments, data-table…). They are the brain
+the cake talks to, not a layer of it. Archetypes never import them and they
+never import archetypes — app code bridges the two via `emit → INTENT_*`.
+
+**"Template" disambiguation** — three different things share that word; do
+not conflate them:
+
+| Term | What it is | Shape | Where |
+|---|---|---|---|
+| **Page layout** | Whole-page template (homepage, category, video detail, auth) — arrangement, landmarks, spacing | Pure render fn → spec tree (stateless) | project code; slide layouts are the existing instance | 
+| **Archetype** | Interactive shell embedded inside pages (grid, viewer, settings) — owns interaction lifecycle | Stateful factory `create*(el, emit, opts)` → `update`/`destroy` | `src/modules/archetypes/` |
+| **Planning scaffold** | Markdown planning-document boilerplate | `.md` file | `docs/product-planning/templates/` (SITE.md, page.md, …) |
+
+Rule of thumb: a page layout answers "where do things go on this page?"; an
+archetype answers "how does this widget behave?". A video-blog detail page =
+page layout (player + meta + related grid) embedding the `viewer` archetype
+(player) and `media-browser` archetype (related rows). Page layouts are
+project-specific; archetypes are cross-project shells. Slide layouts are the
+proof the page-layout concept already works — `src/modules/slides/layouts/`
+is a set of page templates scoped to one domain.
+
+### UI vocabulary (the full ladder)
+
+The industry uses overlapping words (shadcn "components", Gutenberg
+"blocks/patterns"). CSMA's ladder, each rung defined by its **defining
+trait** — grouping is incidental, not definitional:
+
+| Term | Defining trait | Form | Where |
+|---|---|---|---|
+| **Primitive** | One visual atom under the 8-state discipline | CSS (+ optional JS for Type II), `manifest.json` | `src/ui/components/` |
+| **Module UI** | UI bound to one domain's state and intents | rendered by a module service (`auth-ui` login form, `comments-thread`) | `src/modules/<module>/ui/` (+ `aiui/` surfaces) |
+| **Archetype** | Owns an interaction lifecycle; state fed via `emit`, zero module imports | Stateful factory `create*(el, emit, opts)` → `update`/`destroy` | `src/modules/archetypes/` |
+| **Pattern** | **Guidance, not code** — where things go, responsive rules, landmarks | Prose recipes | `docs/patterns/SKILL.md` |
+| **Page layout (template)** | The code artifact implementing a pattern | Stateless pure render fn → spec tree | project code (slide layouts = existing instance) |
+| **Catalog** | What aiui can mount — nothing more | Generated registry | `src/modules/ai-ui/catalog/componentCatalog.js` |
+
+Three litmus tests resolve the common boundary cases:
+
+1. **Bound to domain state/intents?** → module UI. The login form is NOT an
+   archetype despite being "a group of primitives" — it binds to auth flows,
+   form-management, captcha, session state.
+2. **Cross-project interactive shell, state via `emit`?** → archetype
+   (data-grid, viewer).
+3. **Stateless arrangement?** → page layout (auth-split page).
+
+**"Catalog" is strict:** the generated `componentCatalog` contains only
+aiui-mountable components — primitives with `aiUi.enabled: true` plus module
+surfaces (`src/modules/*/aiui/`). Archetypes, patterns, and page layouts are
+NOT in the catalog; they are consumed by different mechanisms (factory call,
+doc reading, render fn respectively). Do not use "catalog" as a synonym for
+"all the UI we ship".
+
+**Industry mapping** (to translate outside vocabulary into CSMA terms):
+
+| Industry term | ≈ CSMA equivalent |
+|---|---|
+| shadcn "component" | spans two rungs: their `button` = primitive; their `card`/`form` composites lean page-layout |
+| shadcn "block" (login-01, sidebar-07) | page layout — stateless pre-composed arrangement |
+| Gutenberg "block" | primitive (Type I or II) |
+| Gutenberg "pattern" | page layout — note the inversion: Gutenberg pattern = code artifact, CSMA pattern = prose recipe |
+| design-system "component library" | the seed catalog (primitives + generation workflow) |
+
+One-liner: **primitives = atoms · module UI = domain-bound UI · archetypes =
+stateful widgets · patterns = recipes (prose) · page layouts = cooked pages
+(code) · catalog = what aiui can mount (atoms + module surfaces).**
+
+## The Build Chain (how a surface goes from brief to shipped)
+
+```
+ 1. PLAN       product-planning/SKILL → SITE.md / APP.md / pages/*.md
+                 │  what surfaces exist, what flows
+ 2. STYLE       design/SKILL → DESIGN.md front matter → token-overrides
+                 │  → npm run tokens:patch → showcase inspection
+                 │  (Axis A — every later step consumes var(--token) only)
+ 3. STRUCTURE   patterns/SKILL recipes → page layout per surface
+                 │  landmarks, grids, responsive rules, containment
+ 4. VOCABULARY  primitives — seed catalog or create-component siblings
+                 │  each classified Type I / Type II; manifests; regen
+                 │  catalog via generate-ai-ui-catalog
+ 5. COMPOSE     agent writes spec trees via ai-ui/specHelpers → mountTree
+                 │  novel surfaces: catalog components + raw elements,
+                 │  all through the one secure composition pipeline
+ 6. EXTRACT     repeated shells get extracted:
+                 │  · interactive shell 2nd use → archetype (Archetype
+                 │    contract, emit boundary)
+                 │  · page shape 2nd use → project page layout fn
+                 │    (slide-layout pattern generalized, pure render → spec tree)
+ 7. STATE       modules own data/intents; app code maps emit → INTENT_*
+                 │  EventBus contracts validate every publish
+ 8. NARRATIVE   if the app is a deck → SlideDeckService on top (Layer 3)
+ 9. VERIFY      npm run verify (design · styles · security-check · vitest)
+                 · check:graph (no dead files) · check:state-vocab
+                 · certify:module for new modules
+```
+
+Skill-to-step map: product-planning→1, design→2, patterns→3, architecture
+→4–7, slides→8, rigor/testing→9. Scripts *execute* step 2 and step 4's
+catalog regeneration; every other step is agent-built on rails and
+gate-verified after.
+
+**Rails vs scripts, explicitly:** agents plan and build; scripts verify.
+The rails are contracts (archetype skeleton, spec-node grammar, 8-state
+manifests) plus the checks that enforce them. There is intentionally no
+`create-archetype` scaffold — see the extraction rule below.
+
+**The extraction rule (step 6):** extract only on the **second** occurrence.
+First use: compose inline with `spec()`/`mountTree()` following patterns
+recipes. Second use of an interactive shell → extract into
+`src/modules/archetypes/<name>/` copying the Archetype contract. Second use
+of a page shape → extract a project page-layout function (same pure-render
+shape as slide layouts) near the app code that shares it. Before either
+point, extraction is speculative code — the repo just deleted a wave of it.
+(Freeze rule: no new archetype without a real consumer.)
+
 ## Core Philosophy
 
 CSMA separates concerns: **JavaScript manages state via events, CSS handles
@@ -30,6 +163,9 @@ Module boundary:
 
 - CSMA modules own only the client-side half: UI state, EventBus contracts,
   adapters, optimistic behavior, and safe local/cache behavior
+- modules never import other modules — the `ai-ui` composition seam is the
+  sanctioned exception; cross-module reuse goes through the vendoring rule,
+  the EventBus, or ServiceManager (enforced by `npm run security-check`)
 - backend/edge companions own authority: secrets, DB writes, payment sessions,
   private search indexes, moderation, RBAC, audit sources, imports, and workflow persistence
 - the vertical frontend modules currently include `catalog`, `cart`,
@@ -38,11 +174,11 @@ Module boundary:
   `edge-search`, `feature-flags`, `content-prefetch`, and `ab-testing`
 - do not put backend authority or deployment orchestration into CSMA modules
 
-- `loadOptionalFeatures` (`docs/legacy/features.js`) loads enabled modules in
-  dependency waves: independent modules run under `Promise.all`, while
-  ordered edges remain sequential (network → sync → optimistic; captcha/form
-  before auth-ui/checkout; consent before analytics/notifications; router
-  before client navigation; file-system before file-upload/media)
+- **Legacy reference**: `docs/legacy/features.js` documents the SSMA-era
+  module loading waves (network → sync → optimistic; captcha/form before
+  auth-ui/checkout; consent before analytics/notifications; router before
+  client navigation; file-system before file-upload/media). It is quarantined
+  history, not live runtime — the live path is `bootstrap.js` + `ModuleManager`.
 
 Routing boundary:
 
@@ -220,6 +356,22 @@ For cross-app atomic UI. Every folder has `manifest.json`. The litmus test:
 
 Examples: `button`, `card`, `badge`, `field`, `count-up`, `tilt-card`.
 
+This folder is a **seed catalog, not a fixed palette**. The seeds are the
+reference implementations that teach the manifest schema (8 states, Type I/II,
+contracts) and calibrate the checks — they are also what the generator
+produces siblings of. The intended workflow for bespoke UI is:
+
+```
+npm run create-component <name>   # scaffolds manifest + CSS + preview here
+# edit the generated manifest/props to fit the brief
+npm run generate-ai-ui-catalog   # regenerates the aiui catalog (generated artifact)
+# compose via AIUIComposerService / aiui ops
+```
+
+Agents should generate project-specific components alongside the seeds
+rather than bending a seed past its contract (vendoring rule still applies
+for module-scoped variants).
+
 ### 2. `src/modules/<module>/ui/` — Scoped Domain UI
 
 For components unique to one module. Two valid reasons to put something here:
@@ -241,8 +393,7 @@ calling `serviceManager.get(moduleId)`, then `mountSurface(surfaceId, container,
 - `aiui/manifest.json` with `component.moduleId` and `aiUi.render.kind: "module"`
 - `mountSurface(surfaceId, container, props) → cleanupFn` on the module's service
 
-**Currently registered**: `comments-thread`, `chart-display`, `mindmap-canvas`,
-`video-player`.
+**Currently registered**: `comments-thread`, `chart-display`.
 
 **Anti-pattern**: adding `aiui/` to an app-shell module (slides, dashboards).
 App shells CONSUME surfaces; they do not offer them. If nobody mounts your
@@ -255,7 +406,7 @@ module inside a slide, you don't need `aiui/`.
 | Is it a generic UI widget (button, card, counter)? | → | `src/ui/components/` |
 | Is it specific to one module AND no other module would use it? | → | `src/modules/<module>/ui/` |
 | Does a module need to modify an existing shared component? | → | Vendor into `src/modules/<module>/ui/` |
-| Should this module be embeddable inside slides/dashboards/mindmaps? | → | `src/modules/<module>/aiui/` |
+| Should this module be embeddable inside slides/dashboards? | → | `src/modules/<module>/aiui/` |
 | Is this module the top-level app shell (slides, dashboards)? | → | No `aiui/` needed |
 
 ### Vendoring Rule
@@ -274,12 +425,80 @@ CSMA renders through a strict layer cake. Each layer composes the layer
 immediately below — no skipping:
 
 ```
-LAYER 4  APPLICATIONS         slide-deck app · mindmap app · dashboard app
+LAYER 4  APPLICATIONS         slide-deck app · dashboard app · docs site
 LAYER 3  NARRATIVE MACHINES   SlideDeckService (next / prev / build / presenter)
 LAYER 2  PRECOMPOSED LAYOUTS  archetypes (data-grid, stats-dashboard, …) +
                              slide layouts (cover, bento, stat-grid, …)
 LAYER 1  SECURE COMPOSITION   aiui (mount / unmount / setState on catalog)
 LAYER 0  PRIMITIVES           CSMA components (button, card, badge, field, …)
+```
+
+**Runtime and dataflow view** — the same layers, plus the runtime core,
+module system, and security boundary (renders on GitHub):
+
+```mermaid
+flowchart TB
+    subgraph L4["LAYER 4 — Applications"]
+        APP1["slide-deck app<br/>(deck + dock + rail)"]
+        APP2["dashboard app"]
+        APP3["docs / marketing site"]
+    end
+
+    subgraph L3["LAYER 3 — Narrative machines"]
+        DECK["SlideDeckService<br/>next / prev / build / presenter"]
+    end
+
+    subgraph L2["LAYER 2 — Precomposed layouts"]
+        ARCH["archetypes<br/>data-grid · stats-dashboard · viewer ·<br/>overlay-manager · media-browser · nav-tabs"]
+        SLL["slide layouts<br/>cover · bento · split · stat-grid"]
+    end
+
+    subgraph L1["LAYER 1 — Secure composition"]
+        COMP["AIUIComposerService<br/>mount · unmount · setState · SAFE_TAGS"]
+        SURF["module surfaces (aiui/)<br/>comments-thread · chart-display"]
+    end
+
+    L0["LAYER 0 — primitives<br/>src/ui/components/*<br/>button · card · badge · field · input …"]
+
+    APP1 --> DECK
+    DECK --> SLL
+    APP2 --> ARCH
+    APP3 --> ARCH
+    SLL --> COMP
+    ARCH --> COMP
+    COMP --> SURF
+    COMP --> L0
+
+    subgraph MOD["Feature modules — src/modules/* (all optional)"]
+        M1["domain modules<br/>catalog · cart · comments · charts · auth ·<br/>analytics · media · search · slides …"]
+    end
+
+    SURF -->|"mountSurface(surfaceId, container, props)"| M1
+
+    subgraph CORE["Runtime core — src/runtime/"]
+        BOOT["bootstrap.js"]
+        EB["EventBus<br/>contract-validated · rate-limited"]
+        SM["ServiceManager"]
+        MM["ModuleManager<br/>dynamic import + manifest"]
+        REG["Contribution registries<br/>commands · navigation · panels ·<br/>adapters · views · serializers"]
+        AUX["CrossTabLeader · ChannelManager ·<br/>MetaManager · LogAccumulator"]
+    end
+
+    CT["Contracts registry<br/>runtime/contracts/* + module contracts/*"]
+
+    STORE["storage module<br/>IndexedDB + memory fallback"]
+
+    BOOT --> EB
+    BOOT --> SM
+    BOOT --> MM
+    BOOT --> REG
+    BOOT --> AUX
+    MM -->|"loads on demand"| MOD
+    M1 --- SM
+    M1 -->|"events"| EB
+    EB -->|"validated fan-out"| M1
+    CT -.->|"schema gate on every publish"| EB
+    M1 --> STORE
 ```
 
 **What belongs where**
@@ -290,6 +509,7 @@ LAYER 0  PRIMITIVES           CSMA components (button, card, badge, field, …)
 | `mount` / `unmount` / `setState` ops, SAFE_TAGS, catalog | 1 | `src/modules/ai-ui/` |
 | A precomposed grid of stat cards | 2 | archetypes (compose via aiui) |
 | A slide layout (`cover`, `bento`, `split`) | 2 | slide layouts (compose via aiui) |
+| A whole-page web template (homepage, category, detail) | 2 | project page layouts — pure render fns emitting spec trees (slide-layout pattern generalized) |
 | `next()` / `prev()` / build steps / cross-tab sync | 3 | `SlideDeckService` (slides module) |
 | A whole deck with dock + rail + grid | 4 | the slides app composition |
 
@@ -300,7 +520,7 @@ composition problem. aiui has no concept of "advance to next slide". Keeping
 **`mountSurface` contract** (Layer 1 ↔ module services)
 
 Any module that wants to be embeddable via aiui — so it can appear inside a
-slide, a dashboard tile, a mindmap sidebar, anywhere — MUST expose:
+slide, a dashboard tile, a docs page sidebar, anywhere — MUST expose:
 
 ```javascript
 class SomeService {
@@ -320,13 +540,12 @@ then `mountSurface(surfaceId, container, props)`. The returned cleanup fn is
 invoked on unmount. If the module isn't loaded, the composer throws a clear
 error the agent can handle.
 
-**Currently registered module surfaces**: `comments-thread`, `chart-display`,
-`mindmap-canvas`, `video-player` (forward-declared).
+**Currently registered module surfaces**: `comments-thread`, `chart-display`.
 
 **Why unify on aiui for Layer 1**
 
 1. Single mental model — agents learn aiui once, compose anything.
-2. Mix-and-match content — a slide embeds comments, charts, mindmap, video.
+2. Mix-and-match content — a slide embeds comments and charts.
 3. Streaming-ready — progressive mount/unmount for live-built UI.
 4. One security boundary — every composition passes the same SAFE filter.
 5. One extension point — new module registers a manifest + `mountSurface`.

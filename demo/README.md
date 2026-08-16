@@ -14,6 +14,15 @@ module examples.
 - **Module examples** — auth login form, notifications center trigger, share action, and upload drop zone
 - **Vanilla JS, no build step needed** — open with any static server
 
+## Other demo surfaces
+
+- `index.html` — todo app reference (this README's main subject)
+- `aiui-catalog.html` — generation-loop demo: mounts the generated component catalog through `AIUIComposerService`
+- `archetypes-demo.html` — the archetype set (data-grid, viewer, overlay-manager, …)
+- `newsletter-dashboard.html` — composed dashboard (archetypes + modules)
+- `slides.html` — slide-deck app (layouts, builds, presenter, comments anchoring)
+- `typeset-demo.html` — prose typography reference
+
 ## Run
 
 ```bash

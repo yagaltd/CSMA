@@ -4,6 +4,13 @@ Files in this directory were moved out of `src/` during the audit remediation
 (plan 3.4, decision D1). They are **not imported by any `src/` runtime path or
 demo**; they are kept as documentation of the SSMA-era full-runtime surface.
 
+## Private companions (kept for the wave tests)
+
+`ssma.js`, `theme-helpers.js`, and `ThreadManager.js` live here because
+`features.js` imports them and the wave tests still exercise `features.js`
+end to end. They are legacy-only — do not import them from `src/` (the
+import-graph gate keeps `src/` clean of them).
+
 ## features.js
 
 - **Moved from:** `src/runtime/features.js`

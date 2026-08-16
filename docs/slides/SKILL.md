@@ -24,14 +24,13 @@ Slides sit in CSMA's **layered rendering model**:
 LAYER 3  SlideDeckService   next / prev / build / presenter — owns navigation
 LAYER 2  Slide layouts       cover, bento, stat-grid, …  (24 factories)
 LAYER 1  aiui composer       mount / unmount / setState   ← rendering pipeline
-LAYER 0  CSMA components     button, card, badge, mind-node, …
+LAYER 0  CSMA components     button, card, badge, field, …
 ```
 
 The deck **state machine** (Layer 3) is slide-specific and stays. The
 **layouts** (Layer 2) emit spec trees consumed by the **aiui composer**
 (Layer 1). Because every layout renders through aiui, any catalog surface
-— `comments-thread`, `video-player`, `chart-display`, `mindmap-canvas`,
-future modules — can embed inside any slide.
+— `comments-thread`, `chart-display`, future modules — can embed inside any slide.
 
 See `docs/architecture/SKILL.md` § *Layered Rendering Architecture* for the
 full contract.
@@ -59,8 +58,7 @@ When the composer mounts the slide, it resolves `component: 'comments-thread'`
 via `serviceManager.get('comments').mountSurface(...)`. The owning module
 owns the rendering inside the slot; the slide just provides the slot.
 
-**Catalog of embeddable surfaces:** `comments-thread`, `chart-display`,
-`mindmap-canvas`, `video-player` (forward-declared). Run
+**Catalog of embeddable surfaces:** `comments-thread`, `chart-display`. Run
 `npm run generate-ai-ui-catalog` to see the live list, or read
 `src/modules/ai-ui/catalog/componentCatalog.js`.
 

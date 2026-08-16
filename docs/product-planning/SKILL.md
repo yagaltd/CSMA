@@ -271,6 +271,12 @@ Use these templates when creating artifacts:
 Copy the relevant template and fill only the sections needed for the user's
 request.
 
+**Naming note:** these are planning-document scaffolds, not page templates.
+"Page template" in CSMA means a rendered page layout (pure render fn →
+spec tree — see `docs/architecture/SKILL.md`, template disambiguation
+table). The `.md` files here are the *briefs* that feed that step, not the
+layouts themselves.
+
 ## Implementation Handoff
 
 Before writing code, summarize:

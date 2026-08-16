@@ -78,6 +78,26 @@ Never edit these directly for app-specific work:
 - `src/generated/tokens.css`
 - `tooling/generated/token-reference.json`
 
+### CSS entry points and the build requirement
+
+`src/style/main.css` and `src/ui/components/index.css` are `@import` chains
+(layered entry points). They are intended to go through the Vite build
+(`npm run build`), which inlines the imports into one stylesheet. Serving them
+raw triggers sequential CSS request chains — every chained `@import` is a
+round-trip before the next discovery.
+
+Rules:
+
+- Public/app pages served statically: link the built CSS, or link foundation
+  and component stylesheets individually (the demo pages do this — see
+  `demo/slides.html` linking `tokens.css`, `base.css`, and foundation files
+  one by one).
+- Never hand-concatenate as a workaround; the `@layer` ordering in `main.css`
+  is load-order dependent and the build preserves it.
+- If a copier cannot run a build, they should copy the individual component
+  CSS files they actually use — the catalog per-component CSS is the unit of
+  copy.
+
 ## Reference Files To Prefer
 
 | Need | Prefer this file |

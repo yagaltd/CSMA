@@ -61,6 +61,51 @@ Phase 4 — Verify
   Copy self-audit — re-read every visible string
 ```
 
+### Workflow diagram
+
+The same flow with its iteration loops and quality gates (renders on GitHub):
+
+```mermaid
+flowchart TD
+    BRIEF["User brief<br/>+ agent-map.md · token-reference.json"] --> READ["Design Read — one line<br/>register · Three Dials · color strategy"]
+    READ --> CFG["Update DESIGN.md front matter<br/>5-field schema"]
+
+    CFG --> OV["Patch src/style/token-overrides.json<br/>dot-notation token paths"]
+    OV --> PATCH["npm run tokens:patch"]
+    PATCH --> GEN["regenerates src/generated/tokens.css<br/>(generated — never hand-edit)"]
+    GEN --> LINT["npm run lint:styles"]
+    LINT --> SHOW["Inspect showcase/token-showcase.html<br/>light · dark · contrast themes"]
+    SHOW -->|"iterate on tokens"| OV
+
+    SHOW -->|"approved"| COMPOSE
+
+    subgraph COMPOSE["Phase 3 — compose the surface"]
+        PAT["docs/patterns/SKILL.md<br/>layout recipes"]
+        PRIM["src/ui/components primitives<br/>+ create-component (8 states)"]
+        AIUI["aiui surfaces + archetypes<br/>(embeddable modules)"]
+    end
+
+    PAT --> BUILD
+    PRIM --> BUILD
+    AIUI --> BUILD
+
+    BUILD["Build pages: data-* state + CSS classes<br/>var(--token) values · textContent only · no inline styles"]
+
+    BUILD --> G1["npm run check:design"]
+    BUILD --> G2["npm run check:responsive"]
+    BUILD --> G3["npm run check:styles"]
+    BUILD --> G4["npm run security-check"]
+
+    G1 --> CRIT
+    G2 --> CRIT
+    G3 --> CRIT
+    G4 --> CRIT
+
+    CRIT{"Self-critique + copy audit<br/>P · H · E · S · R · V — any below 3 → redesign"}
+    CRIT -->|"fail"| BUILD
+    CRIT -->|"pass"| SHIP["Ship / commit"]
+```
+
 ---
 
 ## Phase 0 — Pre-flight

@@ -99,6 +99,39 @@ describe('MyModule', () => {
 });
 ```
 
+## State Lives In The DOM (assert on it)
+
+CSMA's defining testability advantage: application state is **visible in the
+DOM** as `data-*` attributes and classes — not captured in framework
+closures. Assertions therefore query state directly; no internal access, no
+test-id scaffolding, no store mocking.
+
+```javascript
+// Do: assert on documented state attributes
+expect(el.dataset.state).toBe('loading');
+expect(form.querySelector('[data-error]')).toBeTruthy();
+expect(row.matches('[data-selected="true"]')).toBe(true);
+
+// Don't: reach into service internals or count renders
+expect(service._loading).toBe(true);        // private state
+expect(container.childElementCount).toBe(5); // render-count reasoning
+```
+
+Rules:
+
+- Assert the `data-*` contract the CSS consumes — that is the public state
+  surface by definition (`[data-state]`, `[data-loading]`, `[data-selected]`).
+- EventBus effects: subscribe in the test, await the published event, then
+  assert the resulting `data-*` flips. The event → attribute round trip is the
+  behavior under test.
+- Async flows: the service emits before/after events (loading → loaded);
+  waiting on the terminal event beats arbitrary timeouts.
+- jsdom is sufficient for all of this — no devtools, no browser, because the
+  state is in the document, not in component internals.
+
+This is also the agent-rails verification loop: an agent can *see* state,
+query it mechanically, and prove behavior without understanding closures.
+
 ## Contract Testing
 
 Every event contract must be tested for both valid and invalid payloads.

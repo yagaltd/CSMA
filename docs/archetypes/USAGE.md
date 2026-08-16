@@ -31,6 +31,10 @@ archetypes. Wire them through the `emit` callback in your app code.
 
 Sortable, resizable, selectable data table with virtual scrolling.
 
+Pairing: data/state (remote fetch, sort/filter contracts) belongs to the
+`data-table` module; this archetype is the presentation layer only — feed it
+through `fetchData`.
+
 ```javascript
 const grid = createDataGrid(container, emit, {
   columns: [
@@ -107,6 +111,10 @@ Default rendering rules:
 ```
 
 ## Stats Dashboard
+
+Composable KPI stat-card grid with async fetch and an optional charts section
+(renderer hook — point it at the `charts` module's `chart-display` surface
+instead of writing a bespoke renderer).
 
 Responsive stat cards with declarative metrics. Optional charts are explicit:
 provide a `renderChart(chartDef, context)` callback to mount a chart node, or the
@@ -307,6 +315,15 @@ tabs.destroy();
 ## Overlay Manager
 
 Modal, drawer, popover, and lightbox with stacking and focus trap.
+
+**Native first.** For a single modal use `<dialog>` + `showModal()`; for menus
+and anchored transient UI use the `popover` attribute (with fallback per
+`docs/css/SKILL.md`). Reach for `overlay-manager` when you need overlay
+stacking, queued multi-overlay handling, or a shared overlay shell across
+archetypes — that is the layer `patterns/SKILL.md` routes custom plumbing to.
+Note: `openModal`/`openDrawer` accept DOM nodes or HTML strings; when the
+content is user-derived, mount via the composer or build nodes with
+`textContent` — never pass raw user strings as HTML.
 
 ```javascript
 const om = createOverlayManager(document.body, emit);

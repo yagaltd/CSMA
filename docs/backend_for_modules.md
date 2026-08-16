@@ -127,7 +127,59 @@ The following modules are frontend halves. They now include the standard CSMA ga
 | `content-workflow` | Draft/review/publish/schedule UI state transitions | Multi-user workflow persistence, locks, approvals, scheduled publish jobs, author/editor roles | CMS workflow companion |
 | `edge-search` | Search client, facets, suggestions, public/static index adapter | Private index queries, ACL filtering, ranking, typo tolerance at scale, query logs, indexing pipeline | edge search Worker or SSMA search companion |
 
+## Agent tool exposure (WebMCP seam)
+
+The `webmcp` module (catalog-only) adapts selected `INTENT_*` contracts to
+the browser's WebMCP API (W3C WebML CG draft; Chrome early preview) so
+browser-resident agents can discover and invoke site capabilities as tools.
+
+Division of responsibility:
+
+- **Tool surface** — the intent registry. Each exposed tool is an intent:
+  name, description, and the contract's JSON schema. Hosts pass an explicit
+  allowlist to `exposeTools()`; the whole registry is never exposed by default.
+- **Mediation** — every agent invocation goes through `eventBus.publish`, so
+  contract validation and rate limits apply to agents exactly as to user
+  actions. The adapter cannot bypass them.
+- **Authorization authority** — unchanged: companions/SSMA. A tool handler
+  publishes an intent; whatever backend effect it triggers is authorized
+  server-side as always. Sensitive or irreversible actions require
+  confirmation flows owned by the backing module (cart checkout, payments,
+  account changes), not by the adapter.
+- **No HTTP headers involved** — WebMCP is a JavaScript API plus optional
+  HTML annotations on form elements. There is nothing to configure at the
+  edge/gateway for discovery; the registration happens in-page.
+
+The generated events reference (`npm run generate:events`) doubles as the
+reviewable tool catalog: intents with rate limits are precisely the
+candidates an owner may choose to expose.
+
 ## Backend Companion API Principles
+
+### Cache-Control contract (client honors it)
+
+CSMA's `APIWrapper` accepts an optional response cache (`services/core/
+CacheManager`). When wired in, GET responses are cached **under the server's
+own policy** — companions stay authoritative:
+
+- `Cache-Control: no-store` / `no-cache` → never cached (memory-only at best)
+- `Cache-Control: private` → memory-only; never persisted to IndexedDB or
+  localStorage backends
+- `max-age=N` → cache TTL derived from the header
+- Mutations (POST/PUT/PATCH/DELETE) invalidate cached GETs for the endpoint
+  (including query variants) before resolving
+
+Companion obligations:
+
+- GET-able module endpoints (content, catalog, metrics, manifests) SHOULD send
+  an explicit `Cache-Control` plus a validator (`ETag` / `Last-Modified`) so
+  refetches can revalidate cheaply (304s) instead of re-serving bodies
+- Authenticated or user-scoped responses MUST be `Cache-Control: private,
+  no-store`
+- The service worker denylist (`public/sw.js`) independently refuses to cache
+  sensitive prefixes (`/api/`, `/auth/`, `/forms/`, `/logs/`, …) — companions
+  must never rely on the client for confidentiality, but should not fight it
+  either: correct headers make every layer agree
 
 Every backend/edge companion should follow these principles:
 

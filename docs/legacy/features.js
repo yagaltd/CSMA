@@ -7,8 +7,8 @@
  */
 import { initConsentUI } from '../../src/modules/consent/ui/consent-ui.js';
 import { auditPage } from '../../src/runtime/seoAudit.js';
-import { buildLogEndpoint } from '../../src/style/theme/theme-helpers.js';
-import { resolveSsmaBaseUrl, resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from '../../src/runtime/ssma.js';
+import { buildLogEndpoint } from './theme-helpers.js';
+import { resolveSsmaBaseUrl, resolveSsmaHttpEndpoint, resolveSsmaWsEndpoint } from './ssma.js';
 import { assertProductionSecurityPolicy, resolveSecurityPolicy } from '../../src/runtime/SecurityPolicy.js';
 
 function resolveOptionalSsmaEndpoint(path, override, runtimeConfig = {}) {
@@ -434,7 +434,7 @@ export async function loadOptionalFeatures(state, {
         }),
 
         FEATURES.THREAD_MANAGER && runFeature('[ThreadManager] Failed to load:', async () => {
-            const { threadManager } = await import('../../src/runtime/ThreadManager.js');
+            const { threadManager } = await import('./ThreadManager.js');
             const csma = ensureCsma();
             csma.threadManager = threadManager;
             console.log('[ThreadManager] Web Worker management enabled');

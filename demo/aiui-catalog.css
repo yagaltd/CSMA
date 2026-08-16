@@ -1,0 +1,72 @@
+/* aiui-catalog.css — demo chrome only. Component visuals come from
+   src/ui/components/index.css; all values here are tokens. */
+
+.catalog-header {
+    max-width: var(--layout-container-wide, 72rem);
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg);
+}
+
+.catalog-header h1 {
+    margin: 0 0 var(--space-sm);
+}
+
+.loop-steps {
+    margin: var(--space-lg) 0 0;
+    padding-left: var(--space-lg);
+}
+
+.loop-steps li {
+    margin-bottom: var(--space-xs);
+}
+
+#catalog-root {
+    max-width: var(--layout-container-wide, 72rem);
+    margin: 0 auto;
+    padding: 0 var(--space-lg) var(--space-xl);
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--space-md);
+}
+
+.catalog-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg, 12px);
+    padding: var(--space-md);
+    background: var(--surface);
+}
+
+.catalog-card__title {
+    margin: 0 0 var(--space-2xs, 2px);
+    font-size: 1rem;
+}
+
+.catalog-card__meta {
+    margin: 0 0 var(--space-sm);
+    color: var(--foreground-muted);
+    font-size: 0.875rem;
+}
+
+.catalog-card__stage {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+    min-height: 3rem;
+}
+
+.catalog-card__error {
+    color: var(--danger, var(--foreground-muted));
+    font-size: 0.875rem;
+}
+
+.surface-list {
+    padding-left: var(--space-lg);
+}
+
+.surface-list li {
+    margin-bottom: var(--space-xs);
+}

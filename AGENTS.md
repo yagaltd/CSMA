@@ -6,13 +6,47 @@ Treat this repo as the source of truth for runtime, modules, primitives, and
 canonical design tokens. Agents update tokens and compose UI freely, but respect
 the architectural boundaries below.
 
+## You Are Not In React (read before writing any code)
+
+CSMA is deliberately vanilla: no framework, no TypeScript, no JSX/TSX, no
+component-library dependencies. Your training priors are React-shaped — do not
+follow them. Specifically:
+
+- **No JSX/TSX/TS.** Files are `.js` + `.css` + `.json` only.
+- **No `npm install`** for UI or state concerns. If something is missing, build it from
+  primitives or compose it via `ai-ui/specHelpers.js`. External dependencies follow
+  the two-tier policy (security check enforces it): **frameworks banned**;
+  **stable capability libraries** (flexsearch, chart.js class) allowed only behind
+  a module adapter, with a recorded decision in the allowlist.
+- **No hooks mental model.** State is not captured in closures; it lives in
+  the DOM (`data-*`) and in services (EventBus + Contracts).
+- **No VDOM.** You never re-render trees on state change; you flip
+  `data-*`/classes and CSS does the rest.
+
+Translate your priors with this table:
+
+| React reflex | CSMA equivalent |
+|---|---|
+| `useState` / `setState` | `data-*` attribute flip + CSS `[data-state]` rules; shared state → publish `INTENT_*` |
+| `useEffect(() => …, [])` | service `init()` in `src/modules/<m>/services/`; cleanup = returned unsubscribe |
+| `useEffect` subscription | `eventBus.subscribe(NAME, fn)` → keep the unsubscribe fn |
+| props | `manifest.json` `propsSchema` (catalog components) or factory `options` (archetypes) |
+| component tree / JSX | spec tree: `spec()` + `mountTree()` from `src/modules/ai-ui/specHelpers.js` |
+| context / providers | ServiceManager + EventBus contracts |
+| refs to DOM | the nodes `mountTree` returns; `querySelector` on them |
+| `dangerouslySetInnerHTML` | does not exist — `textContent` only, always |
+| rerender on data change | targeted update via `update()`/re-mount of the dynamic subtree only |
+
+These rules are enforced mechanically: the security check fails on framework
+imports, TS files, and non-allowlisted dependencies in `package.json`.
+
 ## Key Directories
 
 | Path | Purpose |
 |------|---------|
 | `src/runtime/` | Runtime helpers and reusable services |
 | `src/modules/` | Reusable feature modules |
-| `src/ui/components/` | Primitive UI building blocks — copy and extend |
+| `src/ui/components/` | Seed component catalog — reference primitives; copy, extend, or generate new siblings via `npm run create-component` |
 | `src/style/` | Canonical token input and base styles |
 | `demo/` | Reference demos and committed snapshots |
 | `showcase/` | Standalone token and design inspection pages |
@@ -50,7 +84,7 @@ CSMA has three UI folders. Pick the right one:
 |--------|---------|-------------|
 | `src/ui/components/` | Cross-app primitives (button, card, badge, count-up, tilt-card). Each folder has `manifest.json` for aiui catalog. | "Would another module reuse this?" → yes = here |
 | `src/modules/<module>/ui/` | Domain UI scoped to one module. Use when the component is unique to that module, or when a module needs to **modify** an existing primitive. | "Would another module reuse this?" → no = here |
-| `src/modules/<module>/aiui/` | Embeddable module surfaces. Used ONLY when a module wants to be mounted INSIDE other surfaces (e.g. comments-thread inside a slide). Requires `manifest.json` + `mountSurface()` on the service. | "Should this module be embeddable inside slides/dashboards/mindmaps?" → yes = here |
+| `src/modules/<module>/aiui/` | Embeddable module surfaces. Used ONLY when a module wants to be mounted INSIDE other surfaces (e.g. comments-thread inside a slide). Requires `manifest.json` + `mountSurface()` on the service. | "Should this module be embeddable inside slides/dashboards?" → yes = here |
 
 **Vendoring rule**: If a module needs to change a shared component's behavior, copy it into `src/modules/<module>/ui/`, modify it, and document the delta in the module's README. Never modify `src/ui/components/` for one module's needs.
 
@@ -121,6 +155,32 @@ Pick one delivery mode per surface before implementation:
 
 Do not mix public HTML routes with injected `frontend/pages/*.js` HTML modules.
 For public multi-page work, run `npm run verify:frontend-routes`.
+
+## Verification and Generation Rails
+
+Gates (all enforced in `npm run verify` unless noted):
+
+| Command | What it proves |
+|---|---|
+| `npm run verify` | design + styles + full security-check + artifact freshness + SEO head + vitest in one chain |
+| `npm run check:graph` | no unreachable `src/` files (import-graph walk from all entry surfaces) |
+| `npm run generate:events` | regenerates `tooling/generated/events-reference.{json,md}` — the agent-facing event catalog (never hand-edit) |
+| `npm run check:state-vocab` | `data-*` state vocabulary drift, advisory with baseline (`CSMA_ENFORCE_STATE_VOCAB=1` to enforce) |
+| `npm run check:artifacts` | robots/sitemap/llms.txt in sync with `project-manifest.json` routes (skips/warns when artifacts not generated) |
+| `npm run check:seo-head` | static-mpa pages have title/description/canonical/one-h1 (skips without `frontend/`) |
+
+Generators (mechanical execution):
+
+| Command | Produces |
+|---|---|
+| `npm run create:component -- <name>` | Layer-0 primitive scaffold (manifest + CSS + preview) |
+| `npm run create:module -- <name>` | full module tree (manifest, rate-limited contracts, service with init/destroy cleanup, README, passing test) — certify with `npm run certify:module -- <name>` |
+| `npm run generate-project-artifacts [-- --force]` | robots.txt / sitemap.xml / llms.txt + legal drafts from `project-manifest.json` (`--force` refreshes only public/ SEO artifacts, never the editable legal drafts) |
+| `npm run generate:llms-full` | `public/llms-full.txt` — full-content markdown of the project's static HTML surfaces (AEO) |
+
+Module boundary (enforced): `src/modules/<m>` never imports `src/modules/<n>`;
+the `ai-ui` composition seam is the sanctioned exception. Cross-module reuse
+goes through the vendoring rule, EventBus, or ServiceManager.
 
 ## Source Inspection Guardrail
 

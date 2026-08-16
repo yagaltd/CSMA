@@ -650,9 +650,12 @@ Catalog generator extended to scan `src/modules/*/aiui/*.json` in addition
 to `src/ui/components/*/manifest.json`. `AIUIComposerService` gained
 `canvas`/`svg`/`path`/`g`/`line`/`circle`/`rect`/`polyline`/`polygon` in
 `SAFE_TAGS` and a new `render.kind: 'module'` path that resolves via
-`serviceManager.get(moduleId).mountSurface(...)`. Four surfaces registered:
-`comments-thread`, `chart-display`, `mindmap-canvas` (live); `video-player`
-(forward-declared, module body pending). `ServiceManager.register` now
+`serviceManager.get(moduleId).mountSurface(...)`. Four surfaces registered
+at the time: `comments-thread`, `chart-display`, `mindmap-canvas` (live);
+`video-player` (forward-declared, module body pending). *(Status update:
+mindmap-canvas and video-player were later removed together with their
+modules — the live registry is `comments-thread` + `chart-display`.)*
+`ServiceManager.register` now
 injects itself into services exposing `setServiceManager`. 12 new tests in
 `tests/ai-ui/module-surfaces.test.js`. 1188/1188 green.
 
@@ -662,8 +665,8 @@ Each of the 24 slide layout factories in `src/modules/slides/layouts/`
 re-expressed as an aiui composition spec. `SlideDeckService` unchanged
 (keeps `next`/`prev`/`build`/cross-tab sync/presenter). Public `deck.json`
 schema unchanged. The `el()` helper in `_shared.js` is deprecated for new
-layouts. Result: any aiui surface (comments, video, charts, mindmap) can
-embed inside any slide. Scope estimate: ~3–5 days, run as a modular wave.
+layouts. Result: any aiui surface (comments, charts, and any future module
+surface) can embed inside any slide. Scope estimate: ~3–5 days, run as a modular wave.
 
 ### Phase 3 — Archetypes migrate, `el()` removed (in progress)
 
@@ -734,7 +737,7 @@ use, then migrates slides (and later visual-editor) onto it.
    Mobile: tap to show the same preview. Both have a Reply button (replies
    go in the preview modal or the drawer).
 4. Drawer (separate from the inline popup) lists ALL comments for the
-   current scope (a slide, a mindmap, a document). Filter, search, jump.
+   current scope (a slide, a document, a canvas surface). Filter, search, jump.
 5. App dock/toolbar gets ONE comments button. Icon shows a total-count
    badge. Click opens the drawer.
 
@@ -785,7 +788,7 @@ An anchor identifies WHERE a comment attaches. Three primitive shapes:
 // Text anchor (port from visual-editor for editor apps)
 { anchor_type: 'text', anchor: { path: [...], start: 12, end: 27 } }
 
-// Point anchor (canvas / SVG — for mindmap nodes, chart cells)
+// Point anchor (canvas / SVG — for canvas elements, chart cells)
 { anchor_type: 'point', anchor: { x: 240, y: 180, scope: 'map-abc' } }
 ```
 
@@ -796,8 +799,8 @@ register a custom resolver; the default uses `selector` or `id`.
 **Layered architecture (rides on Phase 3)**
 
 ```
-LAYER 4  SLIDES APP / MINDMAP APP / VISUAL-EDITOR APP  ← integrate
-LAYER 3  APP-SPECIFIC ANCHOR HOOKS  ← slide element clicks, mindmap node clicks
+LAYER 4  SLIDES APP / VISUAL-EDITOR APP  ← integrate
+LAYER 3  APP-SPECIFIC ANCHOR HOOKS  ← slide element clicks, editor node clicks
 LAYER 2  COMMENTS-DRAWER + COMMENTS-POPUP + COMMENTS-MARKER archetypes
 LAYER 1  aiui composer (mounts the drawer/popup/marker surfaces)
 LAYER 0  AnchorableCommentsService (CRUD + persistence + events)
@@ -805,8 +808,8 @@ LAYER 0  AnchorableCommentsService (CRUD + persistence + events)
 
 Phase 3 must land first because the drawer, popup, and marker are
 archetypes that compose via aiui. Phase 4 builds the Layer 0 service +
-Layer 2 archetypes + one Layer 3 integration (slides). Mindmap and
-visual-editor integrations are follow-on sub-phases.
+Layer 2 archetypes + one Layer 3 integration (slides). The visual-editor
+integration is a follow-on sub-phase.
 
 **Contracts sketch**
 

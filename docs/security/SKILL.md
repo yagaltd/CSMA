@@ -265,6 +265,14 @@ and persistence.
 
 ## Security Testing Patterns
 
+The mechanical gate set lives in `npm run security-check` (13 checks: CSP
+template, DOM sinks, console.log ban, production token storage, contract
+rate limits, offline cache policy, sensitive storage patterns, contract
+drift, framework-free source, runtime dependency policy, page landmarks,
+module boundary). Treat it as the floor, not the ceiling — the patterns
+below are what the gates cannot check for you. See also AGENTS.md
+"Verification and Generation Rails".
+
 ### Test Contract Rejection
 
 ```javascript
